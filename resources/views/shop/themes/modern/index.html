@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="facebook-domain-verification" content="2d59ex7cii10rhhw2o9ny77tfcwft0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Store - Modern Luxury</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shop/styles.css?v=202604021">
+  <link rel="stylesheet" href="/shop/themes/modern/style.css?v=20260705">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="icon" href="data:,">
+  <style>
+    body { opacity: 0; transition: opacity .25s ease; }
+    .ready body { opacity: 1; }
+  </style>
+  <script>document.documentElement.classList.add('ready');</script>
+</head>
+
+<body>
+  <!-- Sticky Minimal Glassmorphism Header -->
+  <header class="container header">
+    <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
+      <img id="siteLogo" src="/images/logo.png?v=202604031" alt="Store"
+        onerror="this.src='https://dummyimage.com/48x48/09090b/ffffff&text=SM'" />
+      <span id="siteName">Store</span>
+    </a>
+    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <div class="icons">
+      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة">
+        <i class="fa fa-shopping-bag"></i><span id="cartCount"></span>
+      </a>
+    </div>
+    <nav class="nav">
+      <a href="/shop/index.html" class="active">الرئيسية</a>
+      <a href="/shop/categories.html">الأقسام</a>
+      <a href="/shop/products.html">المنتجات</a>
+      <a href="/shop/contact.html">اتصل بنا</a>
+      <a id="callBtn" href="tel:01146520922" class="call-now">اتصل الآن</a>
+    </nav>
+  </header>
+
+  <!-- Homepage Dynamic Sections Wrapper (Generous Whitespace & Luxury Layout) -->
+  <main id="homepageSections">
+    <!-- Hero Slider -->
+    <section id="sec-hero_slider" class="hero-slider animate-fade-in-up" style="display: none;">
+      <div class="slider-container">
+        <div class="slides">
+          <div class="slide active">
+            <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
+          </div>
+          <div class="slide">
+            <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+          </div>
+        </div>
+
+        <!-- Navigation arrows -->
+        <button class="slider-btn prev" onclick="changeSlide(-1)" aria-label="السابق">
+          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button class="slider-btn next" onclick="changeSlide(1)" aria-label="التالي">
+          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Featured Categories Section -->
+    <section id="sec-featured_categories" class="section container animate-fade-in-up" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-featured_categories">الأقسام المميزة</h2>
+        <a class="more" href="/shop/categories.html"><span>عرض الكل</span> <i class="fa fa-arrow-left"></i></a>
+      </div>
+      <div id="categoriesGrid" class="grid"></div>
+    </section>
+
+    <!-- Best offers section -->
+    <section id="sec-best_offers" class="section container animate-fade-in-up" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-best_offers">أفضل العروض والخصومات</h2>
+        <a class="more" href="/shop/products.html?sort=discount"><span>عرض الكل</span> <i class="fa fa-arrow-left"></i></a>
+      </div>
+      <div id="offersGrid" class="grid"></div>
+    </section>
+
+    <!-- Products grid -->
+    <section id="sec-latest_products" class="section container animate-fade-in-up" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-latest_products">أحدث المنتجات</h2>
+        <a class="more" href="/shop/products.html"><span>عرض الكل</span> <i class="fa fa-arrow-left"></i></a>
+      </div>
+      <div id="productsGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- Luxury Minimal Footer -->
+  <footer class="container footer">
+    <div style="margin-bottom: 1.5rem; font-weight: 800; font-size: 1.25rem; color: var(--primary-color);">
+      ✨ تجربة تسوق استثنائية وبسيطة
+    </div>
+    © <span id="year"></span> جميع الحقوق محفوظة لـ <a
+      href="https://bird-technology.com/" target="_blank" rel="noopener">بيرد تكنولوجي</a>
+  </footer>
+
+  <a class="wapp-float" id="whatsappBtn" href="https://wa.me/201146520922" target="_blank" aria-label="WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <script>
+    window.API_BASE = '/public-api';
+
+    function applySettings(data) {
+      if (!data) return;
+      if (data.logo_url) {
+        const logoEl = document.getElementById('siteLogo');
+        if (logoEl) logoEl.src = data.logo_url;
+      }
+      if (data.store_name) {
+        const nameEl = document.getElementById('siteName');
+        if (nameEl) nameEl.textContent = data.store_name;
+        document.title = data.store_name + ' - Modern Luxury';
+      }
+      if (data.phone) {
+        const callBtn = document.getElementById('callBtn');
+        if (callBtn) callBtn.href = 'tel:' + data.phone;
+      }
+      if (data.whatsapp) {
+        const waBtn = document.getElementById('whatsappBtn');
+        if (waBtn) waBtn.href = 'https://wa.me/' + data.whatsapp;
+      }
+    }
+
+    if (window.__SITE_SETTINGS__) {
+      applySettings(window.__SITE_SETTINGS__);
+    } else {
+      fetch(`${window.API_BASE}/settings`).then(r => r.json()).then(({ data }) => {
+        window.__SITE_SETTINGS__ = data;
+        applySettings(data);
+      }).catch(() => { });
+    }
+
+    let currentSlideIndex = 0;
+    let slides, totalSlides;
+    let slideInterval = null;
+
+    function initSlider() {
+      slides = document.querySelectorAll('.slide');
+      totalSlides = slides.length;
+      if (totalSlides > 0) {
+        let loadedImages = 0;
+        slides.forEach((slide, index) => {
+          const img = slide.querySelector('img');
+          if (img) {
+            if (img.complete) {
+              loadedImages++;
+            } else {
+              img.onload = () => { loadedImages++; if (loadedImages === totalSlides) startSlider(); };
+              img.onerror = () => { loadedImages++; if (loadedImages === totalSlides) startSlider(); };
+            }
+          }
+        });
+        setTimeout(() => { if (!slideInterval) startSlider(); }, 2000);
+        if (loadedImages === totalSlides) startSlider();
+      }
+    }
+
+    function startSlider() {
+      showSlide(0);
+      startAutoSlide();
+      const sliderContainer = document.querySelector('.slider-container');
+      if (sliderContainer) {
+        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startAutoSlide);
+      }
+    }
+
+    function showSlide(index) {
+      if (!slides || slides.length === 0) return;
+      if (index >= totalSlides) index = 0;
+      if (index < 0) index = totalSlides - 1;
+      currentSlideIndex = index;
+      slides.forEach(slide => slide.classList.remove('active'));
+      if (slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
+      const slidesContainer = document.querySelector('.slides');
+      if (slidesContainer) {
+        slidesContainer.style.transform = `translateX(${currentSlideIndex * (document.dir === 'rtl' ? 100 : -100)}%)`;
+      }
+    }
+
+    function changeSlide(direction) {
+      stopAutoSlide();
+      showSlide(currentSlideIndex + direction);
+      startAutoSlide();
+    }
+
+    function startAutoSlide() {
+      if (slideInterval) clearInterval(slideInterval);
+      slideInterval = setInterval(() => { showSlide(currentSlideIndex + 1); }, 5000);
+    }
+
+    function stopAutoSlide() {
+      if (slideInterval) { clearInterval(slideInterval); slideInterval = null; }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = document.querySelectorAll('.slide');
+      if (slides && slides.length > 0) initSlider();
+    });
+  </script>
+  <script src="/shop/shared.js?v=20260714"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    if (window.__SITE_SETTINGS__) {
+      renderHomepageLayout(window.__SITE_SETTINGS__);
+      loadHomepageContent(window.__SITE_SETTINGS__);
+    } else {
+      fetch(`${window.API_BASE}/settings`).then(r => r.json()).then(({ data }) => {
+        window.__SITE_SETTINGS__ = data;
+        renderHomepageLayout(data);
+        loadHomepageContent(data);
+      }).catch(() => {
+        const fallbackSettings = {
+          homepage_sections: [
+            {id: 'hero_slider', enabled: true},
+            {id: 'featured_categories', enabled: true},
+            {id: 'best_offers', enabled: true},
+            {id: 'latest_products', enabled: true}
+          ]
+        };
+        renderHomepageLayout(fallbackSettings);
+        loadHomepageContent(fallbackSettings);
+      });
+    }
+
+    function loadHomepageContent(settings) {
+      const sections = settings.homepage_sections || [];
+      const isHeroEnabled = !sections.length || sections.some(s => s.id === 'hero_slider' && s.enabled);
+      const isCategoriesEnabled = !sections.length || sections.some(s => s.id === 'featured_categories' && s.enabled);
+      const isOffersEnabled = !sections.length || sections.some(s => s.id === 'best_offers' && s.enabled);
+      const isLatestEnabled = !sections.length || sections.some(s => s.id === 'latest_products' && s.enabled);
+
+      const lang = getStorefrontLang();
+
+      if (isHeroEnabled) {
+        fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
+          const slider = document.querySelector('.slides');
+          if (slider && data && data.length) {
+            slider.innerHTML = data.map((b, i) => `
+              <div class="slide ${i === 0 ? 'active' : ''}">
+                ${b.link ? `<a href="${b.link}">` : ''}
+                  <img src="/storage/${b.image_path}" alt="${b.title || 'بنر إعلاني'}">
+                ${b.link ? `</a>` : ''}
+              </div>
+            `).join('');
+            initSlider();
+          }
+        }).catch(() => {});
+      }
+
+      if (isCategoriesEnabled) {
+        let catsSource = null;
+        if (settings && settings.main_categories && Array.isArray(settings.main_categories)) {
+          catsSource = Promise.resolve({ data: settings.main_categories });
+        } else if (settings && settings.homepage_featured_categories && Array.isArray(settings.homepage_featured_categories) && settings.homepage_featured_categories.length > 0) {
+          catsSource = Promise.resolve({ data: settings.homepage_featured_categories });
+        } else {
+          catsSource = fetch(`${window.API_BASE}/categories`).then(r => r.json());
+        }
+
+        catsSource.then(({ data }) => {
+          const grid = document.getElementById('categoriesGrid');
+          if (grid && data && data.length) {
+            grid.innerHTML = data.map(cat => `
+              <a href="/shop/category-products.html?category_id=${cat.id}" class="category-card animate-fade-scale" style="text-decoration:none; display:flex; flex-direction:column; align-items:center; background:var(--bg-surface); border-radius:var(--radius-lg); padding:1.5rem; border:1px solid var(--border-color); transition:var(--transition-smooth);">
+                <div style="width:100px; height:100px; border-radius:50%; overflow:hidden; background:#f1f5f9; margin-bottom:1rem; border:2px solid #fff; box-shadow:var(--shadow-sm);">
+                  <img src="${cat.image_url || '/images/default-cat.png'}" alt="${cat.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://dummyimage.com/150x150/09090b/ffffff&text=CAT'">
+                </div>
+                <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin:0;">${cat.name}</h3>
+              </a>
+            `).join('');
+          }
+        }).catch(() => {});
+      }
+
+      if (isOffersEnabled || isLatestEnabled) {
+        fetch(`${window.API_BASE}/products`).then(r => r.json()).then(({ data }) => {
+          if (!data || !data.length) return;
+
+          if (isOffersEnabled) {
+            const discountedProducts = data.filter(p => (p.price_after && parseFloat(p.price_after) < parseFloat(p.price)) || (p.discount_price && parseFloat(p.discount_price) < parseFloat(p.price)));
+            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 4;
+            const offersGrid = document.getElementById('offersGrid');
+            if (offersGrid) {
+              if (discountedProducts.length > 0) {
+                renderProducts(offersGrid, discountedProducts.slice(0, bestOffersLimit));
+              } else {
+                offersGrid.innerHTML = '<p class="muted" style="grid-column:1/-1; text-align:center;">' + (lang === 'en' ? 'No offers available currently.' : 'لا توجد عروض متاحة حالياً.') + '</p>';
+              }
+            }
+          }
+
+          if (isLatestEnabled) {
+            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 4;
+            const productsGrid = document.getElementById('productsGrid');
+            if (productsGrid) {
+              renderProducts(productsGrid, data.slice(0, latestProductsLimit));
+            }
+          }
+        }).catch(() => {});
+      }
+    }
+  </script>
+</body>
+
+</html>

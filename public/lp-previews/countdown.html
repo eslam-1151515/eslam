@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معاينة القالب: عداد العروض التنازلي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#0a0a0f;color:#fff}
+.preview-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#7c3aed,#6d28d9);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+.preview-banner a{color:#c4b5fd;text-decoration:underline;cursor:pointer}
+body{padding-top:44px}
+
+/* Top countdown bar */
+.top-countdown{background:linear-gradient(90deg,#7c3aed,#dc2626);padding:14px 20px;text-align:center}
+.top-countdown-inner{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.top-countdown-label{font-size:14px;font-weight:700}
+.cd-boxes{display:flex;gap:6px}
+.cd-box{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 12px;text-align:center;min-width:52px}
+.cd-box .n{font-size:22px;font-weight:900;display:block;line-height:1}
+.cd-box .l{font-size:10px;opacity:.7}
+.cd-sep{font-size:22px;font-weight:900;opacity:.6;align-self:center}
+
+/* Hero */
+.hero{min-height:85vh;display:flex;align-items:center;background:radial-gradient(ellipse at 50% 0%,#1a0533 0%,#0a0a0f 70%);padding:60px 20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.2) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:900px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media(max-width:640px){.hero-inner{grid-template-columns:1fr}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);color:#a78bfa;padding:6px 16px;border-radius:50px;font-size:13px;font-weight:700;margin-bottom:16px}
+.hero h1{font-size:clamp(24px,4vw,44px);font-weight:900;line-height:1.2;margin-bottom:16px;color:#fff}
+.hero-price{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.price-now{font-size:42px;font-weight:900;color:#f97316}
+.price-old{font-size:20px;color:#6b7280;text-decoration:line-through}
+.discount-tag{background:#dc2626;color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:700}
+.hero-cta{display:inline-block;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;padding:16px 36px;border-radius:50px;font-size:17px;font-weight:700;border:none;cursor:pointer;transition:.3s;box-shadow:0 8px 32px rgba(249,115,22,.4);font-family:'Cairo',sans-serif}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(249,115,22,.5)}
+.hero-img-wrap{position:relative}
+.hero-img-wrap img{width:100%;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.urgency-bar{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:12px;padding:12px 16px;margin-top:16px;font-size:13px;color:#fca5a5;display:flex;align-items:center;gap:8px}
+
+/* Product section */
+.product-section{background:#111118;padding:60px 20px;border-top:1px solid rgba(255,255,255,.05)}
+.product-inner{max-width:800px;margin:auto}
+.section-title{text-align:center;font-size:26px;font-weight:900;margin-bottom:36px;color:#fff}
+.product-card{background:#1a1a27;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:28px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
+@media(max-width:600px){.product-card{grid-template-columns:1fr}}
+.product-card img{width:100%;border-radius:16px;object-fit:cover}
+.product-card h3{font-size:20px;font-weight:900;margin-bottom:12px}
+.product-card p{color:#94a3b8;font-size:14px;line-height:1.8;margin-bottom:16px}
+.size-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.size-chip{border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;transition:.2s}
+.size-chip:hover{border-color:#f97316;color:#f97316}
+
+/* Checkout form */
+.checkout-section{background:#0f0f1a;padding:60px 20px;border-top:1px solid rgba(255,255,255,.05)}
+.checkout-inner{max-width:500px;margin:auto}
+.checkout-card{background:#1a1a27;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:32px}
+.checkout-title{font-size:20px;font-weight:900;text-align:center;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:#94a3b8;margin-bottom:8px}
+.form-group input,.form-group select{width:100%;padding:12px 16px;background:#111118;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:#fff;font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:.2s}
+.form-group input:focus,.form-group select:focus{border-color:#f97316}
+.form-group select option{background:#111118}
+.btn-checkout{width:100%;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;border:none;padding:16px;border-radius:14px;font-size:18px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 8px 24px rgba(249,115,22,.4);transition:.3s;margin-top:8px}
+.btn-checkout:hover{transform:translateY(-2px)}
+
+.footer-strip{background:#070710;color:#374151;text-align:center;padding:16px;font-size:12px;border-top:1px solid rgba(255,255,255,.05)}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  ⚠️ هذه صفحة معاينة للقالب فقط — القالب: عداد العروض التنازلي &nbsp;|&nbsp;
+  <a onclick="window.close()">إغلاق المعاينة ✕</a>
+</div>
+
+<!-- Top Countdown Bar -->
+<div class="top-countdown">
+  <div class="top-countdown-inner">
+    <div class="top-countdown-label">🔥 ينتهي العرض خلال:</div>
+    <div class="cd-boxes">
+      <div class="cd-box"><span class="n" id="h">01</span><span class="l">ساعة</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-box"><span class="n" id="m">59</span><span class="l">دقيقة</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-box"><span class="n" id="s">47</span><span class="l">ثانية</span></div>
+    </div>
+    <div class="top-countdown-label">⚡ خصم 25% على الكمية الأولى فقط!</div>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><i class="fa fa-fire"></i> عرض حصري</div>
+      <h1>قميص كتان كاجوال بيج — عرض اليوم فقط</h1>
+      <div class="hero-price">
+        <span class="price-now">299 ج.م</span>
+        <span class="price-old">399 ج.م</span>
+        <span class="discount-tag">وفّر 100 ج.م</span>
+      </div>
+      <button class="hero-cta" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+        ⚡ احجز الآن قبل انتهاء العرض
+      </button>
+      <div class="urgency-bar"><i class="fa fa-users"></i> 127 شخص يشاهد هذا المنتج الآن — الكميات محدودة!</div>
+    </div>
+    <div class="hero-img-wrap">
+      <img src="/images/products/shirt.jpg" alt="قميص كتان">
+    </div>
+  </div>
+</section>
+
+<!-- Product Details -->
+<section class="product-section">
+  <div class="product-inner">
+    <div class="section-title">📦 تفاصيل المنتج</div>
+    <div class="product-card">
+      <img src="/images/products/shirt.jpg" alt="قميص كتان">
+      <div>
+        <h3>قميص كتان كاجوال — 100% Cotton Linen</h3>
+        <p>قميص كتان بيج فاتح مريح جداً، مناسب للإطلالات اليومية والخروجات العائلية. خامة عالية الجودة وتهوية ممتازة تجعله الخيار المثالي.</p>
+        <div style="margin-bottom:12px;font-size:13px;color:#94a3b8">المقاسات المتاحة:</div>
+        <div class="size-chips">
+          <div class="size-chip">S</div>
+          <div class="size-chip">M</div>
+          <div class="size-chip">L</div>
+          <div class="size-chip">XL</div>
+          <div class="size-chip">XXL</div>
+        </div>
+        <div style="font-size:13px;color:#6b7280">الألوان: بيج | أبيض | أزرق فاتح</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Checkout Form -->
+<section class="checkout-section" id="checkout">
+  <div class="checkout-inner">
+    <div class="section-title">✍️ أكمل طلبك الآن</div>
+    <div class="checkout-card">
+      <div class="checkout-title">📋 بيانات التوصيل</div>
+      <div class="form-group"><label>الاسم بالكامل</label><input type="text" placeholder="مثال: أحمد محمد"></div>
+      <div class="form-group"><label>رقم الهاتف</label><input type="text" placeholder="01xxxxxxxxx"></div>
+      <div class="form-group"><label>المحافظة</label>
+        <select><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>المقاس</label>
+          <select><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+        </div>
+        <div class="form-group"><label>اللون</label>
+          <select><option>بيج</option><option>أبيض</option><option>أزرق فاتح</option></select>
+        </div>
+      <!-- ملخص الحساب والإجمالي -->
+      <div style="background:#111118;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;margin-top:12px;margin-bottom:16px;font-size:13px;color:#94a3b8">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span>سعر المنتج الأصلي:</span>
+          <span style="text-decoration:line-through;color:#6b7280">399 ج.م</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span>سعر العرض (خصم 25%):</span>
+          <span style="font-weight:700;color:#fff">299 ج.م</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span>الشحن:</span>
+          <span style="color:#22c55e;font-weight:700">مجاناً</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;border-top:1px dashed rgba(255,255,255,.15);padding-top:8px;margin-top:4px;font-size:15px;font-weight:900;color:#fff">
+          <span>الإجمالي النهائي:</span>
+          <span style="color:#f97316">299 ج.م</span>
+        </div>
+      </div>
+
+      <button class="btn-checkout">⚡ تأكيد الطلب — 299 ج.م (بدلاً من 399)</button>
+      <p style="text-align:center;font-size:12px;color:#4b5563;margin-top:12px">🔒 دفع عند الاستلام • ضمان الإرجاع 7 أيام</p>
+    </div>
+  </div>
+</section>
+
+<div class="footer-strip">FastOrder © 2024 — معاينة قالب: عداد العروض التنازلي</div>
+
+<script>
+let total = 3600 + 59*60 + 47;
+setInterval(()=>{
+  if(total<=0) return;
+  total--;
+  document.getElementById('h').textContent=String(Math.floor(total/3600)).padStart(2,'0');
+  document.getElementById('m').textContent=String(Math.floor((total%3600)/60)).padStart(2,'0');
+  document.getElementById('s').textContent=String(total%60).padStart(2,'0');
+},1000);
+</script>
+</body>
+</html>

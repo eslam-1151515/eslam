@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="facebook-domain-verification" content="2d59ex7cii10rhhw2o9ny77tfcwft0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shop/styles.css?v=202604021">
+  <link rel="stylesheet" href="/shop/themes/default/style.css?v=1.0.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      opacity: 0;
+      transition: opacity .15s ease
+    }
+
+    .ready body {
+      opacity: 1
+    }
+  </style>
+  <script>document.documentElement.classList.add('ready');</script>
+</head>
+
+<body class="theme-default classic-theme">
+  <header class="container header">
+    <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
+      <img id="siteLogo" src="/images/logo.png?v=202604031" alt="Store"
+        onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=SM'" />
+      <span id="siteName">Store</span>
+    </a>
+    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <div class="icons">
+      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
+          class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
+    </div>
+    <nav class="nav">
+      <a href="/shop/index.html" class="active">الرئيسية</a>
+      <a href="/shop/categories.html">الأقسام</a>
+      <a href="/shop/products.html">المنتجات</a>
+      <a href="/shop/contact.html">اتصل بنا</a>
+      <a id="callBtn" href="tel:01146520922" class="call-now">اتصل الآن</a>
+    </nav>
+  </header>
+
+  <!-- Homepage Dynamic Sections Wrapper -->
+  <main id="homepageSections">
+    <!-- Hero Slider -->
+    <section id="sec-hero_slider" class="hero-slider" style="display: none;">
+      <div class="slider-container">
+        <div class="slides">
+          <div class="slide active">
+            <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
+          </div>
+          <div class="slide">
+            <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+          </div>
+        </div>
+
+        <!-- Navigation arrows -->
+        <button class="slider-btn prev" onclick="changeSlide(-1)">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button class="slider-btn next" onclick="changeSlide(1)">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Featured Categories Section -->
+    <section id="sec-featured_categories" class="section container" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-featured_categories">الأقسام المميزة</h2>
+        <a class="more" href="/shop/categories.html">عرض الكل</a>
+      </div>
+      <div id="categoriesGrid" class="grid"></div>
+    </section>
+
+    <!-- Best offers section -->
+    <section id="sec-best_offers" class="section container" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-best_offers">أفضل العروض والخصومات</h2>
+        <a class="more" href="/shop/products.html?sort=discount">عرض الكل</a>
+      </div>
+      <div id="offersGrid" class="grid"></div>
+    </section>
+
+    <!-- Products grid -->
+    <section id="sec-latest_products" class="section container" style="display: none;">
+      <div class="section-head">
+        <h2 id="title-latest_products">أحدث المنتجات</h2>
+        <a class="more" href="/shop/products.html">عرض الكل</a>
+      </div>
+      <div id="productsGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="container footer">© <span id="year"></span> جميع الحقوق محفوظة لـ <a
+      href="https://bird-technology.com/" target="_blank" rel="noopener"
+      style="color:#4f46e5;text-decoration:underline">بيرد تكنولوجي</a></footer>
+  <a class="wapp-float" id="whatsappBtn" href="https://wa.me/201146520922" target="_blank" aria-label="WhatsApp"><i
+      class="fa-brands fa-whatsapp"></i></a>
+
+  <script>
+    // Same-origin public API under Laravel
+    window.API_BASE = '/public-api';
+
+    // Load settings dynamically (reuse from shared.js if already loaded)
+    function applySettings(data) {
+      if (!data) return;
+      if (data.logo_url) {
+        const logoEl = document.getElementById('siteLogo');
+        if (logoEl) logoEl.src = data.logo_url;
+      }
+      if (data.store_name) {
+        const nameEl = document.getElementById('siteName');
+        if (nameEl) nameEl.textContent = data.store_name;
+        document.title = data.store_name;
+      }
+      if (data.phone) {
+        const callBtn = document.getElementById('callBtn');
+        if (callBtn) callBtn.href = 'tel:' + data.phone;
+      }
+      if (data.whatsapp) {
+        const waBtn = document.getElementById('whatsappBtn');
+        if (waBtn) waBtn.href = 'https://wa.me/' + data.whatsapp;
+      }
+    }
+
+    if (window.__SITE_SETTINGS__) {
+      applySettings(window.__SITE_SETTINGS__);
+    } else {
+      fetch(`${window.API_BASE}/settings`).then(r => r.json()).then(({ data }) => {
+        window.__SITE_SETTINGS__ = data;
+        applySettings(data);
+      }).catch(() => { });
+    }
+
+    // Slider functionality
+    let currentSlideIndex = 0;
+    let slides, totalSlides;
+
+    function initSlider() {
+      slides = document.querySelectorAll('.slide');
+      totalSlides = slides.length;
+
+      if (totalSlides > 0) {
+        // Ensure all images are loaded before starting
+        let loadedImages = 0;
+        slides.forEach((slide, index) => {
+          const img = slide.querySelector('img');
+          if (img) {
+            if (img.complete) {
+              loadedImages++;
+            } else {
+              img.onload = () => {
+                loadedImages++;
+                if (loadedImages === totalSlides) {
+                  startSlider();
+                }
+              };
+              img.onerror = () => {
+                loadedImages++;
+                if (loadedImages === totalSlides) {
+                  startSlider();
+                }
+              };
+            }
+          }
+        });
+
+        // Fallback: start slider after 2 seconds even if images aren't fully loaded
+        setTimeout(() => {
+          if (!slideInterval) {
+            startSlider();
+          }
+        }, 2000);
+
+        if (loadedImages === totalSlides) {
+          startSlider();
+        }
+      }
+    }
+
+    function startSlider() {
+      showSlide(0);
+      startAutoSlide();
+
+      // Pause auto-slide on hover
+      const sliderContainer = document.querySelector('.slider-container');
+      if (sliderContainer) {
+        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startAutoSlide);
+      }
+    }
+
+    function showSlide(index) {
+      if (!slides || slides.length === 0) return;
+
+      // Ensure index is within bounds
+      if (index >= totalSlides) index = 0;
+      if (index < 0) index = totalSlides - 1;
+
+      // Update currentSlideIndex
+      currentSlideIndex = index;
+
+      // Remove active class from all slides
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+      });
+
+      // Add active class to current slide
+      if (slides[currentSlideIndex]) {
+        slides[currentSlideIndex].classList.add('active');
+      }
+
+      // Move slides container
+      const slidesContainer = document.querySelector('.slides');
+      if (slidesContainer) {
+        const translateValue = `translateX(${currentSlideIndex * -100}%)`;
+        slidesContainer.style.transform = translateValue;
+      }
+    }
+
+    function changeSlide(direction) {
+      stopAutoSlide(); // Stop auto slide when user interacts
+      let newIndex = currentSlideIndex + direction;
+      showSlide(newIndex);
+      startAutoSlide(); // Restart auto slide
+    }
+
+    // Auto-slide functionality
+    function autoSlide() {
+      let nextIndex = currentSlideIndex + 1;
+
+      // Handle wraparound manually here too
+      if (nextIndex >= totalSlides) {
+        nextIndex = 0;
+      }
+
+      showSlide(nextIndex);
+    }
+
+    // Start auto-slide when page loads
+    let slideInterval;
+    function startAutoSlide() {
+      // Clear any existing interval first
+      if (slideInterval) {
+        clearInterval(slideInterval);
+      }
+      slideInterval = setInterval(autoSlide, 4000); // Change slide every 4 seconds
+    }
+
+    function stopAutoSlide() {
+      if (slideInterval) {
+        clearInterval(slideInterval);
+        slideInterval = null;
+      }
+    }
+
+    // Also initialize when window is fully loaded (fallback)
+    window.addEventListener('load', function () {
+      if (!slideInterval) {
+        const slides = document.querySelectorAll('.slide');
+        if (slides && slides.length > 0) {
+          initSlider();
+        }
+      }
+    });
+  </script>
+  <script src="/shop/shared.js?v=20260714"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 1. apply layout ordering and loading
+    if (window.__SITE_SETTINGS__) {
+      renderHomepageLayout(window.__SITE_SETTINGS__);
+      loadHomepageContent(window.__SITE_SETTINGS__);
+    } else {
+      fetch(`${window.API_BASE}/settings`).then(r => r.json()).then(({ data }) => {
+        window.__SITE_SETTINGS__ = data;
+        renderHomepageLayout(data);
+        loadHomepageContent(data);
+      }).catch(() => {
+        // Fallback: render default layout
+        const fallbackSettings = {
+          homepage_sections: [
+            {id: 'hero_slider', enabled: true},
+            {id: 'featured_categories', enabled: true},
+            {id: 'best_offers', enabled: true},
+            {id: 'latest_products', enabled: true}
+          ]
+        };
+        renderHomepageLayout(fallbackSettings);
+        loadHomepageContent(fallbackSettings);
+      });
+    }
+
+    function loadHomepageContent(settings) {
+      const sections = settings.homepage_sections || [];
+      const isHeroEnabled = !sections.length || sections.some(s => s.id === 'hero_slider' && s.enabled);
+      const isCategoriesEnabled = !sections.length || sections.some(s => s.id === 'featured_categories' && s.enabled);
+      const isOffersEnabled = !sections.length || sections.some(s => s.id === 'best_offers' && s.enabled);
+      const isLatestEnabled = !sections.length || sections.some(s => s.id === 'latest_products' && s.enabled);
+
+      const lang = getStorefrontLang();
+
+      // Load Hero Slider banners if enabled
+      if (isHeroEnabled) {
+        fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
+          const slider = document.querySelector('.slides');
+          if (slider && data && data.length) {
+            slider.innerHTML = data.map((b, i) => `
+              <div class="slide ${i === 0 ? 'active' : ''}">
+                <a href="${b.link ? b.link : '#'}">
+                  <img src="${b.image_url}" alt="${b.title || 'Store'}">
+                </a>
+              </div>
+            `).join('');
+          }
+          setTimeout(function () {
+            initSlider();
+          }, 100);
+        }).catch(e => {
+          console.error(e);
+          setTimeout(function () {
+            initSlider();
+          }, 100);
+        });
+      }
+
+      // Load Featured Categories if enabled
+      if (isCategoriesEnabled) {
+        fetch(`${window.API_BASE}/categories`).then(r => r.json()).then(({ data }) => {
+          let featuredCats = data;
+          if (settings.homepage_featured_categories && settings.homepage_featured_categories.length) {
+            const featuredIds = settings.homepage_featured_categories.map(Number);
+            featuredCats = data.filter(c => featuredIds.includes(Number(c.id)));
+          } else {
+            featuredCats = data.slice(0, 4);
+          }
+          renderCategories(document.getElementById('categoriesGrid'), featuredCats);
+        }).catch(() => {
+          document.getElementById('categoriesGrid').innerHTML = '<p class="muted">' + (lang === 'en' ? 'Failed to load categories.' : 'تعذر تحميل الأقسام الآن.') + '</p>';
+        });
+      }
+
+      // Load Products if Best Offers or Latest Products is enabled
+      if (isOffersEnabled || isLatestEnabled) {
+        fetch(`${window.API_BASE}/products`).then(r => r.json()).then(({ data }) => {
+          if (isOffersEnabled) {
+            const discountedProducts = data.filter(product => {
+              const priceBefore = parseFloat(product.price_before || 0);
+              const priceAfter = parseFloat(product.price_after || 0);
+              return priceBefore > 0 && priceAfter > 0 && priceBefore > priceAfter;
+            });
+
+            discountedProducts.sort((a, b) => {
+              const discountA = ((a.price_before - a.price_after) / a.price_before) * 100;
+              const discountB = ((b.price_before - b.price_after) / b.price_before) * 100;
+              return discountB - discountA;
+            });
+
+            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 4;
+
+            if (discountedProducts.length > 0) {
+              renderProducts(document.getElementById('offersGrid'), discountedProducts.slice(0, bestOffersLimit));
+            } else {
+              document.getElementById('offersGrid').innerHTML = '<p class="muted">' + (lang === 'en' ? 'No offers available currently.' : 'لا توجد عروض متاحة حالياً.') + '</p>';
+            }
+          }
+
+          if (isLatestEnabled) {
+            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 4;
+            renderProducts(document.getElementById('productsGrid'), data.slice(0, latestProductsLimit));
+          }
+        }).catch(() => {
+          if (isOffersEnabled) {
+            document.getElementById('offersGrid').innerHTML = '<p class="muted">' + (lang === 'en' ? 'Failed to load offers.' : 'تعذر تحميل العروض الآن.') + '</p>';
+          }
+          if (isLatestEnabled) {
+            document.getElementById('productsGrid').innerHTML = '<p class="muted">' + (lang === 'en' ? 'Failed to load products.' : 'تعذر تحميل المنتجات الآن.') + '</p>';
+          }
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>

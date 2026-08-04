@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معاينة القالب: الكلاسيكي الأنيق</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b}
+.preview-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#f97316,#ea580c);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+.preview-banner a{color:#fff;text-decoration:underline;cursor:pointer}
+body{padding-top:44px}
+/* Hero */
+.hero{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);color:#fff;padding:70px 20px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url('/images/products/shirt.jpg') center/cover no-repeat;opacity:.15}
+.hero-inner{position:relative;max-width:700px;margin:auto}
+.badge{display:inline-block;background:#f97316;color:#fff;padding:6px 18px;border-radius:50px;font-size:13px;font-weight:700;margin-bottom:18px}
+.hero h1{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.2;margin-bottom:16px}
+.hero p{font-size:17px;opacity:.85;margin-bottom:28px}
+.hero-price{font-size:32px;font-weight:900;color:#fb923c;margin-bottom:12px}
+.hero-price s{font-size:18px;color:#94a3b8;margin-right:10px}
+.btn-hero{display:inline-block;background:#f97316;color:#fff;padding:16px 40px;border-radius:50px;font-size:18px;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:.3s}
+.btn-hero:hover{background:#ea580c;transform:translateY(-2px)}
+/* Countdown */
+.countdown-section{background:#0f172a;color:#fff;padding:30px 20px;text-align:center}
+.countdown-section h3{font-size:16px;margin-bottom:16px;opacity:.8}
+.countdown-boxes{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.cbox{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px 20px;text-align:center;min-width:70px}
+.cbox .num{font-size:32px;font-weight:900;color:#f97316;display:block}
+.cbox .lbl{font-size:11px;opacity:.6}
+/* Features */
+.features{padding:60px 20px;background:#fff;max-width:900px;margin:auto}
+.features h2{text-align:center;font-size:28px;font-weight:900;margin-bottom:40px;color:#1e293b}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+.feature-card{text-align:center;padding:28px 20px;border-radius:20px;background:#f8fafc;border:1px solid #e2e8f0}
+.feature-icon{font-size:36px;margin-bottom:12px}
+.feature-card h4{font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:13px;color:#64748b;line-height:1.6}
+/* Showcase */
+.showcase{background:#fff;padding:60px 20px}
+.showcase-inner{max-width:900px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:640px){.showcase-inner{grid-template-columns:1fr}}
+.showcase-img{border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.showcase-img img{width:100%;display:block;object-fit:cover}
+.showcase-info h2{font-size:28px;font-weight:900;margin-bottom:12px}
+.showcase-info p{color:#64748b;line-height:1.8;margin-bottom:20px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tag{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:4px 14px;border-radius:50px;font-size:13px;font-weight:600}
+/* Reviews */
+.reviews{background:#f8fafc;padding:60px 20px}
+.reviews h2{text-align:center;font-size:28px;font-weight:900;margin-bottom:40px}
+.reviews-grid{max-width:900px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.review-card{background:#fff;border-radius:16px;padding:24px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.stars{color:#f59e0b;margin-bottom:8px;font-size:18px}
+.review-card p{color:#475569;font-size:14px;line-height:1.7;margin-bottom:12px}
+.reviewer{font-weight:700;font-size:13px;color:#1e293b}
+/* CTA / Form */
+.cta-section{background:linear-gradient(135deg,#f97316,#ea580c);padding:60px 20px;text-align:center}
+.cta-section h2{color:#fff;font-size:32px;font-weight:900;margin-bottom:12px}
+.cta-section p{color:rgba(255,255,255,.85);margin-bottom:30px}
+.order-form{background:#fff;border-radius:20px;padding:32px;max-width:500px;margin:auto;text-align:right}
+.form-title{font-size:18px;font-weight:900;margin-bottom:20px;color:#1e293b;text-align:center}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:.2s}
+.form-group input:focus,.form-group select:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.1)}
+.btn-order{width:100%;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;border:none;padding:16px;border-radius:12px;font-size:18px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;transition:.3s}
+.btn-order:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.4)}
+/* Footer strip */
+.footer-strip{background:#0f172a;color:#94a3b8;text-align:center;padding:16px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  ⚠️ هذه صفحة معاينة للقالب فقط — القالب: الكلاسيكي الأنيق &nbsp;|&nbsp;
+  <a onclick="window.close()">إغلاق المعاينة ✕</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">🔥 عرض حصري محدود الوقت</div>
+    <h1>قميص كتان كاجوال فاخر</h1>
+    <p>خامة كتان 100% مريحة طوال اليوم — مناسب للإطلالات اليومية والخروجات العائلية</p>
+    <div class="hero-price">
+      <s>399 ج.م</s>
+      299 ج.م
+    </div>
+    <button class="btn-hero" onclick="document.getElementById('order-form').scrollIntoView({behavior:'smooth'})">
+      ⚡ اطلب الآن بخصم 25%
+    </button>
+  </div>
+</section>
+
+<!-- Countdown -->
+<section class="countdown-section">
+  <h3>⏱ ينتهي العرض بعد:</h3>
+  <div class="countdown-boxes">
+    <div class="cbox"><span class="num" id="hrs">02</span><span class="lbl">ساعة</span></div>
+    <div class="cbox"><span class="num" id="mins">47</span><span class="lbl">دقيقة</span></div>
+    <div class="cbox"><span class="num" id="secs">33</span><span class="lbl">ثانية</span></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <h2>✨ لماذا هذا القميص مختلف؟</h2>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">🌿</div><h4>خامة كتان طبيعي</h4><p>تهوية ممتازة تناسب الطقس الحار وتعطيك راحة طوال اليوم</p></div>
+    <div class="feature-card"><div class="feature-icon">✂️</div><h4>قصة أنيقة</h4><p>تصميم عصري يناسب جميع أشكال الجسم للمظهر المثالي</p></div>
+    <div class="feature-card"><div class="feature-icon">🎨</div><h4>3 ألوان متاحة</h4><p>بيج، أبيض، وأزرق فاتح — اختر ما يناسب إطلالتك</p></div>
+    <div class="feature-card"><div class="feature-icon">🚚</div><h4>توصيل سريع</h4><p>يصلك في 2-4 أيام عمل لأي محافظة في مصر</p></div>
+  </div>
+</section>
+
+<!-- Product Showcase -->
+<section class="showcase" style="background:#f8fafc">
+  <div class="showcase-inner">
+    <div class="showcase-img">
+      <img src="/images/products/shirt.jpg" alt="قميص كتان">
+    </div>
+    <div class="showcase-info">
+      <h2>📦 تفاصيل المنتج</h2>
+      <p>قميص كتان بيج فاتح مريح جداً، مناسب للإطلالات اليومية والخروجات العائلية. خامة عالية الجودة وتهوية ممتازة تجعله الخيار المثالي في الطقس الدافئ.</p>
+      <div class="tags">
+        <span class="tag">مقاس S إلى XXL</span>
+        <span class="tag">3 ألوان</span>
+        <span class="tag">توصيل لكل مصر</span>
+        <span class="tag">إرجاع خلال 7 أيام</span>
+      </div>
+      <button class="btn-hero" style="font-size:15px;padding:12px 28px" onclick="document.getElementById('order-form').scrollIntoView({behavior:'smooth'})">اطلب الآن</button>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews">
+  <h2>⭐ آراء عملائنا</h2>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p>"جودة عالية جداً والخامة ناعمة ومريحة. اشتريت اتنين وهطلب تاني!"</p>
+      <div class="reviewer">أحمد محمد — القاهرة</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p>"وصل في وقت ممتاز والمقاس بالظبط. التوصيل كان سريع وكل حاجة تمام."</p>
+      <div class="reviewer">محمد كريم — الإسكندرية</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★☆</div>
+      <p>"تصميم أنيق ويناسب كل المناسبات. السعر كويس جداً مقارنة بالجودة."</p>
+      <div class="reviewer">عمر حسين — الجيزة</div>
+    </div>
+  </div>
+</section>
+
+<!-- Order Form -->
+<section class="cta-section">
+  <h2>✍️ اطلب الآن واستلم في باب بيتك</h2>
+  <p>سجل بياناتك وسيتواصل معك فريقنا لتأكيد الطلب</p>
+  <div class="order-form" id="order-form">
+    <div class="form-title">📋 بيانات الطلب</div>
+    <div class="form-group"><label>الاسم بالكامل</label><input type="text" placeholder="مثال: أحمد محمد"></div>
+    <div class="form-group"><label>رقم الهاتف</label><input type="text" placeholder="01xxxxxxxxx"></div>
+    <div class="form-group"><label>المحافظة</label>
+      <select><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option><option>المنصورة</option></select>
+    </div>
+    <div class="form-group"><label>المقاس</label>
+      <select><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+    </div>
+    <div class="form-group"><label>اللون</label>
+      <select><option>بيج</option><option>أبيض</option><option>أزرق فاتح</option></select>
+    </div>
+
+    <!-- ملخص الحساب والإجمالي -->
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#334155">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>سعر المنتج:</span>
+        <span style="font-weight:700">299 ج.م</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>مصاريف الشحن:</span>
+        <span style="color:#16a34a;font-weight:700">مجاناً</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;border-top:1px dashed #cbd5e1;padding-top:8px;margin-top:4px;font-size:15px;font-weight:900;color:#1e293b">
+        <span>الإجمالي الكلي:</span>
+        <span style="color:#ea580c">299 ج.م</span>
+      </div>
+    </div>
+
+    <button class="btn-order">⚡ تأكيد الطلب — 299 ج.م</button>
+    <p style="text-align:center;font-size:12px;color:#94a3b8;margin-top:12px">🔒 الدفع عند الاستلام • توصيل سريع • إرجاع مضمون</p>
+  </div>
+</section>
+
+<div class="footer-strip">FastOrder © 2024 — هذه صفحة معاينة تجريبية للقالب الكلاسيكي الأنيق</div>
+
+<script>
+// Countdown
+let secs = 2*3600 + 47*60 + 33;
+setInterval(() => {
+  if(secs <= 0) return;
+  secs--;
+  document.getElementById('hrs').textContent = String(Math.floor(secs/3600)).padStart(2,'0');
+  document.getElementById('mins').textContent = String(Math.floor((secs%3600)/60)).padStart(2,'0');
+  document.getElementById('secs').textContent = String(secs%60).padStart(2,'0');
+}, 1000);
+</script>
+</body>
+</html>

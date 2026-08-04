@@ -1,0 +1,513 @@
+import React, { useState } from 'react';
+import { Link, usePage, router } from '@inertiajs/react';
+
+const navLinks = [
+    {
+        href: '/admin/dashboard',
+        label: 'الرئيسية',
+        pathMatch: '/admin/dashboard',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/orders',
+        label: 'الطلبات',
+        pathMatch: '/admin/orders',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/reports',
+        label: 'التقارير والتحليلات',
+        pathMatch: '/admin/reports',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/products',
+        label: 'المنتجات',
+        pathMatch: '/admin/products',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/categories',
+        label: 'التصنيفات',
+        pathMatch: '/admin/categories',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/subscription',
+        label: 'الاشتراك والفوترة',
+        pathMatch: '/admin/subscription',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/support',
+        label: 'الدعم الفني',
+        pathMatch: '/admin/support',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.172l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/tutorials',
+        label: 'الشروحات والدروس',
+        pathMatch: '/admin/tutorials',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/settings',
+        label: 'الإعدادات',
+        pathMatch: '/admin/settings',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        ),
+    },
+];
+
+// روابط الإعدادات المتقدمة - مجمّعة في قائمة منسدلة
+const advancedLinks = [
+    {
+        href: '/admin/landing-pages',
+        label: 'صفحات الهبوط',
+        pathMatch: '/admin/landing-pages',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/profile',
+        label: 'الملف الشخصي',
+        pathMatch: '/admin/profile',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/theme',
+        label: 'مظهر المتجر',
+        pathMatch: '/admin/theme',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/media',
+        label: 'مكتبة الوسائط',
+        pathMatch: '/admin/media',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/coupons',
+        label: 'الكوبونات',
+        pathMatch: '/admin/coupons',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/blacklist',
+        label: 'منع الطلبات الوهمية',
+        pathMatch: '/admin/blacklist',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+        ),
+    },
+    /*
+    {
+        href: '/admin/webhooks',
+        label: 'الـ Webhooks',
+        pathMatch: '/admin/webhooks',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+        ),
+    },
+    */
+    {
+        href: '/admin/shipping-gateways',
+        label: 'ربط شركات الشحن',
+        pathMatch: '/admin/shipping-gateways',
+        badge: 'قريباً',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/ai-tools',
+        label: 'الذكاء الاصطناعي',
+        pathMatch: '/admin/ai-tools',
+        badge: 'قريباً',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/admin/payment-gateways',
+        label: 'ربط دفع إلكتروني',
+        pathMatch: '/admin/payment-gateways',
+        badge: 'قريباً',
+        icon: (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+        ),
+    },
+];
+
+function isActive(link) {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname;
+    return path.startsWith(link.pathMatch);
+}
+
+function isAdvancedActive() {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname;
+    return advancedLinks.some(l => path.startsWith(l.pathMatch));
+}
+
+export default function MerchantLayout({ children, title }) {
+    const { auth, storeName } = usePage().props;
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [advancedOpen, setAdvancedOpen] = useState(isAdvancedActive());
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        router.post('/admin/logout', {}, {
+            onSuccess: () => {
+                window.location.href = '/admin/login';
+            },
+            onError: () => {
+                window.location.href = '/admin/login';
+            }
+        });
+    };
+
+    const displayName = storeName || auth?.user?.name || 'متجر';
+    const userName = auth?.user?.name || 'المالك';
+    const userEmail = auth?.user?.email || '';
+    const initials = userName.substring(0, 2).toUpperCase();
+
+    const NavItem = ({ link }) => {
+        const active = isActive(link);
+        return (
+            <li>
+                <Link
+                    href={link.href}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+                        active
+                            ? 'bg-white/15 text-white shadow-sm'
+                            : 'text-indigo-200 hover:bg-white/10 hover:text-white'
+                    } ${!sidebarOpen ? 'justify-center' : ''}`}
+                    title={!sidebarOpen ? link.label : undefined}
+                >
+                    <span className={`flex-shrink-0 ${active ? 'text-amber-300' : 'text-indigo-300 group-hover:text-white'}`}>
+                        {link.icon}
+                    </span>
+                    {sidebarOpen && (
+                        <div className="flex items-center justify-between w-full">
+                            <span className="text-sm font-medium">{link.label}</span>
+                            {link.badge && (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-400/20 text-amber-300 rounded-full border border-amber-400/30">
+                                    {link.badge}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    {active && sidebarOpen && !link.badge && (
+                        <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    )}
+                </Link>
+            </li>
+        );
+    };
+
+    const AdvancedDropdown = () => {
+        const anyActive = isAdvancedActive();
+        return (
+            <li>
+                {/* زر الإعدادات المتقدمة */}
+                <button
+                    onClick={() => setAdvancedOpen(prev => !prev)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+                        anyActive
+                            ? 'bg-white/15 text-white shadow-sm'
+                            : 'text-indigo-200 hover:bg-white/10 hover:text-white'
+                    } ${!sidebarOpen ? 'justify-center' : ''}`}
+                    title={!sidebarOpen ? 'إعدادات متقدمة' : undefined}
+                >
+                    <span className={`flex-shrink-0 ${anyActive ? 'text-amber-300' : 'text-indigo-300 group-hover:text-white'}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                    </span>
+                    {sidebarOpen && (
+                        <>
+                            <span className="text-sm font-medium flex-1 text-right">إعدادات متقدمة</span>
+                            <svg
+                                className={`w-4 h-4 flex-shrink-0 text-indigo-400 transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`}
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </>
+                    )}
+                </button>
+
+                {/* القائمة المنسدلة */}
+                {(advancedOpen || !sidebarOpen) && sidebarOpen && (
+                    <ul className="mt-1 mr-4 space-y-0.5 border-r border-indigo-700/50 pr-2">
+                        {advancedLinks.map(link => {
+                            const active = isActive(link);
+                            return (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-150 group text-sm ${
+                                            active
+                                                ? 'bg-white/10 text-white'
+                                                : 'text-indigo-300 hover:bg-white/8 hover:text-white'
+                                        }`}
+                                    >
+                                        <span className={`flex-shrink-0 ${active ? 'text-amber-300' : 'text-indigo-400 group-hover:text-white'}`}>
+                                            {link.icon}
+                                        </span>
+                                        <span className="font-medium">{link.label}</span>
+                                        {active && (
+                                            <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                                        )}
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+
+                {/* عند إغلاق الـ Sidebar نرسم الأيقونات بدون نص */}
+                {!sidebarOpen && (
+                    <ul className="mt-1 space-y-0.5">
+                        {advancedLinks.map(link => {
+                            const active = isActive(link);
+                            return (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        title={link.label}
+                                        className={`flex items-center justify-center px-3 py-2 rounded-lg transition-all duration-150 ${
+                                            active
+                                                ? 'bg-white/15 text-amber-300'
+                                                : 'text-indigo-400 hover:bg-white/10 hover:text-white'
+                                        }`}
+                                    >
+                                        {link.icon}
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+            </li>
+        );
+    };
+
+    const SidebarInner = ({ showToggle = true }) => (
+        <div className="flex flex-col h-full">
+            <div className={`flex items-center h-16 border-b border-indigo-800 px-4 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
+                {sidebarOpen && (
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z" />
+                            </svg>
+                        </div>
+                        <div className="overflow-hidden">
+                            <p className="text-white font-bold text-sm leading-tight truncate max-w-[130px]">{displayName}</p>
+                            <p className="text-indigo-300 text-xs">لوحة التحكم</p>
+                        </div>
+                    </div>
+                )}
+                {showToggle && (
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="text-indigo-200 hover:text-white hover:bg-indigo-700 rounded-lg p-1.5 transition-colors flex-shrink-0"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                )}
+            </div>
+
+            <nav className="flex-1 py-4 overflow-y-auto">
+                <ul className="space-y-1 px-2">
+                    {navLinks.map((link) => (
+                        <NavItem key={link.href} link={link} />
+                    ))}
+                    {/* الإعدادات المتقدمة */}
+                    <AdvancedDropdown />
+                </ul>
+            </nav>
+
+            <div className={`border-t border-indigo-800 p-3 ${!sidebarOpen ? 'flex justify-center' : ''}`}>
+                {sidebarOpen ? (
+                    <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition-colors">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                            {initials}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-white text-sm font-semibold truncate">{userName}</p>
+                            <p className="text-indigo-300 text-xs truncate">{userEmail}</p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            title="تسجيل الخروج"
+                            className="flex items-center gap-1.5 text-indigo-300 hover:text-red-400 transition-colors flex-shrink-0 p-1 font-medium text-sm mr-1"
+                        >
+                            <span>تسجيل الخروج</span>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={handleLogout}
+                        title="تسجيل الخروج"
+                        className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold hover:opacity-80 transition-opacity"
+                    >
+                        {initials}
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="h-screen bg-gray-50 flex" dir="rtl">
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
+            <aside
+                className={`fixed inset-y-0 right-0 z-40 w-64 bg-gradient-to-b from-indigo-900 to-indigo-950 shadow-2xl transform transition-transform duration-300 lg:hidden ${
+                    mobileOpen ? 'translate-x-0' : 'translate-x-full'
+                }`}
+            >
+                <SidebarInner showToggle={false} />
+            </aside>
+
+            <aside
+                className={`hidden lg:flex flex-col flex-shrink-0 bg-gradient-to-b from-indigo-900 to-indigo-950 shadow-xl transition-all duration-300 ${
+                    sidebarOpen ? 'w-64' : 'w-20'
+                }`}
+            >
+                <SidebarInner showToggle={true} />
+            </aside>
+
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 shadow-sm flex-shrink-0">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                            className="lg:hidden text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <h1 className="text-lg font-semibold text-gray-800 truncate">
+                            {title || 'لوحة التحكم'}
+                        </h1>
+                        {storeName && (
+                            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                                {storeName}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="hidden md:block text-sm text-gray-500">{userEmail}</span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold">
+                            {initials}
+                        </div>
+                    </div>
+                </header>
+
+                <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+                    {children}
+                </main>
+            </div>
+        </div>
+    );
+}

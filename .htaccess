@@ -1,0 +1,24 @@
+RewriteEngine On
+
+# Handle Angular and other frontend routing, send all requests to index.html
+# RewriteCond %{REQUEST_FILENAME} -f [OR]
+# RewriteCond %{REQUEST_FILENAME} -d
+# RewriteRule ^ - [L]
+
+# API Routes - send to Laravel public folder
+RewriteRule ^api/(.*)$ public/index.php [L,QSA]
+
+# Admin Panel - send to Laravel public folder  
+RewriteRule ^(dashboard|login|register|categories|products|orders|profile|logout)(.*)$ public/index.php [L,QSA]
+
+# Static files in public directory
+RewriteRule ^(images|css|js|build|storage)/(.*)$ public/$1/$2 [L]
+
+# Shop frontend files
+RewriteRule ^shop/(.*)$ public/shop/$1 [L]
+
+# Default to shop index for root
+RewriteRule ^$ public/shop/index.html [L]
+
+# Fallback to Laravel for everything else
+RewriteRule ^(.*)$ public/index.php [L,QSA]

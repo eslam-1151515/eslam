@@ -1,0 +1,81 @@
+{
+    "name": "Vibrant Bold Fashion",
+    "name_ar": "الثيم الجريء (Vibrant & Dynamic)",
+    "slug": "bold",
+    "version": "1.0.0",
+    "author": "Fast Order Team",
+    "description": "تصميم جريء وألوان نابضة بالحياة مصمم خصيصاً لمتاجر الموضة والملابس والعلامات التجارية العصرية. يتميز بصور هيرو ضخمة (Large Hero Images)، شبكات عرض ديناميكية (Dynamic Grid Layouts)، وحركات تفاعلية مبهرة (Micro-animations) مع دعم كامل للغتين العربية والإنجليزية (RTL & LTR).",
+    "thumbnail": "/shop/themes/bold/thumbnail.png",
+    "direction": "rtl,ltr",
+    "layouts": {
+        "header": [
+            { "id": "Vibrant Bold", "name": "هيدر جريء ونابض", "name_en": "Vibrant Bold" },
+            { "id": "Mega Center", "name": "شعار وسطي ضخم", "name_en": "Mega Centered Logo" },
+            { "id": "Dynamic Transparent", "name": "شفاف ديناميكي", "name_en": "Dynamic Transparent" }
+        ],
+        "banner": [
+            { "id": "Large Hero", "name": "صورة هيرو ضخمة", "name_en": "Large Hero Image" },
+            { "id": "Dynamic Grid", "name": "شبكة عرض ديناميكية للموضة", "name_en": "Dynamic Fashion Grid" },
+            { "id": "Vibrant Slider", "name": "سلايدر تفاعلي نابض", "name_en": "Vibrant Interactive Slider" }
+        ]
+    },
+    "supported_fonts": [
+        { "id": "Outfit", "name": "Outfit (عصري وجريء)" },
+        { "id": "Cairo", "name": "Cairo (خط القاهرة)" },
+        { "id": "Almarai", "name": "Almarai (خط المراعي)" },
+        { "id": "Tajawal", "name": "Tajawal (خط تجول)" },
+        { "id": "Inter", "name": "Inter (إنجليزي عالمي)" }
+    ],
+    "default_settings": {
+        "primary_color": "#ff0055",
+        "secondary_color": "#7928ca",
+        "accent_color": "#00f0ff",
+        "background_color": "#ffffff",
+        "text_color": "#0f172a",
+        "card_background": "#f8fafc",
+        "border_color": "#e2e8f0",
+        "font_family": "Outfit, Cairo, sans-serif",
+        "header_layout": "Vibrant Bold",
+        "banner_layout": "Large Hero"
+    },
+    "css_variables": {
+        "--primary-color": "primary_color",
+        "--secondary-color": "secondary_color",
+        "--accent-color": "accent_color",
+        "--bg-color": "background_color",
+        "--text-color": "text_color",
+        "--card-bg": "card_background",
+        "--border-color": "border_color",
+        "--font-family": "font_family"
+    },
+    "templates": [
+        "index.html",
+        "products.html",
+        "product.html",
+        "categories.html",
+        "category-products.html",
+        "cart.html",
+        "checkout.html",
+        "checkout.blade.php",
+        "order-success.html",
+        "order-success.blade.php",
+        "wishlist.html",
+        "search.html",
+        "contact.html",
+        "account.blade.php",
+        "tracking.html",
+        "tracking.blade.php",
+        "promotions.blade.php",
+        "landing.blade.php"
+    ],
+    "features": [
+        "large_hero_images",
+        "dynamic_grid_layouts",
+        "micro_animations",
+        "vibrant_fashion_aesthetics",
+        "rtl_ltr_support",
+        "dynamic_css_variables",
+        "glassmorphism_effects",
+        "quick_view_modal"
+    ]
+}

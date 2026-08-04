@@ -1,0 +1,102 @@
+{
+    "name": "Starter (Simple & Fast)",
+    "name_ar": "الثيم المبدئي السريع (Starter)",
+    "slug": "starter",
+    "version": "1.0.0",
+    "author": "Fast Order Team",
+    "description": "تصميم مبسط وسريع جداً مخصص للمبتدئين وللأجهزة الضعيفة والاتصالات البطيئة، يتميز بأقل عناصر ممكنة وبنية خفيفة مع التركيز التام على السرعة القصوى (Ultra-Fast Loading) ودعم كامل للغتين العربية والإنجليزية RTL & LTR.",
+    "thumbnail": "/shop/themes/starter/thumbnail.png",
+    "preview_image": "/shop/themes/starter/preview.webp",
+    "support_rtl": true,
+    "direction": "rtl,ltr",
+    "layouts": {
+        "header": [
+            { "id": "Minimal", "name": "بسيط وسريع", "name_en": "Minimal Fast" },
+            { "id": "Compact", "name": "مدمج للمبتدئين", "name_en": "Compact Beginner" },
+            { "id": "TextOnly", "name": "نصي فائق السرعة", "name_en": "Ultra Fast Text" }
+        ],
+        "banner": [
+            { "id": "Static", "name": "بانر ثابت سريع", "name_en": "Fast Static Banner" },
+            { "id": "Simple Grid", "name": "شبكة مبسطة", "name_en": "Simple Grid" },
+            { "id": "None", "name": "بدون بانر (للسرعة القصوى)", "name_en": "No Banner (Max Speed)" }
+        ]
+    },
+    "supported_fonts": [
+        { "id": "Cairo", "name": "Cairo (خط القاهرة)" },
+        { "id": "Almarai", "name": "Almarai (خط المراعي)" },
+        { "id": "Tajawal", "name": "Tajawal (خط تجول)" },
+        { "id": "Inter", "name": "Inter (إنجليزي عصري)" },
+        { "id": "Roboto", "name": "Roboto (قياسي سريع)" }
+    ],
+    "default_settings": {
+        "primary_color": "#2563eb",
+        "secondary_color": "#475569",
+        "accent_color": "#ea580c",
+        "background_color": "#ffffff",
+        "text_color": "#0f172a",
+        "card_background": "#f8fafc",
+        "border_color": "#cbd5e1",
+        "border_radius": "0.375rem",
+        "font_family": "Cairo",
+        "header_layout": "Minimal",
+        "banner_layout": "Static",
+        "card_style": "Simple Fast Bordered",
+        "button_style": "Solid Fast"
+    },
+    "settings": {
+        "primary_color": "#2563eb",
+        "secondary_color": "#475569",
+        "accent_color": "#ea580c",
+        "background_color": "#ffffff",
+        "text_color": "#0f172a",
+        "card_background": "#f8fafc",
+        "border_color": "#cbd5e1",
+        "border_radius": "0.375rem",
+        "font_family": "Cairo",
+        "header_layout": "Minimal",
+        "banner_layout": "Static"
+    },
+    "css_variables": {
+        "primary_color": "#2563eb",
+        "secondary_color": "#475569",
+        "accent_color": "#ea580c",
+        "background_color": "#ffffff",
+        "text_color": "#0f172a",
+        "border_color": "#cbd5e1",
+        "border_radius": "0.375rem",
+        "font_family": "Cairo"
+    },
+    "templates": [
+        "index.html",
+        "products.html",
+        "product.html",
+        "categories.html",
+        "category-products.html",
+        "cart.html",
+        "checkout.html",
+        "checkout.blade.php",
+        "order-success.html",
+        "order-success.blade.php",
+        "wishlist.html",
+        "search.html",
+        "contact.html",
+        "account.blade.php",
+        "tracking.html",
+        "tracking.blade.php",
+        "promotions.blade.php",
+        "landing.blade.php"
+    ],
+    "features": [
+        "ultra_fast_loading",
+        "lightweight_dom",
+        "beginner_friendly",
+        "low_end_devices_optimized",
+        "rtl_ltr_support",
+        "dynamic_css_variables",
+        "stripped_down_animations",
+        "high_contrast_readability",
+        "seo_optimized",
+        "mobile_first_responsive",
+        "zero_layout_shift"
+    ]
+}

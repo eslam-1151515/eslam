@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معاينة القالب: صفحة تفاصيل المنتج</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#f9fafb;color:#1e293b}
+.preview-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#059669,#047857);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+.preview-banner a{color:#a7f3d0;text-decoration:underline;cursor:pointer}
+body{padding-top:44px}
+
+/* Product detail page — no nav */
+.page-wrapper{max-width:900px;margin:0 auto;padding:24px 16px}
+
+/* Breadcrumb */
+.breadcrumb{font-size:12px;color:#94a3b8;margin-bottom:20px;display:flex;align-items:center;gap:6px}
+.breadcrumb span{color:#475569}
+
+/* Product main grid */
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-bottom:40px}
+@media(max-width:640px){.product-grid{grid-template-columns:1fr}}
+
+/* Image section */
+.img-main{border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.08);background:#fff;margin-bottom:10px;aspect-ratio:1}
+.img-main img{width:100%;height:100%;object-fit:cover;display:block}
+.img-thumbs{display:flex;gap:8px}
+.ithumb{width:64px;height:64px;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:.2s;flex-shrink:0}
+.ithumb.active,.ithumb:hover{border-color:#059669}
+.ithumb img{width:100%;height:100%;object-fit:cover}
+
+/* Info */
+.product-detail-info{}
+.pcat{font-size:12px;color:#059669;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.pname{font-size:clamp(20px,3vw,30px);font-weight:900;line-height:1.2;margin-bottom:12px;color:#111827}
+.prating{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.stars{color:#f59e0b;font-size:14px}
+.rating-count{font-size:12px;color:#94a3b8}
+.price-block{margin-bottom:16px}
+.price-now{font-size:36px;font-weight:900;color:#111827}
+.price-before{font-size:16px;color:#9ca3af;text-decoration:line-through;margin-right:8px}
+.discount-pill{background:#fee2e2;color:#dc2626;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.free-shipping{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:5px 12px;border-radius:50px;font-size:12px;font-weight:700;margin-bottom:20px}
+
+/* Variant pickers */
+.variant-label{font-size:13px;font-weight:700;color:#374151;margin-bottom:8px}
+.size-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.sc{border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;font-family:'Cairo',sans-serif;transition:.15s}
+.sc:hover,.sc.sel{border-color:#059669;color:#059669;background:#f0fdf4}
+.color-row{display:flex;gap:10px;margin-bottom:20px}
+.cc{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.2s}
+.cc:hover,.cc.sel{border-color:#059669;transform:scale(1.15)}
+
+/* Description */
+.desc-card{background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:20px;margin-bottom:24px}
+.desc-card h3{font-size:15px;font-weight:700;margin-bottom:12px;color:#111827}
+.desc-card ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.desc-card ul{grid-template-columns:1fr}}
+.desc-card li{font-size:13px;color:#475569;display:flex;align-items:center;gap:6px}
+.desc-card li::before{content:'✓';color:#059669;font-weight:700;flex-shrink:0}
+
+/* Order form */
+.order-section{background:#fff;border-radius:20px;border:1px solid #e5e7eb;padding:28px;margin-bottom:32px}
+.order-section h2{font-size:18px;font-weight:900;margin-bottom:20px;text-align:center;color:#111827}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px}
+.fg input,.fg select{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'Cairo',sans-serif;font-size:13px;outline:none;transition:.2s;background:#f9fafb}
+.fg input:focus,.fg select:focus{border-color:#059669;background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1)}
+.btn-buy{width:100%;background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;padding:15px;border-radius:12px;font-size:17px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 6px 20px rgba(5,150,105,.35);transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(5,150,105,.45)}
+
+/* Guarantees */
+.guarantees{display:flex;justify-content:space-around;flex-wrap:wrap;gap:12px;padding:20px 0;border-top:1px solid #f0f0f0;margin-top:16px}
+.guar-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#6b7280;text-align:center}
+.guar-item i{font-size:22px;color:#059669}
+
+.footer-strip{background:#1f2937;color:#6b7280;text-align:center;padding:16px;font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  ⚠️ هذه صفحة معاينة للقالب فقط — القالب: صفحة تفاصيل المنتج &nbsp;|&nbsp;
+  <a onclick="window.close()">إغلاق المعاينة ✕</a>
+</div>
+
+<div class="page-wrapper">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span>الرئيسية</span> / <span>ملابس رجالي</span> / <span style="color:#111827;font-weight:700">قميص كتان كاجوال</span>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="product-grid">
+    <!-- Images -->
+    <div>
+      <div class="img-main"><img id="mainImg" src="/images/products/shirt.jpg" alt="قميص كتان"></div>
+      <div class="img-thumbs">
+        <div class="ithumb active" onclick="setImg(this,'/images/products/shirt.jpg')"><img src="/images/products/shirt.jpg"></div>
+        <div class="ithumb" onclick="setImg(this,'/images/products/pants.jpg')"><img src="/images/products/pants.jpg"></div>
+        <div class="ithumb" onclick="setImg(this,'/images/products/sneakers.jpg')"><img src="/images/products/sneakers.jpg"></div>
+        <div class="ithumb" onclick="setImg(this,'/images/products/watch.jpg')"><img src="/images/products/watch.jpg"></div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-detail-info">
+      <div class="pcat"><i class="fa fa-tag"></i> ملابس رجالي</div>
+      <h1 class="pname">قميص كتان كاجوال بيج فاخر</h1>
+      <div class="prating">
+        <div class="stars">★★★★★</div>
+        <div class="rating-count">(4.8 من 5) — 340 تقييم</div>
+      </div>
+
+      <div class="price-block">
+        <span class="price-before">399 ج.م</span>
+        <span class="discount-pill">خصم 25%</span>
+        <div class="price-now">299 ج.م</div>
+      </div>
+
+      <div class="free-shipping"><i class="fa fa-truck"></i> شحن مجاني لجميع المحافظات</div>
+
+      <!-- Sizes -->
+      <div class="variant-label">المقاس:</div>
+      <div class="size-chips">
+        <div class="sc sel">S</div><div class="sc">M</div><div class="sc">L</div><div class="sc">XL</div><div class="sc">XXL</div>
+      </div>
+
+      <!-- Colors -->
+      <div class="variant-label">اللون:</div>
+      <div class="color-row">
+        <div class="cc sel" style="background:#d4c4a0" title="بيج"></div>
+        <div class="cc" style="background:#f0f0f0;border-color:#ddd" title="أبيض"></div>
+        <div class="cc" style="background:#93c5fd" title="أزرق فاتح"></div>
+      </div>
+
+      <!-- Description -->
+      <div class="desc-card">
+        <h3>مواصفات المنتج</h3>
+        <ul>
+          <li>خامة كتان طبيعي 100%</li>
+          <li>تهوية ممتازة للطقس الحار</li>
+          <li>مقاسات من S حتى XXL</li>
+          <li>3 ألوان متاحة</li>
+          <li>قابل للغسيل بالغسالة</li>
+          <li>تصميم Regular Fit</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Form -->
+  <div class="order-section" id="order-form">
+    <h2>✍️ اطلب الآن — التوصيل لباب بيتك</h2>
+    <div class="form-row">
+      <div class="fg"><label>الاسم بالكامل</label><input type="text" placeholder="مثال: أحمد محمد"></div>
+      <div class="fg"><label>رقم الهاتف</label><input type="text" placeholder="01xxxxxxxxx"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>المحافظة</label>
+        <select><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option><option>المنصورة</option></select>
+      </div>
+      <div class="fg"><label>الكمية</label>
+        <select><option>1 قطعة</option><option>2 قطع</option><option>3 قطع</option></select>
+      </div>
+    </div>
+    <div class="fg"><label>العنوان بالتفصيل</label><input type="text" placeholder="رقم المبنى، الشارع، الحي..."></div>
+    <div class="fg"><label>ملاحظات إضافية (اختياري)</label><input type="text" placeholder="أي تفاصيل إضافية للطلب..."></div>
+
+    <!-- ملخص الحساب والإجمالي -->
+    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#374151">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>سعر القميص:</span>
+        <span style="font-weight:700">299 ج.م</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>مصاريف الشحن:</span>
+        <span style="color:#059669;font-weight:700">مجاناً</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;border-top:1px dashed #d1d5db;padding-top:8px;margin-top:4px;font-size:15px;font-weight:900;color:#111827">
+        <span>الإجمالي الكلي:</span>
+        <span style="color:#059669">299 ج.م</span>
+      </div>
+    </div>
+
+    <button class="btn-buy"><i class="fa fa-bolt"></i> تأكيد الطلب الآن — 299 ج.م</button>
+    <div class="guarantees">
+      <div class="guar-item"><i class="fa fa-shield-alt"></i>دفع عند الاستلام</div>
+      <div class="guar-item"><i class="fa fa-undo"></i>إرجاع خلال 7 أيام</div>
+      <div class="guar-item"><i class="fa fa-truck"></i>توصيل 2-4 أيام</div>
+      <div class="guar-item"><i class="fa fa-headset"></i>دعم على مدار الساعة</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-strip">FastOrder © 2024 — معاينة قالب: صفحة تفاصيل المنتج (بدون قائمة تنقل)</div>
+
+<script>
+function setImg(el, src){
+  document.getElementById('mainImg').src=src;
+  document.querySelectorAll('.ithumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+document.querySelectorAll('.sc').forEach(c=>{
+  c.addEventListener('click',function(){
+    this.closest('.size-chips').querySelectorAll('.sc').forEach(x=>x.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+document.querySelectorAll('.cc').forEach(c=>{
+  c.addEventListener('click',function(){
+    this.closest('.color-row').querySelectorAll('.cc').forEach(x=>x.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+</script>
+</body>
+</html>

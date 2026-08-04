@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 400;
+    src: url('{{ storage_path("fonts/Cairo-Regular.ttf") }}') format('truetype');
+}
+@font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 700;
+    src: url('{{ storage_path("fonts/Cairo-Bold.ttf") }}') format('truetype');
+}
+body {
+    font-family: 'Cairo', sans-serif;
+}

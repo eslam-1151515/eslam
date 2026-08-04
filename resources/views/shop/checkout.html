@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>اتمام الشراء - Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shop/styles.css?v=202604021">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <header class="container header">
+    <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
+      <img src="/images/logo.png?v=202604031" alt="Store"
+        onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
+      <span>Store</span>
+    </a>
+    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <div class="icons">
+      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
+          class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
+    </div>
+    <nav class="nav">
+      <a href="/shop/index.html">الرئيسية</a>
+      <a href="/shop/categories.html">الأقسام</a>
+      <a href="/shop/products.html">المنتجات</a>
+      <a href="/shop/contact.html">اتصل بنا</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">إتمام الشراء</h1>
+
+    <div id="checkoutWrap" style="display:grid;grid-template-columns:1fr 350px;gap:24px;margin-bottom:24px;">
+      <!-- Left: Form -->
+      <div class="card" style="padding:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #f3f4f6;">
+          بيانات الطلب</h2>
+
+        <form id="checkoutForm" style="display:grid;gap:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">الاسم الكامل <span style="color:#ef4444">*</span></label>
+              <input required name="name" type="text"
+                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:border-color .2s;"
+                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+            <div>
+              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">رقم الهاتف <span style="color:#ef4444">*</span></label>
+              <input required name="phone" id="phoneInput" type="tel" inputmode="numeric" maxlength="11" minlength="11" pattern="^01[0-9]{9}$"
+                placeholder="01XXXXXXXXX"
+                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:border-color .2s;"
+                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">المحافظة <span style="color:#ef4444">*</span></label>
+            <select required name="governorate" id="governorateSelect"
+              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;background:#fff;cursor:pointer;appearance:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
+              onchange="updateShipping()">
+              <option value="">جاري تحميل المحافظات...</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">العنوان بالتفاصيل <span style="color:#ef4444">*</span></label>
+            <textarea required name="address" rows="3"
+              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;resize:vertical;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
+              placeholder="أدخل العنوان الكامل مع رقم الشارع والمنطقة"></textarea>
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">ملاحظات إضافية (اختياري)</label>
+            <textarea name="notes" rows="2"
+              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;resize:vertical;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
+              placeholder="أي ملاحظات خاصة بالطلب"></textarea>
+          </div>
+
+          <input type="hidden" name="pay" value="cod">
+        </form>
+      </div>
+
+      <!-- Right: Summary -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Order items -->
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:18px;font-weight:700;margin:0 0 16px;padding-bottom:12px;border-bottom:2px solid #f3f4f6;">ملخص الطلب</h3>
+          <div id="orderItems"></div>
+          <div style="border-top:2px solid #f3f4f6;padding-top:16px;margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="color:#6b7280;">المجموع الفرعي:</span>
+              <span id="sumSubtotal" style="font-weight:600;">0 EGP</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="color:#6b7280;">رسوم الشحن:</span>
+              <span id="sumShipping" style="font-weight:600;color:#4f46e5;">—</span>
+            </div>
+            <div id="couponRow" style="display:none;justify-content:space-between;margin-bottom:8px;">
+              <span style="color:#16a34a;">كوبون خصم:</span>
+              <span id="sumDiscount" style="font-weight:600;color:#16a34a;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid #e5e7eb;">
+              <span style="font-size:18px;font-weight:700;">الإجمالي:</span>
+              <span id="sumTotal" style="font-size:18px;font-weight:700;color:#4f46e5;">0 EGP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <button form="checkoutForm" type="submit" id="submitBtn"
+          style="width:100%;padding:16px 24px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;transition:all .3s;box-shadow:0 4px 12px rgba(79,70,229,.3);">
+          <i class="fa fa-check-circle" style="margin-left:8px;"></i>تأكيد الطلب
+        </button>
+        <a href="/shop/cart.html"
+          style="width:100%;padding:14px 24px;background:#f8fafc;color:#475569;border:2px solid #cbd5e1;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;text-align:center;display:block;font-family:Cairo,sans-serif;transition:all .2s;">
+          العودة للسلة
+        </a>
+      </div>
+    </div>
+
+    <style>
+      @media(max-width:768px){
+        #checkoutWrap{grid-template-columns:1fr !important;}
+        form>div:first-child{grid-template-columns:1fr !important;}
+      }
+    </style>
+  </main>
+
+  <footer class="container footer">
+    <div style="text-align:center;padding:20px;color:#6b7280;">
+      © <span id="footYear"></span> Store. جميع الحقوق محفوظة.
+    </div>
+  </footer>
+
+  <a class="wapp-float" href="https://wa.me/201146520922" target="_blank" aria-label="WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <script src="/shop/shared.js?v=20260405"></script>
+  <script>
+    document.getElementById('footYear').textContent = new Date().getFullYear();
+
+    var currentShipping = 0;
+    var governorates   = [];
+
+    /* ---- Format ---- */
+    function fmt(n) {
+      return new Intl.NumberFormat('en-EG', { maximumFractionDigits: 0 }).format(Math.round(Number(n || 0))) + ' EGP';
+    }
+
+    /* ---- Load governorates ---- */
+    fetch('/public-api/shipping-governorates')
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        governorates = (res.data || []).filter(function(g){ return g.is_active; });
+        var sel = document.getElementById('governorateSelect');
+        sel.innerHTML = '<option value="">اختر المحافظة</option>';
+        governorates.sort(function(a,b){ return a.name.localeCompare(b.name,'ar'); })
+          .forEach(function(g){
+            var opt = document.createElement('option');
+            opt.value = g.id;
+            opt.textContent = g.name;
+            opt.dataset.price = g.price;
+            sel.appendChild(opt);
+          });
+        renderSummary();
+      })
+      .catch(function(){ });
+
+    /* ---- Render order items ---- */
+    function renderSummary() {
+      var cart = BirdCart.getCart();
+      var box  = document.getElementById('orderItems');
+
+      if (!cart.length) {
+        box.innerHTML = '<p style="color:#6b7280;text-align:center;padding:16px;">السلة فارغة</p>';
+        return;
+      }
+
+      var subtotal = 0;
+      box.innerHTML = cart.map(function(it) {
+        var line = (it.price || 0) * (it.qty || 1);
+        subtotal += line;
+
+        var sizeTag  = it.selectedSize  ? '<span style="font-size:.75rem;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;margin-right:4px;">المقاس: '+it.selectedSize+'</span>' : '';
+        var colorTag = it.selectedColor ? '<span style="font-size:.75rem;background:#fce7f3;color:#be185d;padding:2px 6px;border-radius:4px;margin-right:4px;">اللون: '+it.selectedColor+'</span>' : '';
+
+        return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:600;color:#111827;margin-bottom:3px;">' + (it.name||'منتج') + '</div>' +
+            (sizeTag||colorTag ? '<div style="margin-bottom:4px;">' + sizeTag + colorTag + '</div>' : '') +
+            '<div style="font-size:14px;color:#6b7280;">الكمية: ' + (it.qty||1) + ' × ' + fmt(it.price) + '</div>' +
+          '</div>' +
+          '<div style="font-weight:700;color:#4f46e5;margin-right:8px;">' + fmt(line) + '</div>' +
+        '</div>';
+      }).join('');
+
+      document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+      updateTotal(subtotal);
+    }
+
+    /* ---- Update shipping ---- */
+    function updateShipping() {
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      currentShipping = opt && opt.dataset.price ? parseInt(opt.dataset.price) : 0;
+      var shEl = document.getElementById('sumShipping');
+      shEl.textContent = currentShipping > 0 ? fmt(currentShipping) : '—';
+      shEl.style.color  = currentShipping > 0 ? '#4f46e5' : '#9ca3af';
+
+      var cart     = BirdCart.getCart();
+      var subtotal = cart.reduce(function(s,it){ return s + (it.price||0)*(it.qty||1); }, 0);
+      updateTotal(subtotal);
+    }
+
+    function updateTotal(subtotal) {
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
+
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
+        } else {
+          discount = couponValue;
+        }
+        discount = Math.min(discount, subtotal);
+      }
+
+      var row = document.getElementById('couponRow');
+      var discEl = document.getElementById('sumDiscount');
+      if (discount > 0 && couponCode) {
+        row.style.display = 'flex';
+        discEl.textContent = '−' + fmt(discount);
+      } else {
+        row.style.display = 'none';
+      }
+
+      var finalTotal = Math.max(0, subtotal - discount + currentShipping);
+      document.getElementById('sumTotal').textContent = fmt(finalTotal);
+    }
+
+    /* ---- Phone Input Realtime Formatting & Validation ---- */
+    var pInput = document.getElementById('phoneInput');
+    if (pInput) {
+      pInput.addEventListener('input', function() {
+        // Strip non-digits completely
+        var val = this.value.replace(/\D/g, '');
+        
+        // Force starting with 01 if user types other numbers
+        if (val.length >= 1 && val[0] !== '0') {
+          val = '0' + val;
+        }
+        if (val.length >= 2 && val[1] !== '1') {
+          val = '01' + val.slice(2);
+        }
+        
+        // Enforce 11 digits max
+        this.value = val.slice(0, 11);
+      });
+
+      pInput.addEventListener('paste', function(e) {
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        var clean = pasted.replace(/\D/g, '');
+        if (clean.length > 0 && !clean.startsWith('01')) {
+          if (clean.startsWith('1')) clean = '0' + clean;
+          else clean = '01' + clean;
+        }
+        this.value = clean.slice(0, 11);
+        e.preventDefault();
+      });
+    }
+
+    /* ---- Form submit ---- */
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      var form = e.target;
+      var fd   = new FormData(form);
+      var name = fd.get('name');
+      var phone= (fd.get('phone') || '').trim();
+      var addr = fd.get('address');
+
+      if (!name || !phone || !addr) { alert('يرجى ملء جميع البيانات المطلوبة'); return; }
+
+      // Enforce strictly 11 digits starting with 01
+      if (!/^01\d{9}$/.test(phone)) {
+        alert('عفواً، يجب أن يكون رقم الهاتف مكوناً من 11 رقماً ويبدأ بـ 01 (مثال: 01012345678)');
+        if (pInput) pInput.focus();
+        return;
+      }
+
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      if (!opt || !opt.value) { alert('يرجى اختيار المحافظة'); return; }
+
+      var cart = BirdCart.getCart();
+      if (!cart.length) { alert('السلة فارغة'); return; }
+
+      var btn = document.getElementById('submitBtn');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-left:8px;"></i>جاري المعالجة...';
+      btn.disabled = true;
+
+      var subtotal = cart.reduce(function(s,it){ return s+(it.price||0)*(it.qty||1); },0);
+      
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
+
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
+        } else {
+          discount = couponValue;
+        }
+        discount = Math.min(discount, subtotal);
+      }
+
+      var total = Math.max(0, subtotal - discount + currentShipping);
+
+      try {
+        var res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({
+            customer_name:    name,
+            customer_phone:   phone,
+            customer_address: addr,
+            governorate_id:   opt.value,
+            payment_method:   'cod',
+            coupon_code:      couponCode || null,
+            items:            cart,
+            notes:            fd.get('notes') || null
+          })
+        });
+
+        var result = await res.json();
+
+        if (result.success) {
+          sessionStorage.setItem('orderSuccess', JSON.stringify({
+            reference_number: result.data.reference_number,
+            customer_name:  name,
+            customer_phone: phone,
+            governorate:    opt.textContent,
+            subtotal:       subtotal,
+            shipping_cost:  currentShipping,
+            discount:       discount,
+            coupon_code:    couponCode,
+            total:          result.data.total || total,
+            items:          cart
+          }));
+          localStorage.removeItem('bird_cart');
+          localStorage.removeItem('fastorder_coupon_code');
+          localStorage.removeItem('fastorder_coupon_type');
+          localStorage.removeItem('fastorder_coupon_value');
+          localStorage.removeItem('fastorder_coupon_discount');
+          window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
+        } else {
+          throw new Error(result.message || 'فشل في إنشاء الطلب');
+        }
+      } catch(err) {
+        btn.innerHTML = orig;
+        btn.disabled = false;
+        alert('حدث خطأ: ' + (err.message || 'يرجى المحاولة مرة أخرى'));
+      }
+    });
+
+    /* ---- Settings dynamic loader ---- */
+    (function(){
+      fetch('/public-api/settings').then(function(r){return r.json();}).then(function(res){
+        var d = res.data; if(!d) return;
+        if(d.logo_url) document.querySelectorAll('.brand img').forEach(function(el){el.src=d.logo_url;});
+        if(d.store_name) document.querySelectorAll('.brand span').forEach(function(el){el.textContent=d.store_name;});
+        if(d.whatsapp) document.querySelectorAll('a.wapp-float').forEach(function(el){el.href='https://wa.me/'+d.whatsapp;});
+        if(d.phone) document.querySelectorAll('a[href^="tel:"]').forEach(function(el){el.href='tel:'+d.phone;});
+      }).catch(function(){});
+    })();
+
+    /* ---- Init ---- */
+    window.updateShipping = updateShipping;
+    BirdCart.updateCartCount();
+    renderSummary();
+  </script>
+</body>
+
+</html>

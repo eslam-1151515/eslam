@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معاينة القالب: معرض المنتج المتميز</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#fff;color:#1e293b}
+.preview-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#0891b2,#0e7490);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+.preview-banner a{color:#bae6fd;text-decoration:underline;cursor:pointer}
+body{padding-top:44px}
+
+/* Main showcase hero */
+.showcase-hero{padding:60px 20px;background:linear-gradient(135deg,#f0f9ff 0%,#fff 100%)}
+.showcase-inner{max-width:960px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+@media(max-width:640px){.showcase-inner{grid-template-columns:1fr}}
+
+/* Image gallery */
+.gallery-main{border-radius:24px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.1);margin-bottom:12px;aspect-ratio:1;background:#f1f5f9}
+.gallery-main img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-thumbs{display:flex;gap:8px}
+.thumb{width:70px;height:70px;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:.2s;flex-shrink:0}
+.thumb.active,.thumb:hover{border-color:#0891b2}
+.thumb img{width:100%;height:100%;object-fit:cover}
+
+/* Product info */
+.product-info{padding-top:8px}
+.category-label{color:#0891b2;font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.product-info h1{font-size:clamp(22px,3vw,36px);font-weight:900;line-height:1.2;margin-bottom:16px;color:#0f172a}
+.price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:20px}
+.price-main{font-size:40px;font-weight:900;color:#0891b2}
+.price-old{font-size:20px;text-decoration:line-through;color:#94a3b8}
+.discount-badge{background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:700}
+.stock-badge{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:700;margin-bottom:20px}
+
+/* Variant selectors */
+.selector-label{font-size:14px;font-weight:700;margin-bottom:10px;color:#374151}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.chip{border:2px solid #e2e8f0;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;background:#fff;font-family:'Cairo',sans-serif}
+.chip:hover,.chip.sel{border-color:#0891b2;color:#0891b2;background:#f0f9ff}
+.color-chip{width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:.2s}
+.color-chip:hover,.color-chip.sel{border-color:#0891b2;transform:scale(1.1)}
+
+/* CTAs */
+.cta-group{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.btn-primary{background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;padding:16px;border-radius:14px;font-size:17px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(8,145,178,.4)}
+.btn-secondary{background:#fff;color:#0891b2;border:2px solid #0891b2;padding:14px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-secondary:hover{background:#f0f9ff}
+
+/* Features bar */
+.features-bar{background:#f0f9ff;border-top:1px solid #bae6fd;padding:16px 20px}
+.features-bar-inner{max-width:960px;margin:auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:12px}
+.feat-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#0e7490}
+
+/* Reviews */
+.reviews-section{padding:60px 20px;background:#f8fafc}
+.reviews-inner{max-width:900px;margin:auto}
+.section-title{font-size:26px;font-weight:900;text-align:center;margin-bottom:12px}
+.section-sub{text-align:center;color:#64748b;font-size:14px;margin-bottom:36px}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.review-card{background:#fff;border-radius:16px;padding:24px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.stars{color:#f59e0b;font-size:16px;margin-bottom:8px}
+.review-card p{color:#475569;font-size:13px;line-height:1.8;margin-bottom:12px}
+.reviewer{font-weight:700;font-size:12px;color:#0891b2;display:flex;align-items:center;gap:6px}
+
+/* Checkout */
+.checkout-section{padding:60px 20px;background:#fff;border-top:1px solid #e2e8f0}
+.checkout-card{max-width:520px;margin:auto;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:24px;padding:32px}
+.checkout-title{font-size:20px;font-weight:900;text-align:center;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:8px}
+.form-group input,.form-group select{width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:.2s;background:#fff}
+.form-group input:focus,.form-group select:focus{border-color:#0891b2;box-shadow:0 0 0 3px rgba(8,145,178,.1)}
+.btn-confirm{width:100%;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;padding:16px;border-radius:14px;font-size:18px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 8px 24px rgba(8,145,178,.35);transition:.3s}
+.btn-confirm:hover{transform:translateY(-2px)}
+
+.footer-strip{background:#0f172a;color:#475569;text-align:center;padding:16px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  ⚠️ هذه صفحة معاينة للقالب فقط — القالب: معرض المنتج المتميز &nbsp;|&nbsp;
+  <a onclick="window.close()">إغلاق المعاينة ✕</a>
+</div>
+
+<!-- Showcase Hero -->
+<section class="showcase-hero">
+  <div class="showcase-inner">
+    <!-- Gallery -->
+    <div>
+      <div class="gallery-main"><img id="mainImg" src="/images/products/shirt.jpg" alt="قميص"></div>
+      <div class="gallery-thumbs">
+        <div class="thumb active" onclick="setImg(this,'/images/products/shirt.jpg')"><img src="/images/products/shirt.jpg"></div>
+        <div class="thumb" onclick="setImg(this,'/images/products/pants.jpg')"><img src="/images/products/pants.jpg"></div>
+        <div class="thumb" onclick="setImg(this,'/images/products/sneakers.jpg')"><img src="/images/products/sneakers.jpg"></div>
+        <div class="thumb" onclick="setImg(this,'/images/products/watch.jpg')"><img src="/images/products/watch.jpg"></div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+      <div class="category-label"><i class="fa fa-tag"></i> ملابس رجالي</div>
+      <h1>قميص كتان كاجوال فاخر</h1>
+      <div class="price-row">
+        <span class="price-main">299 ج.م</span>
+        <span class="price-old">399 ج.م</span>
+        <span class="discount-badge">خصم 25%</span>
+      </div>
+      <div class="stock-badge"><i class="fa fa-check-circle"></i> قارب على النفاد — متبقي 12 قطعة فقط!</div>
+
+      <div class="selector-label">المقاس:</div>
+      <div class="chips">
+        <div class="chip sel">S</div><div class="chip">M</div><div class="chip">L</div><div class="chip">XL</div><div class="chip">XXL</div>
+      </div>
+
+      <div class="selector-label">اللون:</div>
+      <div class="chips">
+        <div class="color-chip sel" style="background:#d4c4a0" title="بيج"></div>
+        <div class="color-chip" style="background:#f0f0f0;border:1px solid #ddd" title="أبيض"></div>
+        <div class="color-chip" style="background:#93c5fd" title="أزرق فاتح"></div>
+      </div>
+
+      <div class="cta-group">
+        <button class="btn-primary" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})"><i class="fa fa-bolt"></i> اطلب الآن بالتوصيل</button>
+        <button class="btn-secondary"><i class="fa fa-cart-plus"></i> أضف إلى السلة</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features bar -->
+<div class="features-bar">
+  <div class="features-bar-inner">
+    <div class="feat-item"><i class="fa fa-truck"></i> توصيل سريع 2-4 أيام</div>
+    <div class="feat-item"><i class="fa fa-undo"></i> إرجاع خلال 7 أيام</div>
+    <div class="feat-item"><i class="fa fa-lock"></i> دفع آمن عند الاستلام</div>
+    <div class="feat-item"><i class="fa fa-star"></i> ضمان الجودة الأصلية</div>
+  </div>
+</div>
+
+<!-- Reviews -->
+<section class="reviews-section">
+  <div class="reviews-inner">
+    <div class="section-title">⭐ ماذا قال عملاؤنا</div>
+    <div class="section-sub">4.8 من 5 — بناءً على 340+ تقييم موثق</div>
+    <div class="reviews-grid">
+      <div class="review-card"><div class="stars">★★★★★</div><p>"جودة ممتازة، الخامة ناعمة ومريحة. اشتريت 3 ألوان وكلهم رائعين!"</p><div class="reviewer"><i class="fa fa-check-circle"></i> أحمد م. — القاهرة</div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p>"المقاس بالظبط والتوصيل جه في يومين. سعر ممتاز جداً لخامة بالكيفية دي."</p><div class="reviewer"><i class="fa fa-check-circle"></i> كريم ع. — الجيزة</div></div>
+      <div class="review-card"><div class="stars">★★★★☆</div><p>"القميص أنيق ويناسب كل المناسبات. هطلب مقاسات تاني قريباً إن شاء الله."</p><div class="reviewer"><i class="fa fa-check-circle"></i> محمد ط. — الإسكندرية</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Checkout Form -->
+<section class="checkout-section" id="checkout">
+  <div class="checkout-card">
+    <div class="checkout-title">📋 أكمل طلبك الآن</div>
+    <div class="form-group"><label>الاسم بالكامل</label><input type="text" placeholder="مثال: أحمد محمد"></div>
+    <div class="form-group"><label>رقم الهاتف</label><input type="text" placeholder="01xxxxxxxxx"></div>
+    <div class="form-group"><label>المحافظة</label>
+      <select><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option></select>
+    </div>
+    <div class="form-group"><label>العنوان بالتفصيل</label><input type="text" placeholder="رقم البيت، الشارع، المنطقة"></div>
+
+    <!-- ملخص الحساب والإجمالي -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#334155">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>سعر المنتج:</span>
+        <span style="font-weight:700">299 ج.م</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>الشحن والمصاريف:</span>
+        <span style="font-weight:700">50 ج.م</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;border-top:1px dashed #cbd5e1;padding-top:8px;margin-top:4px;font-size:15px;font-weight:900;color:#0f172a">
+        <span>الإجمالي المستحق:</span>
+        <span style="color:#0891b2">349 ج.م</span>
+      </div>
+    </div>
+
+    <button class="btn-confirm">✅ تأكيد الطلب — 349 ج.م (شامل الشحن)</button>
+    <p style="text-align:center;font-size:12px;color:#94a3b8;margin-top:14px">🔒 بياناتك آمنة تماماً • الدفع عند الاستلام فقط</p>
+  </div>
+</section>
+
+<div class="footer-strip">FastOrder © 2024 — معاينة قالب: معرض المنتج المتميز</div>
+
+<script>
+function setImg(el, src) {
+  document.getElementById('mainImg').src = src;
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', function() {
+    this.closest('.chips').querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+document.querySelectorAll('.color-chip').forEach(c => {
+  c.addEventListener('click', function() {
+    this.closest('.chips').querySelectorAll('.color-chip').forEach(x => x.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+</script>
+</body>
+</html>

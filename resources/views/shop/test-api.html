@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار API الطلبات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background: #ccc;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اختبار API الطلبات</h1>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label>اسم العميل:</label>
+                <input type="text" name="customer_name" value="أحمد محمد" required>
+            </div>
+            
+            <div class="form-group">
+                <label>رقم الهاتف:</label>
+                <input type="tel" name="customer_phone" value="01234567890" required>
+            </div>
+            
+            <div class="form-group">
+                <label>العنوان:</label>
+                <textarea name="customer_address" required>شارع 15، المعادي، القاهرة</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>المحافظة:</label>
+                <select name="governorate_id" id="governorateSelect" required>
+                    <option value="">اختر المحافظة...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>طريقة الدفع:</label>
+                <select name="payment_method" required>
+                    <option value="cod">الدفع عند الاستلام</option>
+                    <option value="visa">الدفع الإلكتروني</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>ملاحظات:</label>
+                <textarea name="notes">طلب تجريبي للاختبار</textarea>
+            </div>
+            
+            <button type="submit" id="submitBtn">إرسال الطلب</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        console.log('🚀 Test page loaded');
+        
+        // Load governorates
+        async function loadGovernorates() {
+            try {
+                console.log('📍 Loading governorates...');
+                const response = await fetch('/public-api/shipping-governorates');
+                const result = await response.json();
+                
+                console.log('📍 Governorates response:', result);
+                
+                const select = document.getElementById('governorateSelect');
+                
+                if (result.data && Array.isArray(result.data)) {
+                    result.data.forEach(gov => {
+                        if (gov.is_active) {
+                            const option = document.createElement('option');
+                            option.value = gov.id;
+                            option.textContent = gov.name;
+                            select.appendChild(option);
+                        }
+                    });
+                    console.log('✅ Governorates loaded successfully');
+                } else {
+                    console.error('❌ Invalid governorates data');
+                }
+            } catch (error) {
+                console.error('❌ Error loading governorates:', error);
+            }
+        }
+        
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            console.log('📝 Form submitted');
+            
+            const formData = new FormData(this);
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الإرسال...';
+            
+            // Create test cart data
+            const testItems = [
+                {
+                    id: 1,
+                    name: 'منتج تجريبي',
+                    price: 100,
+                    qty: 2
+                }
+            ];
+            
+            const orderData = {
+                customer_name: formData.get('customer_name'),
+                customer_phone: formData.get('customer_phone'),
+                customer_address: formData.get('customer_address'),
+                governorate_id: parseInt(formData.get('governorate_id')),
+                payment_method: formData.get('payment_method'),
+                items: testItems,
+                notes: formData.get('notes')
+            };
+            
+            console.log('📦 Order data:', orderData);
+            
+            try {
+                console.log('🌐 Sending request to /api/orders...');
+                
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response headers:', response.headers);
+                
+                const result = await response.json();
+                console.log('📧 Response data:', result);
+                
+                if (result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ تم إنشاء الطلب بنجاح!</h3>
+                        <p><strong>رقم الطلب:</strong> ${result.data.reference_number}</p>
+                        <p><strong>الإجمالي:</strong> ${result.data.total} جنيه</p>
+                        <p><strong>ID:</strong> ${result.data.order_id}</p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ فشل في إنشاء الطلب</h3>
+                        <p>${result.message}</p>
+                        ${result.errors ? '<pre>' + JSON.stringify(result.errors, null, 2) + '</pre>' : ''}
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Request failed:', error);
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ خطأ في الاتصال</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+            
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'إرسال الطلب';
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM loaded, initializing...');
+            loadGovernorates();
+        });
+    </script>
+</body>
+</html>

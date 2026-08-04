@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fast Order Theme Configuration Schema",
+  "description": "مستند الهيكل الأساسي لتعريف وتخصيص ثيمات متجر فاست أوردر (Theme Architecture Schema)",
+  "type": "object",
+  "required": [
+    "name",
+    "slug",
+    "version",
+    "css_variables",
+    "layouts"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "اسم الثيم المعروض في لوحة التحكم (مثلاً: الثيم العصري Modern Minimalist)"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-_]+$",
+      "description": "المعرّف الفريد للثيم (مثلاً: default, modern, classic, dark-elegance)"
+    },
+    "version": {
+      "type": "string",
+      "description": "إصدار الثيم (مثلاً: 1.0.0)"
+    },
+    "author": {
+      "type": "string",
+      "description": "اسم مطور أو فريق عمل الثيم"
+    },
+    "description": {
+      "type": "string",
+      "description": "وصف قصير لمميزات الثيم وتصميمه"
+    },
+    "preview_image": {
+      "type": "string",
+      "description": "مسار صورة المعاينة للثيم داخل مجلد public أو الـ storage"
+    },
+    "support_rtl": {
+      "type": "boolean",
+      "default": true,
+      "description": "دعم الاتجاه من اليمين لليسار RTL ديناميكياً"
+    },
+    "css_variables": {
+      "type": "object",
+      "description": "متغيرات CSS الأساسية للألوان والخطوط والأبعاد في هذا الثيم",
+      "properties": {
+        "primary_color": { "type": "string", "default": "#4f46e5" },
+        "secondary_color": { "type": "string", "default": "#64748b" },
+        "accent_color": { "type": "string", "default": "#f59e0b" },
+        "background_color": { "type": "string", "default": "#ffffff" },
+        "text_color": { "type": "string", "default": "#1e293b" },
+        "border_color": { "type": "string", "default": "#e2e8f0" },
+        "border_radius": { "type": "string", "default": "0.5rem" },
+        "font_family": { "type": "string", "default": "Cairo, sans-serif" }
+      }
+    },
+    "layouts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "قائمة بأسماء القوالب والصفحات المدعومة في الثيم (مثلاً: index, product, cart, checkout)"
+    },
+    "sections": {
+      "type": "object",
+      "description": "تعريف الأقسام المتاحة للتخصيص في الصفحة الرئيسية وصفحات الثيم",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "enabled": { "type": "boolean", "default": true },
+          "title": { "type": "string" },
+          "order": { "type": "integer" }
+        }
+      }
+    },
+    "settings_schema": {
+      "type": "array",
+      "description": "حقول إعدادات التخصيص التي تظهر للتاجر في محرر الثيمات (Theme Customizer)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "group": { "type": "string" },
+          "label": { "type": "string" },
+          "key": { "type": "string" },
+          "type": { "type": "string", "enum": ["color", "font", "select", "text", "boolean"] },
+          "default": {}
+        }
+      }
+    }
+  },
+  "example": {
+    "name": "الثيم الافتراضي (Default Theme)",
+    "slug": "default",
+    "version": "1.0.0",
+    "author": "Fast Order Team",
+    "description": "الثيم الافتراضي السريع والمتجاوب لجميع المتاجر في منصة فاست أوردر، يدعم التصميم العصري والمتجاوب بالكامل.",
+    "preview_image": "/shop/images/themes/default-preview.webp",
+    "support_rtl": true,
+    "css_variables": {
+      "primary_color": "#4f46e5",
+      "secondary_color": "#64748b",
+      "accent_color": "#f59e0b",
+      "background_color": "#ffffff",
+      "text_color": "#1e293b",
+      "border_color": "#e2e8f0",
+      "border_radius": "0.5rem",
+      "font_family": "Cairo, sans-serif"
+    },
+    "layouts": [
+      "index",
+      "product",
+      "categories",
+      "category-products",
+      "cart",
+      "checkout",
+      "search",
+      "wishlist",
+      "order-success",
+      "tracking",
+      "account",
+      "landing",
+      "promotions",
+      "contact"
+    ],
+    "sections": {
+      "hero_slider": { "enabled": true, "title": "البانر الإعلاني الرئيسي", "order": 1 },
+      "featured_categories": { "enabled": true, "title": "الأقسام المميزة", "order": 2 },
+      "best_offers": { "enabled": true, "title": "أفضل العروض والخصومات", "order": 3 },
+      "latest_products": { "enabled": true, "title": "أحدث المنتجات المعروضة", "order": 4 }
+    },
+    "settings_schema": [
+      {
+        "group": "colors",
+        "label": "اللون الأساسي (Primary Color)",
+        "key": "primary_color",
+        "type": "color",
+        "default": "#4f46e5"
+      },
+      {
+        "group": "colors",
+        "label": "اللون الثانوي (Secondary Color)",
+        "key": "secondary_color",
+        "type": "color",
+        "default": "#64748b"
+      },
+      {
+        "group": "typography",
+        "label": "نوع الخط (Font Family)",
+        "key": "font_family",
+        "type": "select",
+        "default": "Cairo",
+        "options": ["Cairo", "Tajawal", "Inter", "Roboto", "Almarai"]
+      }
+    ]
+  }
+}

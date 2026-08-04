@@ -1,0 +1,78 @@
+{
+    "name": "Default Classic Store",
+    "name_ar": "الثيم الافتراضي (كلاسيك)",
+    "slug": "default",
+    "version": "1.0.0",
+    "author": "Fast Order Team",
+    "description": "تصميم كلاسيكي نظيف وأنيق مناسب لكافة أنواع المتاجر الإلكترونية، يتميز بتجاوب كامل مع الشاشات، دعم كامل للاتجاهين RTL و LTR، وتخصيص مرن للألوان والخطوط عبر متغيرات CSS.",
+    "thumbnail": "/shop/themes/default/thumbnail.png",
+    "layouts": {
+        "header": [
+            { "id": "Classic", "name": "كلاسيكي تقليدي", "name_en": "Classic" },
+            { "id": "Centered", "name": "شعار في المنتصف", "name_en": "Centered Logo" },
+            { "id": "Minimal", "name": "بسيط ومدمج", "name_en": "Minimal" }
+        ],
+        "banner": [
+            { "id": "Slider", "name": "سلايدر متحرك", "name_en": "Interactive Slider" },
+            { "id": "Grid", "name": "شبكة بانرات", "name_en": "Banners Grid" },
+            { "id": "Single Banner", "name": "بانر فردي عريض", "name_en": "Single Wide Banner" }
+        ]
+    },
+    "supported_fonts": [
+        { "id": "Cairo", "name": "Cairo (خط القاهرة)" },
+        { "id": "Almarai", "name": "Almarai (خط المراعي)" },
+        { "id": "Tajawal", "name": "Tajawal (خط تجول)" },
+        { "id": "Inter", "name": "Inter (إنجليزي عصري)" },
+        { "id": "Roboto", "name": "Roboto (قياسي)" }
+    ],
+    "default_settings": {
+        "primary_color": "#4f46e5",
+        "secondary_color": "#64748b",
+        "background_color": "#ffffff",
+        "text_color": "#1f2937",
+        "card_background": "#f8fafc",
+        "border_color": "#e2e8f0",
+        "font_family": "Cairo",
+        "header_layout": "Classic",
+        "banner_layout": "Slider"
+    },
+    "css_variables": {
+        "--primary-color": "primary_color",
+        "--secondary-color": "secondary_color",
+        "--bg-color": "background_color",
+        "--text-color": "text_color",
+        "--card-bg": "card_background",
+        "--border-color": "border_color",
+        "--font-family": "font_family"
+    },
+    "templates": [
+        "index.html",
+        "products.html",
+        "product.html",
+        "categories.html",
+        "category-products.html",
+        "cart.html",
+        "checkout.html",
+        "checkout.blade.php",
+        "order-success.html",
+        "order-success.blade.php",
+        "wishlist.html",
+        "search.html",
+        "contact.html",
+        "account.blade.php",
+        "tracking.html",
+        "tracking.blade.php",
+        "promotions.blade.php",
+        "landing.blade.php"
+    ],
+    "features": [
+        "responsive_grid",
+        "rtl_ltr_support",
+        "dynamic_css_variables",
+        "customizable_header_and_banner",
+        "seo_optimized",
+        "infinite_scroll_ready",
+        "touch_swipe_gallery",
+        "variants_selector"
+    ]
+}
