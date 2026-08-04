@@ -60,5 +60,5 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             cd ${{ secrets.SSH_PATH }}
-            chmod +x deploy.sh
-            ./deploy.sh
+            chmod +x zero_downtime_deploy.sh
+            ./zero_downtime_deploy.sh
