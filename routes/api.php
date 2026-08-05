@@ -31,7 +31,7 @@ Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health
 // ============================================================
 // API v1 - يتطلب مفتاح API في Authorization header
 // ============================================================
-Route::prefix('v1')->middleware(['auth.apikey', 'throttle:api'])->group(function () {
+Route::prefix('v1')->name('api.v1.')->middleware(['auth.apikey', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('orders', ApiOrderController::class);
     Route::apiResource('categories', CategoryController::class);
