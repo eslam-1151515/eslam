@@ -39,7 +39,7 @@ export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 echo "✨ Building Frontend Assets..."
-npm ci
+npm install
 npm run build
 
 echo "🗄️ Running database migrations..."
