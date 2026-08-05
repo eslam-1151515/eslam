@@ -12,8 +12,10 @@ export default function BannersIndex({ banners }) {
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         title: '',
         link: '',
-        order: '0',
         image: null,
+        order: 0,
+        is_active: true,
+        _method: 'POST',
     });
 
     const openCreateModal = () => {
@@ -30,10 +32,12 @@ export default function BannersIndex({ banners }) {
         setData({
             title: banner.title || '',
             link: banner.link || '',
-            order: String(banner.order || 0),
             image: null,
+            order: banner.order || 0,
+            is_active: banner.is_active !== undefined ? banner.is_active : true,
+            _method: 'PUT',
         });
-        setImagePreview(banner.image_url);
+        setImagePreview(banner.image_url || (banner.image_path ? (banner.image_path.startsWith('/') || banner.image_path.startsWith('http') ? banner.image_path : `/storage/${banner.image_path}`) : null));
         setShowFormModal(true);
     };
 
@@ -55,7 +59,6 @@ export default function BannersIndex({ banners }) {
             // Multipart form upload with method spoofing for Laravel PUT requests
             post(`/admin/banners/${editingBanner.id}`, {
                 forceFormData: true,
-                _method: 'PUT',
                 onSuccess: () => {
                     setShowFormModal(false);
                     reset();
