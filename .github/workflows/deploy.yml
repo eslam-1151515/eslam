@@ -53,12 +53,15 @@ jobs:
     steps:
       - name: Deploy to Production Server via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
+          envs: GITHUB_TOKEN
           script: |
             cd ${{ secrets.SSH_PATH }}
             chmod +x zero_downtime_deploy.sh
-            ./zero_downtime_deploy.sh
+            ./zero_downtime_deploy.sh $GITHUB_TOKEN

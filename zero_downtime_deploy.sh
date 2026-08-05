@@ -4,7 +4,8 @@ set -e
 echo "🚀 Starting Zero-Downtime Deployment..."
 
 # Configuration
-REPO_URL="git@github.com:fast-order-eg/fast-order.git"
+REPO_TOKEN=$1
+REPO_URL="https://x-access-token:${REPO_TOKEN}@github.com/fast-order-eg/fast-order.git"
 BASE_DIR="/home/fast-order-eg.tech/deploy"
 RELEASES_DIR="$BASE_DIR/releases"
 SHARED_DIR="$BASE_DIR/shared"
@@ -57,6 +58,9 @@ echo "🔄 Restarting Queue Workers..."
 php artisan queue:restart || true
 # Restart OpenLiteSpeed detached PHP processes
 killall -9 lsphp || true
+
+echo "🔐 Fixing file permissions..."
+chown -R fasto5299:nobody "$RELEASE_DIR"
 
 echo "🧹 Cleaning up old releases (keeping last 3)..."
 cd "$RELEASES_DIR"
