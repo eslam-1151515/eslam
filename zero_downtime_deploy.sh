@@ -45,6 +45,9 @@ npm run build
 echo "🗄️ Running database migrations..."
 php artisan migrate --force
 
+echo "🔗 Linking public storage..."
+php artisan storage:link || true
+
 echo "🧹 Caching configurations..."
 php artisan config:cache
 php artisan route:cache
