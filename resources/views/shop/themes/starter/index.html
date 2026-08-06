@@ -58,12 +58,6 @@
     <section id="sec-hero_slider" class="hero-slider" style="display: none;">
       <div class="slider-container">
         <div class="slides">
-          <div class="slide active">
-            <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
-          </div>
-          <div class="slide">
-            <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
-          </div>
         </div>
 
         <!-- Navigation arrows -->
@@ -322,14 +316,25 @@
       if (isHeroEnabled) {
         fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
           const slider = document.querySelector('.slides');
-          if (slider && data && data.length) {
-            slider.innerHTML = data.map((b, i) => `
-              <div class="slide ${i === 0 ? 'active' : ''}">
-                <a href="${b.link ? b.link : '#'}">
-                  <img src="${b.image_url}" alt="${b.title || 'Store'}">
-                </a>
-              </div>
-            `).join('');
+          if (slider) {
+            if (data && data.length) {
+              slider.innerHTML = data.map((b, i) => `
+                <div class="slide ${i === 0 ? 'active' : ''}">
+                  <a href="${b.link ? b.link : '#'}">
+                    <img src="${b.image_url}" alt="${b.title || 'Store'}">
+                  </a>
+                </div>
+              `).join('');
+            } else {
+              slider.innerHTML = `
+                <div class="slide active">
+                  <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
+                </div>
+                <div class="slide">
+                  <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+                </div>
+              `;
+            }
           }
           setTimeout(function () {
             initSlider();

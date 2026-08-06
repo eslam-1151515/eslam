@@ -59,31 +59,6 @@
       <div class="hero-banner-large">
         <div class="slider-container" style="width: 100%; height: 100%; position: relative;">
           <div class="slides" style="height: 100%;">
-            <div class="slide active" style="height: 100%;">
-              <img class="hero-bg-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80" alt="عرض خاص">
-              <div class="hero-overlay"></div>
-              <div class="hero-content">
-                <span class="hero-tag floating-element">⚡ تشكيلة الصيف الجديدة 2026</span>
-                <h1 class="hero-title">أزياء نابضة بالحياة تعبر عن شخصيتك الجريئة</h1>
-                <p class="hero-description">اكتشفي أحدث تصاميم الموضة العالمية والأزياء الراقية مع خصومات حصرية تصل إلى 50% لفترة محدودة على تشكيلات الموسم الجديد.</p>
-                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                  <a href="/shop/products.html?sort=discount" class="btn btn-vibrant">تسوقي التشكيلة الآن <i class="fa fa-shopping-bag"></i></a>
-                  <a href="/shop/categories.html" class="btn btn-outline" style="color:#ffffff;border-color:#ffffff;">استكشاف الأقسام</a>
-                </div>
-              </div>
-            </div>
-            <div class="slide" style="height: 100%;">
-              <img class="hero-bg-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=80" alt="منتجات جديدة">
-              <div class="hero-overlay"></div>
-              <div class="hero-content">
-                <span class="hero-tag floating-element" style="background:rgba(0,240,255,0.2);color:#00f0ff;border-color:#00f0ff;">✨ إطلالات حصرية</span>
-                <h1 class="hero-title">أناقة عصرية ولمسات فاخرة لكل مناسبة</h1>
-                <p class="hero-description">تشكيلة واسعة من الفساتين والإكسسوارات الفاخرة المصممة بعناية فائقة لتمنحك إطلالة ساحرة ومتميزة في جميع أوقاتك.</p>
-                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                  <a href="/shop/products.html" class="btn btn-vibrant" style="background:var(--gradient-vibrant);">اكتشفي العروض <i class="fa fa-sparkles"></i></a>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Navigation arrows -->
@@ -391,14 +366,25 @@
       if (isHeroEnabled) {
         fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
           const slider = document.querySelector('.slides');
-          if (slider && data && data.length) {
-            slider.innerHTML = data.map((b, i) => `
-              <div class="slide ${i === 0 ? 'active' : ''}">
-                <a href="${b.link ? b.link : '#'}">
-                  <img src="${b.image_url}" alt="${b.title || 'Store'}">
-                </a>
-              </div>
-            `).join('');
+          if (slider) {
+            if (data && data.length) {
+              slider.innerHTML = data.map((b, i) => `
+                <div class="slide ${i === 0 ? 'active' : ''}">
+                  <a href="${b.link ? b.link : '#'}">
+                    <img src="${b.image_url}" alt="${b.title || 'Store'}">
+                  </a>
+                </div>
+              `).join('');
+            } else {
+              slider.innerHTML = `
+                <div class="slide active">
+                  <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
+                </div>
+                <div class="slide">
+                  <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+                </div>
+              `;
+            }
           }
           setTimeout(function () {
             initSlider();
