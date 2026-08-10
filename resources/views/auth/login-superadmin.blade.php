@@ -7,18 +7,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
         body {
             font-family: 'Cairo', sans-serif;
-            min-height: 100vh;
             background: #0f0c29;
             background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 50%, #24243e 100%);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px 12px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         /* Animated background circles */
         body::before {
@@ -43,12 +47,18 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 24px;
-            padding: 48px 40px;
+            padding: 40px 32px;
             width: 100%;
             max-width: 420px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
             position: relative;
             z-index: 1;
+            margin: auto;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 16px 8px; }
+            .card { padding: 28px 18px; border-radius: 20px; }
         }
 
         .badge {
@@ -261,7 +271,7 @@
             <input id="email" type="email" name="email"
                    value="{{ old('email') }}"
                    placeholder="admin@example.com"
-                   required autofocus autocomplete="username">
+                   required autofocus autocomplete="email">
         </div>
 
         <div class="field">

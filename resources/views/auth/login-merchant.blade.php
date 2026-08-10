@@ -33,7 +33,7 @@
             <label for="email" class="block text-sm font-semibold text-gray-700 mb-3">البريد الإلكتروني</label>
             <input id="email" type="email" name="email"
                    class="arabic-input block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-                   value="{{ old('email') }}" required autofocus autocomplete="username"
+                   value="{{ old('email') }}" required autofocus autocomplete="email"
                    placeholder="أدخل البريد الإلكتروني" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>

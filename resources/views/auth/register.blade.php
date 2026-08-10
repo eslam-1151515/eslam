@@ -52,6 +52,7 @@
                    name="email" 
                    value="{{ old('email') }}" 
                    required 
+                   autocomplete="email"
                    placeholder="أدخل بريدك الإلكتروني" />
             @if ($errors->has('email'))
                 <p style="color: #f87171; font-size: 12px; font-weight: 600; margin-top: 6px; text-align: right;">{{ $errors->first('email') }}</p>
@@ -65,6 +66,7 @@
                    type="text" 
                    name="phone" 
                    value="{{ old('phone') }}" 
+                   autocomplete="tel"
                    placeholder="أدخل رقم هاتفك" />
             @if ($errors->has('phone'))
                 <p style="color: #f87171; font-size: 12px; font-weight: 600; margin-top: 6px; text-align: right;">{{ $errors->first('phone') }}</p>
@@ -79,6 +81,7 @@
                    name="store_name" 
                    value="{{ old('store_name') }}" 
                    required 
+                   autocomplete="off"
                    placeholder="أدخل اسم متجرك (بحد أقصى 4 كلمات)"
                    oninput="let words = this.value.trim().split(/\s+/); if(words.length > 4) { this.value = words.slice(0, 4).join(' '); }" />
             @if ($errors->has('store_name'))
@@ -89,14 +92,15 @@
         <!-- Store Subdomain -->
         <div>
             <label for="subdomain">رابط المتجر (السب دومين)</label>
-            <div style="display: flex; align-items: center; direction: ltr;">
+            <div style="display: flex; align-items: center; direction: ltr; width: 100%;">
                 <input id="subdomain" 
                        type="text" 
                        name="subdomain" 
+                       autocomplete="off"
                        value="{{ old('subdomain', 'store-' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 4)) }}" 
                        required 
                        placeholder="store-link"
-                       style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; text-align: right; direction: ltr;" />
+                       style="flex: 1; min-width: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; text-align: right; direction: ltr;" />
                 @php
                     $currentHost = request()->getHost();
                     if ($currentHost && $currentHost !== '127.0.0.1' && $currentHost !== 'localhost') {
@@ -118,7 +122,7 @@
                     $portStr = ($port && $port != 80 && $port != 443) ? ':' . $port : '';
                     $displayDomain = '.' . $baseDomain . $portStr;
                 @endphp
-                <span style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-left: none; padding: 14px 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; color: #a5b4fc; font-weight: 600; font-size: 13px;" dir="ltr">{{ $displayDomain }}</span>
+                <span style="flex-shrink: 0; white-space: nowrap; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-left: none; padding: 14px 8px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; color: #a5b4fc; font-weight: 600; font-size: 12px; font-family: sans-serif;" dir="ltr">{{ $displayDomain }}</span>
             </div>
             <p id="subdomain-check-msg" style="font-size: 12px; margin-top: 6px; font-weight: 600; color: #a5b4fc; text-align: right;"></p>
             @if ($errors->has('subdomain'))
