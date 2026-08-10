@@ -19,6 +19,31 @@ class SettingService
             $tenantId = session()->get('tenant_id') ?? config('tenant.id');
         }
 
+        // Direct DB lookup without cache for critical dynamic keys (Payment & Contact settings)
+        $uncachedKeys = ['vodafone_cash_number', 'instapay_number', 'instapay_address', 'support_phone', 'phone'];
+        if (in_array($key, $uncachedKeys, true)) {
+            if ($tenantId) {
+                $tenantSetting = Setting::withoutGlobalScopes()
+                    ->where('tenant_id', $tenantId)
+                    ->where('key', $key)
+                    ->first();
+                if ($tenantSetting !== null && $tenantSetting->value !== null && $tenantSetting->value !== '') {
+                    return $tenantSetting->value;
+                }
+            }
+
+            $globalSetting = Setting::withoutGlobalScopes()
+                ->whereNull('tenant_id')
+                ->where('key', $key)
+                ->first();
+
+            if ($globalSetting !== null && $globalSetting->value !== null && $globalSetting->value !== '') {
+                return $globalSetting->value;
+            }
+
+            return $default;
+        }
+
         // 1. Try to find the tenant-specific setting
         if ($tenantId) {
             $cacheKey = "setting:tenant:{$tenantId}:{$key}";
@@ -74,13 +99,12 @@ class SettingService
             ]
         );
 
-        // Invalidate key cache
+        // Invalidate all key & group caches for both global and tenant contexts
+        Cache::forget("setting:global:{$key}");
+        Cache::forget("setting:group:{$group}:global");
         if ($tenantId) {
             Cache::forget("setting:tenant:{$tenantId}:{$key}");
             Cache::forget("setting:group:{$group}:{$tenantId}");
-        } else {
-            Cache::forget("setting:global:{$key}");
-            Cache::forget("setting:group:{$group}:global");
         }
 
         return $setting;

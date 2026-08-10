@@ -16,8 +16,8 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
 
     // Form for editing payment settings
     const { data: settingsData, setData: setSettingsData, post: postSettings, processing: savingSettings } = useForm({
-        vodafone_cash_number: paymentSettings?.vodafone_cash_number || '01012345678',
-        instapay_number: paymentSettings?.instapay_number || '01012345678',
+        vodafone_cash_number: paymentSettings?.vodafone_cash_number || '',
+        instapay_number: paymentSettings?.instapay_number || '',
     });
 
     // Modal state for attaching receipt

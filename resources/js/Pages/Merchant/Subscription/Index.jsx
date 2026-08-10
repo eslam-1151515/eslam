@@ -9,8 +9,8 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
     const [receiptPreview, setReceiptPreview] = useState(null);
     const [copiedField, setCopiedField] = useState(null);
 
-    const vodaNumber = paymentSettings?.vodafone_cash_number || '01012345678';
-    const instaNumber = paymentSettings?.instapay_number || '01012345678';
+    const vodaNumber = paymentSettings?.vodafone_cash_number || '';
+    const instaNumber = paymentSettings?.instapay_number || '';
 
     const handleCopy = (text, field) => {
         if (!text) return;
