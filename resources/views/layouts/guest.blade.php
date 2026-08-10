@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
             min-height: 100vh;
             min-height: 100dvh;
