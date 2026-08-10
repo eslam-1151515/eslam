@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 
 <head>
   <meta charset="utf-8">
   <meta name="facebook-domain-verification" content="thjq95dh1a88yu3cmr55fhq2xqvxr3" />
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>منتجات القسم - Store</title>
+  <title>?????? ????? - Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -21,18 +21,18 @@
         onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
       <span>Store</span>
     </a>
-    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <button class="menu-toggle" aria-label="???????"><span></span><span></span><span></span></button>
     <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
+      <a href="#" class="icon-round search-trigger" title="???" aria-label="???"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="?????" aria-label="?????"><i
           class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
     </div>
     <nav class="nav">
-      <a href="/shop/index.html">الرئيسية</a>
-      <a href="/shop/categories.html">الأقسام</a>
-      <a href="/shop/products.html">المنتجات</a>
-      <a href="/shop/contact.html">اتصل بنا</a>
-      <a href="tel:01146520922" class="call-now">اتصل الآن</a>
+      <a href="/shop/index.html">????????</a>
+      <a href="/shop/categories.html">???????</a>
+      <a href="/shop/products.html">????????</a>
+      <a style="display:none !important;" href="/shop/contact.html">???? ???</a>
+      <a href="tel:01146520922" class="call-now" style="display:none !important;">???? ????</a>
     </nav>
   </header>
 
@@ -40,14 +40,14 @@
     <!-- Category Products Section -->
     <div
       style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-      <h1 id="categoryName" class="page-title" style="margin: 0;">اسم القسم</h1>
+      <h1 id="categoryName" class="page-title" style="margin: 0;">??? ?????</h1>
 
       <!-- Filter Dropdown -->
       <div class="filter-dropdown" style="position: relative;">
         <button id="filterBtn" class="filter-btn"
           style="background: #6366f1; color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
           <i class="fa fa-filter"></i>
-          ترتيب حسب
+          ????? ???
           <i class="fa fa-chevron-down"></i>
         </button>
 
@@ -56,22 +56,22 @@
           <button class="filter-option" data-filter="default"
             style="width: 100%; text-align: right; padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; border-bottom: 1px solid #f3f4f6;">
             <i class="fa fa-list" style="margin-left: 0.5rem; color: #6b7280;"></i>
-            الترتيب الافتراضي
+            ??????? ?????????
           </button>
           <button class="filter-option" data-filter="price-low"
             style="width: 100%; text-align: right; padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; border-bottom: 1px solid #f3f4f6;">
             <i class="fa fa-arrow-up" style="margin-left: 0.5rem; color: #10b981;"></i>
-            الأقل سعراً
+            ????? ?????
           </button>
           <button class="filter-option" data-filter="price-high"
             style="width: 100%; text-align: right; padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; border-bottom: 1px solid #f3f4f6;">
             <i class="fa fa-arrow-down" style="margin-left: 0.5rem; color: #ef4444;"></i>
-            الأعلى سعراً
+            ?????? ?????
           </button>
           <button class="filter-option" data-filter="discount"
             style="width: 100%; text-align: right; padding: 0.75rem 1rem; border: none; background: none; cursor: pointer;">
             <i class="fa fa-percent" style="margin-left: 0.5rem; color: #f59e0b;"></i>
-            الأكثر خصماً
+            ?????? ?????
           </button>
         </div>
       </div>
@@ -81,18 +81,18 @@
     <div id="productsGrid" class="grid">
       <div style="text-align: center; padding: 3rem; color: #9ca3af;">
         <i class="fa fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-        <p>جاري تحميل المنتجات...</p>
+        <p>???? ????? ????????...</p>
       </div>
     </div>
 
     <!-- Empty State -->
     <div id="emptyState" style="display: none; text-align: center; padding: 4rem 2rem; color: #9ca3af;">
       <i class="fa fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-      <h3 style="margin-bottom: 0.5rem;">لا توجد منتجات في هذا القسم</h3>
-      <p style="margin-bottom: 2rem;">سيتم إضافة منتجات جديدة قريباً</p>
+      <h3 style="margin-bottom: 0.5rem;">?? ???? ?????? ?? ??? ?????</h3>
+      <p style="margin-bottom: 2rem;">???? ????? ?????? ????? ??????</p>
       <a href="/shop/categories.html"
         style="background: #6366f1; color: white; padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none;">
-        تصفح أقسام أخرى
+        ???? ????? ????
       </a>
     </div>
   </main>
@@ -113,7 +113,7 @@
     const categoryName = urlParams.get('name');
 
     if (!categoryId) {
-      document.getElementById('productsGrid').innerHTML = '<p class="muted">معرف القسم غير محدد.</p>';
+      document.getElementById('productsGrid').innerHTML = '<p class="muted">???? ????? ??? ????.</p>';
     } else {
       loadCategoryProducts(categoryId, categoryName);
     }
@@ -206,7 +206,7 @@
         if (categoryData.data) {
           const category = categoryData.data.find(c => c.id == categoryId);
           if (category) {
-            document.getElementById('categoryName').textContent = category.name || 'قسم';
+            document.getElementById('categoryName').textContent = category.name || '???';
             document.title = `${category.name} - Store`;
           }
         }
@@ -228,8 +228,8 @@
         }
 
       } catch (error) {
-        console.error('خطأ في تحميل منتجات القسم:', error);
-        document.getElementById('productsGrid').innerHTML = '<p class="muted">حدث خطأ في تحميل المنتجات.</p>';
+        console.error('??? ?? ????? ?????? ?????:', error);
+        document.getElementById('productsGrid').innerHTML = '<p class="muted">??? ??? ?? ????? ????????.</p>';
       }
     }
   </script>

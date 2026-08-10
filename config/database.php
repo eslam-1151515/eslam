@@ -58,7 +58,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'timezone' => '+02:00', // توقيت القاهرة
+            'timezone' => env('DB_TIMEZONE', '+03:00'), // توقيت القاهرة (مصر UTC+3)
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

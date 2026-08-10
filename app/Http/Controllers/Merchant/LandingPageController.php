@@ -100,6 +100,13 @@ class LandingPageController extends Controller
         $validated['color_theme'] = $request->input('color_theme', 'light');
         $validated['is_active'] = $request->has('is_active') ? (bool) $request->input('is_active') : true;
 
+        if (!empty($validated['facebook_pixel_id'])) {
+            $validated['facebook_pixel_id'] = $this->cleanPixelInput($validated['facebook_pixel_id'], 'fb');
+        }
+        if (!empty($validated['tiktok_pixel_id'])) {
+            $validated['tiktok_pixel_id'] = $this->cleanPixelInput($validated['tiktok_pixel_id'], 'tt');
+        }
+
         LandingPage::create($validated);
 
         return redirect()->route('merchant.landing-pages.index')->with('success', 'تم إنشاء صفحة الهبوط بنجاح ✓');
@@ -154,9 +161,39 @@ class LandingPageController extends Controller
             $validated['content'] = $validated['sections'];
         }
 
+        if (array_key_exists('facebook_pixel_id', $validated)) {
+            $validated['facebook_pixel_id'] = $this->cleanPixelInput($validated['facebook_pixel_id'], 'fb');
+        }
+        if (array_key_exists('tiktok_pixel_id', $validated)) {
+            $validated['tiktok_pixel_id'] = $this->cleanPixelInput($validated['tiktok_pixel_id'], 'tt');
+        }
+
         $landingPage->update($validated);
 
         return redirect()->route('merchant.landing-pages.index')->with('success', 'تم تحديث صفحة الهبوط بنجاح ✓');
+    }
+
+    private function cleanPixelInput($val, $type = 'fb')
+    {
+        if (!$val) return null;
+        if ($type === 'fb') {
+            if (str_contains($val, 'fbq') || str_contains($val, 'script') || str_contains($val, 'facebook.com')) {
+                preg_match_all('/fbq\s*\(\s*[\'"]init[\'"]\s*,\s*[\'"]?(\d+)[\'"]?|[?&]id=(\d+)|\b(\d{13,17})\b/i', $val, $matches);
+                $extracted = array_filter(array_merge($matches[1], $matches[2], $matches[3]));
+                if (!empty($extracted)) {
+                    return implode("\n", array_unique($extracted));
+                }
+            }
+        } elseif ($type === 'tt') {
+            if (str_contains($val, 'ttq') || str_contains($val, 'script') || str_contains($val, 'analytics.tiktok.com')) {
+                preg_match_all('/ttq\.load\s*\(\s*[\'"]([a-zA-Z0-9_-]+)[\'"]\s*\)|[?&]sdkid=([a-zA-Z0-9_-]+)/i', $val, $matches);
+                $extracted = array_filter(array_merge($matches[1], $matches[2]));
+                if (!empty($extracted)) {
+                    return implode("\n", array_unique($extracted));
+                }
+            }
+        }
+        return $val;
     }
 
     /**

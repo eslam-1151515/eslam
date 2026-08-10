@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SubscriptionReceipt extends Model
 {
     protected $fillable = [
+        'reference_code',
         'tenant_id',
         'plan_id',
         'type',
@@ -20,6 +21,27 @@ class SubscriptionReceipt extends Model
         'approved_by',
         'rejection_reason',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($receipt) {
+            if (empty($receipt->reference_code)) {
+                $receipt->reference_code = self::generateUniqueNumericReference();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique 6-digit numeric reference code
+     */
+    public static function generateUniqueNumericReference(): string
+    {
+        do {
+            $code = (string) rand(100000, 999999);
+        } while (self::where('reference_code', $code)->exists());
+
+        return $code;
+    }
 
     protected $casts = [
         'approved_at' => 'datetime',

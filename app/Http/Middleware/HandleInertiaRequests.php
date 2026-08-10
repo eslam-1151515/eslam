@@ -51,6 +51,32 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
+        $tenantSlug = $tenant?->slug;
+        if (!$tenantSlug && $user && !$user->isSuperAdmin()) {
+            try {
+                $tenantSlug = $user->ownedTenants()->first()?->slug;
+            } catch (\Exception $e) {}
+        }
+
+        $host = $request->getHost();
+        $scheme = $request->getScheme();
+        $port = $request->getPort();
+        $portSuffix = ($port && !in_array($port, [80, 443])) ? ":{$port}" : '';
+
+        $cleanHost = str_starts_with($host, 'app.') ? substr($host, 4) : $host;
+        $parts = explode('.', $cleanHost);
+        if (count($parts) >= 2) {
+            array_shift($parts);
+            $baseDomain = implode('.', $parts);
+        } else {
+            $baseDomain = $cleanHost;
+        }
+        if (empty($baseDomain) || $baseDomain === 'localhost' || $baseDomain === '127.0.0.1') {
+            $baseDomain = 'fastorder.localhost';
+        }
+
+        $storefrontUrl = $tenantSlug ? "{$scheme}://{$tenantSlug}.{$baseDomain}{$portSuffix}/shop/index.html" : '#';
+
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $user ? [
@@ -62,7 +88,9 @@ class HandleInertiaRequests extends Middleware
                     'avatar'    => $user->avatar,
                 ] : null,
             ],
-            'storeName' => $storeName,
+            'storeName'     => $storeName,
+            'tenantSlug'    => $tenantSlug,
+            'storefrontUrl' => $storefrontUrl,
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error'   => $request->session()->get('error'),

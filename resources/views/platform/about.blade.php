@@ -151,7 +151,7 @@
 <section class="py-16 text-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <h2 class="text-3xl font-black text-white mb-6">انضم إلينا وابدأ قصة نجاحك اليوم</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto mb-8">استمتع بـ 14 يوماً كاملة من التجربة المجانية لتتعرف على أداء المنصة الممتاز.</p>
+        <p class="text-gray-400 max-w-2xl mx-auto mb-8">استمتع بـ 7 أيام كاملة من التجربة المجانية لتتعرف على أداء المنصة الممتاز.</p>
         <a href="{{ route('main.home') }}#pricing" class="px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all">
             <i class="fa-solid fa-rocket ml-2"></i> ابدأ تجربتك المجانية
         </a>

@@ -2,8 +2,11 @@
 // Meta & TikTok Pixel - يتحمل تلقائياً من الـ settings
 // ======================================
 (function() {
-  function initFBPixel(pixelId) {
-    if (!pixelId) return;
+  function initFBPixel(pixelIdRaw) {
+    if (!pixelIdRaw) return;
+    var ids = String(pixelIdRaw).split(/[\r\n,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
+    if (!ids.length) return;
+
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -12,15 +15,23 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', pixelId);
+
+    ids.forEach(function(pid) {
+      fbq('init', pid);
+    });
     fbq('track', 'PageView');
   }
 
-  function initTTPixel(pixelId) {
-    if (!pixelId) return;
+  function initTTPixel(pixelIdRaw) {
+    if (!pixelIdRaw) return;
+    var ids = String(pixelIdRaw).split(/[\r\n,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
+    if (!ids.length) return;
+
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
-      ttq.load(pixelId);
+      ids.forEach(function(pid) {
+        ttq.load(pid);
+      });
       ttq.page();
     }(window, document, 'ttq');
   }
@@ -274,7 +285,7 @@ function injectStorefrontLangSwitcher() {
   btn.href = '#';
   btn.className = 'lang-nav-link';
   btn.style.cssText = `
-    display: inline-flex;
+    display: none !important;
     align-items: center;
     justify-content: center;
     gap: 6px;
@@ -584,16 +595,19 @@ function getCart(){ try{ return JSON.parse(localStorage.getItem('bird_cart')||'[
 function saveCart(items){ localStorage.setItem('bird_cart', JSON.stringify(items)); }
 function addToCart(item){
   const items = getCart();
-  const idx = items.findIndex(x=> x.id===item.id && (x.selectedSize||null)===(item.selectedSize||null) && (x.selectedColor||null)===(item.selectedColor||null));
+  const idx = items.findIndex(x=> x.id===item.id && (x.selectedSize||null)===(item.selectedSize||null) && (x.selectedColor||null)===(item.selectedColor||null) && JSON.stringify(x.options||{})===JSON.stringify(item.options||{}));
   if(idx>-1){ items[idx].qty += item.qty||1; } else { items.push(item); }
   saveCart(items);
+}
+function clearCart() {
+  saveCart([]);
 }
 function cartCount(){ return getCart().reduce((s,x)=> s+(Number(x.qty)||0), 0); }
 function updateCartCount(){
   const badge = document.getElementById('cartCount');
   if(badge){ const c = cartCount(); badge.textContent = c>0? String(c):''; badge.style.display = c>0? 'inline-flex':'none'; }
 }
-window.BirdCart = {getCart, saveCart, addToCart, cartCount, updateCartCount, formatEGP, formatPrice};
+window.BirdCart = {getCart, getItems: getCart, saveCart, addToCart, clearCart, cartCount, updateCartCount, formatEGP, formatPrice};
 
 // Global search overlay
 let SEARCH_DATA = null;

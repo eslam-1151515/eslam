@@ -26,6 +26,7 @@ class Product extends Model
         'main_image_path',
         'sizes',
         'colors',
+        'custom_variants',
         'variants_stock',
     ];
 
@@ -36,6 +37,7 @@ class Product extends Model
         'price_tiers' => 'array',
         'sizes' => 'array',
         'colors' => 'array',
+        'custom_variants' => 'array',
         'variants_stock' => 'array',
     ];
 
@@ -105,6 +107,19 @@ class Product extends Model
 
     protected static function booted()
     {
+        static::saving(function ($product) {
+            if (!empty($product->variants_stock)) {
+                $variants = is_array($product->variants_stock)
+                    ? $product->variants_stock
+                    : (is_string($product->variants_stock) ? json_decode($product->variants_stock, true) : []);
+                if (is_array($variants) && count($variants) > 0) {
+                    $product->stock = array_reduce($variants, function ($sum, $v) {
+                        return $sum + (int) ($v['qty'] ?? 0);
+                    }, 0);
+                }
+            }
+        });
+
         static::saved(function ($product) {
             if ($product->tenant_id) {
                 \App\Services\CacheService::invalidateDashboardStats($product->tenant_id);
@@ -126,5 +141,47 @@ class Product extends Model
             ->wherePivot('type', 'cross-sell')
             ->withPivot('type')
             ->withTimestamps();
+    }
+
+    /**
+     * تقليل كمية variant محدد من variants_stock + تقليل stock الإجمالي
+     */
+    public function decrementVariantStock(int $qty, ?string $size = null, ?string $color = null, array $options = []): void
+    {
+        // 1) خصم من الإجمالي
+        $this->decrement('stock', $qty);
+
+        // 2) خصم من variants_stock إن وُجد
+        $variantsStock = $this->variants_stock;
+        if (!is_array($variantsStock) || empty($variantsStock)) {
+            return;
+        }
+
+        $hasSize  = !empty($size);
+        $hasColor = !empty($color);
+        $hasOpts  = !empty($options);
+
+        if (!$hasSize && !$hasColor && !$hasOpts) {
+            return;
+        }
+
+        foreach ($variantsStock as &$row) {
+            $matchSize  = !$hasSize  || (($row['size']  ?? null) === $size);
+            $matchColor = !$hasColor || (($row['color'] ?? null) === $color);
+            $matchOpts  = true;
+            if ($hasOpts) {
+                $rowOpts = $row['options'] ?? [];
+                foreach ($options as $k => $v) {
+                    if (($rowOpts[$k] ?? null) !== $v) { $matchOpts = false; break; }
+                }
+            }
+            if ($matchSize && $matchColor && $matchOpts) {
+                $row['qty'] = max(0, (int)($row['qty'] ?? 0) - $qty);
+                break;
+            }
+        }
+        unset($row);
+        $this->variants_stock = $variantsStock;
+        $this->save();
     }
 }

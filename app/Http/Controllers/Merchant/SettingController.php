@@ -70,6 +70,29 @@ class SettingController extends Controller
                 if (is_bool($val)) {
                     $val = $val ? '1' : '0';
                 }
+
+                // Smart Extraction for FB Pixel if full JS snippet pasted
+                if ($key === 'facebook_pixel_id' && $val) {
+                    if (str_contains($val, 'fbq') || str_contains($val, 'script') || str_contains($val, 'facebook.com')) {
+                        preg_match_all('/fbq\s*\(\s*[\'"]init[\'"]\s*,\s*[\'"]?(\d+)[\'"]?|[?&]id=(\d+)|\b(\d{13,17})\b/i', $val, $matches);
+                        $extracted = array_filter(array_merge($matches[1], $matches[2], $matches[3]));
+                        if (!empty($extracted)) {
+                            $val = implode("\n", array_unique($extracted));
+                        }
+                    }
+                }
+
+                // Smart Extraction for TikTok Pixel if full JS snippet pasted
+                if ($key === 'tiktok_pixel_id' && $val) {
+                    if (str_contains($val, 'ttq') || str_contains($val, 'script') || str_contains($val, 'analytics.tiktok.com')) {
+                        preg_match_all('/ttq\.load\s*\(\s*[\'"]([a-zA-Z0-9_-]+)[\'"]\s*\)|[?&]sdkid=([a-zA-Z0-9_-]+)/i', $val, $matches);
+                        $extracted = array_filter(array_merge($matches[1], $matches[2]));
+                        if (!empty($extracted)) {
+                            $val = implode("\n", array_unique($extracted));
+                        }
+                    }
+                }
+
                 Setting::set($key, $val ?? '');
             }
         }

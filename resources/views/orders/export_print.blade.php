@@ -106,10 +106,14 @@
                         @endphp
                         @if(is_array($items))
                             @foreach($items as $item)
-                                <div>
                                     - {{ $item['name'] ?? 'منتج' }} x{{ $item['quantity'] ?? 1 }}
                                     @if(isset($item['selectedSize'])) | مقاس: {{ $item['selectedSize'] }} @endif
                                     @if(isset($item['selectedColor'])) | لون: {{ $item['selectedColor'] }} @endif
+                                    @if(isset($item['options']) && is_array($item['options']))
+                                        @foreach($item['options'] as $optK => $optV)
+                                            @if($optV) | {{ $optK }}: {{ $optV }} @endif
+                                        @endforeach
+                                    @endif
                                 </div>
                             @endforeach
                         @endif

@@ -150,7 +150,7 @@
     <section class="relative pt-16 pb-12 text-center px-4 sm:px-6 lg:px-8 z-10">
         <div class="max-w-3xl mx-auto">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-bold mb-6 animate-float">
-                <i class="fa-solid fa-sparkles"></i> 0% عمولة على مبيعاتك + تجربة مجانية 14 يوماً
+                <i class="fa-solid fa-sparkles"></i> 0% عمولة على مبيعاتك + تجربة مجانية 7 أيام
             </div>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
                 باقات وأسعار مصممة <br class="hidden sm:block"> <span class="gradient-text">لنمو متجرك الإلكتروني بسرعة</span>
@@ -193,7 +193,7 @@
                     $description = $plan['description'] ?? '';
                     $priceMonthly = $plan['price_monthly'] ?? 0;
                     $priceYearly = $plan['price_yearly'] ?? 0;
-                    $trialDays = $plan['trial_days'] ?? 14;
+                    $trialDays = $plan['trial_days'] ?? 7;
                     $limits = $plan['limits'] ?? [];
                     $features = $limits['features'] ?? [];
                     $maxProducts = $limits['max_products'] ?? null;
@@ -436,7 +436,7 @@
                 جاهز لإطلاق متجرك الإلكتروني ومضاعفة مبيعاتك؟ 🚀
             </h2>
             <p class="text-indigo-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto mb-8 relative z-10">
-                انضم لآلاف المتاجر الناجحة على فاست أوردر. ابدأ تجربتك المجانية لمدة 14 يوماً الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
+                انضم لآلاف المتاجر الناجحة على فاست أوردر. ابدأ تجربتك المجانية لمدة 7 أيام الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
             </p>
             <div class="flex flex-wrap items-center justify-center gap-4 relative z-10">
                 @if (Route::has('register'))

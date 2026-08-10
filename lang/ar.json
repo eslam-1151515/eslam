@@ -1,2 +1,8 @@
 {
+  "These credentials do not match our records.": "بيانات الدخول غير صحيحة، يرجى التأكد من البريد الإلكتروني وكلمة المرور.",
+  "We have emailed your password reset link.": "تم إرسال رابط إعادة تعيين كلمة السر إلى بريدك الإلكتروني بنجاح",
+  "Please wait before retrying.": "برجاء الانتظار قليلاً قبل إعادة المحاولة.",
+  "This password reset token is invalid.": "رمز إعادة تعيين كلمة السر غير صالح أو انتهت صلاحيته.",
+  "We can't find a user with that email address.": "لم نتمكن من العثور على حساب مرتبط بهذا البريد الإلكتروني.",
+  "Your password has been reset.": "تمت إعادة تعيين كلمة السر الخاصة بك بنجاح!"
 }

@@ -42,8 +42,28 @@ class TenantMiddleware
             // Forget the tenant parameter so it is not passed to the controller methods
             $request->route()->forgetParameter('tenant');
         } else {
-            // Check by custom domain if tenant slug is not in the URL (e.g. custom domain matching)
-            $tenant = Tenant::where('custom_domain', $request->getHost())->first();
+            // Check if subdomain tenant is bound
+            $subdomain = explode('.', $request->getHost())[0] ?? null;
+            if ($subdomain && !in_array(strtolower($subdomain), ['app', 'www', 'admin'])) {
+                $tenant = Tenant::where('slug', $subdomain)->first();
+            }
+
+            if (!$tenant && auth()->check() && !auth()->user()->isSuperAdmin()) {
+                $user = auth()->user();
+                $tenant = $user->ownedTenants()->first() ?? $user->currentTenant;
+            }
+
+            if (!$tenant && session()->has('impersonated_tenant_id')) {
+                $tenant = Tenant::find(session('impersonated_tenant_id'));
+            }
+
+            if (!$tenant && app()->bound(Tenant::class)) {
+                $tenant = app(Tenant::class);
+            }
+
+            if (!$tenant) {
+                $tenant = Tenant::where('custom_domain', $request->getHost())->first();
+            }
 
             if ($tenant) {
                 if ($request->hasSession()) {

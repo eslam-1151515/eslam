@@ -80,12 +80,20 @@ class ProductController extends Controller
             'shipping_type'       => $validated['shipping_type'],
         ];
 
-        // حفظ المقاسات والألوان
+        // حفظ المقاسات والألوان والمتغيرات المخصصة
         if ($request->has('sizes') && is_array($request->sizes)) {
             $data['sizes'] = array_values(array_filter($request->sizes));
         }
         if ($request->has('colors') && is_array($request->colors)) {
             $data['colors'] = array_values(array_filter($request->colors));
+        }
+        if ($request->has('custom_variants')) {
+            $cv = $request->custom_variants;
+            $cvArr = is_string($cv) ? json_decode($cv, true) : $cv;
+            if (is_array($cvArr)) {
+                $filtered = array_values(array_filter($cvArr, fn($item) => !empty($item['name']) && !empty($item['values']) && count($item['values']) > 0));
+                $data['custom_variants'] = count($filtered) > 0 ? $filtered : null;
+            }
         }
 
         // حفظ شرائح الأسعار
@@ -177,7 +185,7 @@ class ProductController extends Controller
             'shipping_type'       => $validated['shipping_type'],
         ];
 
-        // تحديث المقاسات والألوان
+        // تحديث المقاسات والألوان والمتغيرات المخصصة
         if ($request->has('sizes') && is_array($request->sizes)) {
             $data['sizes'] = array_values(array_filter($request->sizes));
         } else {
@@ -187,6 +195,18 @@ class ProductController extends Controller
             $data['colors'] = array_values(array_filter($request->colors));
         } else {
             $data['colors'] = null;
+        }
+        if ($request->has('custom_variants')) {
+            $cv = $request->custom_variants;
+            $cvArr = is_string($cv) ? json_decode($cv, true) : $cv;
+            if (is_array($cvArr)) {
+                $filtered = array_values(array_filter($cvArr, fn($item) => !empty($item['name']) && !empty($item['values']) && count($item['values']) > 0));
+                $data['custom_variants'] = count($filtered) > 0 ? $filtered : null;
+            } else {
+                $data['custom_variants'] = null;
+            }
+        } else {
+            $data['custom_variants'] = null;
         }
 
         // تحديث شرائح الأسعار

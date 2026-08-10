@@ -8,6 +8,7 @@ use App\Models\ShippingGovernorate;
 use App\Http\Requests\StoreCheckoutOrderRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
@@ -100,17 +101,47 @@ class CheckoutController extends Controller
                 $itemTotal  = (float) $item['price'] * (int) $item['qty'];
                 $subtotal  += $itemTotal;
 
+                $options = $item['options'] ?? null;
+                $pieces  = $item['piecesSelections'] ?? null;
+
+                // إذا كانت خيارات قطع متعددة موجودة بدون تجميع الـ options
+                if (is_array($pieces) && count($pieces) > 1) {
+                    $optKeys = [];
+                    foreach ($pieces as $p) {
+                        if (!empty($p['options']) && is_array($p['options'])) {
+                            foreach (array_keys($p['options']) as $k) {
+                                $optKeys[$k] = true;
+                            }
+                        }
+                    }
+                    if (!empty($optKeys)) {
+                        $options = is_array($options) ? $options : [];
+                        foreach (array_keys($optKeys) as $k) {
+                            if (empty($options[$k]) || !str_contains((string)$options[$k], ' | ')) {
+                                $combinedOpts = [];
+                                foreach ($pieces as $idx => $p) {
+                                    $val = $p['options'][$k] ?? '-';
+                                    $combinedOpts[] = 'ق' . ($idx + 1) . ': ' . $val;
+                                }
+                                $options[$k] = implode(' | ', $combinedOpts);
+                            }
+                        }
+                    }
+                }
+
                 $orderItems[] = [
-                    'id'           => $item['id'],
-                    'name'         => $item['name'],
-                    'price'        => (float) $item['price'],
-                    'quantity'     => (int) $item['qty'],
-                    'total'        => $itemTotal,
-                    'image'        => $product?->main_image_path
-                                        ? asset('storage/' . $product->main_image_path)
-                                        : ($product?->image_url ?? null),
-                    'selectedSize'  => $item['selectedSize']  ?? null,
-                    'selectedColor' => $item['selectedColor'] ?? null,
+                    'id'               => $item['id'],
+                    'name'             => $item['name'],
+                    'price'            => (float) $item['price'],
+                    'quantity'         => (int) $item['qty'],
+                    'total'            => $itemTotal,
+                    'image'            => $product?->main_image_path
+                                            ? asset('storage/' . $product->main_image_path)
+                                            : ($product?->image_url ?? null),
+                    'selectedSize'     => $item['selectedSize']  ?? null,
+                    'selectedColor'    => $item['selectedColor'] ?? null,
+                    'options'          => $options,
+                    'piecesSelections' => $pieces,
                 ];
             }
 
@@ -180,15 +211,47 @@ class CheckoutController extends Controller
             foreach ($validated['items'] as $item) {
                 $prod = Product::find($item['id']);
                 if ($prod) {
-                    $prod->decrement('stock', $item['qty']);
-                    
+                    $pieces = OrderController::parsePieceSelections($item);
+                    $deductedQty = 0;
+
+                    if (!empty($pieces)) {
+                        $itemQty = (int) ($item['qty'] ?? 1);
+                        foreach ($pieces as $piece) {
+                            $pSize  = $piece['size'] ?? null;
+                            $pColor = $piece['color'] ?? null;
+                            $pOpts  = is_array($piece['options'] ?? null) ? $piece['options'] : [];
+                            $prod->decrementVariantStock($itemQty, $pSize, $pColor, $pOpts);
+                            $deductedQty += $itemQty;
+                        }
+                    } else {
+                        $selectedSize  = $item['selectedSize']  ?? null;
+                        $selectedColor = $item['selectedColor'] ?? null;
+                        $options       = is_array($item['options'] ?? null) ? $item['options'] : [];
+                        $itemQty       = (int) ($item['qty'] ?? 1);
+
+                        $prod->decrementVariantStock($itemQty, $selectedSize, $selectedColor, $options);
+                        $deductedQty   = $itemQty;
+                    }
+
                     // تسجيل حركة المخزون (صادر)
+                    $optDesc = '';
+                    if (!empty($item['options']) && is_array($item['options'])) {
+                        foreach ($item['options'] as $optK => $optV) {
+                            if ($optV) {
+                                $optDesc .= " | {$optK}: {$optV}";
+                            }
+                        }
+                    }
+
                     \App\Models\StockMovement::create([
                         'tenant_id'   => $prod->tenant_id,
                         'product_id'  => $prod->id,
-                        'quantity'    => $item['qty'],
+                        'quantity'    => $deductedQty,
                         'type'        => 'out',
-                        'description' => "مبيعات الطلب رقم #{$order->reference_number}",
+                        'description' => "مبيعات الطلب رقم #{$order->reference_number}"
+                            . (!empty($item['selectedSize'])  ? " | مقاس: {$item['selectedSize']}"  : '')
+                            . (!empty($item['selectedColor']) ? " | لون: {$item['selectedColor']}" : '')
+                            . $optDesc,
                     ]);
 
                     // إرسال تنبيه في حال انخفاض المخزون عن الحد المحدد

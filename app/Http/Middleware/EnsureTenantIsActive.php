@@ -19,46 +19,35 @@ class EnsureTenantIsActive
         if ($tenant) {
             $isSuperAdmin = \Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()?->user_type === 'super_admin';
 
-            if (!$tenant->is_active && !$isSuperAdmin) {
-                // If merchant user is logged in, invalidate session & logout immediately
-                if (\Illuminate\Support\Facades\Auth::check()) {
-                    \Illuminate\Support\Facades\Auth::guard('web')->logout();
-                    if ($request->hasSession()) {
-                        $request->session()->invalidate();
-                        $request->session()->regenerateToken();
-                    }
+            // Check if active subscription has expired
+            $activeSub = $tenant->subscriptions()->where('status', 'active')->latest()->first();
+            $isCommission = $activeSub && ($activeSub->plan?->slug === 'commission' || str_contains($activeSub->plan?->name ?? '', 'عمولة'));
 
-                    if ($request->expectsJson()) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'تم إيقاف المتجر مؤقتاً. تم تسجيل الخروج.',
-                        ], 403);
-                    }
+            if (!$isCommission) {
+                $subExpired = $tenant->subscription_ends_at && $tenant->subscription_ends_at->isPast();
+                $trialExpired = $tenant->trial_ends_at && $tenant->trial_ends_at->isPast() && !$tenant->subscription_ends_at;
 
-                    return redirect()->route('merchant.login', ['tenant' => $tenant->slug])
-                        ->with('error', 'تم إيقاف هذا المتجر مؤقتاً بواسطة إدارة المنصة.');
+                if ($subExpired || $trialExpired) {
+                    if ($tenant->subscription_status !== 'expired') {
+                        $tenant->update([
+                            'subscription_status' => 'expired',
+                        ]);
+                    }
                 }
-
-                abort(403, 'This store is inactive. Please contact support.');
             }
 
-            $hasTrial = !is_null($tenant->trial_ends_at);
-            $hasSubscription = !is_null($tenant->subscription_ends_at);
-
-            if ($hasTrial || $hasSubscription) {
-                $hasActiveTrial = $hasTrial && $tenant->trial_ends_at->isFuture();
-                $hasActiveSubscription = $hasSubscription && $tenant->subscription_ends_at->isFuture();
-
-                if (!$hasActiveTrial && !$hasActiveSubscription && !$isSuperAdmin) {
-                    if (\Illuminate\Support\Facades\Auth::check()) {
-                        \Illuminate\Support\Facades\Auth::guard('web')->logout();
-                        if ($request->hasSession()) {
-                            $request->session()->invalidate();
-                            $request->session()->regenerateToken();
-                        }
-                    }
-                    abort(403, 'The subscription or trial period for this store has expired. Please renew or upgrade.');
+            // Only block public storefront if the store was manually suspended by SuperAdmin (is_active === false & subscription_status !== 'expired')
+            if (!$tenant->is_active && $tenant->subscription_status !== 'expired') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'عذراً، هذا المتجر موقوف مؤقتاً بواسطة الإدارة.',
+                    ], 403);
                 }
+
+                return response()->view('errors.tenant_suspended', [
+                    'tenant' => $tenant,
+                ], 403);
             }
         }
 

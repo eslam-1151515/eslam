@@ -978,34 +978,302 @@
   </script>
 
   <script>
-    // Load settings dynamically (logo, phone, whatsapp)
-    (function () {
-      var API = window.API_BASE || '/public-api';
-      fetch(API + '/settings').then(function (r) { return r.json(); }).then(function (res) {
-        var data = res.data;
-        if (!data) return;
-        if (data.logo_url) {
-          var logos = document.querySelectorAll('img.site-logo, .brand img:first-child, .brand img');
-          logos.forEach(function (el) { el.src = data.logo_url; });
+    document.getElementById('footYear').textContent = new Date().getFullYear();
+
+    var currentShipping = 0;
+    var governorates   = [];
+
+    /* ---- Format ---- */
+    function fmt(n) {
+      return new Intl.NumberFormat('en-EG', { maximumFractionDigits: 0 }).format(Math.round(Number(n || 0))) + ' EGP';
+    }
+
+    /* ---- Load governorates ---- */
+    fetch('/public-api/shipping-governorates')
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        governorates = (res.data || []).filter(function(g){ return g.is_active; });
+        var sel = document.getElementById('governorateSelect');
+        sel.innerHTML = '<option value="">اختر المحافظة</option>';
+        governorates.sort(function(a,b){ return a.name.localeCompare(b.name,'ar'); })
+          .forEach(function(g){
+            var opt = document.createElement('option');
+            opt.value = g.id;
+            opt.textContent = g.name;
+            opt.dataset.price = g.price;
+            sel.appendChild(opt);
+          });
+        renderSummary();
+      })
+      .catch(function(){ });
+
+    /* ---- Render order items ---- */
+    function renderSummary() {
+      var cart = BirdCart.getCart();
+      var box  = document.getElementById('orderItems');
+
+      if (!cart.length) {
+        box.innerHTML = '<p style="color:#6b7280;text-align:center;padding:16px;">السلة فارغة</p>';
+        return;
+      }
+
+      var subtotal = 0;
+      box.innerHTML = cart.map(function(it) {
+        var line = (it.price || 0) * (it.qty || 1);
+        subtotal += line;
+
+        var sizeTag  = it.selectedSize  ? '<span style="font-size:.75rem;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;margin-right:4px;">المقاس: '+it.selectedSize+'</span>' : '';
+        var colorTag = it.selectedColor ? '<span style="font-size:.75rem;background:#fce7f3;color:#be185d;padding:2px 6px;border-radius:4px;margin-right:4px;">اللون: '+it.selectedColor+'</span>' : '';
+
+        return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:600;color:#111827;margin-bottom:3px;">' + (it.name||'منتج') + '</div>' +
+            (sizeTag||colorTag ? '<div style="margin-bottom:4px;">' + sizeTag + colorTag + '</div>' : '') +
+            '<div style="font-size:14px;color:#6b7280;">الكمية: ' + (it.qty||1) + ' × ' + fmt(it.price) + '</div>' +
+          '</div>' +
+          '<div style="font-weight:700;color:#4f46e5;margin-right:8px;">' + fmt(line) + '</div>' +
+        '</div>';
+      }).join('');
+
+      document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+      updateTotal(subtotal);
+    }
+
+    /* ---- Update shipping ---- */
+    function updateShipping() {
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      currentShipping = opt && opt.dataset.price ? parseInt(opt.dataset.price) : 0;
+      var shEl = document.getElementById('sumShipping');
+      shEl.textContent = currentShipping > 0 ? fmt(currentShipping) : '—';
+      shEl.style.color  = currentShipping > 0 ? '#4f46e5' : '#9ca3af';
+
+      var cart     = BirdCart.getCart();
+      var subtotal = cart.reduce(function(s,it){ return s + (it.price||0)*(it.qty||1); }, 0);
+      updateTotal(subtotal);
+    }
+
+    function updateTotal(subtotal) {
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
+
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
+        } else {
+          discount = couponValue;
         }
-        if (data.store_name) {
-          var names = document.querySelectorAll('.site-name, .brand span:first-of-type');
-          names.forEach(function (el) { el.textContent = data.store_name; });
+        discount = Math.min(discount, subtotal);
+      }
+
+      var row = document.getElementById('couponRow');
+      var discEl = document.getElementById('sumDiscount');
+      if (discount > 0 && couponCode) {
+        row.style.display = 'flex';
+        discEl.textContent = '−' + fmt(discount);
+      } else {
+        row.style.display = 'none';
+      }
+
+      var finalTotal = Math.max(0, subtotal - discount + currentShipping);
+      document.getElementById('sumTotal').textContent = fmt(finalTotal);
+    }
+
+    /* ---- Phone Input Realtime Formatting & Validation ---- */
+    var pInput = document.getElementById('phoneInput');
+    var pErr = document.getElementById('phoneErrorMsg');
+    var phoneRegex = /^01[0125][0-9]{8}$/;
+
+    if (pInput) {
+      pInput.addEventListener('input', function() {
+        // Strip non-digits completely
+        var val = this.value.replace(/\D/g, '');
+        
+        // Force starting with 01 if user types other numbers
+        if (val.length >= 1 && val[0] !== '0') {
+          val = '0' + val;
         }
-        if (data.phone) {
-          var callBtns = document.querySelectorAll('a.call-now, a[href^="tel:"]');
-          callBtns.forEach(function (el) { el.href = 'tel:' + data.phone; });
+        if (val.length >= 2 && val[1] !== '1') {
+          val = '01' + val.slice(2);
         }
-        if (data.whatsapp) {
-          var waBtns = document.querySelectorAll('a.wapp-float, a[href*="wa.me"]');
-          waBtns.forEach(function (el) { el.href = 'https://wa.me/' + data.whatsapp; });
+        
+        // Enforce 11 digits max
+        this.value = val.slice(0, 11);
+
+        if (this.value.length === 11) {
+          if (phoneRegex.test(this.value)) {
+            this.style.borderColor = '#10b981';
+            this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+            if (pErr) pErr.style.display = 'none';
+          } else {
+            this.style.borderColor = '#ef4444';
+            this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (pErr) pErr.style.display = 'block';
+          }
+        } else {
+          this.style.borderColor = '#e5e7eb';
+          this.style.boxShadow = 'none';
+          if (pErr) pErr.style.display = 'none';
         }
-        if (data.facebook_page) {
-          var fbBtns = document.querySelectorAll('a[href*="facebook.com"]');
-          fbBtns.forEach(function (el) { el.href = data.facebook_page; });
+      });
+
+      pInput.addEventListener('blur', function() {
+        if (this.value && (!phoneRegex.test(this.value) || this.value.length !== 11)) {
+          this.style.borderColor = '#ef4444';
+          this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          if (pErr) pErr.style.display = 'block';
         }
-      }).catch(function () { });
+      });
+
+      pInput.addEventListener('paste', function(e) {
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        var clean = pasted.replace(/\D/g, '');
+        if (clean.length > 0 && !clean.startsWith('01')) {
+          if (clean.startsWith('1')) clean = '0' + clean;
+          else clean = '01' + clean;
+        }
+        this.value = clean.slice(0, 11);
+        e.preventDefault();
+
+        if (this.value.length === 11 && phoneRegex.test(this.value)) {
+          this.style.borderColor = '#10b981';
+          this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+          if (pErr) pErr.style.display = 'none';
+        }
+      });
+    }
+
+    /* ---- Form submit ---- */
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      var form = e.target;
+      var fd   = new FormData(form);
+      var name = fd.get('name');
+      var phone = (fd.get('phone') || '').replace(/[\s\+\-]/g, '');
+      if (phone.startsWith('201')) phone = '0' + phone.substring(2);
+      else if (phone.startsWith('00201')) phone = '0' + phone.substring(4);
+      var addr = fd.get('address');
+
+      if (!name || !phone || !addr) { alert('يرجى ملء جميع البيانات المطلوبة'); return; }
+
+      // Enforce strictly 11 digits starting with 010, 011, 012, 015
+      if (!phone || !phoneRegex.test(phone)) {
+        if (pInput) {
+          pInput.style.borderColor = '#ef4444';
+          pInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          pInput.focus();
+        }
+        if (pErr) pErr.style.display = 'block';
+        return;
+      }
+
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      if (!opt || !opt.value) { alert('يرجى اختيار المحافظة'); return; }
+
+      var cart = BirdCart.getCart();
+      if (!cart.length) { alert('السلة فارغة'); return; }
+
+      var btn = document.getElementById('submitBtn');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-left:8px;"></i>جاري المعالجة...';
+      btn.disabled = true;
+
+      var subtotal = cart.reduce(function(s,it){ return s+(it.price||0)*(it.qty||1); },0);
+      
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
+
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
+        } else {
+          discount = couponValue;
+        }
+        discount = Math.min(discount, subtotal);
+      }
+
+      var total = Math.max(0, subtotal - discount + currentShipping);
+
+      try {
+        var res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' 
+          },
+          body: JSON.stringify({
+            customer_name:    name,
+            customer_phone:   phone,
+            customer_address: addr,
+            governorate_id:   opt.value,
+            payment_method:   'cod',
+            coupon_code:      couponCode || null,
+            items:            cart,
+            notes:            fd.get('notes') || null
+          })
+        });
+
+        var result = await res.json();
+
+        if (result.success) {
+          sessionStorage.setItem('orderSuccess', JSON.stringify({
+            reference_number: result.data.reference_number,
+            customer_name:  name,
+            customer_phone: phone,
+            governorate:    opt.textContent,
+            subtotal:       subtotal,
+            shipping_cost:  currentShipping,
+            discount:       discount,
+            coupon_code:    couponCode,
+            total:          result.data.total || total,
+            items:          cart
+          }));
+          localStorage.removeItem('bird_cart');
+          localStorage.removeItem('fastorder_coupon_code');
+          localStorage.removeItem('fastorder_coupon_type');
+          localStorage.removeItem('fastorder_coupon_value');
+          localStorage.removeItem('fastorder_coupon_discount');
+          window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
+        } else {
+          var errorDetails = '';
+          if (result.errors) {
+             for (var key in result.errors) {
+                errorDetails += '\n- ' + result.errors[key].join(', ');
+             }
+          }
+          alert((result.message || 'حدث خطأ أثناء إتمام الطلب') + errorDetails);
+          btn.innerHTML = orig;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً');
+        btn.innerHTML = orig;
+        btn.disabled = false;
+      }
+    });
+
+    /* ---- Settings dynamic loader ---- */
+    (function(){
+      fetch('/public-api/settings').then(function(r){return r.json();}).then(function(res){
+        var d = res.data; if(!d) return;
+        if(d.logo_url) document.querySelectorAll('.brand img').forEach(function(el){el.src=d.logo_url;});
+        if(d.store_name) document.querySelectorAll('.brand span').forEach(function(el){el.textContent=d.store_name;});
+        if(d.whatsapp) document.querySelectorAll('a.wapp-float').forEach(function(el){el.href='https://wa.me/'+d.whatsapp;});
+        if(d.phone) document.querySelectorAll('a[href^="tel:"]').forEach(function(el){el.href='tel:'+d.phone;});
+      }).catch(function(){});
     })();
+
+    /* ---- Init ---- */
+    window.updateShipping = updateShipping;
+    BirdCart.updateCartCount();
+    renderSummary();
   </script>
 </body>
 

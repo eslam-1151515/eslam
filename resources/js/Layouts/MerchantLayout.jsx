@@ -69,6 +69,17 @@ const navLinks = [
         ),
     },
     {
+        href: '/admin/wallet',
+        label: 'المحفظة',
+        pathMatch: '/admin/wallet',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+        ),
+    },
+    {
         href: '/admin/support',
         label: 'الدعم الفني',
         pathMatch: '/admin/support',
@@ -118,13 +129,13 @@ const advancedLinks = [
         ),
     },
     {
-        href: '/admin/profile',
-        label: 'الملف الشخصي',
-        pathMatch: '/admin/profile',
+        href: '/admin/domain',
+        label: 'تغيير رابط المتجر',
+        pathMatch: '/admin/domain',
         icon: (
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
         ),
     },
@@ -233,10 +244,11 @@ function isAdvancedActive() {
 }
 
 export default function MerchantLayout({ children, title }) {
-    const { auth, storeName } = usePage().props;
+    const { auth, storeName, storefrontUrl } = usePage().props;
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [advancedOpen, setAdvancedOpen] = useState(isAdvancedActive());
+    const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
     const handleLogout = (e) => {
         e.preventDefault();
@@ -382,15 +394,17 @@ export default function MerchantLayout({ children, title }) {
         <div className="flex flex-col h-full">
             <div className={`flex items-center h-16 border-b border-indigo-800 px-4 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
                 {sidebarOpen && (
-                    <div className="flex items-center gap-2 overflow-hidden">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    <div className="flex items-center gap-2.5 overflow-hidden">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z" />
                             </svg>
                         </div>
                         <div className="overflow-hidden">
-                            <p className="text-white font-bold text-sm leading-tight truncate max-w-[130px]">{displayName}</p>
-                            <p className="text-indigo-300 text-xs">لوحة التحكم</p>
+                            <p className="text-white font-bold text-sm leading-tight truncate max-w-[130px]" title={displayName}>
+                                {displayName}
+                            </p>
+                            <p className="text-indigo-300 text-xs font-medium">لوحة التحكم</p>
                         </div>
                     </div>
                 )}
@@ -406,6 +420,53 @@ export default function MerchantLayout({ children, title }) {
                 )}
             </div>
 
+            {/* FULL WIDTH STOREFRONT PREVIEW BUTTON - EMERALD NEON GLASS */}
+            {storefrontUrl && storefrontUrl !== '#' && (
+                <div className={`p-3 border-b border-indigo-800/60 ${!sidebarOpen ? 'flex justify-center' : ''}`}>
+                    {sidebarOpen ? (
+                        <a
+                            href={storefrontUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-full py-2.5 px-3.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 hover:text-white border border-emerald-500/35 hover:border-emerald-400 shadow-sm flex items-center justify-between font-extrabold text-xs transition-all duration-200 group hover:shadow-emerald-500/10 backdrop-blur-xs"
+                            title="مشاهدة المتجر للعملاء 👁️"
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+                                </span>
+                                <svg className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span>زيارة المتجر المباشر</span>
+                            </div>
+                            <svg className="w-4 h-4 text-emerald-400/80 group-hover:text-emerald-200 group-hover:translate-x-[-2px] transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    ) : (
+                        <a
+                            href={storefrontUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-10 h-10 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-400/40 flex items-center justify-center transition-all hover:scale-105 shadow-sm relative"
+                            title="زيارة المتجر 👁️"
+                        >
+                            <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                            </span>
+                            <svg className="w-5 h-5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </a>
+                    )}
+                </div>
+            )}
+
             <nav className="flex-1 py-4 overflow-y-auto">
                 <ul className="space-y-1 px-2">
                     {navLinks.map((link) => (
@@ -416,35 +477,28 @@ export default function MerchantLayout({ children, title }) {
                 </ul>
             </nav>
 
-            <div className={`border-t border-indigo-800 p-3 ${!sidebarOpen ? 'flex justify-center' : ''}`}>
+            <div className={`border-t border-indigo-800/80 p-3 ${!sidebarOpen ? 'flex justify-center' : ''}`}>
                 {sidebarOpen ? (
-                    <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition-colors">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                            {initials}
-                        </div>
-                        <div className="flex-1 overflow-hidden">
-                            <p className="text-white text-sm font-semibold truncate">{userName}</p>
-                            <p className="text-indigo-300 text-xs truncate">{userEmail}</p>
-                        </div>
-                        <button
-                            onClick={handleLogout}
-                            title="تسجيل الخروج"
-                            className="flex items-center gap-1.5 text-indigo-300 hover:text-red-400 transition-colors flex-shrink-0 p-1 font-medium text-sm mr-1"
-                        >
-                            <span>تسجيل الخروج</span>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 hover:text-rose-100 border border-rose-500/20 transition-all font-semibold text-sm group"
+                    >
+                        <svg className="w-5 h-5 text-rose-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M17 16l4-4m0 0l4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>تسجيل الخروج</span>
+                    </button>
                 ) : (
                     <button
                         onClick={handleLogout}
                         title="تسجيل الخروج"
-                        className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold hover:opacity-80 transition-opacity"
+                        className="w-10 h-10 mx-auto rounded-xl bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 flex items-center justify-center transition-all"
                     >
-                        {initials}
+                        <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M17 16l4-4m0 0l4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                     </button>
                 )}
             </div>
@@ -496,11 +550,62 @@ export default function MerchantLayout({ children, title }) {
                             </span>
                         )}
                     </div>
-                    <div className="flex items-center gap-3">
-                        <span className="hidden md:block text-sm text-gray-500">{userEmail}</span>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold">
-                            {initials}
-                        </div>
+                    <div className="flex items-center gap-3 relative">
+                        <button
+                            type="button"
+                            onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                            className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-gray-100 transition-colors focus:outline-none"
+                        >
+                            <span className="hidden md:block text-sm font-semibold text-gray-700">{userEmail}</span>
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold shadow-sm ring-2 ring-amber-400/30">
+                                {initials}
+                            </div>
+                        </button>
+
+                        {/* User Dropdown Menu */}
+                        {userDropdownOpen && (
+                            <>
+                                <div
+                                    className="fixed inset-0 z-40"
+                                    onClick={() => setUserDropdownOpen(false)}
+                                />
+                                <div className="absolute left-0 top-12 z-50 w-60 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 transition-all">
+                                    <div className="px-4 py-3 border-b border-gray-100">
+                                        <p className="text-sm font-extrabold text-gray-900 truncate">{userName}</p>
+                                        <p className="text-xs text-gray-500 truncate mt-0.5" title={userEmail}>{userEmail}</p>
+                                    </div>
+                                    
+                                    <div className="p-1.5 space-y-1">
+                                        <Link
+                                            href="/admin/profile"
+                                            onClick={() => setUserDropdownOpen(false)}
+                                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-extrabold transition-colors"
+                                        >
+                                            <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            <span>الملف الشخصي</span>
+                                        </Link>
+
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                setUserDropdownOpen(false);
+                                                handleLogout(e);
+                                            }}
+                                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-extrabold transition-colors"
+                                        >
+                                            <svg className="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                    d="M17 16l4-4m0 0l4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                            <span>تسجيل الخروج</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </header>
 

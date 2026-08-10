@@ -671,7 +671,8 @@ function loadCart() {
                 <div class="item-name">${item.name}</div>
                 <div class="item-qty">
                     ${item.selectedSize  ? 'مقاس: ' + item.selectedSize  + ' ' : ''}
-                    ${item.selectedColor ? 'لون: '  + item.selectedColor  : ''}
+                    ${item.selectedColor ? 'لون: '  + item.selectedColor  + ' ' : ''}
+                    ${item.options && typeof item.options === 'object' ? Object.entries(item.options).map(([k, v]) => v ? `${k}: ${v}` : '').join(' | ') : ''}
                 </div>
             </div>
             <div>

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'tenant_id',
         'name',
         'email',
+        'google_id',
         'phone',
         'password',
         'user_type',
@@ -168,5 +169,16 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->user_type === 'staff';
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPasswordNotification($token));
     }
 }

@@ -43,6 +43,7 @@ class SubscriptionController extends Controller
             ->map(fn($receipt) => [
                 'id' => $receipt->id,
                 'plan_name' => $receipt->plan?->name,
+                'plan_price_yearly' => $receipt->plan?->price_yearly,
                 'amount' => $receipt->amount,
                 'payment_method' => $receipt->payment_method,
                 'payment_reference' => $receipt->payment_reference,
@@ -52,43 +53,63 @@ class SubscriptionController extends Controller
                 'created_at' => $receipt->created_at?->format('Y-m-d H:i'),
             ]);
 
-        // Get limits and current usage
-        $currentPlan = $subscription?->plan;
-        $limits = $currentPlan?->limits;
-        
-        $maxProducts = $limits['max_products'] ?? 0;
-        $maxOrders = $limits['max_orders'] ?? 0;
+        $freePlan = SubscriptionPlan::where('slug', 'free')->first()
+            ?? SubscriptionPlan::where('price_monthly', 0)->first();
+
+        $currentPlan = $subscription?->plan ?? $freePlan;
+        $limits = is_array($currentPlan?->limits) ? $currentPlan->limits : json_decode($currentPlan?->limits ?? '{}', true);
+
+        $maxProducts = $limits['max_products'] ?? 50;
+        $maxOrders   = $limits['max_orders'] ?? 100;
 
         $usage = [
             'products' => [
                 'current' => Product::count(),
-                'max' => (int) $maxProducts,
+                'max'     => (int) $maxProducts,
             ],
             'orders' => [
                 'current' => Order::count(),
-                'max' => (int) $maxOrders,
+                'max'     => (int) $maxOrders,
             ],
         ];
 
+        $subscriptionPayload = $subscription ? [
+            'id'            => $subscription->id,
+            'plan'          => $subscription->plan,
+            'status'        => $subscription->status,
+            'billing_cycle' => $subscription->billing_cycle,
+            'price'         => $subscription->price,
+            'starts_at'     => $subscription->starts_at?->format('Y-m-d'),
+            'ends_at'       => $subscription->ends_at?->format('Y-m-d'),
+            'trial_ends_at' => $subscription->trial_ends_at?->format('Y-m-d'),
+            'is_active'     => $subscription->isActive(),
+        ] : [
+            'id'            => 0,
+            'plan'          => $freePlan,
+            'status'        => 'active',
+            'billing_cycle' => 'monthly',
+            'price'         => 0,
+            'starts_at'     => null,
+            'ends_at'       => null,
+            'trial_ends_at' => null,
+            'is_active'     => true,
+        ];
+
+        $paymentSettings = [
+            'vodafone_cash_number' => \App\Models\Setting::get('vodafone_cash_number', '01012345678'),
+            'instapay_number'      => \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', '01012345678')),
+        ];
+
         return Inertia::render('Merchant/Subscription/Index', [
-            'subscription' => $subscription ? [
-                'id' => $subscription->id,
-                'plan' => $subscription->plan,
-                'status' => $subscription->status,
-                'billing_cycle' => $subscription->billing_cycle,
-                'price' => $subscription->price,
-                'starts_at' => $subscription->starts_at?->format('Y-m-d'),
-                'ends_at' => $subscription->ends_at?->format('Y-m-d'),
-                'trial_ends_at' => $subscription->trial_ends_at?->format('Y-m-d'),
-                'is_active' => $subscription->isActive(),
-            ] : null,
-            'plans' => $plans,
-            'receipts' => $receipts,
-            'usage' => $usage,
-            'tenant' => [
-                'trial_ends_at' => $tenant->trial_ends_at?->format('Y-m-d'),
+            'subscription'    => $subscriptionPayload,
+            'plans'           => $plans,
+            'receipts'        => $receipts,
+            'usage'           => $usage,
+            'paymentSettings' => $paymentSettings,
+            'tenant'          => [
+                'trial_ends_at'        => $tenant->trial_ends_at?->format('Y-m-d'),
                 'subscription_ends_at' => $tenant->subscription_ends_at?->format('Y-m-d'),
-                'subscription_status' => $tenant->subscription_status,
+                'subscription_status'  => $tenant->subscription_status,
             ],
         ]);
     }

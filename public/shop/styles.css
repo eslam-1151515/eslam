@@ -143,9 +143,11 @@ html,body{margin:0;padding:0;font-family:var(--font-family);background:#f3f4f6;c
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 /* Mobile: 2 columns for ALL grids (products, categories, offers, subcategories) */
 .grid#productsGrid,#productsGrid.grid,.grid#categoriesGrid,#categoriesGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(2,1fr)}
-/* Tablet and larger: 4 columns for all grids */
+/* Tablet and larger: 4 columns for categories/offers */
 @media(min-width:768px){.grid#categoriesGrid,.grid#productsGrid,#categoriesGrid.grid,#productsGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr)}}
-@media(min-width:1200px){.grid#categoriesGrid,.grid#productsGrid,#categoriesGrid.grid,#productsGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1200px){.grid#categoriesGrid,#categoriesGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr)}}
+/* Desktop: 5 columns for products catalog on desktop screens (1024px+) */
+@media(min-width:1024px){.grid#productsGrid,#productsGrid.grid{grid-template-columns:repeat(5,1fr) !important;gap:16px !important}}
 /* خاص بصفحة الأقسام - فرض 4 أعمدة في الشاشات الكبيرة */
 .subcategories-grid.grid{grid-template-columns:repeat(2,1fr)}
 @media(min-width:768px){.subcategories-grid.grid{grid-template-columns:repeat(4,1fr) !important}}
@@ -745,17 +747,105 @@ html,body{margin:0;padding:0;font-family:var(--font-family);background:#f3f4f6;c
   }
 }
 
-/* Sizes and Colors Selection Styles */
+/* Sizes, Colors, and Custom Variants Selection Styles */
 .size-option input:checked+span,
-.color-option input:checked+span {
-  border-color: var(--primary-color) !important;
-  background: var(--primary-light) !important;
-  font-weight: 600;
-  color: var(--primary-hover) !important;
+.color-option input:checked+span,
+.cv-option input:checked+span {
+  border-color: #111827 !important;
+  background: #111827 !important;
+  font-weight: 700;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 2px #111827;
 }
 
 .size-option span:hover,
-.color-option span:hover {
-  border-color: var(--primary-color);
-  background: var(--primary-light);
+.color-option span:hover,
+.cv-option span:hover {
+  border-color: #374151;
+  background: #f3f4f6;
+}
+
+/* Countdown Timer — Sleek Pill Style */
+#productCountdown {
+  margin: 12px 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#productCountdown .cd-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+#productCountdown .cd-label i { color: #ef4444; font-size: 0.85rem; }
+#productCountdown .cd-blocks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  direction: ltr;
+}
+#productCountdown .cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+#productCountdown .cd-num {
+  background: #1e293b;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  min-width: 34px;
+  padding: 5px 6px;
+  border-radius: 7px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+#productCountdown .cd-num.seconds { background: #dc2626; }
+#productCountdown .cd-sep {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+#productCountdown .cd-text {
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* Quantity Selector Input Alignment */
+.product-qty-control input[type="number"],
+#productQtyInput {
+  text-align: center !important;
+  text-align-last: center !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  direction: ltr !important;
+  display: block !important;
+}
+
+.product-qty-control input[type="number"]::-webkit-outer-spin-button,
+.product-qty-control input[type="number"]::-webkit-inner-spin-button,
+#productQtyInput::-webkit-outer-spin-button,
+#productQtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }

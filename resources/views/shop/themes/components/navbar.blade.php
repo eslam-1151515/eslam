@@ -54,7 +54,8 @@
 
         <!-- Navbar Actions (Cart, Wishlist, Account, Language Switcher) -->
         <div class="fo-navbar__actions">
-            <!-- Language Switcher (AR / EN) -->
+            <!-- Language Switcher (AR / EN) - Hidden by Request -->
+            {{--
             @php
                 $currentLang = app()->getLocale();
                 $switchLang = $currentLang === 'ar' ? 'en' : 'ar';
@@ -62,6 +63,7 @@
             <a href="{{ route('locale.switch', $switchLang) }}" class="fo-navbar__icon-btn" title="{{ $switchLang === 'ar' ? 'العربية' : 'English' }}" aria-label="{{ $switchLang === 'ar' ? 'تغيير اللغة إلى العربية' : 'Switch language to English' }}" style="font-weight: 700; font-size: 0.75rem;">
                 {{ strtoupper($switchLang) }}
             </a>
+            --}}
 
             <!-- Wishlist Button -->
             <a href="{{ route('shop.wishlist') }}" class="fo-navbar__icon-btn" title="{{ __('Wishlist') }}" aria-label="{{ __('Wishlist') }}">

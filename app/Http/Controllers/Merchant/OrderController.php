@@ -91,27 +91,93 @@ class OrderController extends Controller
         // حساب المجموع الإجمالي للطلبات المفلترة
         $totalAmount = (clone $query)->sum('total');
 
-        $orders = $query->latest()
+        $orders = $query->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 
         // قائمة المنتجات للفلتر
         $productsList = Product::orderBy('name')->get(['id', 'name']);
 
+        $tenant = app(\App\Models\Tenant::class);
+
+        $activeSub = $tenant->subscriptions()->where('status', 'active')->latest()->first();
+        $isCommission = $activeSub && ($activeSub->plan?->slug === 'commission' || str_contains($activeSub->plan?->name ?? '', 'عمولة'));
+
+        $isSubscriptionExpired = false;
+        if (!$isCommission) {
+            if ($tenant->subscription_status === 'expired' || ($tenant->subscription_ends_at && $tenant->subscription_ends_at->isPast())) {
+                $isSubscriptionExpired = true;
+            }
+        }
+
         return Inertia::render('Merchant/Orders/Index', [
-            'orders'       => $orders,
-            'totalAmount'  => round((float) $totalAmount, 2),
-            'statusCounts' => $statusCounts,
-            'productsList' => $productsList,
-            'filters'      => $request->only(['search', 'status', 'date_from', 'date_to', 'product_id']),
+            'orders'                 => $orders,
+            'totalAmount'            => round((float) $totalAmount, 2),
+            'statusCounts'           => $statusCounts,
+            'productsList'           => $productsList,
+            'wallet_balance'         => (float) ($tenant->wallet_balance ?? 0),
+            'isSubscriptionExpired'  => $isSubscriptionExpired,
+            'filters'                => $request->only(['search', 'status', 'date_from', 'date_to', 'product_id']),
         ]);
     }
 
     /**
-     * عرض تفاصيل الطلب
+     * فتح الأوردر (اليدوي — للأوردرات القديمة المقفولة بعد شحن المحفظة)
+     * الأوردرات الجديدة تُفتح تلقائياً عند الإنشاء في CheckoutController
      */
-    public function show(Order $order): Response
+    public function unlock(Order $order)
     {
+        if ($order->is_unlocked) {
+            return redirect()->route('merchant.orders.show', $order->id);
+        }
+
+        $tenant = app(\App\Models\Tenant::class);
+        $fee    = 2;
+
+        if (($tenant->wallet_balance ?? 0) < $fee) {
+            return redirect()->route('merchant.orders.index')
+                ->with('insufficient_balance', 'رصيد المحفظة غير كافٍ. يرجى شحن المحفظة لعرض تفاصيل الطلب.');
+        }
+
+        $tenant->decrement('wallet_balance', $fee);
+        \App\Models\WalletTransaction::create([
+            'tenant_id'   => $tenant->id,
+            'amount'      => $fee,
+            'type'        => 'debit',
+            'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
+        ]);
+        $order->update(['is_unlocked' => true, 'unlocked_at' => now()]);
+
+        return redirect()->route('merchant.orders.show', $order->id);
+    }
+
+    /**
+     * عرض تفاصيل الطلب
+     * الطلبات الجديدة تُفتح تلقائياً عند الإنشاء.
+     * الطلبات القديمة المقفولة: لو في رصيد → خصم وفتح. لو لا → رجوع بـ flash.
+     */
+    public function show(Order $order)
+    {
+        if (!$order->is_unlocked) {
+            $tenant = app(\App\Models\Tenant::class);
+            $fee    = 2;
+
+            if (($tenant->wallet_balance ?? 0) < $fee) {
+                return redirect()->route('merchant.orders.index')
+                    ->with('insufficient_balance', 'رصيد المحفظة غير كافٍ. يرجى شحن المحفظة لعرض تفاصيل الطلب.');
+            }
+
+            $tenant->decrement('wallet_balance', $fee);
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => $fee,
+                'type'        => 'debit',
+                'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
+            ]);
+            $order->update(['is_unlocked' => true, 'unlocked_at' => now()]);
+        }
+
         $items = collect($order->items)->map(function ($item) {
             $product = Product::find($item['id'] ?? null);
             $rawPath = null;
@@ -145,6 +211,7 @@ class OrderController extends Controller
                 'subtotal'         => $order->subtotal,
                 'shipping_cost'    => $order->shipping_cost,
                 'status'           => $order->status,
+                'is_unlocked'      => (bool) $order->is_unlocked,
                 'items'            => $items,
                 'notes'            => $order->notes,
                 'created_at'       => $order->created_at?->format('Y-m-d H:i'),
@@ -185,11 +252,17 @@ class OrderController extends Controller
     }
 
     /**
-     * تصدير الطلبات كـ CSV
+     * تصدير الطلبات المفتوحة فقط كـ CSV / PDF
      */
     public function export(Request $request)
     {
-        $query = Order::query();
+        $tenant = app(\App\Models\Tenant::class);
+        $query  = Order::query();
+
+        // إذا كان رصيد المحفظة غير كافٍ، قم بتصدير المفتوحة فقط
+        if (($tenant->wallet_balance ?? 0) < 2) {
+            $query->where('is_unlocked', true);
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -260,10 +333,25 @@ class OrderController extends Controller
     }
 
     /**
-     * عرض فاتورة الطلب للطباعة
+     * عرض فاتورة الطلب للطباعة (للطلبات المفتوحة)
      */
     public function invoice(Order $order)
     {
+        if (!$order->is_unlocked) {
+            $tenant = app(\App\Models\Tenant::class);
+            if (($tenant->wallet_balance ?? 0) < 2) {
+                return redirect()->route('merchant.orders.index')->with('insufficient_balance', 'برجاء الشحن لرؤية وطباعة تفاصيل الأوردر (رصيدك الحالي غير كافٍ، المطلوب 2 ج.م).');
+            }
+            $tenant->decrement('wallet_balance', 2);
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => 2,
+                'type'        => 'debit',
+                'description' => 'رسوم فتح ومعاينة تفاصيل الطلب رقم (' . $order->reference_number . ')',
+            ]);
+            $order->update(['is_unlocked' => true, 'unlocked_at' => now()]);
+        }
+
         $order->items = is_string($order->items) ? json_decode($order->items, true) : $order->items;
         $storeName = \App\Models\Setting::where('key', 'store_name')->value('value') ?: 'Store';
         $storePhone = \App\Models\Setting::where('key', 'phone')->value('value')
@@ -274,10 +362,25 @@ class OrderController extends Controller
     }
 
     /**
-     * تحميل فاتورة الطلب كملف PDF
+     * تحميل فاتورة الطلب كملف PDF (للطلبات المفتوحة)
      */
     public function downloadInvoice(Order $order)
     {
+        if (!$order->is_unlocked) {
+            $tenant = app(\App\Models\Tenant::class);
+            if (($tenant->wallet_balance ?? 0) < 2) {
+                return redirect()->route('merchant.orders.index')->with('insufficient_balance', 'برجاء الشحن لرؤية وتحميل تفاصيل الأوردر (رصيدك الحالي غير كافٍ، المطلوب 2 ج.م).');
+            }
+            $tenant->decrement('wallet_balance', 2);
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => 2,
+                'type'        => 'debit',
+                'description' => 'رسوم فتح ومعاينة تفاصيل الطلب رقم (' . $order->reference_number . ')',
+            ]);
+            $order->update(['is_unlocked' => true, 'unlocked_at' => now()]);
+        }
+
         $order->items = is_string($order->items) ? json_decode($order->items, true) : $order->items;
         $storeName = \App\Models\Setting::where('key', 'store_name')->value('value') ?: 'Store';
         $storePhone = \App\Models\Setting::where('key', 'phone')->value('value')

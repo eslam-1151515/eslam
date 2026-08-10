@@ -18,4 +18,9 @@ class WalletTransaction extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

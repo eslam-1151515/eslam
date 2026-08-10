@@ -29,7 +29,6 @@ class IdentifyTenant
             if ($baseHost && str_ends_with($host, '.' . $baseHost)) {
                 $subdomain = substr($host, 0, -strlen('.' . $baseHost));
             } else {
-                // Fallback for local testing (e.g. merchant1.localhost or merchant1.fastorder.test when baseHost is fastorder.test)
                 $parts = explode('.', $host);
                 if (count($parts) > 1 && !filter_var($host, FILTER_VALIDATE_IP)) {
                     $subdomain = $parts[0];
@@ -42,15 +41,34 @@ class IdentifyTenant
             }
         }
 
-        // If a tenant was expected but not found, abort
+        // 3. If request is on app domain or main domain (or no tenant by subdomain)
+        if (!$tenant) {
+            // A. If logged in merchant user, resolve directly from user's tenant
+            if (auth()->check() && !auth()->user()->isSuperAdmin()) {
+                $user = auth()->user();
+                $tenant = $user->ownedTenants()->first() ?? $user->currentTenant;
+            }
+
+            // B. If super admin impersonating
+            if (!$tenant && session()->has('impersonated_tenant_id')) {
+                $tenant = Tenant::find(session('impersonated_tenant_id'));
+            }
+
+            // C. Session fallback
+            if (!$tenant && session()->has('tenant_id')) {
+                $tenant = Tenant::find(session('tenant_id'));
+            }
+        }
+
+        // If a tenant was expected on a subdomain but not found, abort
         if (!$tenant) {
             $isMainDomain = ($host === $baseHost || 
                              in_array(strtolower($subdomain), ['www', 'app', 'admin']) || 
                              $host === 'localhost' || 
                              $host === '127.0.0.1');
 
-            if (!$isMainDomain) {
-                abort(404, 'Tenant not found');
+            if (!$isMainDomain && str_contains($request->getPathInfo(), '/shop')) {
+                abort(404, 'Store not found');
             }
         }
 
@@ -61,8 +79,9 @@ class IdentifyTenant
             // Store in config for scopes and traits
             config(['app.tenant' => $tenant]);
             config(['tenant.id' => $tenant->id]);
+            config(['tenant.current' => $tenant]);
             
-            // Also store in session if needed
+            // Store in session
             session(['tenant_id' => $tenant->id]);
             $request->attributes->set('tenant', $tenant);
         }

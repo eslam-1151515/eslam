@@ -34,6 +34,14 @@ if ($host && $host !== '127.0.0.1' && $host !== 'localhost') {
     }
 }
 
+// Global Google OAuth Routes (accessible on all hosts including localhost)
+Route::middleware(['web'])->group(function () {
+    Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+    Route::get('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'showCompleteRegistration'])->name('auth.google.complete');
+    Route::post('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'completeRegistration']);
+});
+
 /*
 |--------------------------------------------------------------------------
 | 1. Main Site Routing
@@ -80,6 +88,7 @@ Route::domain('app.' . $baseDomain)->group(function () {
         Route::get('/tenants/{tenant}/impersonate', [App\Http\Controllers\SuperAdmin\TenantController::class, 'impersonate'])->name('superadmin.tenants.impersonate');
         Route::delete('/tenants/{tenant}', [App\Http\Controllers\SuperAdmin\TenantController::class, 'destroy'])->name('superadmin.tenants.destroy');
         Route::post('/tenants/{tenant}/add-wallet-balance', [App\Http\Controllers\SuperAdmin\TenantController::class, 'addWalletBalance'])->name('superadmin.tenants.add-wallet-balance');
+        Route::post('/tenants/{tenant}/deduct-wallet-balance', [App\Http\Controllers\SuperAdmin\TenantController::class, 'deductWalletBalance'])->name('superadmin.tenants.deduct-wallet-balance');
 
         // Subscriptions & Plans Management
         Route::get('/subscriptions/plans', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'plans'])->name('superadmin.subscriptions.plans');
@@ -87,6 +96,7 @@ Route::domain('app.' . $baseDomain)->group(function () {
         Route::post('/subscriptions/receipts', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'storeReceipt'])->name('superadmin.subscriptions.receipts.store');
         Route::post('/subscriptions/receipts/{receipt}/approve', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'approveReceipt'])->name('superadmin.subscriptions.receipts.approve');
         Route::post('/subscriptions/receipts/{receipt}/reject', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'rejectReceipt'])->name('superadmin.subscriptions.receipts.reject');
+        Route::post('/subscriptions/payment-settings', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'updatePaymentSettings'])->name('superadmin.subscriptions.update-payment-settings');
 
         // Backup & Data Export Management
         Route::get('/backups', [App\Http\Controllers\SuperAdmin\BackupController::class, 'index'])->name('superadmin.backups.index');
@@ -112,42 +122,29 @@ Route::domain('app.' . $baseDomain)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| 3. Tenant Routing
+| 3. Merchant Admin Panel & Tenant Routing
 |--------------------------------------------------------------------------
 */
-Route::domain('{tenant}.' . $baseDomain)->group(function () {
 
-    Route::get('/login', function ($tenant) {
-        return redirect()->route('merchant.login', ['tenant' => $tenant]);
+// A. Merchant Admin Panel (Available on app.fastorder.localhost/admin/* & subdomains)
+Route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('merchant.dashboard');
     });
 
-    Route::get('/lang/{locale}', [App\Http\Controllers\LanguageController::class, 'switch'])->name('lang.switch');
+    // Impersonate entry — one-time token login from super admin (no auth middleware needed)
+    Route::middleware(['web', 'tenant'])->get('/impersonate-entry', [App\Http\Controllers\SuperAdmin\TenantController::class, 'impersonateEntry'])->name('merchant.impersonate.entry');
 
-    // Theme Marketplace routes (Phase 73)
-    Route::middleware(['web', 'auth', 'tenant', 'tenant.active'])->prefix('merchant/themes/marketplace')->name('merchant.themes.marketplace.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Merchant\ThemeMarketplaceController::class, 'index'])->name('index');
-        Route::get('/{slug}', [\App\Http\Controllers\Merchant\ThemeMarketplaceController::class, 'show'])->name('show');
-        Route::post('/{slug}/install', [\App\Http\Controllers\Merchant\ThemeMarketplaceController::class, 'install'])->name('install');
-        Route::post('/{slug}/review', [\App\Http\Controllers\Merchant\ThemeMarketplaceController::class, 'storeReview'])->name('review');
+    // Google OAuth entry — one-time token login for Google auth (no auth middleware needed)
+    Route::middleware(['web', 'tenant'])->get('/google-entry', [App\Http\Controllers\Auth\GoogleAuthController::class, 'googleEntry'])->name('merchant.google.entry');
+
+    // Merchant Auth Routes — منفصلة تماماً عن السوبر أدمن
+    Route::middleware(['web', 'tenant'])->group(function () {
+        require __DIR__ . '/auth_merchant.php';
     });
 
-    // A. Merchant Admin Panel ({tenant}.fastorder.test/admin)
-    Route::prefix('admin')->group(function () {
-        
-        Route::get('/', function ($tenant) {
-            return redirect()->route('merchant.dashboard', ['tenant' => $tenant]);
-        });
-
-        // Impersonate entry — one-time token login from super admin (no auth middleware needed)
-        Route::middleware(['web', 'tenant'])->get('/impersonate-entry', [App\Http\Controllers\SuperAdmin\TenantController::class, 'impersonateEntry'])->name('merchant.impersonate.entry');
-
-        // Merchant Auth Routes — منفصلة تماماً عن السوبر أدمن
-        Route::middleware(['web', 'tenant'])->group(function () {
-            require __DIR__ . '/auth_merchant.php';
-        });
-
-        // Protected Merchant Admin Routes
-        Route::middleware(['web', 'impersonate.cookie', 'auth', 'tenant', 'tenant.active'])->group(function () {
+        // Protected Merchant Admin Routes (لوحة تحكم التاجر تُفتح دائماً ولا تُغلق بالخطأ)
+        Route::middleware(['web', 'impersonate.cookie', 'auth', 'tenant'])->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\Merchant\DashboardController::class, 'index'])->name('merchant.dashboard');
             
             Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -183,6 +180,7 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
             Route::get('/orders', [App\Http\Controllers\Merchant\OrderController::class, 'index'])->name('orders.index');
             Route::get('/orders/export', [App\Http\Controllers\Merchant\OrderController::class, 'export'])->name('orders.export');
             Route::get('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'show'])->name('orders.show');
+            Route::post('/orders/{order}/unlock', [App\Http\Controllers\Merchant\OrderController::class, 'unlock'])->name('orders.unlock');
             Route::patch('/orders/{order}/status', [App\Http\Controllers\Merchant\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
             Route::patch('/orders/{order}/cancel', [App\Http\Controllers\Merchant\OrderController::class, 'cancel'])->name('orders.cancel');
             Route::delete('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'destroy'])->name('orders.destroy');
@@ -203,6 +201,11 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
             // Settings routes
             Route::get('/settings', [\App\Http\Controllers\Merchant\SettingController::class, 'index'])->name('settings.index');
             Route::put('/settings', [\App\Http\Controllers\Merchant\SettingController::class, 'update'])->name('settings.update');
+
+            // Store Domain Change routes
+            Route::get('/domain', [\App\Http\Controllers\Merchant\DomainController::class, 'edit'])->name('merchant.domain.edit');
+            Route::post('/domain/check', [\App\Http\Controllers\Merchant\DomainController::class, 'check'])->name('merchant.domain.check');
+            Route::put('/domain', [\App\Http\Controllers\Merchant\DomainController::class, 'update'])->name('merchant.domain.update');
 
             // Theme routes
             Route::get('/theme', [\App\Http\Controllers\Merchant\ThemeController::class, 'index'])->name('merchant.theme.index');
@@ -225,6 +228,10 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
             // Subscription routes
             Route::get('/subscription', [App\Http\Controllers\Merchant\SubscriptionController::class, 'index'])->name('merchant.subscription.index');
             Route::post('/subscription/subscribe', [App\Http\Controllers\Merchant\SubscriptionController::class, 'subscribe'])->name('merchant.subscription.subscribe');
+
+            // Wallet routes
+            Route::get('/wallet', [App\Http\Controllers\Merchant\WalletController::class, 'index'])->name('merchant.wallet.index');
+            Route::post('/wallet/deposit', [App\Http\Controllers\Merchant\WalletController::class, 'deposit'])->name('merchant.wallet.deposit');
 
             // Reports routes
             Route::get('/reports', [App\Http\Controllers\Merchant\ReportController::class, 'index'])->name('merchant.reports.index');
@@ -487,6 +494,7 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
                         'image_url' => $formatImg($img),
                         'sizes' => is_string($p->sizes) ? json_decode($p->sizes, true) : ($p->sizes ?: []),
                         'colors' => is_string($p->colors) ? json_decode($p->colors, true) : ($p->colors ?: []),
+                        'custom_variants' => is_string($p->custom_variants) ? json_decode($p->custom_variants, true) : ($p->custom_variants ?: []),
                         'shipping_type' => $p->shipping_type ?? 'free',
                         'price_tiers' => is_string($p->price_tiers) ? json_decode($p->price_tiers, true) : ($p->price_tiers ?: []),
                         'variants_stock' => is_string($p->variants_stock) ? json_decode($p->variants_stock, true) : ($p->variants_stock ?: []),
@@ -522,6 +530,7 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
                     'image_url' => $formatImg($img),
                     'sizes' => is_string($p->sizes) ? json_decode($p->sizes, true) : ($p->sizes ?: []),
                     'colors' => is_string($p->colors) ? json_decode($p->colors, true) : ($p->colors ?: []),
+                    'custom_variants' => is_string($p->custom_variants) ? json_decode($p->custom_variants, true) : ($p->custom_variants ?: []),
                     'shipping_type' => $p->shipping_type ?? 'free',
                     'price_tiers' => is_string($p->price_tiers) ? json_decode($p->price_tiers, true) : ($p->price_tiers ?: []),
                     'variants_stock' => is_string($p->variants_stock) ? json_decode($p->variants_stock, true) : ($p->variants_stock ?: []),
@@ -570,6 +579,7 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
                 'image_url' => $formatImg($mainImg),
                 'sizes' => is_string($p->sizes) ? json_decode($p->sizes, true) : ($p->sizes ?: []),
                 'colors' => is_string($p->colors) ? json_decode($p->colors, true) : ($p->colors ?: []),
+                'custom_variants' => is_string($p->custom_variants) ? json_decode($p->custom_variants, true) : ($p->custom_variants ?: []),
                 'images' => $images,
                 'shipping_type' => $p->shipping_type ?? 'free',
                 'price_tiers' => is_string($p->price_tiers) ? json_decode($p->price_tiers, true) : ($p->price_tiers ?: []),
@@ -610,7 +620,7 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
 
         Route::get('/public-api/shipping-governorates', function () {
             $locale = app()->getLocale();
-            $governorates = \App\Models\ShippingGovernorate::orderBy('name')->get();
+            $governorates = \App\Models\ShippingGovernorate::where('is_active', true)->orderBy('name')->get();
             $data = $governorates->map(function ($gov) use ($locale) {
                 return [
                     'id' => $gov->id,
@@ -739,5 +749,4 @@ Route::domain('{tenant}.' . $baseDomain)->group(function () {
             Route::post('/settings', [\App\Http\Controllers\NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
         });
     });
-});
 

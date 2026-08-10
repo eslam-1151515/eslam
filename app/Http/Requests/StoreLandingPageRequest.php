@@ -31,8 +31,8 @@ class StoreLandingPageRequest extends FormRequest
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string'],
             'featured_image' => ['nullable', 'string', 'max:255'],
-            'facebook_pixel_id' => ['nullable', 'string', 'max:255'],
-            'tiktok_pixel_id' => ['nullable', 'string', 'max:255'],
+            'facebook_pixel_id' => ['nullable', 'string', 'max:2000'],
+            'tiktok_pixel_id' => ['nullable', 'string', 'max:2000'],
             'is_active' => ['boolean'],
         ];
     }

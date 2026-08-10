@@ -40,6 +40,47 @@ export default function LandingPagesEdit({ landingPage, defaultSections, product
         setSections(updated);
     };
 
+    const handleFBPixelChange = (val) => {
+        let text = val;
+        if (text && (text.includes('fbq') || text.includes('script') || text.includes('facebook.com') || text.includes('<noscript>'))) {
+            const found = [];
+            const initMatches = [...text.matchAll(/fbq\s*\(\s*['"]init['"]\s*,\s*['"]?(\d+)['"]?/gi)];
+            initMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const idMatches = [...text.matchAll(/[?&]id=(\d+)/gi)];
+            idMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const digitMatches = text.match(/\b\d{13,17}\b/g);
+            if (digitMatches) {
+                digitMatches.forEach(num => found.push(num));
+            }
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('facebook_pixel_id', text);
+    };
+
+    const handleTTPixelChange = (val) => {
+        let text = val;
+        if (text && (text.includes('ttq') || text.includes('script') || text.includes('analytics.tiktok.com'))) {
+            const found = [];
+            const loadMatches = [...text.matchAll(/ttq\.load\s*\(\s*['"]([a-zA-Z0-9_-]+)['"]\s*\)/gi)];
+            loadMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const sdkMatches = [...text.matchAll(/[?&]sdkid=([a-zA-Z0-9_-]+)/gi)];
+            sdkMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('tiktok_pixel_id', text);
+    };
+
     const handleMoveSection = (index, direction) => {
         const targetIndex = direction === 'up' ? index - 1 : index + 1;
         if (targetIndex < 0 || targetIndex >= sections.length) return;
@@ -287,25 +328,27 @@ export default function LandingPagesEdit({ landingPage, defaultSections, product
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1.5">Facebook Pixel ID (اختياري)</label>
-                                        <input
-                                            type="text"
+                                        <label className="block text-xs font-bold text-gray-700 mb-1.5">Facebook Pixel ID (اختياري - مخصص هذه الصفحة)</label>
+                                        <textarea
+                                            rows={2}
                                             value={data.facebook_pixel_id}
-                                            onChange={(e) => setData('facebook_pixel_id', e.target.value)}
-                                            placeholder="مثال: 123456789012345"
-                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 text-sm focus:outline-none"
+                                            onChange={(e) => handleFBPixelChange(e.target.value)}
+                                            placeholder="ضع الـ ID أو لزق كود فيسبوك بيكسل بالكامل وسيتم استخراج الرقم أوتوماتيكياً"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 text-sm focus:outline-none font-mono text-right dir-rtl placeholder:text-right"
+                                            dir="rtl"
                                         />
                                         {errors.facebook_pixel_id && <p className="text-red-500 text-xs mt-1">{errors.facebook_pixel_id}</p>}
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1.5">TikTok Pixel ID (اختياري)</label>
-                                        <input
-                                            type="text"
+                                        <label className="block text-xs font-bold text-gray-700 mb-1.5">TikTok Pixel ID (اختياري - مخصص هذه الصفحة)</label>
+                                        <textarea
+                                            rows={2}
                                             value={data.tiktok_pixel_id}
-                                            onChange={(e) => setData('tiktok_pixel_id', e.target.value)}
-                                            placeholder="مثال: C1234567890ABCDE"
-                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 text-sm focus:outline-none"
+                                            onChange={(e) => handleTTPixelChange(e.target.value)}
+                                            placeholder="ضع الـ ID أو لزق كود تيك توك بيكسل بالكامل وسيتم استخراج الرقم أوتوماتيكياً"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 text-sm focus:outline-none font-mono text-right dir-rtl placeholder:text-right"
+                                            dir="rtl"
                                         />
                                         {errors.tiktok_pixel_id && <p className="text-red-500 text-xs mt-1">{errors.tiktok_pixel_id}</p>}
                                     </div>

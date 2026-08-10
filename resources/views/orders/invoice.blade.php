@@ -275,10 +275,15 @@
                 <tr>
                     <td>
                         <strong>{{ $itemName }}</strong>
-                        @if(isset($item['selectedSize']) || isset($item['selectedColor']) || isset($item['size']) || isset($item['color']))
+                        @if(isset($item['selectedSize']) || isset($item['selectedColor']) || isset($item['size']) || isset($item['color']) || isset($item['options']))
                             <br><small style="color: #6b7280;">
                                 @if(isset($item['selectedSize']) || isset($item['size'])) المقاس: {{ $item['selectedSize'] ?? $item['size'] }} @endif
                                 @if(isset($item['selectedColor']) || isset($item['color'])) اللون: {{ $item['selectedColor'] ?? $item['color'] }} @endif
+                                @if(isset($item['options']) && is_array($item['options']))
+                                    @foreach($item['options'] as $optK => $optV)
+                                        @if($optV) | {{ $optK }}: {{ $optV }} @endif
+                                    @endforeach
+                                @endif
                             </small>
                         @endif
                         @if(isset($item['description']))

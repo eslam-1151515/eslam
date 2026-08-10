@@ -28,6 +28,8 @@ class Order extends Model
         'subtotal',
         'total',
         'status',
+        'is_unlocked',
+        'unlocked_at',
         'notes'
     ];
 
@@ -37,6 +39,8 @@ class Order extends Model
         'discount' => 'float',
         'subtotal' => 'integer',
         'total' => 'integer',
+        'is_unlocked' => 'boolean',
+        'unlocked_at' => 'datetime',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
@@ -57,6 +61,8 @@ class Order extends Model
             'discount' => 'float',
             'subtotal' => 'integer',
             'total' => 'integer',
+            'is_unlocked' => 'boolean',
+            'unlocked_at' => 'datetime',
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
@@ -85,6 +91,29 @@ class Order extends Model
 
     protected static function booted()
     {
+        static::created(function ($order) {
+            if ($order->tenant_id) {
+                try {
+                    $tenant = \App\Models\Tenant::find($order->tenant_id);
+                    if ($tenant && ($tenant->wallet_balance ?? 0) >= 2) {
+                        $tenant->decrement('wallet_balance', 2);
+                        \App\Models\WalletTransaction::create([
+                            'tenant_id'   => $tenant->id,
+                            'amount'      => 2,
+                            'type'        => 'debit',
+                            'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
+                        ]);
+                        static::where('id', $order->id)->update([
+                            'is_unlocked' => true,
+                            'unlocked_at' => now(),
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning('Order auto unlock fee failed: ' . $e->getMessage());
+                }
+            }
+        });
+
         static::saved(function ($order) {
             if ($order->tenant_id) {
                 \App\Services\CacheService::invalidateDashboardStats($order->tenant_id);
@@ -98,6 +127,14 @@ class Order extends Model
             }
             \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
         });
+    }
+
+    /**
+     * الحفاظ على التوقيت المحلي لمصر عند التسلسل لـ JSON
+     */
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 
     /**

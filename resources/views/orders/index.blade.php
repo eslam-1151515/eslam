@@ -262,7 +262,8 @@
                     <div class="flex-1">
                         <div class="font-bold">${item.name || ''}</div>
                         ${item.selectedSize ? `<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded mr-1">مقاس: ${item.selectedSize}</span>` : ''}
-                        ${item.selectedColor ? `<span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded">لون: ${item.selectedColor}</span>` : ''}
+                        ${item.selectedColor ? `<span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded mr-1">لون: ${item.selectedColor}</span>` : ''}
+                        ${item.options && typeof item.options === 'object' ? Object.entries(item.options).map(([k, v]) => v ? `<span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded mr-1">${k}: ${v}</span>` : '').join('') : ''}
                         <div class="text-sm text-gray-600 mt-1">${Number(item.price||0).toLocaleString()} × ${item.quantity||1}</div>
                     </div>
                     <div class="font-bold text-green-600">${Number((item.price||0)*(item.quantity||1)).toLocaleString()}</div>

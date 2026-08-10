@@ -52,10 +52,11 @@
             </div>
             <div>
               <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">رقم الهاتف <span style="color:#ef4444">*</span></label>
-              <input required name="phone" id="phoneInput" type="tel" inputmode="numeric" maxlength="11" minlength="11" pattern="^01[0-9]{9}$"
-                placeholder="01XXXXXXXXX"
-                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:border-color .2s;"
-                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'">
+              <input required name="phone" id="phoneInput" type="tel" inputmode="text" maxlength="11"
+                placeholder="رقم الهاتف (مثل: 01012345678)"
+                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:all .2s;"
+                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'" dir="rtl">
+              <div id="phoneErrorMsg" style="color: #ef4444; font-size: 0.85rem; margin-top: 6px; display: none; font-weight: 600;">يجب أن يكون رقم الهاتف 11 رقماً ويبدأ بـ 01 (مثل: 01012345678)</div>
             </div>
           </div>
 
@@ -193,11 +194,19 @@
 
         var sizeTag  = it.selectedSize  ? '<span style="font-size:.75rem;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;margin-right:4px;">المقاس: '+it.selectedSize+'</span>' : '';
         var colorTag = it.selectedColor ? '<span style="font-size:.75rem;background:#fce7f3;color:#be185d;padding:2px 6px;border-radius:4px;margin-right:4px;">اللون: '+it.selectedColor+'</span>' : '';
+        var optsTag  = '';
+        if (it.options && typeof it.options === 'object') {
+          for (var optK in it.options) {
+            if (it.options[optK]) {
+              optsTag += '<span style="font-size:.75rem;background:#f3e8ff;color:#7e22ce;padding:2px 6px;border-radius:4px;margin-right:4px;">' + optK + ': ' + it.options[optK] + '</span>';
+            }
+          }
+        }
 
         return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
           '<div style="flex:1;">' +
             '<div style="font-weight:600;color:#111827;margin-bottom:3px;">' + (it.name||'منتج') + '</div>' +
-            (sizeTag||colorTag ? '<div style="margin-bottom:4px;">' + sizeTag + colorTag + '</div>' : '') +
+            (sizeTag||colorTag||optsTag ? '<div style="margin-bottom:4px;">' + sizeTag + colorTag + optsTag + '</div>' : '') +
             '<div style="font-size:14px;color:#6b7280;">الكمية: ' + (it.qty||1) + ' × ' + fmt(it.price) + '</div>' +
           '</div>' +
           '<div style="font-weight:700;color:#4f46e5;margin-right:8px;">' + fmt(line) + '</div>' +
@@ -252,6 +261,9 @@
 
     /* ---- Phone Input Realtime Formatting & Validation ---- */
     var pInput = document.getElementById('phoneInput');
+    var pErr = document.getElementById('phoneErrorMsg');
+    var phoneRegex = /^01[0125][0-9]{8}$/;
+
     if (pInput) {
       pInput.addEventListener('input', function() {
         // Strip non-digits completely
@@ -267,6 +279,30 @@
         
         // Enforce 11 digits max
         this.value = val.slice(0, 11);
+
+        if (this.value.length === 11) {
+          if (phoneRegex.test(this.value)) {
+            this.style.borderColor = '#10b981';
+            this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+            if (pErr) pErr.style.display = 'none';
+          } else {
+            this.style.borderColor = '#ef4444';
+            this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (pErr) pErr.style.display = 'block';
+          }
+        } else {
+          this.style.borderColor = '#e5e7eb';
+          this.style.boxShadow = 'none';
+          if (pErr) pErr.style.display = 'none';
+        }
+      });
+
+      pInput.addEventListener('blur', function() {
+        if (this.value && (!phoneRegex.test(this.value) || this.value.length !== 11)) {
+          this.style.borderColor = '#ef4444';
+          this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          if (pErr) pErr.style.display = 'block';
+        }
       });
 
       pInput.addEventListener('paste', function(e) {
@@ -278,6 +314,12 @@
         }
         this.value = clean.slice(0, 11);
         e.preventDefault();
+
+        if (this.value.length === 11 && phoneRegex.test(this.value)) {
+          this.style.borderColor = '#10b981';
+          this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+          if (pErr) pErr.style.display = 'none';
+        }
       });
     }
 
@@ -288,15 +330,21 @@
       var form = e.target;
       var fd   = new FormData(form);
       var name = fd.get('name');
-      var phone= (fd.get('phone') || '').trim();
+      var phone = (fd.get('phone') || '').replace(/[\s\+\-]/g, '');
+      if (phone.startsWith('201')) phone = '0' + phone.substring(2);
+      else if (phone.startsWith('00201')) phone = '0' + phone.substring(4);
       var addr = fd.get('address');
 
       if (!name || !phone || !addr) { alert('يرجى ملء جميع البيانات المطلوبة'); return; }
 
-      // Enforce strictly 11 digits starting with 01
-      if (!/^01\d{9}$/.test(phone)) {
-        alert('عفواً، يجب أن يكون رقم الهاتف مكوناً من 11 رقماً ويبدأ بـ 01 (مثال: 01012345678)');
-        if (pInput) pInput.focus();
+      // Enforce strictly 11 digits starting with 010, 011, 012, 015
+      if (!phone || !phoneRegex.test(phone)) {
+        if (pInput) {
+          pInput.style.borderColor = '#ef4444';
+          pInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          pInput.focus();
+        }
+        if (pErr) pErr.style.display = 'block';
         return;
       }
 
@@ -333,7 +381,11 @@
       try {
         var res = await fetch('/api/orders', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' 
+          },
           body: JSON.stringify({
             customer_name:    name,
             customer_phone:   phone,
@@ -368,12 +420,20 @@
           localStorage.removeItem('fastorder_coupon_discount');
           window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
         } else {
-          throw new Error(result.message || 'فشل في إنشاء الطلب');
+          var errorDetails = '';
+          if (result.errors) {
+             for (var key in result.errors) {
+                errorDetails += '\n- ' + result.errors[key].join(', ');
+             }
+          }
+          alert((result.message || 'حدث خطأ أثناء إتمام الطلب') + errorDetails);
+          btn.innerHTML = orig;
+          btn.disabled = false;
         }
-      } catch(err) {
+      } catch (err) {
+        alert('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً');
         btn.innerHTML = orig;
         btn.disabled = false;
-        alert('حدث خطأ: ' + (err.message || 'يرجى المحاولة مرة أخرى'));
       }
     });
 

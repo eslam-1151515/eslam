@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingGovernorate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
@@ -34,6 +35,7 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.selectedSize'  => 'nullable|string',
             'items.*.selectedColor' => 'nullable|string',
+            'items.*.options'       => 'nullable',
             'notes'            => 'nullable|string|max:1000'
         ]);
 
@@ -69,6 +71,7 @@ class OrderController extends Controller
                 'image'         => $product->main_image_path ? asset('storage/' . $product->main_image_path) : $product->image_url,
                 'selectedSize'  => $item['selectedSize'] ?? null,
                 'selectedColor' => $item['selectedColor'] ?? null,
+                'options'       => $item['options'] ?? null,
             ];
         }
 
@@ -90,7 +93,13 @@ class OrderController extends Controller
         ]);
 
         foreach ($validated['items'] as $item) {
-            Product::where('id', $item['id'])->decrement('stock', $item['quantity']);
+            $prod = Product::find($item['id']);
+            if ($prod) {
+                $selectedSize  = $item['selectedSize']  ?? null;
+                $selectedColor = $item['selectedColor'] ?? null;
+                $options       = is_array($item['options'] ?? null) ? $item['options'] : [];
+                $prod->decrementVariantStock((int)($item['quantity'] ?? 1), $selectedSize, $selectedColor, $options);
+            }
         }
 
         // Trigger Webhook order.created
@@ -120,6 +129,7 @@ class OrderController extends Controller
                 'items.*.qty'      => 'required|integer|min:1',
                 'items.*.selectedSize'  => 'nullable|string',
                 'items.*.selectedColor' => 'nullable|string',
+                'items.*.options'       => 'nullable',
                 'notes'            => 'nullable|string|max:1000'
             ]);
 
@@ -153,6 +163,7 @@ class OrderController extends Controller
                     'total'         => $itemTotal,
                     'selectedSize'  => $item['selectedSize'] ?? null,
                     'selectedColor' => $item['selectedColor'] ?? null,
+                    'options'       => $item['options'] ?? null,
                 ];
             }
 
@@ -179,7 +190,10 @@ class OrderController extends Controller
             $shippingCost = $hasNonFreeShipping ? $governorate->price : 0;
             $total = max(0, $subtotal - $discount + $shippingCost);
 
+            DB::beginTransaction();
+
             $order = Order::createWithReference([
+                'tenant_id'        => $governorate->tenant_id ?? null,
                 'customer_name'    => $validated['customer_name'],
                 'customer_phone'   => $validated['customer_phone'],
                 'customer_address' => $validated['customer_address'],
@@ -195,6 +209,65 @@ class OrderController extends Controller
                 'notes'            => $validated['notes'] ?? null
             ]);
 
+            // تقليل المخزون
+            foreach ($validated['items'] as $item) {
+                $prod = Product::find($item['id']);
+                if ($prod) {
+                    $pieces = static::parsePieceSelections($item);
+                    $deductedQty = 0;
+
+                    if (!empty($pieces)) {
+                        foreach ($pieces as $piece) {
+                            $pSize  = $piece['size'] ?? null;
+                            $pColor = $piece['color'] ?? null;
+                            $pOpts  = is_array($piece['options'] ?? null) ? $piece['options'] : [];
+                            $prod->decrementVariantStock(1, $pSize, $pColor, $pOpts);
+                            $deductedQty++;
+                        }
+                    } else {
+                        $selectedSize  = $item['selectedSize']  ?? null;
+                        $selectedColor = $item['selectedColor'] ?? null;
+                        $options       = is_array($item['options'] ?? null) 
+                            ? $item['options'] 
+                            : (is_string($item['options'] ?? null) ? json_decode($item['options'], true) ?? [] : []);
+                        $itemQty       = (int) ($item['qty'] ?? 1);
+
+                        $prod->decrementVariantStock($itemQty, $selectedSize, $selectedColor, $options);
+                        $deductedQty   = $itemQty;
+                    }
+
+                    // تسجيل حركة المخزون (صادر)
+                    \App\Models\StockMovement::create([
+                        'tenant_id'   => $prod->tenant_id,
+                        'product_id'  => $prod->id,
+                        'quantity'    => $deductedQty,
+                        'type'        => 'out',
+                        'description' => "مبيعات الطلب رقم #{$order->reference_number}"
+                            . (!empty($item['selectedSize'])  ? " | مقاس: {$item['selectedSize']}"  : '')
+                            . (!empty($item['selectedColor']) ? " | لون: {$item['selectedColor']}" : ''),
+                    ]);
+
+                    // إرسال تنبيه في حال انخفاض المخزون عن الحد المحدد
+                    if ($prod->stock <= $prod->low_stock_threshold) {
+                        $tenant = \App\Models\Tenant::find($order->tenant_id);
+                        if ($tenant && $tenant->owner) {
+                            try {
+                                $tenant->owner->notify(new \App\Notifications\LowStockNotification($prod, $prod->stock));
+                            } catch (\Exception $e) {
+                                // لا نعطل العملية بسبب فشل إرسال التنبيه
+                            }
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+
+            // Trigger Webhook order.created
+            try {
+                \App\Services\WebhookSender::trigger('order.created', $order->toArray(), $order->tenant_id);
+            } catch (\Throwable $e) {}
+
             return response()->json([
                 'success' => true,
                 'message' => 'تم إنشاء الطلب بنجاح',
@@ -206,12 +279,15 @@ class OrderController extends Controller
             ]);
 
         } catch (ValidationException $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'خطأ في البيانات المدخلة',
                 'errors'  => $e->errors()
             ], 422);
         } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('OrderController::storeApi error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'حدث خطأ أثناء معالجة الطلب'
@@ -569,4 +645,41 @@ class OrderController extends Controller
 
         return $basePrice;
     }
+
+    /**
+     * تفكيك اختيار الباقات متعددة القطع إلى قطع منفصلة
+     */
+    public static function parsePieceSelections(array $item): array
+    {
+        if (!empty($item['piecesSelections']) && is_array($item['piecesSelections'])) {
+            return $item['piecesSelections'];
+        }
+
+        $sizeStr  = $item['selectedSize']  ?? '';
+        $colorStr = $item['selectedColor'] ?? '';
+        $options  = is_array($item['options'] ?? null) 
+            ? $item['options'] 
+            : (is_string($item['options'] ?? null) ? json_decode($item['options'], true) ?? [] : []);
+
+        if (str_contains($sizeStr, ' | ') || str_contains($colorStr, ' | ')) {
+            $sizeParts  = $sizeStr  ? explode(' | ', $sizeStr)  : [];
+            $colorParts = $colorStr ? explode(' | ', $colorStr) : [];
+            $maxCount   = max(count($sizeParts), count($colorParts));
+
+            $pieces = [];
+            for ($i = 0; $i < $maxCount; $i++) {
+                $sz = isset($sizeParts[$i])  ? trim(str_contains($sizeParts[$i], ':')  ? (explode(':', $sizeParts[$i], 2)[1] ?? $sizeParts[$i])  : $sizeParts[$i])  : null;
+                $cl = isset($colorParts[$i]) ? trim(str_contains($colorParts[$i], ':') ? (explode(':', $colorParts[$i], 2)[1] ?? $colorParts[$i]) : $colorParts[$i]) : null;
+                $pieces[] = [
+                    'size'    => $sz,
+                    'color'   => $cl,
+                    'options' => $options,
+                ];
+            }
+            return $pieces;
+        }
+
+        return [];
+    }
 }
+

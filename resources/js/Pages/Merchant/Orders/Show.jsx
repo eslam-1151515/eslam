@@ -6,7 +6,6 @@ export default function OrderShow({ order }) {
     const { flash } = usePage().props;
 
     const handleStatusChange = (newStatus) => {
-        if (!confirm(`هل أنت متأكد من تغيير حالة الطلب إلى "${getStatusText(newStatus)}"؟`)) return;
         router.patch(`/admin/orders/${order.id}/status`, { status: newStatus }, {
             preserveScroll: true,
         });
@@ -49,7 +48,7 @@ export default function OrderShow({ order }) {
         <MerchantLayout title={`تفاصيل الطلب ${order.reference_number}`}>
             <Head title={`طلب ${order.reference_number}`} />
 
-            <div className="max-w-4xl space-y-6">
+            <div className="w-full space-y-6">
                 {/* Breadcrumb & Navigation */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <nav className="flex items-center gap-2 text-sm text-gray-500">
@@ -93,6 +92,8 @@ export default function OrderShow({ order }) {
                         >
                             <option value="pending">في الانتظار</option>
                             <option value="confirmed">مؤكد</option>
+                            <option value="shipped">في التوصيل</option>
+                            <option value="delivered">تم التسليم</option>
                             <option value="cancelled">ملغي</option>
                         </select>
                     </div>
@@ -168,6 +169,11 @@ export default function OrderShow({ order }) {
                                                         لون: {item.selectedColor}
                                                     </span>
                                                 )}
+                                                {item.options && Object.entries(item.options).map(([k, v]) => v ? (
+                                                    <span key={k} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-100">
+                                                        {k}: {v}
+                                                    </span>
+                                                ) : null)}
                                                 <span className="text-xs text-gray-500 font-medium">الكمية: {item.quantity}</span>
                                             </div>
                                         </div>

@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
-export default function OrdersIndex({ orders, totalAmount, statusCounts, productsList, filters }) {
+export default function OrdersIndex({ orders, totalAmount, statusCounts, productsList, wallet_balance, isSubscriptionExpired, filters }) {
     const { flash } = usePage().props;
     const [search, setSearch] = useState(filters?.search || '');
     const [status, setStatus] = useState(filters?.status || '');
     const [dateFrom, setDateFrom] = useState(filters?.date_from || '');
     const [dateTo, setDateTo] = useState(filters?.date_to || '');
     const [productId, setProductId] = useState(filters?.product_id || '');
+    const [showInsufficientModal, setShowInsufficientModal] = useState(false);
+
+    useEffect(() => {
+        if (flash?.insufficient_balance) {
+            setShowInsufficientModal(true);
+        }
+    }, [flash]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -30,9 +37,21 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
         router.get('/admin/orders', {}, { replace: true });
     };
 
+    const handleOrderView = (order) => {
+        if (isSubscriptionExpired) {
+            return;
+        }
+        if (order.is_unlocked || wallet_balance >= 2) {
+            router.get(`/admin/orders/${order.id}`);
+        } else {
+            setShowInsufficientModal(true);
+        }
+    };
+
+
     const statusConfig = {
         pending:   { text: 'في الانتظار', color: 'bg-yellow-50 text-yellow-700 border-yellow-100' },
-        confirmed: { text: 'مؤكد', bg: 'bg-blue-50 text-blue-700 border-blue-100' },
+        confirmed: { text: 'مؤكد', color: 'bg-blue-50 text-blue-700 border-blue-100' },
         shipped:   { text: 'في التوصيل', color: 'bg-purple-50 text-purple-700 border-purple-100' },
         delivered: { text: 'تم التسليم', color: 'bg-green-50 text-green-700 border-green-100' },
         cancelled: { text: 'ملغي', color: 'bg-red-50 text-red-700 border-red-100' },
@@ -51,45 +70,67 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
         return Math.round(Number(amount)).toLocaleString('en-US') + ' ج.م';
     };
 
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const cleanStr = dateStr.includes(' ') && !dateStr.includes('T')
+            ? dateStr.replace(' ', 'T')
+            : dateStr;
+        return new Date(cleanStr).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
     return (
         <MerchantLayout title="إدارة الطلبات">
             <Head title="الطلبات" />
 
             <div className="space-y-6">
+                {/* Flash Messages */}
+                {flash?.success && (
+                    <div className="p-4 bg-emerald-50 border-r-4 border-emerald-500 rounded-xl text-emerald-900 text-sm font-bold animate-fade-in flex items-center justify-between">
+                        <span>{flash.success}</span>
+                        <span className="text-xs text-emerald-700 font-mono">رصيدك الحالي: {Math.round(wallet_balance)} ج.م</span>
+                    </div>
+                )}
+
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                     <div>
                         <h2 className="text-2xl font-bold text-gray-900">الطلبات</h2>
                         <p className="text-sm text-gray-500 mt-0.5">
-                            إجمالي عدد الطلبات المفلترة: <span className="font-bold text-indigo-600">{statusCounts.total} طلب</span>
+                            تجاوز عدد الطلبات: <span className="font-bold text-indigo-600">{statusCounts.total} طلب</span> |
+                            رسوم الطلب (2 ج.م) تُخصم تلقائياً مع كل طلب جديد.
                         </p>
                     </div>
-                    <div className="hidden md:flex flex-wrap items-center gap-2">
-                        <a
-                            href={`/admin/orders/export?format=excel&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            excel تحميل
-                        </a>
-                        <a
-                            href={`/admin/orders/export?format=pdf&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                            </svg>
-                            pdf / طباعة
-                        </a>
+                    <div className="flex items-center gap-3">
+                        <div className="hidden md:flex flex-wrap items-center gap-2">
+                            <a
+                                href={`/admin/orders/export?format=excel&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm"
+                                title="تصدير الأوردرات كـ Excel"
+                            >
+                                📥 excel الأوردرات
+                            </a>
+                            <a
+                                href={`/admin/orders/export?format=pdf&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm"
+                                title="طباعة الأوردرات"
+                            >
+                                🖨️ pdf / طباعة
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                     <button
                         onClick={() => { setStatus(''); router.get('/admin/orders', { search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === '' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
@@ -110,6 +151,20 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                     >
                         <p className="text-2xl font-bold">{statusCounts.confirmed}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">مؤكد</p>
+                    </button>
+                    <button
+                        onClick={() => { setStatus('shipped'); router.get('/admin/orders', { status: 'shipped', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        className={`p-4 rounded-xl border text-right transition-all ${status === 'shipped' ? 'bg-purple-600 text-white border-purple-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                    >
+                        <p className="text-2xl font-bold">{statusCounts.shipped ?? 0}</p>
+                        <p className="text-xs font-medium opacity-80 mt-1">في التوصيل</p>
+                    </button>
+                    <button
+                        onClick={() => { setStatus('delivered'); router.get('/admin/orders', { status: 'delivered', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        className={`p-4 rounded-xl border text-right transition-all ${status === 'delivered' ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                    >
+                        <p className="text-2xl font-bold">{statusCounts.delivered ?? 0}</p>
+                        <p className="text-xs font-medium opacity-80 mt-1">تم التسليم</p>
                     </button>
                     <button
                         onClick={() => { setStatus('cancelled'); router.get('/admin/orders', { status: 'cancelled', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
@@ -178,27 +233,21 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                     </form>
                 </div>
 
-                {/* Mobile Export Buttons (Side by Side) */}
+                {/* Mobile Export Buttons */}
                 <div className="md:hidden flex gap-2">
                     <a
                         href={`/admin/orders/export?format=excel&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
                         className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        excel تحميل
+                        excel الأوردرات المفتوحة
                     </a>
                     <a
-                        href={`/admin/orders/export?format=pdf&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
+                        href={`/admin/orders/export?format=pdf&search=${search}&status=${search}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                        </svg>
-                        pdf / طباعة
+                        pdf / طباعة المفتوح
                     </a>
                 </div>
 
@@ -216,7 +265,7 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                                     <th className="px-6 py-3.5">الحالة</th>
                                     <th className="px-6 py-3.5">الإجمالي</th>
                                     <th className="px-6 py-3.5">التاريخ</th>
-                                    <th className="px-6 py-3.5">الإجراءات</th>
+                                    <th className="px-6 py-3.5 text-left">الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
@@ -230,8 +279,12 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                                                 {order.reference_number}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-semibold text-gray-900">{order.customer_name}</div>
-                                                <div className="text-xs text-gray-500 font-mono mt-0.5">{order.customer_phone}</div>
+                                                <div className="font-semibold text-gray-900">
+                                                    {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
+                                                </div>
+                                                <div className="text-xs text-gray-500 font-mono mt-0.5" dir="ltr">
+                                                    {order.is_unlocked || wallet_balance >= 2 ? order.customer_phone : `${order.customer_phone?.substring(0, 4)}******`}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4 text-gray-600 font-medium">
                                                 {order.governorate}
@@ -243,30 +296,38 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                                                 {formatCurrency(order.total)}
                                             </td>
                                             <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                                                {new Date(order.created_at).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
+                                                {formatDate(order.created_at)}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <Link
-                                                        href={`/admin/orders/${order.id}`}
-                                                        className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition-colors"
-                                                    >
-                                                        تفاصيل
-                                                    </Link>
-                                                    <a
-                                                        href={`/admin/orders/${order.id}/invoice`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-250 transition-colors"
-                                                    >
-                                                        الفاتورة
-                                                    </a>
+                                            <td className="px-6 py-4 text-left">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {order.is_unlocked || wallet_balance >= 2 ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleOrderView(order)}
+                                                            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-1"
+                                                        >
+                                                            <span>👁️</span>
+                                                            <span>عرض التفاصيل</span>
+                                                        </button>
+                                                    ) : (
+                                                        <Link
+                                                            href={route('merchant.wallet.index')}
+                                                            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-sm flex items-center gap-1 whitespace-nowrap"
+                                                        >
+                                                            <span>💳</span>
+                                                            <span>شحن لعرض التفاصيل</span>
+                                                        </Link>
+                                                    )}
+                                                    {(order.is_unlocked || wallet_balance >= 2) && (
+                                                        <a
+                                                            href={`/admin/orders/${order.id}/invoice`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
+                                                        >
+                                                            الفاتورة
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
@@ -296,43 +357,52 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                                                 رقم: {order.reference_number}
                                             </span>
                                         </div>
-                                        {getStatusBadge(order.status)}
+                                        <div className="flex items-center gap-2">
+                                            {getStatusBadge(order.status)}
+                                        </div>
                                     </div>
                                     <div className="text-sm space-y-1.5 text-gray-600">
                                         <div className="flex justify-between">
-                                            <span className="font-semibold text-gray-900">{order.customer_name}</span>
+                                            <span className="font-semibold text-gray-900">
+                                                {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
+                                            </span>
                                             <span className="font-bold text-indigo-600">{formatCurrency(order.total)}</span>
                                         </div>
                                         <div className="flex justify-between text-xs">
-                                            <span className="font-mono">{order.customer_phone}</span>
+                                            <span className="font-mono" dir="ltr">
+                                                {order.is_unlocked || wallet_balance >= 2 ? order.customer_phone : `${order.customer_phone?.substring(0, 4)}******`}
+                                            </span>
                                             <span>{order.governorate}</span>
                                         </div>
-                                        <div className="text-xs text-gray-400">
-                                            {new Date(order.created_at).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
+                                    </div>
+                                        <div className="flex items-center gap-2 pt-1">
+                                        {order.is_unlocked || wallet_balance >= 2 ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleOrderView(order)}
+                                                className="flex-1 py-2 text-center rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-sm"
+                                            >
+                                                عرض التفاصيل 👁️
+                                            </button>
+                                        ) : (
+                                            <Link
+                                                href={route('merchant.wallet.index')}
+                                                className="flex-1 py-2 text-center rounded-lg text-xs font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-sm"
+                                            >
+                                                💳 شحن لعرض التفاصيل
+                                            </Link>
+                                        )}
+                                        {(order.is_unlocked || wallet_balance >= 2) && (
+                                            <a
+                                                href={`/admin/orders/${order.id}/invoice`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 py-2 text-center bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
+                                            >
+                                                الفاتورة
+                                            </a>
+                                        )}
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 pt-1">
-                                        <Link
-                                            href={`/admin/orders/${order.id}`}
-                                            className="flex-1 py-2 text-center bg-indigo-50 text-indigo-700 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-colors"
-                                        >
-                                            تفاصيل
-                                        </Link>
-                                        <a
-                                            href={`/admin/orders/${order.id}/invoice`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex-1 py-2 text-center bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
-                                        >
-                                            الفاتورة
-                                        </a>
-                                    </div>
                                 </div>
                             ))
                         ) : (
@@ -342,7 +412,7 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                         )}
                     </div>
 
-                    {/* Total Amount Box - Matched Exactly to Backup Store Design */}
+                    {/* Total Amount Box */}
                     <div className="px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-t border-emerald-200">
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
                             <span className="text-base sm:text-lg font-bold text-emerald-800">إجمالي المبالغ المعروضة:</span>
@@ -380,6 +450,78 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                     )}
                 </div>
             </div>
+
+            {/* مودال عدم كفاية الرصيد */}
+            {showInsufficientModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 space-y-5 text-right">
+                        <div className="flex items-center gap-3 text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                            <span className="text-2xl">⚠️</span>
+                            <div>
+                                <h3 className="font-extrabold text-base text-gray-900">برجاء الشحن لرؤية تفاصيل الأوردر</h3>
+                                <span className="text-xs text-amber-700 font-medium">رسوم كل طلب: 2 ج.م</span>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            رصيدك في المحفظة غير كافٍ لفتح تفاصيل الطلب. رسوم كل طلب (2 ج.م) تُخصم تلقائياً عند الإنشاء. يرجى شحن المحفظة للمتابعة.
+                        </p>
+
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 flex justify-between items-center text-xs font-bold">
+                            <span className="text-gray-500">رصيدك الحالي:</span>
+                            <span className="text-rose-600 font-mono text-sm" dir="ltr">{Math.round(wallet_balance)} ج.م</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-2">
+                            <Link
+                                href={route('merchant.wallet.index')}
+                                className="flex-1 py-3 bg-indigo-600 text-white text-center font-extrabold text-xs rounded-xl hover:bg-indigo-700 transition-all shadow-md flex items-center justify-center gap-1.5"
+                            >
+                                <span>💳</span>
+                                <span>الانتقال لصفحة شحن المحفظة</span>
+                            </Link>
+                            <button
+                                type="button"
+                                onClick={() => setShowInsufficientModal(false)}
+                                className="py-3 px-4 bg-gray-100 text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-200 transition-colors"
+                            >
+                                إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ====== Modal: قفل الطلبات لانتهاء مدة الاشتراك ====== */}
+            {isSubscriptionExpired && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl border border-gray-100 animate-fade-in">
+                        <div className="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-3xl font-bold mx-auto mb-4 border border-rose-200">
+                            🔒
+                        </div>
+                        <h3 className="text-xl font-extrabold text-gray-900 mb-2">
+                            تم قفل استعراض الطلبات لانتهاء مدة الاشتراك
+                        </h3>
+                        <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                            سيظل متجرك مفتوحاً وعاملاً أمام العملاء لاستقبال الطلبات دائماً، ولكن لمشاهدة تفاصيل الطلبات الواردة وإدارتها يرجى تجديد الاشتراك أو شحن المحفظة والتحويل لباقة العمولة.
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <Link
+                                href={route('merchant.subscription.index')}
+                                className="w-full py-3.5 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-extrabold text-sm rounded-xl transition-all shadow-md hover:shadow-indigo-200"
+                            >
+                                تجديد الاشتراك أو التحويل للباقة 🚀
+                            </Link>
+                            <Link
+                                href={route('merchant.dashboard')}
+                                className="w-full py-2.5 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all"
+                            >
+                                العودة للرئيسية
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
         </MerchantLayout>
     );
 }

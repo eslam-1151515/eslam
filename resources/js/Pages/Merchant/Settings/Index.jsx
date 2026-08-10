@@ -45,6 +45,48 @@ export default function SettingsIndex({ settings }) {
         setData('logo', null);
     };
 
+    const handleFBPixelChange = (val) => {
+        let text = val;
+        // Smart auto-extraction if merchant pastes full Facebook pixel code snippet or URL
+        if (text && (text.includes('fbq') || text.includes('script') || text.includes('facebook.com') || text.includes('<noscript>'))) {
+            const found = [];
+            const initMatches = [...text.matchAll(/fbq\s*\(\s*['"]init['"]\s*,\s*['"]?(\d+)['"]?/gi)];
+            initMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const idMatches = [...text.matchAll(/[?&]id=(\d+)/gi)];
+            idMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const digitMatches = text.match(/\b\d{13,17}\b/g);
+            if (digitMatches) {
+                digitMatches.forEach(num => found.push(num));
+            }
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('facebook_pixel_id', text);
+    };
+
+    const handleTTPixelChange = (val) => {
+        let text = val;
+        if (text && (text.includes('ttq') || text.includes('script') || text.includes('analytics.tiktok.com'))) {
+            const found = [];
+            const loadMatches = [...text.matchAll(/ttq\.load\s*\(\s*['"]([a-zA-Z0-9_-]+)['"]\s*\)/gi)];
+            loadMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const sdkMatches = [...text.matchAll(/[?&]sdkid=([a-zA-Z0-9_-]+)/gi)];
+            sdkMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('tiktok_pixel_id', text);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         post('/admin/settings', {
@@ -271,43 +313,77 @@ export default function SettingsIndex({ settings }) {
 
                             {/* Tab 2: Pixel Links */}
                             {activeTab === 'integrations' && (
-                                <div className="space-y-5 animate-in fade-in duration-200">
-                                    <h3 className="text-lg font-bold text-gray-900 border-b pb-3 mb-4 flex items-center gap-2">
-                                        <span>🎯</span> ربط البيكسل
+                                <div className="space-y-6 animate-in fade-in duration-200">
+                                    <h3 className="text-lg font-bold text-gray-900 border-b pb-3 mb-4 flex items-center justify-between">
+                                        <span className="flex items-center gap-2">🎯 إعدادات البيكسلز (Facebook, TikTok, Snapchat)</span>
                                     </h3>
 
+                                    {/* Critical Instructions Warning Box */}
+                                    <div className="bg-red-50/90 border-2 border-red-200 rounded-2xl p-4 sm:p-5 text-sm space-y-3 shadow-xs">
+                                        <h4 className="font-extrabold text-red-700 text-base flex items-center gap-2">
+                                            <span className="text-xl">🚨</span> مهم جداً يجب عليك قراءته قبل تفعيل البيكسل:
+                                        </h4>
+
+                                        <div className="bg-white p-3.5 rounded-xl border border-red-200/80 shadow-2xs">
+                                            <p className="font-bold text-red-700 text-xs sm:text-sm mb-1 flex items-center gap-1.5">
+                                                <span>🚫</span> لا تربط البيكسل بصفحة (thank you) أو بأي زرار (Don't Use Event Builder):
+                                            </p>
+                                            <p className="text-xs text-gray-700 leading-relaxed mr-5">
+                                                عندما تقوم بربط أي صفحة أو زرار بـ Event Builder مثلاً العميل يدخل على صفحة شكراً لك بعد الطلب يرسل للبيكسل شراء وهذا خاطئ، لأننا نقوم بإرسال كافة البيانات والأحداث بشكل أوتوماتيك، وهذا يؤدي إلى أن الطلبات ستظهر مرتين وتتكرر في البيكسل ولن تكون بياناتك دقيقة.
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-white p-3.5 rounded-xl border border-red-200/80 shadow-2xs">
+                                            <p className="font-bold text-red-700 text-xs sm:text-sm mb-1 flex items-center gap-1.5">
+                                                <span>✨</span> يمكنك إضافة الـ ID (المعرف) مباشرة أو لزق كود البيكسل بالكامل:
+                                            </p>
+                                            <p className="text-xs text-gray-700 leading-relaxed mr-5">
+                                                ضع رقم معرف البيكسل (ID) فقط، أو قم بلزق كود البيكسل كاملاً وسيقوم النظام باستخراج أرقام الـ ID تلقائياً وتفعيل التتبع أوتوماتيكياً دون الحاجة لربط أي زراير أو صفحات.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Facebook Pixel */}
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1.5">معرف فيسبوك بكسل (Facebook Pixel ID)</label>
-                                        <input
-                                            type="text"
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-sm font-bold text-gray-700">معرف فيسبوك بكسل (Facebook Pixel ID)</label>
+                                            <span className="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">تستطيع إضافة أكثر من بيكسل (كل معرف في سطر)</span>
+                                        </div>
+                                        <textarea
+                                            rows={3}
                                             value={data.facebook_pixel_id}
-                                            onChange={(e) => setData('facebook_pixel_id', e.target.value)}
-                                            placeholder="مثال: 123456789012345"
-                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-left font-mono ${
+                                            onChange={(e) => handleFBPixelChange(e.target.value)}
+                                            placeholder="ضع الـ ID أو لزق كود البيكسل هنا وسيتم استخراج الرقم أوتوماتيكياً&#10;مثال: 123456789012345"
+                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-right font-mono dir-rtl placeholder:text-right ${
                                                 errors.facebook_pixel_id ? 'border-red-400 bg-red-50/50 text-red-900' : 'border-gray-300'
                                             }`}
-                                            dir="ltr"
+                                            dir="rtl"
                                         />
-                                        <p className="text-xs text-gray-400 mt-1 text-right">أدخل أرقام الـ Pixel ID فقط وسيتم تفعيل تتبع الأحداث تلقائياً.</p>
+                                        <p className="text-xs text-gray-500 mt-1 text-right">💡 يمكنك إضافة أرقام الـ ID مباشرة أو لزق كود فيسبوك بالكامل وسيقوم النظام باستخراج رقم البيكسل أوتوماتيكياً!</p>
                                         {errors.facebook_pixel_id && <p className="text-xs text-red-600 mt-1 text-right">{errors.facebook_pixel_id}</p>}
                                     </div>
 
+                                    {/* TikTok Pixel */}
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1.5">معرف تيك توك بكسل (TikTok Pixel ID)</label>
-                                        <input
-                                            type="text"
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-sm font-bold text-gray-700">معرف تيك توك بكسل (TikTok Pixel ID)</label>
+                                            <span className="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">تستطيع إضافة أكثر من بيكسل (كل معرف في سطر)</span>
+                                        </div>
+                                        <textarea
+                                            rows={3}
                                             value={data.tiktok_pixel_id}
-                                            onChange={(e) => setData('tiktok_pixel_id', e.target.value)}
-                                            placeholder="مثال: CD8Q..."
-                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-left font-mono ${
+                                            onChange={(e) => handleTTPixelChange(e.target.value)}
+                                            placeholder="ضع الـ ID أو لزق كود التيك توك هنا وسيتم استخراج المعرف أوتوماتيكياً&#10;مثال: CD8Q..."
+                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-right font-mono dir-rtl placeholder:text-right ${
                                                 errors.tiktok_pixel_id ? 'border-red-400 bg-red-50/50 text-red-900' : 'border-gray-300'
                                             }`}
-                                            dir="ltr"
+                                            dir="rtl"
                                         />
-                                        <p className="text-xs text-gray-400 mt-1 text-right">أدخل الـ Pixel ID المكون من حروف وأرقام.</p>
+                                        <p className="text-xs text-gray-500 mt-1 text-right">أدخل الـ Pixel ID أو لزق الكود الكامل وسيقوم النظام باستخراج المعرف أوتوماتيكياً.</p>
                                         {errors.tiktok_pixel_id && <p className="text-xs text-red-600 mt-1 text-right">{errors.tiktok_pixel_id}</p>}
                                     </div>
 
+                                    {/* Snapchat Pixel */}
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1.5">معرف سناب شات بكسل (Snapchat Pixel ID)</label>
                                         <input
@@ -315,12 +391,12 @@ export default function SettingsIndex({ settings }) {
                                             value={data.snapchat_pixel_id}
                                             onChange={(e) => setData('snapchat_pixel_id', e.target.value)}
                                             placeholder="مثال: 9a8b7c6d-5e4f-3a2b..."
-                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-left font-mono ${
+                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-right font-mono dir-rtl placeholder:text-right ${
                                                 errors.snapchat_pixel_id ? 'border-red-400 bg-red-50/50 text-red-900' : 'border-gray-300'
                                             }`}
-                                            dir="ltr"
+                                            dir="rtl"
                                         />
-                                        <p className="text-xs text-gray-400 mt-1 text-right">أدخل معرف Snapchat Pixel لتتبع الإعلانات على سناب شات.</p>
+                                        <p className="text-xs text-gray-500 mt-1 text-right">أدخل معرف Snapchat Pixel لتتبع الإعلانات على سناب شات.</p>
                                         {errors.snapchat_pixel_id && <p className="text-xs text-red-600 mt-1 text-right">{errors.snapchat_pixel_id}</p>}
                                     </div>
 
@@ -331,10 +407,10 @@ export default function SettingsIndex({ settings }) {
                                             value={data.google_analytics_id}
                                             onChange={(e) => setData('google_analytics_id', e.target.value)}
                                             placeholder="مثال: G-XXXXXXXXXX"
-                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-left font-mono ${
+                                            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-right font-mono dir-rtl placeholder:text-right ${
                                                 errors.google_analytics_id ? 'border-red-400 bg-red-50/50 text-red-900' : 'border-gray-300'
                                             }`}
-                                            dir="ltr"
+                                            dir="rtl"
                                         />
                                         <p className="text-xs text-gray-400 mt-1 text-right">أدخل معرف التتبع لجوجل مثل G-XXXXXXXXXX.</p>
                                         {errors.google_analytics_id && <p className="text-xs text-red-600 mt-1 text-right">{errors.google_analytics_id}</p>}

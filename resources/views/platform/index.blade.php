@@ -86,8 +86,8 @@
             'id' => 'starter',
             'name_ar' => 'الباقة التجريبية (Starter)',
             'name_en' => 'Starter Trial Plan',
-            'badge_ar' => 'مجاني 14 يوم',
-            'badge_en' => 'Free 14 Days',
+            'badge_ar' => 'مجاني 7 أيام',
+            'badge_en' => 'Free 7 Days',
             'price_monthly' => '0',
             'price_yearly' => '0',
             'period_ar' => 'شهر',
@@ -480,7 +480,7 @@
                 heroDesc: 'المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات مرنة تناسب نمو عملك وتطلعاتك.',
                 heroCtaStart: 'ابدأ متجرك الآن مجاناً',
                 heroCtaFeatures: 'تصفح المميزات',
-                heroCheckFree: '14 يوم تجربة مجانية',
+                heroCheckFree: '7 أيام تجربة مجانية',
                 heroCheckNoCard: 'بدون بطاقة ائتمان',
                 heroCheckZeroComm: '0% عمولة على المبيعات',
                 heroCheckSupport: 'دعم فني وتدريب 24/7',
@@ -516,10 +516,7 @@
                 
                 pricingSub: 'باقات شفافة وبدون عمولات',
                 pricingTitle: 'باقات مصممة لنمو أعمالك بدون رسوم خفية',
-                pricingDesc: 'ابدأ مجاناً لمدة 14 يوماً وقم بالترقية عندما ينمو متجرك. جميع الباقات تتمتع بعمولة 0% على المبيعات!',
-                pricingMonthlyToggle: 'دفع شهري',
-                pricingAnnualToggle: 'دفع سنوي',
-                pricingSaveDiscount: 'وفّر 20% 🔥',
+                pricingDesc: 'ابدأ مجاناً لمدة 7 أيام أو اختر الدفع على الطلب (2ج لكل أوردر) أو الاشتراك الشهري بخصم 50% (500ج بدلاً من 1000ج) بدون عمولات!',
                 pricingIncluded: 'المميزات المشمولة:',
                 pricingGuarantee: 'جميع الباقات تشمل استضافة سحابية فائقة الأمان، شهادة SSL مجانية، ونسخ احتياطي يومي تلقائي.',
                 
@@ -537,7 +534,7 @@
                 
                 finalCtaSub: '🚀 انطلق نحو النجاح اليوم',
                 finalCtaTitle: 'هل أنت مستعد لنقل تجارتك الإلكترونية إلى المستوى التالي؟',
-                finalCtaDesc: 'أنشئ متجرك الآن في أقل من 3 دقائق، استمتع بـ 14 يوماً مجاناً، ولا تدفع أي عمولات على مبيعاتك أبداً!',
+                finalCtaDesc: 'أنشئ متجرك الآن في أقل من 3 دقائق، استمتع بـ 7 أيام مجاناً، ولا تدفع أي عمولات على مبيعاتك أبداً!',
                 finalCtaSupport: 'تواصل مع الدعم الفني',
                 
                 footerDesc: 'فاست أوردر هي المنصة المتكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بسرعات فائقة وتقنيات ذكية، مصممة لتمكين التجار من النمو بدون عمولات أو قيود تقنية.',
@@ -572,7 +569,7 @@
                 heroDesc: 'The fastest and smartest platform in the Arab world to manage your e-commerce without coding complexity, with 0% commission and flexible plans to suit your growth.',
                 heroCtaStart: 'Start Your Store Free',
                 heroCtaFeatures: 'Browse Features',
-                heroCheckFree: '14-Day Free Trial',
+                heroCheckFree: '7-Day Free Trial',
                 heroCheckNoCard: 'No Credit Card Required',
                 heroCheckZeroComm: '0% Sales Commission',
                 heroCheckSupport: '24/7 Technical Support',
@@ -608,7 +605,7 @@
                 
                 pricingSub: 'Transparent Pricing & No Commissions',
                 pricingTitle: 'Plans Designed to Grow Your Business with No Hidden Fees',
-                pricingDesc: 'Start free for 14 days and upgrade as your store grows. All plans enjoy 0% commission on sales!',
+                pricingDesc: 'Start free for 7 days and upgrade as your store grows. All plans enjoy 0% commission on sales!',
                 pricingMonthlyToggle: 'Monthly Pay',
                 pricingAnnualToggle: 'Annual Pay',
                 pricingSaveDiscount: 'Save 20% 🔥',
@@ -629,7 +626,7 @@
                 
                 finalCtaSub: '🚀 Launch Into Success Today',
                 finalCtaTitle: 'Ready to Take Your E-Commerce to the Next Level?',
-                finalCtaDesc: 'Create your store now in less than 3 minutes, enjoy 14 days free, and never pay any commission on your sales!',
+                finalCtaDesc: 'Create your store now in less than 3 minutes, enjoy 7 days free, and never pay any commission on your sales!',
                 finalCtaSupport: 'Contact Support',
                 
                 footerDesc: 'Fast Order is the all-in-one platform for building and growing e-commerce stores in the Arab world with blazing speeds and smart technologies, designed to enable merchants to grow without commissions or tech limits.',
@@ -1137,7 +1134,7 @@
             </section>
 
             <!-- Pricing Section -->
-            <section id="pricing" class="py-24 relative overflow-hidden" x-data="{ annual: true }">
+            <section id="pricing" class="py-24 relative overflow-hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
@@ -1149,22 +1146,6 @@
                         </h2>
                         <p class="text-base sm:text-lg text-slate-500 dark:text-gray-400 font-normal leading-relaxed" x-text="trans('pricingDesc')">
                         </p>
-
-                        <!-- Monthly / Annual Toggle -->
-                        <div class="pt-6 flex items-center justify-center gap-4">
-                            <span class="text-sm font-bold text-slate-700 dark:text-gray-300" :class="!annual ? 'text-slate-900 dark:text-white font-extrabold' : 'text-slate-400 dark:text-gray-500'" x-text="trans('pricingMonthlyToggle')"></span>
-                            <button type="button" 
-                                    @click="annual = !annual" 
-                                    class="w-16 h-8 rounded-full bg-slate-200 dark:bg-dark-card border border-slate-300 dark:border-white/20 p-1 transition-colors relative focus:outline-none"
-                                    :class="annual ? 'bg-brand-600 border-brand-500 dark:bg-brand-600 dark:border-brand-500' : ''">
-                                <div class="w-6 h-6 rounded-full bg-white transition-transform duration-300 shadow-md"
-                                     :class="annual ? (lang === 'ar' ? '-translate-x-8' : 'translate-x-8') : 'translate-x-0'"></div>
-                            </button>
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-slate-700 dark:text-gray-300" :class="annual ? 'text-slate-900 dark:text-white font-extrabold' : 'text-slate-400 dark:text-gray-500'" x-text="trans('pricingAnnualToggle')"></span>
-                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-extrabold border border-emerald-500/30" x-text="trans('pricingSaveDiscount')"></span>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Pricing Cards Grid -->
@@ -1172,18 +1153,20 @@
                         @foreach($plans as $plan)
                             <div class="glass-card rounded-3xl p-8 border flex flex-col justify-between relative transition-all duration-500 {{ $plan['featured'] ? 'border-brand-500 shadow-2xl dark:shadow-brand-500/20 bg-white dark:bg-gradient-to-b dark:from-dark-card dark:via-brand-950/20 dark:to-dark-card lg:-translate-y-4' : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20' }}">
                                 
-                                @if($plan['featured'])
-                                    <!-- Popular Badge -->
-                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-600 to-pink-600 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg shadow-brand-500/30">
-                                        ★ <span x-text="lang === 'ar' ? '{{ $plan['badge_ar'] }}' : '{{ $plan['badge_en'] }}'"></span>
-                                    </div>
-                                @elseif(isset($plan['badge_ar']))
-                                    <div class="absolute top-6 left-6 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 text-xs font-bold px-3 py-1 rounded-full">
-                                        <span x-text="lang === 'ar' ? '{{ $plan['badge_ar'] }}' : '{{ $plan['badge_en'] }}'"></span>
-                                    </div>
-                                @endif
-
                                 <div>
+                                    <!-- Badge Header -->
+                                    <div class="mb-4 min-h-[28px] flex items-center">
+                                        @if($plan['featured'])
+                                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 text-white text-xs font-black uppercase tracking-wider shadow-md">
+                                                ★ <span x-text="lang === 'ar' ? '{{ $plan['badge_ar'] }}' : '{{ $plan['badge_en'] }}'"></span>
+                                            </span>
+                                        @elseif(isset($plan['badge_ar']))
+                                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-brand-600 dark:text-brand-300 border border-slate-200 dark:border-white/10 text-xs font-bold">
+                                                ✨ <span x-text="lang === 'ar' ? '{{ $plan['badge_ar'] }}' : '{{ $plan['badge_en'] }}'"></span>
+                                            </span>
+                                        @endif
+                                    </div>
+
                                     <!-- Plan Name & Description -->
                                     <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2"
                                         x-text="lang === 'ar' ? '{{ $plan['name_ar'] }}' : '{{ $plan['name_en'] }}'">
@@ -1196,7 +1179,7 @@
 
                                     <!-- Price Display -->
                                     <div class="mb-8 pb-6 border-b border-slate-200 dark:border-white/10 flex items-baseline gap-2">
-                                        <span class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight" x-text="annual ? '{{ $plan['price_yearly'] }}' : '{{ $plan['price_monthly'] }}'"></span>
+                                        <span class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">{{ $plan['price'] }}</span>
                                         <span class="text-base font-bold text-brand-600 dark:text-brand-400" x-text="lang === 'ar' ? 'ج.م / {{ $plan['period_ar'] }}' : 'EGP / {{ $plan['period_en'] }}'"></span>
                                     </div>
 

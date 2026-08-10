@@ -466,7 +466,7 @@
 
                     <div class="summary-row">
                         <span>??????? ??????</span>
-                        <span id="summary-subtotal">�</span>
+                        <span id="summary-subtotal"></span>
                     </div>
                     <div class="summary-row" id="discount-row" style="display:none; color:#16a34a; font-weight:700;">
                         <span>????? (<span id="coupon-code-lbl"></span>)</span>
@@ -474,14 +474,14 @@
                     </div>
                     <div class="summary-row" id="shipping-row">
                         <span>?????</span>
-                        <span id="summary-shipping" style="color:#22c55e;">�</span>
+                        <span id="summary-shipping" style="color:#22c55e;"></span>
                     </div>
 
                     <hr class="divider">
 
                     <div class="summary-total">
                         <span>????????</span>
-                        <span id="summary-total">�</span>
+                        <span id="summary-total"></span>
                     </div>
 
                     <button type="button" class="place-btn" id="place-btn" onclick="document.getElementById('checkout-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))">
@@ -495,343 +495,302 @@
     </div>
 
 <script>
-// --- Globals ---------------------------------------------------------------
-let cartItems      = [];
-let governorates   = [];
-let shippingCost   = 0;
+    document.getElementById('footYear').textContent = new Date().getFullYear();
 
-const fmt = (n) => Number(n).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ?.?';
+    var currentShipping = 0;
+    var governorates   = [];
 
-let appliedDiscount = 0;
-let appliedCouponCode = null;
-
-// --- Init -------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', async () => {
-    loadCart();
-    await loadGovernorates();
-    renderSummary();
-
-    // Load saved customer info if present
-    try {
-        const savedInfo = localStorage.getItem('saved_customer_info');
-        if (savedInfo) {
-            const info = JSON.parse(savedInfo);
-            if (info.name) document.querySelector('input[name="customer_name"]').value = info.name;
-            if (info.phone) document.querySelector('input[name="customer_phone"]').value = info.phone;
-            if (info.address) document.querySelector('input[name="customer_address"]').value = info.address;
-            if (info.governorate_id) {
-                setTimeout(() => {
-                    const sel = document.getElementById('governorate-select');
-                    if (sel) {
-                        sel.value = info.governorate_id;
-                        const opt = sel.options[sel.selectedIndex];
-                        if (opt && opt.dataset.price) {
-                            shippingCost = parseFloat(opt.dataset.price || 0);
-                            renderSummary();
-                        }
-                    }
-                }, 500);
-            }
-        }
-    } catch(e){}
-});
-
-// --- Load cart from localStorage --------------------------------------------
-function loadCart() {
-    try {
-        cartItems = JSON.parse(localStorage.getItem('bird_cart') || '[]');
-    } catch { cartItems = []; }
-
-    const list = document.getElementById('order-items-list');
-
-    if (!cartItems.length) {
-        list.innerHTML = '<p class="empty-cart-msg">?? ???? ?????! <a href="/shop/">???? ????</a></p>';
-        document.getElementById('place-btn').disabled = true;
-        return;
+    /* ---- Format ---- */
+    function fmt(n) {
+      return new Intl.NumberFormat('en-EG', { maximumFractionDigits: 0 }).format(Math.round(Number(n || 0))) + ' EGP';
     }
 
-    list.innerHTML = cartItems.map(item => `
-        <div class="order-item-row">
-            <img class="item-thumb" src="${item.image || '/shop/placeholder.jpg'}"
-                 onerror="this.src='/shop/placeholder.jpg'" alt="${item.name}">
-            <div style="flex:1">
-                <div class="item-name">${item.name}</div>
-                <div class="item-qty">
-                    ${item.selectedSize  ? '????: ' + item.selectedSize  + ' ' : ''}
-                    ${item.selectedColor ? '???: '  + item.selectedColor  : ''}
-                </div>
-            </div>
-            <div>
-                <div class="item-qty" style="text-align:center">� ${item.qty || 1}</div>
-                <div class="item-price">${fmt((item.price || 0) * (item.qty || 1))}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// --- Load governorates -------------------------------------------------------
-async function loadGovernorates() {
-    try {
-        const res  = await fetch('/public-api/shipping-governorates');
-        const data = await res.json();
-        governorates = (data.data || []).filter(g => g.is_active);
-    } catch { governorates = []; }
-
-    const sel = document.getElementById('governorate-select');
-    if (!governorates.length) {
-        sel.innerHTML = '<option value="">?? ???? ??????? ?????</option>';
-        return;
-    }
-    sel.innerHTML = '<option value="">???? ????????</option>' +
-        governorates.map(g =>
-            `<option value="${g.id}" data-price="${g.price}">${g.name} � ${g.price > 0 ? fmt(g.price) : '??? ?????'}</option>`
-        ).join('');
-
-    sel.addEventListener('change', () => {
-        const opt  = sel.options[sel.selectedIndex];
-        shippingCost = parseFloat(opt.dataset.price || 0);
+    /* ---- Load governorates ---- */
+    fetch('/public-api/shipping-governorates')
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        governorates = (res.data || []).filter(function(g){ return g.is_active; });
+        var sel = document.getElementById('governorateSelect');
+        sel.innerHTML = '<option value="">اختر المحافظة</option>';
+        governorates.sort(function(a,b){ return a.name.localeCompare(b.name,'ar'); })
+          .forEach(function(g){
+            var opt = document.createElement('option');
+            opt.value = g.id;
+            opt.textContent = g.name;
+            opt.dataset.price = g.price;
+            sel.appendChild(opt);
+          });
         renderSummary();
-    });
-}
+      })
+      .catch(function(){ });
 
-// --- Render order summary totals ---------------------------------------------
-function hasCalculatedShipping() {
-    return cartItems.some(item => item.shipping_type && item.shipping_type !== 'free');
-}
+    /* ---- Render order items ---- */
+    function renderSummary() {
+      var cart = BirdCart.getCart();
+      var box  = document.getElementById('orderItems');
 
-// --- Render order summary totals ---------------------------------------------
-function renderSummary() {
-    const subtotal = cartItems.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
-    const hasCalc = hasCalculatedShipping();
-    const govSel = document.getElementById('governorate-select');
-    const isGovSelected = govSel && govSel.value !== '';
+      if (!cart.length) {
+        box.innerHTML = '<p style="color:#6b7280;text-align:center;padding:16px;">السلة فارغة</p>';
+        return;
+      }
 
-    let shippingText = '';
-    let totalText = '';
+      var subtotal = 0;
+      box.innerHTML = cart.map(function(it) {
+        var line = (it.price || 0) * (it.qty || 1);
+        subtotal += line;
 
-    if (!hasCalc) {
-        shippingText = 'مجاني';
-        totalText = fmt(Math.max(0, subtotal - appliedDiscount));
-    } else {
-        if (!isGovSelected) {
-            shippingText = 'غير محدد';
-            totalText = fmt(Math.max(0, subtotal - appliedDiscount));
+        var sizeTag  = it.selectedSize  ? '<span style="font-size:.75rem;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;margin-right:4px;">المقاس: '+it.selectedSize+'</span>' : '';
+        var colorTag = it.selectedColor ? '<span style="font-size:.75rem;background:#fce7f3;color:#be185d;padding:2px 6px;border-radius:4px;margin-right:4px;">اللون: '+it.selectedColor+'</span>' : '';
+
+        return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:600;color:#111827;margin-bottom:3px;">' + (it.name||'منتج') + '</div>' +
+            (sizeTag||colorTag ? '<div style="margin-bottom:4px;">' + sizeTag + colorTag + '</div>' : '') +
+            '<div style="font-size:14px;color:#6b7280;">الكمية: ' + (it.qty||1) + ' × ' + fmt(it.price) + '</div>' +
+          '</div>' +
+          '<div style="font-weight:700;color:#4f46e5;margin-right:8px;">' + fmt(line) + '</div>' +
+        '</div>';
+      }).join('');
+
+      document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+      updateTotal(subtotal);
+    }
+
+    /* ---- Update shipping ---- */
+    function updateShipping() {
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      currentShipping = opt && opt.dataset.price ? parseInt(opt.dataset.price) : 0;
+      var shEl = document.getElementById('sumShipping');
+      shEl.textContent = currentShipping > 0 ? fmt(currentShipping) : '—';
+      shEl.style.color  = currentShipping > 0 ? '#4f46e5' : '#9ca3af';
+
+      var cart     = BirdCart.getCart();
+      var subtotal = cart.reduce(function(s,it){ return s + (it.price||0)*(it.qty||1); }, 0);
+      updateTotal(subtotal);
+    }
+
+    function updateTotal(subtotal) {
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
+
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
         } else {
-            shippingText = shippingCost > 0 ? fmt(shippingCost) : 'مجاني';
-            totalText = fmt(Math.max(0, subtotal - appliedDiscount + shippingCost));
+          discount = couponValue;
         }
+        discount = Math.min(discount, subtotal);
+      }
+
+      var row = document.getElementById('couponRow');
+      var discEl = document.getElementById('sumDiscount');
+      if (discount > 0 && couponCode) {
+        row.style.display = 'flex';
+        discEl.textContent = '−' + fmt(discount);
+      } else {
+        row.style.display = 'none';
+      }
+
+      var finalTotal = Math.max(0, subtotal - discount + currentShipping);
+      document.getElementById('sumTotal').textContent = fmt(finalTotal);
     }
 
-    document.getElementById('summary-subtotal').textContent = fmt(subtotal);
-    document.getElementById('summary-shipping').textContent = shippingText;
-    document.getElementById('summary-total').textContent    = totalText;
-}
+    /* ---- Phone Input Realtime Formatting & Validation ---- */
+    var pInput = document.getElementById('phoneInput');
+    var pErr = document.getElementById('phoneErrorMsg');
+    var phoneRegex = /^01[0125][0-9]{8}$/;
 
-// --- Apply Coupon ------------------------------------------------------------
-async function applyCoupon() {
-    const input = document.getElementById('coupon-input');
-    const msg   = document.getElementById('coupon-msg');
-    const btn   = document.getElementById('apply-coupon-btn');
-    if (!input.value.trim()) {
-        msg.textContent = '???? ??? ????? ?????';
-        msg.style.color = '#dc2626';
-        msg.style.display = 'block';
-        return;
-    }
-    const code = input.value.trim().toUpperCase();
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>';
-    
-    const subtotal = cartItems.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+    if (pInput) {
+      pInput.addEventListener('input', function() {
+        // Strip non-digits completely
+        var val = this.value.replace(/\D/g, '');
+        
+        // Force starting with 01 if user types other numbers
+        if (val.length >= 1 && val[0] !== '0') {
+          val = '0' + val;
+        }
+        if (val.length >= 2 && val[1] !== '1') {
+          val = '01' + val.slice(2);
+        }
+        
+        // Enforce 11 digits max
+        this.value = val.slice(0, 11);
 
-    try {
-        const res = await fetch('/checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-            },
-            body: JSON.stringify({ action: 'check_coupon', coupon_code: code, subtotal }),
-        });
-        const data = await res.json();
-        if (data.success) {
-            appliedDiscount   = parseFloat(data.discount || 0);
-            appliedCouponCode = data.code || code;
-            msg.textContent   = '? ' + data.message + ` (??? ${fmt(appliedDiscount)})`;
-            msg.style.color   = '#16a34a';
-            msg.style.display = 'block';
-            document.getElementById('discount-row').style.display = 'flex';
-            document.getElementById('coupon-code-lbl').textContent = appliedCouponCode;
-            document.getElementById('summary-discount').textContent = '-' + fmt(appliedDiscount);
-            input.disabled = true;
-            btn.textContent = '??';
-            renderSummary();
+        if (this.value.length === 11) {
+          if (phoneRegex.test(this.value)) {
+            this.style.borderColor = '#10b981';
+            this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+            if (pErr) pErr.style.display = 'none';
+          } else {
+            this.style.borderColor = '#ef4444';
+            this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (pErr) pErr.style.display = 'block';
+          }
         } else {
-            appliedDiscount   = 0;
-            appliedCouponCode = null;
-            msg.textContent   = '? ' + (data.message || '??? ??? ????');
-            msg.style.color   = '#dc2626';
-            msg.style.display = 'block';
-            document.getElementById('discount-row').style.display = 'none';
-            renderSummary();
+          this.style.borderColor = '#e5e7eb';
+          this.style.boxShadow = 'none';
+          if (pErr) pErr.style.display = 'none';
         }
-    } catch(e) {
-        msg.textContent   = '? ??? ??? ?? ?????? ?? ???????';
-        msg.style.color   = '#dc2626';
-        msg.style.display = 'block';
-    } finally {
-        btn.disabled = false;
-        if (!input.disabled) btn.textContent = '?????';
+      });
+
+      pInput.addEventListener('blur', function() {
+        if (this.value && (!phoneRegex.test(this.value) || this.value.length !== 11)) {
+          this.style.borderColor = '#ef4444';
+          this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          if (pErr) pErr.style.display = 'block';
+        }
+      });
+
+      pInput.addEventListener('paste', function(e) {
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        var clean = pasted.replace(/\D/g, '');
+        if (clean.length > 0 && !clean.startsWith('01')) {
+          if (clean.startsWith('1')) clean = '0' + clean;
+          else clean = '01' + clean;
+        }
+        this.value = clean.slice(0, 11);
+        e.preventDefault();
+
+        if (this.value.length === 11 && phoneRegex.test(this.value)) {
+          this.style.borderColor = '#10b981';
+          this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+          if (pErr) pErr.style.display = 'none';
+        }
+      });
     }
-}
 
-// --- Payment method toggle ---------------------------------------------------
-function selectPayment(method, el) {
-    document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    el.querySelector('input[type=radio]').checked = true;
-    document.getElementById('transfer-details').classList.toggle('show', method === 'transfer');
-}
+    /* ---- Form submit ---- */
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
 
-// --- Place order -------------------------------------------------------------
-async function placeOrder(e) {
-    e.preventDefault();
+      var form = e.target;
+      var fd   = new FormData(form);
+      var name = fd.get('name');
+      var phone = (fd.get('phone') || '').replace(/[\s\+\-]/g, '');
+      if (phone.startsWith('201')) phone = '0' + phone.substring(2);
+      else if (phone.startsWith('00201')) phone = '0' + phone.substring(4);
+      var addr = fd.get('address');
 
-    // Validate cart
-    if (!cartItems.length) {
-        showError('???? ?????! ??? ?????? ??? ????????.');
+      if (!name || !phone || !addr) { alert('يرجى ملء جميع البيانات المطلوبة'); return; }
+
+      // Enforce strictly 11 digits starting with 010, 011, 012, 015
+      if (!phone || !phoneRegex.test(phone)) {
+        if (pInput) {
+          pInput.style.borderColor = '#ef4444';
+          pInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+          pInput.focus();
+        }
+        if (pErr) pErr.style.display = 'block';
         return;
-    }
+      }
 
-    // Validate governorate
-    const govSel = document.getElementById('governorate-select');
-    if (!govSel.value) {
-        showError('???? ?????? ????????.');
-        govSel.focus();
-        return;
-    }
+      var sel = document.getElementById('governorateSelect');
+      var opt = sel.options[sel.selectedIndex];
+      if (!opt || !opt.value) { alert('يرجى اختيار المحافظة'); return; }
 
-    hideError();
+      var cart = BirdCart.getCart();
+      if (!cart.length) { alert('السلة فارغة'); return; }
 
-    const form   = document.getElementById('checkout-form');
-    const fData  = new FormData(form);
-    const fields = Object.fromEntries(fData.entries());
+      var btn = document.getElementById('submitBtn');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-left:8px;"></i>جاري المعالجة...';
+      btn.disabled = true;
 
-    // Validate phone format and normalize it
-    let phone = fields.customer_phone ? fields.customer_phone.trim().replace(/\s+/g, '') : '';
-    if (phone.startsWith('+201')) {
-        phone = phone.substring(2);
-    } else if (phone.startsWith('201')) {
-        phone = '0' + phone.substring(1);
-    } else if (phone.startsWith('00201')) {
-        phone = phone.substring(4);
-    }
+      var subtotal = cart.reduce(function(s,it){ return s+(it.price||0)*(it.qty||1); },0);
+      
+      var couponCode = localStorage.getItem('fastorder_coupon_code');
+      var couponType = localStorage.getItem('fastorder_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var discount = 0;
 
-    const phoneRegex = /^01[0125]\d{8}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-        showError('يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم ويبدأ بـ 01 (مثل: 01012345678).');
-        const phoneInput = form.querySelector('input[name="customer_phone"]');
-        if (phoneInput) phoneInput.focus();
-        return;
-    }
+      if (couponCode && couponValue > 0) {
+        if (couponType === 'percentage') {
+          discount = (subtotal * couponValue) / 100;
+        } else {
+          discount = couponValue;
+        }
+        discount = Math.min(discount, subtotal);
+      }
 
-    const btn = document.getElementById('place-btn');
-    btn.disabled = true;
-    btn.innerHTML = 'جاري معالجة الطلب... <span class="spinner"></span>';
+      var total = Math.max(0, subtotal - discount + currentShipping);
 
-
-    // Build items array matching backend validation
-    const items = cartItems.map(item => ({
-        id:            item.id,
-        name:          item.name,
-        price:         item.price,
-        qty:           item.qty || 1,
-        selectedSize:  item.selectedSize  || null,
-        selectedColor: item.selectedColor || null,
-    }));
-
-    // Save address if checked
-    const saveChk = document.getElementById('save-address-chk');
-    if (saveChk && saveChk.checked) {
-        try {
-            localStorage.setItem('saved_customer_info', JSON.stringify({
-                name: fields.customer_name,
-                phone: phone,
-                address: fields.customer_address,
-                governorate_id: parseInt(fields.governorate_id)
-            }));
-        } catch(e){}
-    }
-
-    const payload = {
-        customer_name:    fields.customer_name,
-        customer_phone:   fields.customer_phone,
-        customer_email:   fields.customer_email || null,
-        customer_address: fields.customer_address,
-        governorate_id:   parseInt(fields.governorate_id),
-        payment_method:   fields.payment_method,
-        coupon_code:      appliedCouponCode,
-        save_address:     saveChk ? saveChk.checked : false,
-        terms:            true,
-        notes:            fields.notes || null,
-        items,
-    };
-
-    try {
-        let res    = await fetch('/checkout', {
-            method:  'POST',
-            headers: {
-                'Content-Type':  'application/json',
-                'Accept':        'application/json',
-                'X-CSRF-TOKEN':  document.querySelector('meta[name=csrf-token]').content,
-            },
-            body: JSON.stringify(payload),
+      try {
+        var res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' 
+          },
+          body: JSON.stringify({
+            customer_name:    name,
+            customer_phone:   phone,
+            customer_address: addr,
+            governorate_id:   opt.value,
+            payment_method:   'cod',
+            coupon_code:      couponCode || null,
+            items:            cart,
+            notes:            fd.get('notes') || null
+          })
         });
 
-        if (res.status === 404 || res.status === 405) {
-            res = await fetch('/api/orders', {
-                method:  'POST',
-                headers: {
-                    'Content-Type':  'application/json',
-                    'Accept':        'application/json',
-                    'X-CSRF-TOKEN':  document.querySelector('meta[name=csrf-token]').content,
-                },
-                body: JSON.stringify(payload),
-            });
-        }
-
-        const result = await res.json();
+        var result = await res.json();
 
         if (result.success) {
-            // Clear cart
-            localStorage.removeItem('bird_cart');
-            window.location.href = result.redirect;
+          sessionStorage.setItem('orderSuccess', JSON.stringify({
+            reference_number: result.data.reference_number,
+            customer_name:  name,
+            customer_phone: phone,
+            governorate:    opt.textContent,
+            subtotal:       subtotal,
+            shipping_cost:  currentShipping,
+            discount:       discount,
+            coupon_code:    couponCode,
+            total:          result.data.total || total,
+            items:          cart
+          }));
+          localStorage.removeItem('bird_cart');
+          localStorage.removeItem('fastorder_coupon_code');
+          localStorage.removeItem('fastorder_coupon_type');
+          localStorage.removeItem('fastorder_coupon_value');
+          localStorage.removeItem('fastorder_coupon_discount');
+          window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
         } else {
-            const msg = result.errors
-                ? Object.values(result.errors).flat().join(' | ')
-                : (result.message || '??? ???? ???? ???????? ??? ????.');
-            showError(msg);
-            btn.disabled = false;
-            btn.textContent = '????? ????? ?';
+          var errorDetails = '';
+          if (result.errors) {
+             for (var key in result.errors) {
+                errorDetails += '\n- ' + result.errors[key].join(', ');
+             }
+          }
+          alert((result.message || 'حدث خطأ أثناء إتمام الطلب') + errorDetails);
+          btn.innerHTML = orig;
+          btn.disabled = false;
         }
-    } catch (err) {
-        showError('??? ??? ?? ???????? ???? ?? ?????? ?????????.');
+      } catch (err) {
+        alert('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً');
+        btn.innerHTML = orig;
         btn.disabled = false;
-        btn.textContent = '????? ????? ?';
-    }
-}
+      }
+    });
 
-// --- Error helpers ------------------------------------------------------------
-function showError(msg) {
-    const el = document.getElementById('alert-error');
-    el.textContent = '?? ' + msg;
-    el.classList.add('show');
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-function hideError() {
-    document.getElementById('alert-error').classList.remove('show');
-}
-</script>
+    /* ---- Settings dynamic loader ---- */
+    (function(){
+      fetch('/public-api/settings').then(function(r){return r.json();}).then(function(res){
+        var d = res.data; if(!d) return;
+        if(d.logo_url) document.querySelectorAll('.brand img').forEach(function(el){el.src=d.logo_url;});
+        if(d.store_name) document.querySelectorAll('.brand span').forEach(function(el){el.textContent=d.store_name;});
+        if(d.whatsapp) document.querySelectorAll('a.wapp-float').forEach(function(el){el.href='https://wa.me/'+d.whatsapp;});
+        if(d.phone) document.querySelectorAll('a[href^="tel:"]').forEach(function(el){el.href='tel:'+d.phone;});
+      }).catch(function(){});
+    })();
+
+    /* ---- Init ---- */
+    window.updateShipping = updateShipping;
+    BirdCart.updateCartCount();
+    renderSummary();
+  </script>
 </body>
 </html>

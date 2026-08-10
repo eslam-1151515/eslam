@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex">
   <meta name="csrf-token" content="">
-  <title>سلة المشتريات - Store</title>
+  <title>??? ????????? - Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -397,34 +397,34 @@
         onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=S'" />
       <span id="siteName">Store</span>
     </a>
-    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <button class="menu-toggle" aria-label="???????"><span></span><span></span><span></span></button>
     <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة">
+      <a href="#" class="icon-round search-trigger" title="???" aria-label="???"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="?????" aria-label="?????">
         <i class="fa fa-shopping-cart"></i><span id="cartCount"></span>
       </a>
     </div>
     <nav class="nav">
-      <a href="/shop/index.html">الرئيسية</a>
-      <a href="/shop/categories.html">الأقسام</a>
-      <a href="/shop/products.html">المنتجات</a>
-      <a href="/shop/contact.html">اتصل بنا</a>
-      <a href="tel:01146520922" class="call-now">اتصل الآن</a>
+      <a href="/shop/index.html">????????</a>
+      <a href="/shop/categories.html">???????</a>
+      <a href="/shop/products.html">????????</a>
+      <a style="display:none !important;" href="/shop/contact.html">???? ???</a>
+      <a href="tel:01146520922" class="call-now" style="display:none !important;">???? ????</a>
     </nav>
   </header>
 
   <main class="container cart-page">
     <h1 class="cart-page-title">
-      🛒 سلة المشتريات
+      ?? ??? ?????????
       <span class="cart-count-badge" id="items-count-badge" style="display:none;"></span>
     </h1>
 
     <!-- Empty state -->
     <div id="cart-empty" class="empty-cart" style="display:none;">
-      <div class="empty-cart-icon">🛒</div>
-      <h2>سلتك فارغة!</h2>
-      <p>أضف منتجات لسلتك واستمتع بأفضل العروض</p>
-      <a href="/shop/products.html" class="shop-btn">تصفح المنتجات</a>
+      <div class="empty-cart-icon">??</div>
+      <h2>???? ?????!</h2>
+      <p>??? ?????? ????? ??????? ????? ??????</p>
+      <a href="/shop/products.html" class="shop-btn">???? ????????</a>
     </div>
 
     <!-- Loading state -->
@@ -463,52 +463,52 @@
           <div id="cart-items-list"></div>
         </div>
         <div id="saved-box" class="saved-box" style="display:none;">
-          <p class="saved-box-title">💾 محفوظ لوقت لاحق</p>
+          <p class="saved-box-title">?? ????? ???? ????</p>
           <div id="saved-items-list"></div>
         </div>
       </div>
 
       <div class="summary-card">
-        <p class="summary-card-title">ملخص الطلب</p>
+        <p class="summary-card-title">???? ?????</p>
 
         <div class="summary-row">
-          <span>المجموع الفرعي</span>
-          <span id="sum-subtotal">—</span>
+          <span>??????? ??????</span>
+          <span id="sum-subtotal">�</span>
         </div>
         <div class="summary-row discount-row" id="sum-discount-row" style="display:none;">
           <span>
-            خصم <span id="sum-coupon-code"></span>
-            <button onclick="removeCoupon()" class="remove-coupon-btn" title="إزالة الكوبون"><i class="fa fa-times"></i> إزالة</button>
+            ??? <span id="sum-coupon-code"></span>
+            <button onclick="removeCoupon()" class="remove-coupon-btn" title="????? ???????"><i class="fa fa-times"></i> ?????</button>
           </span>
-          <span id="sum-discount">—</span>
+          <span id="sum-discount">�</span>
         </div>
         <div class="summary-row">
-          <span>الشحن</span>
-          <span style="color:#9ca3af; font-size:0.88rem;">يحدد عند الطلب</span>
+          <span>?????</span>
+          <span style="color:#9ca3af; font-size:0.88rem;">???? ??? ?????</span>
         </div>
         <div class="summary-row" id="sum-tax-row">
-          <span>الضرائب <span id="sum-tax-rate" style="font-size:0.8rem;color:#9ca3af;"></span></span>
-          <span id="sum-tax">0.00 ج.م</span>
+          <span>??????? <span id="sum-tax-rate" style="font-size:0.8rem;color:#9ca3af;"></span></span>
+          <span id="sum-tax">0.00 ?.?</span>
         </div>
         <div class="summary-row total-row">
-          <span>الإجمالي</span>
-          <span id="sum-total">—</span>
+          <span>????????</span>
+          <span id="sum-total">�</span>
         </div>
 
         <div class="coupon-section">
-          <p class="coupon-label">🏷️ كود الخصم</p>
+          <p class="coupon-label">??? ??? ?????</p>
           <div class="coupon-wrap">
-            <input type="text" id="coupon-input" class="coupon-input" placeholder="أدخل الكود هنا" />
-            <button class="coupon-apply-btn" onclick="applyCoupon()">تطبيق</button>
+            <input type="text" id="coupon-input" class="coupon-input" placeholder="???? ????? ???" />
+            <button class="coupon-apply-btn" onclick="applyCoupon()">?????</button>
           </div>
           <div id="coupon-msg" class="coupon-msg"></div>
         </div>
 
         <button class="checkout-btn" onclick="window.location.href='/checkout'">
-          <span>إتمام الطلب</span>
+          <span>????? ?????</span>
           <i class="fa fa-arrow-left"></i>
         </button>
-        <a href="/shop/products.html" class="continue-btn">← متابعة التسوق</a>
+        <a href="/shop/products.html" class="continue-btn">? ?????? ??????</a>
       </div>
     </div>
   </main>
@@ -534,7 +534,7 @@
     }
 
     function fmt(n) {
-      return parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م';
+      return parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ?.?';
     }
 
     function showToast(msg) {
@@ -616,23 +616,23 @@
       var subtotal = 0;
       var badge = document.getElementById('items-count-badge');
       badge.style.display = 'inline-block';
-      badge.textContent = items.length + ' منتج';
+      badge.textContent = items.length + ' ????';
 
       var html = items.map(function(it, idx) {
         var line = (it.price || 0) * (it.qty || 1);
         subtotal += line;
         return '<div class="cart-item">' +
           '<img src="' + (it.image || '/shop/placeholder.jpg') + '" class="cart-item-img" alt="' + it.name + '" onerror="this.src=\'/shop/placeholder.jpg\'">' +
-          '<div><p class="cart-item-name">' + (it.name || 'منتج') + '</p>' +
+          '<div><p class="cart-item-name">' + (it.name || '????') + '</p>' +
           '<p class="cart-item-price">' + fmt(it.price) + '</p>' +
           '<div class="qty-control">' +
-          '<button class="qty-btn" onclick="lsUpdateQty(' + idx + ',-1)">−</button>' +
+          '<button class="qty-btn" onclick="lsUpdateQty(' + idx + ',-1)">-</button>' +
           '<span class="qty-val">' + (it.qty || 1) + '</span>' +
           '<button class="qty-btn" onclick="lsUpdateQty(' + idx + ',1)">+</button>' +
           '</div>' +
           '<div class="item-actions">' +
-          '<button class="item-action-btn" onclick="lsSaveForLater(' + idx + ')">💾 حفظ لوقت لاحق</button>' +
-          '<button class="item-action-btn danger" onclick="lsRemove(' + idx + ', false)">🗑️ حذف</button>' +
+          '<button class="item-action-btn" onclick="lsSaveForLater(' + idx + ')">?? ??? ???? ????</button>' +
+          '<button class="item-action-btn danger" onclick="lsRemove(' + idx + ', false)">??? ???</button>' +
           '</div></div>' +
           '<div class="item-line-total">' + fmt(line) + '</div>' +
           '</div>';
@@ -661,8 +661,8 @@
               '<p class="cart-item-price">' + fmt(item.price) + '</p>' +
             '</div>' +
             '<div class="saved-actions">' +
-              '<button class="btn-sm-primary" onclick="lsMoveToCart(' + sIdx + ')">🛒 أضف للسلة</button>' +
-              '<button class="btn-sm-danger" onclick="lsRemove(' + sIdx + ', true)" title="حذف">🗑️</button>' +
+              '<button class="btn-sm-primary" onclick="lsMoveToCart(' + sIdx + ')">?? ??? ?????</button>' +
+              '<button class="btn-sm-danger" onclick="lsRemove(' + sIdx + ', true)" title="???">???</button>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -684,11 +684,11 @@
       items[idx].qty = Math.max(1, (items[idx].qty || 1) + delta);
       BirdCart.saveCart(items);
       fallbackLocalStorage();
-      showToast('تم تحديث الكمية');
+      showToast('?? ????? ??????');
     }
 
     function lsRemove(idx, isSaved) {
-      if (!confirm('هل تريد حذف هذا المنتج؟')) return;
+      if (!confirm('?? ???? ??? ??? ???????')) return;
       if (isSaved) {
         var savedLs = localStorage.getItem('fastorder_saved_items');
         var saved = savedLs ? JSON.parse(savedLs) : [];
@@ -700,7 +700,7 @@
         BirdCart.saveCart(items);
       }
       fallbackLocalStorage();
-      showToast('تم حذف المنتج');
+      showToast('?? ??? ??????');
     }
 
     function lsSaveForLater(idx) {
@@ -713,7 +713,7 @@
       saved.push(item);
       localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
       fallbackLocalStorage();
-      showToast('تم الحفظ لوقت لاحق');
+      showToast('?? ????? ???? ????');
     }
 
     function lsMoveToCart(idx) {
@@ -726,7 +726,7 @@
       items.push(item);
       BirdCart.saveCart(items);
       fallbackLocalStorage();
-      showToast('تمت الإضافة للسلة');
+      showToast('??? ??????? ?????');
     }
 
     function showEmpty() {
@@ -753,7 +753,7 @@
       // Badge
       var badge = document.getElementById('items-count-badge');
       badge.style.display = 'inline-block';
-      badge.textContent = (summary.items_count || items.length) + ' منتج';
+      badge.textContent = (summary.items_count || items.length) + ' ????';
 
       // Items
       document.getElementById('cart-items-list').innerHTML = items.map(function(item) {
@@ -764,13 +764,13 @@
             (item.variant ? '<p style="font-size:0.82rem;color:#9ca3af;">' + item.variant.name + '</p>' : '') +
             '<p class="cart-item-price">' + fmt(item.price) + '</p>' +
             '<div class="qty-control">' +
-              '<button class="qty-btn" id="qb-m-' + item.id + '" onclick="updateQty(' + item.id + ',' + (item.quantity - 1) + ')">−</button>' +
+              '<button class="qty-btn" id="qb-m-' + item.id + '" onclick="updateQty(' + item.id + ',' + (item.quantity - 1) + ')">-</button>' +
               '<span class="qty-val">' + item.quantity + '</span>' +
               '<button class="qty-btn" id="qb-p-' + item.id + '" onclick="updateQty(' + item.id + ',' + (item.quantity + 1) + ')">+</button>' +
             '</div>' +
             '<div class="item-actions">' +
-              '<button class="item-action-btn" onclick="saveForLater(' + item.id + ')">💾 حفظ لوقت لاحق</button>' +
-              '<button class="item-action-btn danger" onclick="removeItem(' + item.id + ', false)">🗑️ حذف</button>' +
+              '<button class="item-action-btn" onclick="saveForLater(' + item.id + ')">?? ??? ???? ????</button>' +
+              '<button class="item-action-btn danger" onclick="removeItem(' + item.id + ', false)">??? ???</button>' +
             '</div>' +
           '</div>' +
           '<div class="item-line-total">' + fmt(item.total) + '</div>' +
@@ -791,13 +791,13 @@
           taxRateEl.textContent = '';
         }
       } else {
-        document.getElementById('sum-tax').textContent = '0.00 ج.م';
+        document.getElementById('sum-tax').textContent = '0.00 ?.?';
       }
 
       // Discount & Coupon
       if (summary.discount > 0 && summary.coupon) {
         document.getElementById('sum-discount-row').style.display = 'flex';
-        document.getElementById('sum-discount').textContent = '−' + fmt(summary.discount);
+        document.getElementById('sum-discount').textContent = '-' + fmt(summary.discount);
         document.getElementById('sum-coupon-code').textContent = '(' + summary.coupon.code + ')';
         document.getElementById('coupon-input').value = summary.coupon.code;
       } else {
@@ -817,8 +817,8 @@
               '<p class="cart-item-price">' + fmt(item.price) + '</p>' +
             '</div>' +
             '<div class="saved-actions">' +
-              '<button class="btn-sm-primary" onclick="moveToCart(' + item.id + ')">🛒 أضف للسلة</button>' +
-              '<button class="btn-sm-danger" onclick="removeItem(' + item.id + ', true)" title="حذف نهائي">🗑️</button>' +
+              '<button class="btn-sm-primary" onclick="moveToCart(' + item.id + ')">?? ??? ?????</button>' +
+              '<button class="btn-sm-danger" onclick="removeItem(' + item.id + ', true)" title="??? ?????">???</button>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -859,7 +859,7 @@
           body: JSON.stringify({ quantity: parseInt(qty) })
         });
         await loadCart();
-        showToast('تم تحديث الكمية');
+        showToast('?? ????? ??????');
       } catch (e) { 
         console.error(e); 
         if (btnM) btnM.disabled = false;
@@ -868,7 +868,7 @@
     }
 
     async function removeItem(itemId, isSaved) {
-      if (!confirm('هل تريد حذف هذا المنتج من السلة؟')) return;
+      if (!confirm('?? ???? ??? ??? ?????? ?? ??????')) return;
       if (isOfflineFallback) return;
       try {
         await fetch('/api/cart/items/' + itemId, {
@@ -876,7 +876,7 @@
           headers: { 'X-CSRF-TOKEN': getCsrf(), 'X-Requested-With': 'XMLHttpRequest' }
         });
         await loadCart();
-        showToast('تم حذف المنتج');
+        showToast('?? ??? ??????');
       } catch (e) { console.error(e); }
     }
 
@@ -888,7 +888,7 @@
           headers: { 'X-CSRF-TOKEN': getCsrf(), 'X-Requested-With': 'XMLHttpRequest' }
         });
         await loadCart();
-        showToast('تم الحفظ لوقت لاحق');
+        showToast('?? ????? ???? ????');
       } catch (e) { console.error(e); }
     }
 
@@ -900,7 +900,7 @@
           headers: { 'X-CSRF-TOKEN': getCsrf(), 'X-Requested-With': 'XMLHttpRequest' }
         });
         await loadCart();
-        showToast('تمت الإضافة للسلة');
+        showToast('??? ??????? ?????');
       } catch (e) { console.error(e); }
     }
 
@@ -908,7 +908,7 @@
       var code = document.getElementById('coupon-input').value.trim();
       if (!code) return;
       var msgEl = document.getElementById('coupon-msg');
-      msgEl.textContent = 'جاري التحقق...';
+      msgEl.textContent = '???? ??????...';
       msgEl.style.color = '#9ca3af';
       try {
         var res = await fetch('/api/cart/coupon', {
@@ -925,17 +925,17 @@
         msgEl.style.color = data.success ? '#16a34a' : '#ef4444';
         if (data.success) {
           await loadCart();
-          showToast('تم تطبيق كود الخصم');
+          showToast('?? ????? ??? ?????');
         }
       } catch (e) {
-        msgEl.textContent = 'حدث خطأ، حاول مرة أخرى';
+        msgEl.textContent = '??? ???? ???? ??? ????';
         msgEl.style.color = '#ef4444';
       }
     }
 
     async function removeCoupon() {
       var msgEl = document.getElementById('coupon-msg');
-      msgEl.textContent = 'جاري إزالة الكوبون...';
+      msgEl.textContent = '???? ????? ???????...';
       msgEl.style.color = '#9ca3af';
       try {
         var res = await fetch('/api/cart/coupon', {
@@ -944,13 +944,13 @@
         });
         var data = await res.json();
         if (data.success || res.ok) {
-          msgEl.textContent = 'تمت إزالة الكوبون';
+          msgEl.textContent = '??? ????? ???????';
           msgEl.style.color = '#16a34a';
           await loadCart();
-          showToast('تمت إزالة كود الخصم');
+          showToast('??? ????? ??? ?????');
         }
       } catch (e) {
-        msgEl.textContent = 'حدث خطأ، حاول مرة أخرى';
+        msgEl.textContent = '??? ???? ???? ??? ????';
         msgEl.style.color = '#ef4444';
       }
     }

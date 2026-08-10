@@ -35,8 +35,31 @@ class SubscriptionController extends Controller
     {
         $query = SubscriptionReceipt::with(['tenant', 'plan', 'approvedBy']);
 
+        // Search filter (reference_code, payment_reference, amount, tenant name/email/phone)
+        if ($search = trim((string) $request->input('search'))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('reference_code', 'like', "%{$search}%")
+                  ->orWhere('payment_reference', 'like', "%{$search}%")
+                  ->orWhere('amount', 'like', "%{$search}%")
+                  ->orWhereHas('tenant', function ($tq) use ($search) {
+                      $tq->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Date filter
+        if ($date = $request->input('date')) {
+            $query->whereDate('created_at', $date);
+        }
+
         if ($status = $request->input('status')) {
             $query->where('status', $status);
+        }
+
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
         }
 
         $receipts = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
@@ -44,12 +67,34 @@ class SubscriptionController extends Controller
         $tenants = Tenant::orderBy('name', 'asc')->get(['id', 'name', 'slug']);
         $plans = SubscriptionPlan::orderBy('price_monthly', 'asc')->get(['id', 'name', 'price_monthly']);
 
+        $paymentSettings = [
+            'vodafone_cash_number' => \App\Models\Setting::get('vodafone_cash_number', '01012345678'),
+            'instapay_number'      => \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', '01012345678')),
+        ];
+
         return Inertia::render('SuperAdmin/Subscriptions/Receipts', [
-            'receipts' => $receipts,
-            'tenants' => $tenants,
-            'plans' => $plans,
-            'filters' => $request->only(['status']),
+            'receipts'        => $receipts,
+            'tenants'         => $tenants,
+            'plans'           => $plans,
+            'paymentSettings' => $paymentSettings,
+            'filters'         => $request->only(['search', 'date', 'status', 'type']),
         ]);
+    }
+
+    /**
+     * Update platform payment numbers for wallet & subscription transfers.
+     */
+    public function updatePaymentSettings(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'vodafone_cash_number' => ['required', 'string', 'max:50'],
+            'instapay_number'      => ['required', 'string', 'max:50'],
+        ]);
+
+        \App\Models\Setting::set('vodafone_cash_number', $request->vodafone_cash_number, 'payment');
+        \App\Models\Setting::set('instapay_number', $request->instapay_number, 'payment');
+
+        return redirect()->back()->with('success', 'تم تحديث أرقام استقبال التحويلات بنجاح.');
     }
 
     /**
@@ -85,7 +130,7 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Approve a subscription receipt.
+     * Approve a subscription or wallet receipt.
      */
     public function approveReceipt(Request $request, SubscriptionReceipt $receipt): RedirectResponse
     {
@@ -94,7 +139,6 @@ class SubscriptionController extends Controller
         }
 
         DB::transaction(function () use ($receipt) {
-            $plan = $receipt->plan;
             $tenant = $receipt->tenant;
 
             // 1. Approve receipt
@@ -104,33 +148,56 @@ class SubscriptionController extends Controller
                 'approved_by' => Auth::id(),
             ]);
 
-            // 2. Determine duration based on amount vs plan prices
-            $months = 1;
-            if ($plan->price_yearly > 0 && $receipt->amount >= $plan->price_yearly) {
-                $months = 12;
+            // If this is a wallet top-up receipt
+            if ($receipt->type === 'wallet') {
+                if ($tenant) {
+                    $tenant->increment('wallet_balance', $receipt->amount);
+                    \App\Models\WalletTransaction::create([
+                        'tenant_id'   => $tenant->id,
+                        'amount'      => $receipt->amount,
+                        'type'        => 'credit',
+                        'description' => 'شحن محفظة عبر ' . ($receipt->payment_method === 'vodafone_cash' ? 'فودافون كاش' : ($receipt->payment_method === 'instapay' ? 'إنستا باي' : $receipt->payment_method)) . ($receipt->payment_reference ? ' (الرقم المحول منه: ' . $receipt->payment_reference . ')' : ''),
+                        'created_by'  => Auth::id(),
+                    ]);
+                }
+                return;
             }
 
-            // 3. Create or update tenant subscription
-            $endsAt = now()->addMonths($months);
-            Subscription::updateOrCreate(
-                ['tenant_id' => $tenant->id, 'status' => 'active'],
-                [
-                    'plan_id' => $plan->id,
-                    'price' => $receipt->amount,
-                    'starts_at' => now(),
-                    'ends_at' => $endsAt,
-                    'billing_cycle' => $months == 12 ? 'yearly' : 'monthly',
-                ]
-            );
+            // Otherwise, subscription plan assignment
+            $plan = $receipt->plan;
+            if ($plan && $tenant) {
+                // Determine duration based on amount vs plan prices
+                $months = 1;
+                if ($plan->price_yearly > 0 && $receipt->amount >= $plan->price_yearly) {
+                    $months = 12;
+                }
 
-            // 4. Update tenant model fields
-            $tenant->update([
-                'subscription_status' => 'active',
-                'subscription_ends_at' => $endsAt,
-            ]);
+                // Create or update tenant subscription
+                $endsAt = now()->addMonths($months);
+                Subscription::updateOrCreate(
+                    ['tenant_id' => $tenant->id, 'status' => 'active'],
+                    [
+                        'plan_id' => $plan->id,
+                        'price' => $receipt->amount,
+                        'starts_at' => now(),
+                        'ends_at' => $endsAt,
+                        'billing_cycle' => $months == 12 ? 'yearly' : 'monthly',
+                    ]
+                );
+
+                // Update tenant model fields
+                $tenant->update([
+                    'subscription_status' => 'active',
+                    'subscription_ends_at' => $endsAt,
+                ]);
+            }
         });
 
-        return redirect()->back()->with('success', 'تم اعتماد إيصال الدفع وتفعيل الاشتراك بنجاح.');
+        $msg = $receipt->type === 'wallet'
+            ? 'تم تأكيد وصول المبلغ وإضافته إلى محفظة التاجر بنجاح.'
+            : 'تم اعتماد إيصال الدفع وتفعيل الاشتراك بنجاح.';
+
+        return redirect()->back()->with('success', $msg);
     }
 
     /**

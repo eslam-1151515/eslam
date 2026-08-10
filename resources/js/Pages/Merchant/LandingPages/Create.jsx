@@ -108,6 +108,47 @@ export default function LandingPagesCreate({ defaultSections, templates, product
         }
     };
 
+    const handleFBPixelChange = (val) => {
+        let text = val;
+        if (text && (text.includes('fbq') || text.includes('script') || text.includes('facebook.com') || text.includes('<noscript>'))) {
+            const found = [];
+            const initMatches = [...text.matchAll(/fbq\s*\(\s*['"]init['"]\s*,\s*['"]?(\d+)['"]?/gi)];
+            initMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const idMatches = [...text.matchAll(/[?&]id=(\d+)/gi)];
+            idMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const digitMatches = text.match(/\b\d{13,17}\b/g);
+            if (digitMatches) {
+                digitMatches.forEach(num => found.push(num));
+            }
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('facebook_pixel_id', text);
+    };
+
+    const handleTTPixelChange = (val) => {
+        let text = val;
+        if (text && (text.includes('ttq') || text.includes('script') || text.includes('analytics.tiktok.com'))) {
+            const found = [];
+            const loadMatches = [...text.matchAll(/ttq\.load\s*\(\s*['"]([a-zA-Z0-9_-]+)['"]\s*\)/gi)];
+            loadMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const sdkMatches = [...text.matchAll(/[?&]sdkid=([a-zA-Z0-9_-]+)/gi)];
+            sdkMatches.forEach(m => { if (m[1]) found.push(m[1]); });
+
+            const unique = [...new Set(found)];
+            if (unique.length > 0) {
+                text = unique.join('\n');
+            }
+        }
+        setData('tiktok_pixel_id', text);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         post('/admin/landing-pages');
@@ -317,28 +358,30 @@ export default function LandingPagesCreate({ defaultSections, templates, product
                                             <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                                             </svg>
-                                            أكواد البيكسل لتتبع الحملة الإعلانية <span className="text-gray-400 font-normal">(اختياري)</span>
+                                            أكواد البيكسل لتتبع الحملة الإعلانية <span className="text-gray-400 font-normal">(اختياري - مخصص لهذه الصفحة)</span>
                                         </label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label className="block text-xs font-bold text-gray-600 mb-2">Facebook Pixel ID:</label>
-                                                <input
-                                                    type="text"
+                                                <textarea
+                                                    rows={2}
                                                     value={data.facebook_pixel_id}
-                                                    onChange={(e) => setData('facebook_pixel_id', e.target.value)}
-                                                    placeholder="مثال: 123456789012345"
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                                                    onChange={(e) => handleFBPixelChange(e.target.value)}
+                                                    placeholder="ضع الـ ID أو لزق كود فيسبوك بيكسل بالكامل وسيتم استخراج الرقم أوتوماتيكياً"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm font-mono text-right dir-rtl placeholder:text-right"
+                                                    dir="rtl"
                                                 />
                                                 {errors.facebook_pixel_id && <p className="text-red-500 text-xs mt-1">{errors.facebook_pixel_id}</p>}
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-gray-600 mb-2">TikTok Pixel ID:</label>
-                                                <input
-                                                    type="text"
+                                                <textarea
+                                                    rows={2}
                                                     value={data.tiktok_pixel_id}
-                                                    onChange={(e) => setData('tiktok_pixel_id', e.target.value)}
-                                                    placeholder="مثال: C1234567890ABCDE"
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                                                    onChange={(e) => handleTTPixelChange(e.target.value)}
+                                                    placeholder="ضع الـ ID أو لزق كود تيك توك بيكسل بالكامل وسيتم استخراج الرقم أوتوماتيكياً"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm font-mono text-right dir-rtl placeholder:text-right"
+                                                    dir="rtl"
                                                 />
                                                 {errors.tiktok_pixel_id && <p className="text-red-500 text-xs mt-1">{errors.tiktok_pixel_id}</p>}
                                             </div>

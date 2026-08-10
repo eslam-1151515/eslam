@@ -4,7 +4,49 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'فاست أوردر (Fast Order) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ')</title>
-    <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك.')">
+    <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك وتجربة مجانية لمدة 7 أيام.')">
+    <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, فاست أوردر, Fast Order, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, استرجاع السلات المتروكة, تسويق إلكتروني">
+    <meta name="author" content="Fast Order Platform">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="{{ url()->current() }}" />
+
+    <!-- Open Graph / Facebook / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fast Order — فاست أوردر" />
+    <meta property="og:title" content="@yield('og_title', 'فاست أوردر (Fast Order) | منصة التجارة الإلكترونية الأسرع في الوطن العربي')" />
+    <meta property="og:description" content="@yield('og_description', 'أنشئ متجرك الإلكتروني المتكامل مجاناً في أقل من 3 دقائق بدون عمولات على مبيعاتك وبتقنيات سرعة فائقة.')" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:locale" content="ar_EG" />
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', 'فاست أوردر | أنشئ متجرك الإلكتروني المتكامل')">
+    <meta name="twitter:description" content="@yield('og_description', 'المنصة الأسرع والأذكى لإدارة تجارتك الإلكترونية بدون عمولات على المبيعات وبتقنيات حديثة.')">
+
+    <!-- JSON-LD Structured Data Schema for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Fast Order",
+      "alternateName": "فاست أوردر",
+      "operatingSystem": "All",
+      "applicationCategory": "BusinessApplication",
+      "description": "منصة متكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بدون عمولات وبتقنيات سرعة فائقة.",
+      "url": "https://fast-order-eg.tech",
+      "offers": {
+        "@type": "Offer",
+        "price": "500",
+        "priceCurrency": "EGP",
+        "availability": "https://schema.org/InStock"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "1450"
+      }
+    }
+    </script>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

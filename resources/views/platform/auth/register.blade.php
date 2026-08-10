@@ -417,7 +417,7 @@
                                     <ul class="space-y-2.5 text-xs text-gray-300 border-t border-white/5 pt-4">
                                         <li class="flex items-center gap-2">
                                             <span class="text-brand-400 font-bold">✓</span>
-                                            <span><strong>{{ $plan->trial_days ?? 14 }} يوماً</strong> تجربة مجانية</span>
+                                            <span><strong>{{ $plan->trial_days ?? 7 }} أيام</strong> تجربة مجانية</span>
                                         </li>
                                         <li class="flex items-center gap-2">
                                             <span class="text-brand-400 font-bold">✓</span>
@@ -460,7 +460,7 @@
                                         <ul class="space-y-2.5 text-xs text-gray-300 border-t border-white/5 pt-4">
                                             <li class="flex items-center gap-2">
                                                 <span class="text-brand-400 font-bold">✓</span>
-                                                <span><strong>14 يوماً</strong> تجربة مجانية</span>
+                                                <span><strong>7 أيام</strong> تجربة مجانية</span>
                                             </li>
                                             <li class="flex items-center gap-2">
                                                 <span class="text-brand-400 font-bold">✓</span>
@@ -490,7 +490,7 @@
                         </div>
 
                         <h3 class="text-xl font-bold text-white mb-2">أنت على بعد خطوة واحدة من إطلاق متجرك!</h3>
-                        <p class="text-sm text-brand-200/80 max-w-md mx-auto mb-6">سيتم تفعيل الفترة التجريبية المجانية لمدة <strong class="text-white font-bold">14 يوماً</strong> تلقائياً، دون الحاجة لإدخال أي بطاقة بنكية الآن.</p>
+                        <p class="text-sm text-brand-200/80 max-w-md mx-auto mb-6">سيتم تفعيل الفترة التجريبية المجانية لمدة <strong class="text-white font-bold">7 أيام</strong> تلقائياً، دون الحاجة لإدخال أي بطاقة بنكية الآن.</p>
 
                         <!-- Summary Table -->
                         <div class="bg-black/50 rounded-xl p-4 text-right space-y-3 border border-white/10 text-xs sm:text-sm max-w-lg mx-auto">
@@ -585,7 +585,7 @@
                     'أدخل اسمك ورقم الهاتف لتلقي إشعارات الطلبات وتفعيل المتجر',
                     'اختر اسماً مميزاً ورابطاً فريداً لمتجرك ليتمكن العملاء من الوصول إليك',
                     'اختر الباقة التي تلبي احتياجاتك. جميع الباقات تشمل فترة تجريبية مجانية',
-                    'راجع بياناتك وسنقوم بإنشاء لوحة التحكم وتفعيل الـ 14 يوماً المجانية'
+                    'راجع بياناتك وسنقوم بإنشاء لوحة التحكم وتفعيل الـ 7 أيام المجانية'
                 ],
                 activities: [
                     { name: 'ملابس وأزياء', icon: '👗' },

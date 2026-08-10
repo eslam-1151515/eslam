@@ -34,6 +34,7 @@ export default function ProductCreate({ categories }) {
     
     const [sizeInput, setSizeInput] = useState('');
     const [colorInput, setColorInput] = useState('');
+    const [customVariantInputs, setCustomVariantInputs] = useState({});
 
     // Extra Features States
     const [priceTiers, setPriceTiers] = useState([]);
@@ -54,9 +55,49 @@ export default function ProductCreate({ categories }) {
         gallery: [],
         sizes: [],
         colors: [],
+        custom_variants: [],
         price_tiers_json: '[]',
         variants_stock: '',
     });
+
+    const addCustomVariant = () => {
+        const newCv = [...(data.custom_variants || []), { name: '', values: [] }];
+        setData('custom_variants', newCv);
+    };
+
+    const updateCustomVariantName = (index, name) => {
+        const newCv = (data.custom_variants || []).map((item, i) => i === index ? { ...item, name } : item);
+        setData('custom_variants', newCv);
+    };
+
+    const removeCustomVariant = (index) => {
+        const newCv = (data.custom_variants || []).filter((_, i) => i !== index);
+        setData('custom_variants', newCv);
+    };
+
+    const addCustomVariantValue = (index) => {
+        const val = (customVariantInputs[index] || '').trim();
+        if (!val) return;
+        const newCv = (data.custom_variants || []).map((item, i) => {
+            if (i === index) {
+                if (item.values.includes(val)) return item;
+                return { ...item, values: [...item.values, val] };
+            }
+            return item;
+        });
+        setData('custom_variants', newCv);
+        setCustomVariantInputs({ ...customVariantInputs, [index]: '' });
+    };
+
+    const removeCustomVariantValue = (vIdx, valIdx) => {
+        const newCv = (data.custom_variants || []).map((item, i) => {
+            if (i === vIdx) {
+                return { ...item, values: item.values.filter((_, idx) => idx !== valIdx) };
+            }
+            return item;
+        });
+        setData('custom_variants', newCv);
+    };
 
     const handleMainImage = (e) => {
         const file = e.target.files[0];
@@ -120,27 +161,65 @@ export default function ProductCreate({ categories }) {
     // Variant Combinations
     const activeSizes = data.sizes.filter(s => s.trim() !== '');
     const activeColors = data.colors.filter(c => c.trim() !== '');
-    const hasVariants = activeSizes.length > 0 || activeColors.length > 0;
+    const activeCustomVariants = (data.custom_variants || []).filter(cv => cv.name && cv.name.trim() !== '' && cv.values && cv.values.filter(v => v.trim() !== '').length > 0);
+    const hasVariants = activeSizes.length > 0 || activeColors.length > 0 || activeCustomVariants.length > 0;
+
+    const isComboEqual = (v1, v2) => {
+        if ((v1.size || null) !== (v2.size || null)) return false;
+        if ((v1.color || null) !== (v2.color || null)) return false;
+        const opt1 = v1.options || {};
+        const opt2 = v2.options || {};
+        const keys1 = Object.keys(opt1);
+        const keys2 = Object.keys(opt2);
+        if (keys1.length !== keys2.length) return false;
+        for (let k of keys1) {
+            if (opt1[k] !== opt2[k]) return false;
+        }
+        return true;
+    };
 
     const generateCombinations = () => {
         if (!hasVariants) return [];
-        let combos = [];
-        if (activeSizes.length > 0 && activeColors.length > 0) {
-            activeSizes.forEach(size => {
-                activeColors.forEach(color => {
-                    combos.push({ size, color });
-                });
-            });
-        } else if (activeSizes.length > 0) {
-            activeSizes.forEach(size => {
-                combos.push({ size, color: null });
-            });
-        } else if (activeColors.length > 0) {
-            activeColors.forEach(color => {
-                combos.push({ size: null, color });
-            });
+
+        let dimensions = [];
+
+        if (activeSizes.length > 0) {
+            dimensions.push(activeSizes.map(s => ({ key: 'size', name: 'المقاس', value: s })));
         }
-        return combos;
+        if (activeColors.length > 0) {
+            dimensions.push(activeColors.map(c => ({ key: 'color', name: 'اللون', value: c })));
+        }
+        activeCustomVariants.forEach(cv => {
+            const vals = cv.values.filter(v => v.trim() !== '');
+            if (vals.length > 0) {
+                dimensions.push(vals.map(v => ({ key: 'custom', name: cv.name, value: v })));
+            }
+        });
+
+        if (dimensions.length === 0) return [];
+
+        const cartesian = (args) => {
+            return args.reduce((a, b) => {
+                return a.flatMap(d => b.map(e => [...(Array.isArray(d) ? d : [d]), e]));
+            }, [[]]);
+        };
+
+        const rawCombos = cartesian(dimensions);
+
+        return rawCombos.map(comboArr => {
+            const arr = Array.isArray(comboArr) ? comboArr : [comboArr];
+            let size = null;
+            let color = null;
+            let options = {};
+
+            arr.forEach(item => {
+                if (item.key === 'size') size = item.value;
+                else if (item.key === 'color') color = item.value;
+                else if (item.key === 'custom') options[item.name] = item.value;
+            });
+
+            return { size, color, options };
+        });
     };
 
     const combinations = generateCombinations();
@@ -159,11 +238,11 @@ export default function ProductCreate({ categories }) {
         let changed = false;
 
         combinations.forEach(combo => {
-            const found = variantsStock.find(v => v.size === combo.size && v.color === combo.color);
+            const found = variantsStock.find(v => isComboEqual(v, combo));
             if (found) {
                 updated.push(found);
             } else {
-                updated.push({ size: combo.size, color: combo.color, qty: 100 });
+                updated.push({ size: combo.size, color: combo.color, options: combo.options, price: '', qty: 100 });
                 changed = true;
             }
         });
@@ -177,7 +256,7 @@ export default function ProductCreate({ categories }) {
             setVariantsStock(updated);
             setData('variants_stock', JSON.stringify(updated));
         }
-    }, [data.sizes, data.colors, hasVariants]);
+    }, [data.sizes, data.colors, data.custom_variants, hasVariants]);
 
     // Calculate total stock from variants
     useEffect(() => {
@@ -189,20 +268,40 @@ export default function ProductCreate({ categories }) {
         }
     }, [variantsStock, hasVariants]);
 
-    const handleVariantStockChange = (size, color, value) => {
+    const handleVariantPriceChange = (combo, value) => {
         let updated = [...variantsStock];
-        const idx = updated.findIndex(v => v.size === size && v.color === color);
+        const idx = updated.findIndex(v => isComboEqual(v, combo));
         if (idx > -1) {
-            updated[idx].qty = value === '' ? '' : (parseInt(value) || 0);
+            updated[idx].price = value;
         } else {
-            updated.push({ size, color, qty: value === '' ? '' : (parseInt(value) || 0) });
+            updated.push({ ...combo, price: value, qty: 100 });
         }
         setVariantsStock(updated);
         setData('variants_stock', JSON.stringify(updated));
     };
 
-    const getVariantStockValue = (size, color) => {
-        const found = variantsStock.find(v => v.size === size && v.color === color);
+    const handleVariantStockChange = (combo, value) => {
+        let updated = [...variantsStock];
+        const idx = updated.findIndex(v => isComboEqual(v, combo));
+        if (idx > -1) {
+            updated[idx].qty = value === '' ? '' : (parseInt(value) || 0);
+        } else {
+            updated.push({ ...combo, price: '', qty: value === '' ? '' : (parseInt(value) || 0) });
+        }
+        setVariantsStock(updated);
+        setData('variants_stock', JSON.stringify(updated));
+    };
+
+    const getVariantPriceValue = (combo) => {
+        const found = variantsStock.find(v => isComboEqual(v, combo));
+        if (found && found.price !== undefined && found.price !== null && found.price !== '') {
+            return found.price;
+        }
+        return data.price_after || '';
+    };
+
+    const getVariantStockValue = (combo) => {
+        const found = variantsStock.find(v => isComboEqual(v, combo));
         return found ? found.qty : 100;
     };
 
@@ -427,9 +526,8 @@ export default function ProductCreate({ categories }) {
                                 label="حد التنبيه بانخفاض المخزون"
                                 name="low_stock_threshold"
                                 type="number"
-                                required
                                 placeholder="5"
-                                hint="سيتم تنبيهك عندما يقل المخزون عن هذا الرقم"
+                                hint="سيتم تنبيهك عندما يقل المخزون عن هذا الرقم (اختياري)"
                                 data={data}
                                 setData={setData}
                                 errors={errors}
@@ -564,6 +662,92 @@ export default function ProductCreate({ categories }) {
                             </div>
                         </div>
 
+                        {/* Custom Dynamic Variants (إضافة متغيرات مخصصة) */}
+                        <div className="pt-4 border-t border-gray-100 space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-800">متغيرات مخصصة أخرى (مثل: عروض، الموديل، الوزن، النوع...)</label>
+                                    <p className="text-xs text-gray-400 mt-0.5">يمكنك إضافة خيارات مخصصة إضافية ليختار منها العميل عند الشراء</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={addCustomVariant}
+                                    className="px-3.5 py-1.5 bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors"
+                                >
+                                    + إضافة متغير
+                                </button>
+                            </div>
+
+                            {data.custom_variants && data.custom_variants.length > 0 && (
+                                <div className="space-y-4">
+                                    {data.custom_variants.map((variant, vIdx) => (
+                                        <div key={vIdx} className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3 relative">
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="flex-1">
+                                                    <label className="block text-xs font-bold text-gray-700 mb-1">اسم المتغير (مثل: عروض / الموديل):</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="أدخل اسم المتغير (مثل: عروض)"
+                                                        value={variant.name}
+                                                        onChange={(e) => updateCustomVariantName(vIdx, e.target.value)}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 font-semibold"
+                                                    />
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeCustomVariant(vIdx)}
+                                                    className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 text-xs font-bold self-end"
+                                                >
+                                                    حذف المتغير ✕
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">قيم الخيارات المتاحة لهذا المتغير:</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="اكتب الخيار واضغط إضافة (مثل: عرض 1 مسكرة مع قلم روج)"
+                                                        value={customVariantInputs[vIdx] || ''}
+                                                        onChange={(e) => setCustomVariantInputs({ ...customVariantInputs, [vIdx]: e.target.value })}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault();
+                                                                addCustomVariantValue(vIdx);
+                                                            }
+                                                        }}
+                                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-orange-400"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => addCustomVariantValue(vIdx)}
+                                                        className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-medium hover:bg-gray-700 transition-colors"
+                                                    >
+                                                        إضافة
+                                                    </button>
+                                                </div>
+
+                                                <div className="flex flex-wrap gap-1.5 mt-2">
+                                                    {variant.values && variant.values.map((val, valIdx) => (
+                                                        <span key={valIdx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-orange-100 text-orange-900 text-xs font-bold border border-orange-200 shadow-sm">
+                                                            {val}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeCustomVariantValue(vIdx, valIdx)}
+                                                                className="text-orange-600 hover:text-orange-950 font-extrabold"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         {/* Variants Detailed Stock (مخزون المتغيرات التفصيلي) */}
                         {hasVariants && (
                             <div className="pt-4 border-t border-gray-100">
@@ -573,7 +757,7 @@ export default function ProductCreate({ categories }) {
                                     className="w-full flex items-center justify-between px-4 py-3 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl text-sm font-semibold transition-all"
                                 >
                                     <span className="flex items-center gap-2">
-                                        📋 تفاصيل أكثر (كميات المقاسات والألوان)
+                                        📋 تفاصيل أكثر
                                     </span>
                                     <span>{showVariantsStockSection ? '▲' : '▼'}</span>
                                 </button>
@@ -585,6 +769,10 @@ export default function ProductCreate({ categories }) {
                                                 <tr>
                                                     {activeSizes.length > 0 && <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">المقاس</th>}
                                                     {activeColors.length > 0 && <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">اللون</th>}
+                                                    {activeCustomVariants.map((cv, i) => (
+                                                        <th key={i} className="px-4 py-3 text-right text-xs font-bold text-gray-500">{cv.name}</th>
+                                                    ))}
+                                                    <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
                                                     <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">الكمية المتاحة</th>
                                                 </tr>
                                             </thead>
@@ -599,24 +787,38 @@ export default function ProductCreate({ categories }) {
                                                                 </span>
                                                             </td>
                                                         )}
+                                                        {activeCustomVariants.map((cv, i) => (
+                                                            <td key={i} className="px-4 py-3 text-sm text-gray-700 font-medium">
+                                                                <span className="px-2.5 py-1 bg-orange-50 text-orange-800 rounded-lg text-xs border border-orange-200">
+                                                                    {combo.options ? combo.options[cv.name] : '-'}
+                                                                </span>
+                                                            </td>
+                                                        ))}
+                                                        <td className="px-4 py-3">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                min="0"
+                                                                placeholder={data.price_after ? `مثال: ${data.price_after}` : 'السعر الأصلي'}
+                                                                value={getVariantPriceValue(combo)}
+                                                                onChange={(e) => handleVariantPriceChange(combo, e.target.value)}
+                                                                className="w-full max-w-[130px] px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white"
+                                                            />
+                                                        </td>
                                                         <td className="px-4 py-3">
                                                             <input
                                                                 type="number"
                                                                 min="0"
                                                                 placeholder="غير محدود"
-                                                                value={getVariantStockValue(combo.size, combo.color)}
-                                                                onChange={(e) => handleVariantStockChange(combo.size, combo.color, e.target.value)}
-                                                                className="w-full max-w-[120px] px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white"
+                                                                value={getVariantStockValue(combo)}
+                                                                onChange={(e) => handleVariantStockChange(combo, e.target.value)}
+                                                                className="w-full max-w-[110px] px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white"
                                                             />
                                                         </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className="p-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-200 flex items-center gap-1.5">
-                                            <span>💡</span>
-                                            <span>اترك الحقل فارغاً ليكون المخزون غير محدود لهذا التباين، أو اكتب 0 لنفاد المخزون.</span>
-                                        </div>
                                     </div>
                                 )}
                             </div>

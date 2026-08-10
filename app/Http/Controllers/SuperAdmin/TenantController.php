@@ -83,12 +83,19 @@ class TenantController extends Controller
             ->where('tenant_id', $tenant->id)
             ->count();
 
+        // Load wallet transactions for audit history log
+        $walletTransactions = \App\Models\WalletTransaction::where('tenant_id', $tenant->id)
+            ->with('creator')
+            ->latest()
+            ->get();
+
         return Inertia::render('SuperAdmin/Tenants/Show', [
-            'tenant'        => $tenant,
-            'settings'      => $settings,
-            'plans'         => $plans,
-            'productsCount' => $productsCount,
-            'ordersCount'   => $ordersCount,
+            'tenant'             => $tenant,
+            'settings'           => $settings,
+            'plans'              => $plans,
+            'productsCount'      => $productsCount,
+            'ordersCount'        => $ordersCount,
+            'walletTransactions' => $walletTransactions,
         ]);
     }
 
@@ -188,15 +195,22 @@ class TenantController extends Controller
             'ends_at' => ['required', 'date'],
         ]);
 
+        $endsAt = \Carbon\Carbon::parse($request->ends_at);
+
         Subscription::updateOrCreate(
             ['tenant_id' => $tenant->id],
             [
                 'plan_id' => $request->plan_id,
                 'status' => 'active',
-                'ends_at' => \Carbon\Carbon::parse($request->ends_at),
+                'ends_at' => $endsAt,
                 'starts_at' => now(),
             ]
         );
+
+        $tenant->update([
+            'subscription_status' => 'active',
+            'subscription_ends_at' => $endsAt,
+        ]);
 
         return redirect()->back()->with('success', 'تم تعديل الاشتراك وتاريخ الانتهاء بنجاح.');
     }
@@ -253,13 +267,13 @@ class TenantController extends Controller
         }
 
         $host    = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+        if (str_starts_with($host, 'app.')) {
+            $host = substr($host, 4);
+        }
         $port    = request()->getPort();
         $portStr = ($port && $port != 80 && $port != 443) ? ':' . $port : '';
         $scheme  = request()->getScheme();
 
-        // Build a signed URL that points to the tenant subdomain entry point.
-        // We manually build the URL then sign only the path+query via a token
-        // stored in cache (avoids cross-domain HMAC issues).
         $token = \Illuminate\Support\Str::random(64);
         \Illuminate\Support\Facades\Cache::put(
             'impersonate_token_' . $token,
@@ -267,19 +281,14 @@ class TenantController extends Controller
             now()->addSeconds(60)
         );
 
-        $entryUrl = $scheme . '://' . $tenant->slug . '.' . $host . $portStr
-            . '/admin/impersonate-entry?token=' . $token;
+        // Build URL on tenant subdomain so cookie is isolated to tenant domain only
+        $entryUrl = $scheme . '://' . $tenant->slug . '.' . $host . $portStr . '/admin/impersonate-entry?token=' . $token;
 
-        // Always do a full redirect (opens in new tab from JS side)
         return redirect()->away($entryUrl);
     }
 
     /**
-     * Entry point on the tenant subdomain — consumes the one-time token
-     * and sets a subdomain-specific cookie (NOT session-based).
-     *
-     * This means the shared session on app.fastorder.localhost is NEVER
-     * touched, so the super admin tab keeps working normally.
+     * Entry point on the tenant subdomain for impersonating a merchant store.
      */
     public function impersonateEntry(Request $request)
     {
@@ -297,26 +306,32 @@ class TenantController extends Controller
             abort(404, 'المستخدم غير موجود.');
         }
 
+        $tenant = \App\Models\Tenant::find($data['tenant_id']);
+        if (!$tenant) {
+            abort(404, 'المتجر غير موجود.');
+        }
+
         // Store a long-lived token in cache (8 hours) for cookie-based auth
         $longToken = \Illuminate\Support\Str::random(64);
         \Illuminate\Support\Facades\Cache::put(
             'impersonate_token_' . $longToken,
-            ['user_id' => $user->id, 'tenant_id' => $data['tenant_id']],
+            ['user_id' => $user->id, 'tenant_id' => $tenant->id],
             now()->addHours(8)
         );
 
-        // Build subdomain-specific cookie domain so it NEVER leaks to app.*
-        $host       = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
-        $tenant     = \App\Models\Tenant::find($data['tenant_id']);
-        $cookieDomain = $tenant ? ($tenant->slug . '.' . $host) : null;
+        $host         = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+        if (str_starts_with($host, 'app.')) {
+            $host = substr($host, 4);
+        }
+        $cookieDomain = $tenant->slug . '.' . $host;
 
         $cookie = cookie(
             name:     'impersonate_token',
             value:    $longToken,
             minutes:  480,          // 8 hours
             path:     '/',
-            domain:   $cookieDomain, // slug.fastorder.localhost ONLY
-            secure:   false,         // localhost — not HTTPS
+            domain:   $cookieDomain, // tenant subdomain ONLY (isolated)
+            secure:   false,
             httpOnly: true,
             sameSite: 'Lax'
         );
@@ -347,21 +362,62 @@ class TenantController extends Controller
     {
         $request->validate([
             'amount' => ['required', 'numeric', 'min:1'],
+            'note'   => ['nullable', 'string', 'max:255'],
         ]);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($request, $tenant) {
-            $tenant->wallet_balance += $request->amount;
+            $amountInt = (int) round($request->amount);
+            $tenant->wallet_balance += $amountInt;
             $tenant->save();
 
+            $description = $request->note 
+                ? "تم إضافة {$amountInt}ج - السبب: {$request->note}" 
+                : "تم إضافة {$amountInt}ج";
+
             \App\Models\WalletTransaction::create([
-                'tenant_id' => $tenant->id,
-                'amount' => $request->amount,
-                'type' => 'credit',
-                'description' => 'إضافة رصيد من قبل الإدارة',
-                'created_by' => auth()->id(),
+                'tenant_id'   => $tenant->id,
+                'amount'      => $amountInt,
+                'type'        => 'credit',
+                'description' => $description,
+                'created_by'  => auth()->id(),
             ]);
         });
 
-        return redirect()->back()->with('success', 'تم إضافة الرصيد لمحفظة التاجر بنجاح.');
+        return redirect()->back()->with('success', 'تم إضافة الرصيد لمحفظة التاجر وتسجيل المعاملة بنجاح.');
+    }
+
+    /**
+     * Deduct wallet balance
+     */
+    public function deductWalletBalance(Request $request, Tenant $tenant): RedirectResponse
+    {
+        $request->validate([
+            'amount' => ['required', 'numeric', 'min:1'],
+            'note'   => ['nullable', 'string', 'max:255'],
+        ]);
+
+        if ($tenant->wallet_balance < $request->amount) {
+            return redirect()->back()->with('error', 'المبلغ المطلوب خصمه أكبر من رصيد المحفظة الحالي.');
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $tenant) {
+            $amountInt = (int) round($request->amount);
+            $tenant->wallet_balance -= $amountInt;
+            $tenant->save();
+
+            $description = $request->note 
+                ? "تم خصم {$amountInt}ج - السبب: {$request->note}" 
+                : "تم خصم {$amountInt}ج";
+
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => -$amountInt,
+                'type'        => 'debit',
+                'description' => $description,
+                'created_by'  => auth()->id(),
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'تم خصم الرصيد من محفظة التاجر وتسجيل المعاملة بنجاح.');
     }
 }

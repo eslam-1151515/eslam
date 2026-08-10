@@ -499,8 +499,8 @@
       <a href="/shop/index.html">الرئيسية</a>
       <a href="/shop/categories.html">الأقسام</a>
       <a href="/shop/products.html">المنتجات</a>
-      <a href="/shop/contact.html">اتصل بنا</a>
-      <a href="tel:01146520922" class="call-now">اتصل الآن</a>
+      <a style="display:none !important;" href="/shop/contact.html">اتصل بنا</a>
+      <a href="tel:01146520922" class="call-now" style="display:none !important;">اتصل الآن</a>
     </nav>
   </header>
 
@@ -671,6 +671,13 @@
         var variantTagsLs = '';
         if (it.selectedSize || it.size) variantTagsLs += '<span class="variant-tag">المقاس: ' + (it.selectedSize || it.size) + '</span>';
         if (it.selectedColor || it.color) variantTagsLs += '<span class="variant-tag">اللون: ' + (it.selectedColor || it.color) + '</span>';
+        if (it.options) {
+          for (var optK in it.options) {
+            if (it.options[optK]) {
+              variantTagsLs += '<span class="variant-tag">' + optK + ': ' + it.options[optK] + '</span>';
+            }
+          }
+        }
         var discountBadgeLs = '';
         var pbLs = parseFloat(it.price_before || it.priceBefore || 0);
         var paLs = parseFloat(it.price || 0);

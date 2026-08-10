@@ -24,7 +24,9 @@ class ProfileController extends Controller
 
         return Inertia::render('Merchant/Profile/Edit', [
             'status' => session('status'),
-            'user' => $user,
+            'user' => array_merge($user->toArray(), [
+                'is_google_user' => !empty($user->google_id)
+            ]),
         ]);
     }
 

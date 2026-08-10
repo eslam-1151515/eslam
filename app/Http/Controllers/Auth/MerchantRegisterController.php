@@ -109,7 +109,7 @@ class MerchantRegisterController extends Controller
                 'phone' => $request->phone,
                 'email' => $email,
                 'subscription_status' => 'trial',
-                'trial_ends_at' => now()->addDays(14),
+                'trial_ends_at' => now()->addDays(7),
                 'is_active' => true,
                 'settings' => [
                     'activity' => $request->activity ?? 'تجارة عامة',
@@ -168,7 +168,7 @@ class MerchantRegisterController extends Controller
                 $plan = SubscriptionPlan::where('is_active', true)->first();
             }
 
-            $trialDays = $plan ? ($plan->trial_days ?: 14) : 14;
+            $trialDays = $plan ? ($plan->trial_days ?: 7) : 7;
 
             Subscription::create([
                 'tenant_id' => $tenant->id,

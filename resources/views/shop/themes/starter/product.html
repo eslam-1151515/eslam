@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 
 <head>
   <meta charset="utf-8">
   <meta name="facebook-domain-verification" content="thjq95dh1a88yu3cmr55fhq2xqvxr3" />
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>تفاصيل المنتج - Store</title>
+  <title>?????? ?????? - Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -21,25 +21,91 @@
         onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
       <span>Store</span>
     </a>
-    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <button class="menu-toggle" aria-label="???????"><span></span><span></span><span></span></button>
     <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
+      <a href="#" class="icon-round search-trigger" title="???" aria-label="???"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="?????" aria-label="?????"><i
           class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
     </div>
     <nav class="nav">
-      <a href="/shop/index.html">الرئيسية</a>
-      <a href="/shop/categories.html">الأقسام</a>
-      <a href="/shop/products.html">المنتجات</a>
-      <a href="/shop/contact.html">اتصل بنا</a>
+      <a href="/shop/index.html">????????</a>
+      <a href="/shop/categories.html">???????</a>
+      <a href="/shop/products.html">????????</a>
+      <a style="display:none !important;" href="/shop/contact.html">???? ???</a>
     </nav>
   </header>
 
   <main class="container">
     <div id="productRoot" class="section"></div>
+    <!-- Inline Checkout Section -->
+    <section class="section" id="inlineCheckoutSection" style="margin: 2rem 0; background: #fafafa; padding: 1.5rem; border-radius: 16px; border: 2px dashed #cbd5e1; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+      <style>
+        #quickCheckoutForm.was-validated input:invalid,
+        #quickCheckoutForm.was-validated select:invalid,
+        #quickCheckoutForm.was-validated textarea:invalid {
+          border-color: #ef4444 !important;
+          box-shadow: 0 0 0 1px #ef4444;
+        }
+      </style>
+      <div class="section-head" style="margin-bottom: 1.25rem; text-align: center;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #1e293b;">ظٹط±ط¬ظ‰ ط¥ط¯ط®ط§ظ„ ظ…ط¹ظ„ظˆظ…ط§طھظƒ ظ„ط¥ظƒظ…ط§ظ„ ط§ظ„ط·ظ„ط¨</h2>
+      </div>
+      <form id="quickCheckoutForm" style="display:grid;gap:16px;">
+        <div>
+          <label style="display:none;">ط§ظ„ط§ط³ظ… ط¨ط§ظ„ظƒط§ظ…ظ„</label>
+          <div style="position: relative;">
+            <i class="fa-regular fa-user" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+            <input required name="name" type="text" placeholder="ط§ط³ظ…ظƒ ط¨ط§ظ„ظƒط§ظ…ظ„" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff; transition: border-color 0.3s;">
+            <input required name="name" type="text" placeholder="اسمك بالكامل" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff; transition: border-color 0.3s;">
+          </div>
+        </div>
+        <div>
+          <label style="display:none;">رقم الهاتف</label>
+          <div style="position: relative;">
+            <i class="fa-solid fa-phone" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+            <input required name="phone" type="tel" inputmode="numeric" maxlength="11" minlength="11" pattern="^01[0-9]{9}$" placeholder="رقم الهاتف" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff;text-align: right; transition: border-color 0.3s;" dir="rtl">
+          </div>
+        </div>
+        <div>
+          <label style="display:none;">المحافظة</label>
+          <div style="position: relative;">
+            <i class="fa-solid fa-map-location-dot" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; z-index: 2;"></i>
+            <select name="governorate" id="quickGovernorateSelect" style="width:100%;padding:12px 40px 12px 36px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;) no-repeat left 16px center;background-size:14px;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;transition:all 0.3s;">
+              <option value="">جاري تحميل المحافظات...</option>
+            </select>
+          </div>
+          <div id="qcGovError" class="qc-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: none; font-weight: 600;">يرجى اختيار المحافظة</div>
+        </div>
+        <div>
+          <label style="display:none;">العنوان بالتفصيل</label>
+          <div style="position: relative;">
+            <textarea name="address" rows="2" style="width:100%;padding:12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff;resize:none; transition: all 0.3s;" placeholder="العنوان بالتفصيل"></textarea>
+          </div>
+          <div id="qcAddressError" class="qc-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: none; font-weight: 600;">يرجى كتابة العنوان التفصيلي</div>
+        </div>
+
+        <!-- ملخص الشحن والإجمالي -->
+        <div id="quickCheckoutSummary" style="margin-top: 6px; padding: 12px 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; font-family: Cairo, sans-serif;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #475569;">
+            <span style="font-weight: 600;">تكلفة الشحن</span>
+            <span id="qcShippingCost" style="font-weight: 700; color: #16a34a;">شحن مجاني</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; color: #0f172a; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+            <span style="font-weight: 800;">الإجمالي</span>
+            <span id="qcTotalAmount" style="font-weight: 900; color: #1e293b; font-size: 1.25rem;">0 ج.م</span>
+          </div>
+        </div>
+        
+        <input type="hidden" name="pay" value="cod">
+        <button type="submit" id="quickSubmitBtn" style="width: 100%; padding: 14px; font-size: 1.1rem; font-weight: bold; background: #000; color: white; border: none; border-radius: 25px; cursor: pointer; margin-top: 6px;">
+          إتمام الطلب
+        </button>
+      </form>
+    </section>
+
     <section class="section">
       <div class="section-head">
-        <h2>منتجات مشابهة</h2>
+        <h2>?????? ??????</h2>
       </div>
       <div id="relatedGrid" class="grid"></div>
     </section>
@@ -243,12 +309,12 @@
     const root = document.getElementById('productRoot');
     const relatedGrid = document.getElementById('relatedGrid');
 
-    if (!id) { root.innerHTML = '<p class="muted">لم يتم تحديد منتج.</p>'; }
+    if (!id) { root.innerHTML = '<p class="muted">?? ??? ????? ????.</p>'; }
 
     fetch(`${window.API_BASE}/products/${id}`).then(r => r.json()).then(({ data }) => {
       renderProductDetails(data);
       loadRelated(data.category_id, data.id);
-    }).catch(() => { root.innerHTML = '<p class="muted">تعذر تحميل تفاصيل المنتج.</p>'; });
+    }).catch(() => { root.innerHTML = '<p class="muted">???? ????? ?????? ??????.</p>'; });
 
     function renderProductDetails(p) {
       const imgs = [p.image_url, ...(p.images || [])].filter(Boolean);
@@ -259,43 +325,49 @@
           <div class="p-gallery">
             <div class="p-main">
               <img id="pMain" src="${imgs[0] || ''}" alt="${p.name || ''}">
-              <button class="p-arrow p-prev" aria-label="السابق">‹</button>
-              <button class="p-arrow p-next" aria-label="التالي">›</button>
+              <button class="p-arrow p-prev" aria-label="??????">‹</button>
+              <button class="p-arrow p-next" aria-label="??????">›</button>
             </div>
             <div class="p-thumbs">${imgs.map((src, i) => `<button class="p-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}"><img src="${src}" alt="thumb ${i + 1}"></button>`).join('')}</div>
           </div>
           <div>
-            <h1 style="margin:0 0 8px">${p.name || 'منتج'}</h1>
+            <h1 style="margin:0 0 8px">${p.name || '????'}</h1>
             <div class="muted" style="margin-bottom:8px">${p.category || ''}</div>
             <div class="price-block" style="text-align: right;">
               <div class="price-now" id="mainPriceNow" style="text-align: right;">${BirdCart.formatEGP(p.price_after || 0)}</div>
               <div class="price-row" id="mainPriceOld" style="justify-content: flex-start; gap: 8px;">
-                ${p.price_before && p.price_before > p.price_after ? `<span class='old'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount'><span>خصم</span><span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
+                ${p.price_before && p.price_before > p.price_after ? `<span class='old'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount'><span>???</span><span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
               </div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; align-items: center;">
-              ${p.shipping_type === 'free' ? `<div style="padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.875rem; font-weight: 600; display: inline-block;"><i class="fa fa-truck" style="margin-left: 6px;"></i>الشحن مجاناً</div>` : ''}
+              ${p.shipping_type === 'free' ? `<div style="padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.875rem; font-weight: 600; display: inline-block;"><i class="fa fa-truck" style="margin-left: 6px;"></i>????? ??????</div>` : ''}
               <div id="stockIndicator"></div>
             </div>
             ${renderBundles(p)}
             <div id="variantsContainer">
               ${renderSizesAndColors(p, 1)}
             </div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px;">
-              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 200px; padding: 12px; font-size: 1.1rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-cart-plus"></i> أضف إلى السلة</button>
-              <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 200px; padding: 12px; font-size: 1.1rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-bolt"></i> إتمام الشراء</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; align-items: center;">
+              <!-- QUANTITY SELECTOR -->
+              <div class="product-qty-control" style="display: inline-flex; align-items: center; border: 1.5px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #ffffff; height: 46px; user-select: none;">
+                <button type="button" class="qty-btn qty-plus" onclick="changeProductQty(1)" style="width: 42px; height: 100%; border: none; background: #f3f4f6; color: #111827; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">+</button>
+                <input type="number" id="productQtyInput" value="1" min="1" readonly style="width: 44px; height: 100%; border: none; text-align: center !important; text-align-last: center !important; font-size: 1.1rem; font-weight: 800; color: #111827; background: transparent; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0; padding: 0; outline: none; direction: ltr !important;">
+                <button type="button" class="qty-btn qty-minus" onclick="changeProductQty(-1)" style="width: 42px; height: 100%; border: none; background: #f3f4f6; color: #111827; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">-</button>
+              </div>
+              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-cart-plus"></i> أضف إلى السلة</button>
+              <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-bolt"></i> إتمام الشراء</button>
             </div>
           </div>
         </div>
-        ${descList ? `<div class="card" style="padding:16px;margin-top:12px"><h3 style="margin:0 0 10px">المواصفات</h3><ul class="desc-list">${descList}</ul></div>` : ''}
+        ${descList ? `<div class="card" style="padding:16px;margin-top:12px"><h3 style="margin:0 0 10px">?????????</h3><ul class="desc-list">${descList}</ul></div>` : ''}
         <div class="lightbox" id="pLightbox">
-          <button class="close" aria-label="إغلاق">✕</button>
-          <button class="p-arrow p-prev" aria-label="السابق">‹</button>
+          <button class="close" aria-label="?????">?</button>
+          <button class="p-arrow p-prev" aria-label="??????">‹</button>
           <img id="lbImg" src="${imgs[0] || ''}" alt="">
-          <button class="p-arrow p-next" aria-label="التالي">›</button>
+          <button class="p-arrow p-next" aria-label="??????">›</button>
         </div>
         <div class="sticky-buy-bar">
-          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fa fa-bolt"></i> إتمام الشراء الآن</button>
+          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fa fa-bolt"></i> ????? ?????? ????</button>
         </div>`;
 
       // Image gallery logic with transition & zoom
@@ -394,13 +466,26 @@
       });
 
       // Cart logic
-      function handleCartAction(btn, isBuyNow) {
+      function handleCartAction(btn, isBuyNow, bypassUpsell = false) {
+        if (window.currentProductUpsells && window.currentProductUpsells.length > 0 && !bypassUpsell) {
+          showUpsellPopup(window.currentProductUpsells[0], btn, isBuyNow);
+          return;
+        }
+
         const hasSizes = btn.dataset.hasSizes === 'yes';
         const hasColors = btn.dataset.hasColors === 'yes';
 
         const bundleInput = document.querySelector('input[name="bundle_tier"]:checked');
-        const finalQty = bundleInput ? parseInt(bundleInput.value) : 1;
-        const totalBundlePrice = bundleInput ? Number(bundleInput.dataset.price) : (Number(btn.dataset.price) || 0);
+        const qtyInput = document.getElementById('productQtyInput');
+        const qtyVal = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+        const finalQty = bundleInput ? parseInt(bundleInput.value) : qtyVal;
+        const totalBundlePrice = window.calculateTotalPiecesPrice ? window.calculateTotalPiecesPrice(p, finalQty) : (bundleInput ? Number(bundleInput.dataset.price) : ((Number(btn.dataset.price) || 0) * finalQty));
+
+        let customVariantsData = [];
+        if (p.custom_variants) {
+          try { customVariantsData = typeof p.custom_variants === 'string' ? JSON.parse(p.custom_variants) : p.custom_variants; } catch(e){}
+        }
+        const hasCustomVariantsData = Array.isArray(customVariantsData) && customVariantsData.length > 0;
 
         let isValid = true;
         let firstErrorElement = null;
@@ -409,6 +494,7 @@
         for (let i = 0; i < finalQty; i++) {
           let selectedSize = null;
           let selectedColor = null;
+          let selectedOptions = {};
 
           if (hasSizes) {
             const sizeInput = document.querySelector(`input[name="product_size_${i}"]:checked`);
@@ -438,7 +524,24 @@
             }
           }
 
-          piecesSelections.push({ size: selectedSize, color: selectedColor });
+          if (hasCustomVariantsData) {
+            customVariantsData.forEach((cv, cvIdx) => {
+              if (!cv || !cv.name || !cv.values || !cv.values.length) return;
+              const cvInput = document.querySelector(`input[name="product_cv_${cvIdx}_${i}"]:checked`);
+              if (cvInput) {
+                selectedOptions[cv.name] = cvInput.value;
+              } else {
+                const err = document.querySelector(`#cvError_${cvIdx}_${i}`);
+                if (err) {
+                  err.style.display = 'block';
+                  if (!firstErrorElement) firstErrorElement = err.parentElement;
+                }
+                isValid = false;
+              }
+            });
+          }
+
+          piecesSelections.push({ size: selectedSize, color: selectedColor, options: selectedOptions });
         }
 
         if (!isValid) {
@@ -480,12 +583,13 @@
         if (window.BirdCart && window.BirdCart.addToCart) {
           let combinedSize = null;
           let combinedColor = null;
+          let combinedOptions = null;
 
           if (hasSizes) {
             if (finalQty > 1) {
               combinedSize = piecesSelections.map((s, i) => `ق${i+1}: ${s.size}`).join(' | ');
             } else {
-              combinedSize = piecesSelections[0].size;
+              combinedSize = piecesSelections[0]?.size || null;
             }
           }
 
@@ -493,7 +597,29 @@
             if (finalQty > 1) {
               combinedColor = piecesSelections.map((s, i) => `ق${i+1}: ${s.color}`).join(' | ');
             } else {
-              combinedColor = piecesSelections[0].color;
+              combinedColor = piecesSelections[0]?.color || null;
+            }
+          }
+
+          if (piecesSelections && piecesSelections.length > 0) {
+            const optKeys = new Set();
+            piecesSelections.forEach(s => {
+              if (s.options && typeof s.options === 'object') {
+                Object.keys(s.options).forEach(k => optKeys.add(k));
+              }
+            });
+
+            if (optKeys.size > 0) {
+              combinedOptions = {};
+              optKeys.forEach(k => {
+                if (finalQty > 1) {
+                  combinedOptions[k] = piecesSelections
+                    .map((s, i) => `ق${i + 1}: ${s.options?.[k] || '-'}`)
+                    .join(' | ');
+                } else {
+                  combinedOptions[k] = piecesSelections[0]?.options?.[k] || null;
+                }
+              });
             }
           }
 
@@ -509,6 +635,8 @@
             qty: 1,
             selectedSize: combinedSize,
             selectedColor: combinedColor,
+            options: combinedOptions,
+            piecesSelections: piecesSelections,
           });
           window.BirdCart.updateCartCount();
         }
@@ -536,8 +664,30 @@
           });
         }
 
-        if (isBuyNow) {
-          window.location.href = '/checkout';
+                if (isBuyNow) {
+          document.getElementById('inlineCheckoutSection').style.display = 'block';
+          document.getElementById('inlineCheckoutSection').scrollIntoView({ behavior: 'smooth' });
+          setTimeout(function() {
+            var qForm = document.getElementById('quickCheckoutForm');
+            if (qForm && typeof window.validateQuickForm === 'function') {
+              window.validateQuickForm(qForm);
+            }
+          }, 300);
+          if (!window.governoratesLoaded) {
+            window.governoratesLoaded = true;
+            fetch('/public-api/shipping-governorates')
+              .then(function(r) { return r.json(); })
+              .then(function(res) {
+                var select = document.getElementById('quickGovernorateSelect');
+                select.innerHTML = '<option value="">اختر المحافظة...</option>';
+                (res.data || []).filter(function(gov){ return gov.is_active; }).forEach(function (gov) {
+                  var opt = document.createElement('option');
+                  opt.value = gov.id;
+                  opt.textContent = gov.name;
+                  select.appendChild(opt);
+                });
+              });
+          }
         } else {
           document.querySelectorAll('input[type="radio"]').forEach(i => {
              if(i.name.startsWith('product_')) i.checked = false;
@@ -676,20 +826,19 @@
 
     function renderSizesAndColors(p, qty = 1) {
       let html = '';
-      let sizes = [];
-      let colors = [];
+      let sizes = p.sizes || []; if (typeof sizes === 'string') { try { sizes = JSON.parse(sizes); } catch(e) { sizes = []; } }
+      let colors = p.colors || []; if (typeof colors === 'string') { try { colors = JSON.parse(colors); } catch(e) { colors = []; } }
 
-      if (p.sizes) {
-        try { sizes = typeof p.sizes === 'string' ? JSON.parse(p.sizes) : p.sizes; } catch(e){}
-      }
-      if (p.colors) {
-        try { colors = typeof p.colors === 'string' ? JSON.parse(p.colors) : p.colors; } catch(e){}
+      let customVariants = [];
+      if (p.custom_variants) {
+        try { customVariants = typeof p.custom_variants === 'string' ? JSON.parse(p.custom_variants) : p.custom_variants; } catch(e){}
       }
 
       const hasSizes = Array.isArray(sizes) && sizes.length > 0;
       const hasColors = Array.isArray(colors) && colors.length > 0;
+      const hasCustomVariants = Array.isArray(customVariants) && customVariants.length > 0;
 
-      if (!hasSizes && !hasColors) return '';
+      if (!hasSizes && !hasColors && !hasCustomVariants) return '';
 
       for (let i = 0; i < qty; i++) {
         const title = qty > 1 ? `القطعة ${i + 1}` : 'المواصفات';
@@ -701,7 +850,7 @@
         if (hasSizes) {
           html += `
             <div style="margin-bottom: 12px;">
-              <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">المقاس <span style="color: #dc2626;">*</span></label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">المقاس <span style="color: #dc2626;">*</span><span id="sizeSelectedLabel_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="size-group-container" data-piece="${i}">
                 ${sizes.map(size => `
                   <label class="size-option" style="cursor: pointer; position: relative;">
@@ -717,8 +866,8 @@
 
         if (hasColors) {
           html += `
-            <div>
-              <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">اللون <span style="color: #dc2626;">*</span></label>
+            <div style="margin-bottom: 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">اللون <span style="color: #dc2626;">*</span><span id="colorSelectedLabel_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="color-group-container" data-piece="${i}">
                 ${colors.map(color => `
                   <label class="color-option" style="cursor: pointer; position: relative;">
@@ -730,6 +879,26 @@
               <div id="colorError_${i}" class="error-msg colorError" style="color: #dc2626; font-size: 0.875rem; margin-top: 4px; display: none;">يرجى اختيار اللون</div>
             </div>
           `;
+        }
+
+        if (hasCustomVariants) {
+          customVariants.forEach((cv, cvIdx) => {
+            if (!cv || !cv.name || !cv.values || !cv.values.length) return;
+            html += `
+              <div style="margin-bottom: 12px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">${cv.name} <span style="color: #dc2626;">*</span><span id="cvSelectedLabel_${cvIdx}_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="cv-group-container" data-piece="${i}" data-cv-idx="${cvIdx}">
+                  ${cv.values.map(val => `
+                    <label class="cv-option" style="cursor: pointer; position: relative;">
+                      <input type="radio" name="product_cv_${cvIdx}_${i}" value="${val}" style="display: none;" onchange="updateVariantAvailability(${i})">
+                      <span class="variant-btn" data-type="cv_${cvIdx}" data-val="${val}">${val}</span>
+                    </label>
+                  `).join('')}
+                </div>
+                <div id="cvError_${cvIdx}_${i}" class="error-msg cvError" style="color: #dc2626; font-size: 0.875rem; margin-top: 4px; display: none;">يرجى اختيار ${cv.name}</div>
+              </div>
+            `;
+          });
         }
 
         html += `</div>`;
@@ -750,6 +919,28 @@
       const selectedSize = sizeInput ? sizeInput.value : null;
       const selectedColor = colorInput ? colorInput.value : null;
       
+      let customVariantsData = p.custom_variants || [];
+      if (typeof customVariantsData === 'string') { try { customVariantsData = JSON.parse(customVariantsData); } catch(e) { customVariantsData = []; } }
+      
+      let selectedCvOptions = {};
+      if (Array.isArray(customVariantsData)) {
+        customVariantsData.forEach((cv, cvIdx) => {
+          const cvInp = document.querySelector(`input[name="product_cv_${cvIdx}_${pieceIndex}"]:checked`);
+          if (cvInp && cvInp.value) {
+            selectedCvOptions[cv.name] = cvInp.value;
+          }
+        });
+      }
+
+      const isOptsMatch = (vOpts, extraOpts = {}) => {
+        vOpts = vOpts || {};
+        const combined = { ...selectedCvOptions, ...extraOpts };
+        for (const k in combined) {
+          if (vOpts[k] !== combined[k]) return false;
+        }
+        return true;
+      };
+
       const sizeLabels = document.querySelectorAll(`.size-group-container[data-piece="${pieceIndex}"] label.size-option`);
       const colorLabels = document.querySelectorAll(`.color-group-container[data-piece="${pieceIndex}"] label.color-option`);
       
@@ -798,59 +989,86 @@
         }
       };
 
-      // Update Colors based on selected Size
+      // Update Colors based on selected Size and Options
       if (selectedSize && hasColors) {
         colorLabels.forEach(lbl => {
           const cVal = lbl.querySelector('input').value;
-          const found = stock.find(s => s.size === selectedSize && s.color === cVal);
+          const found = stock.find(s => s.size === selectedSize && s.color === cVal && isOptsMatch(s.options));
           const qty = found ? found.qty : (p.stock !== undefined && p.stock !== null ? p.stock : 100);
           applyVariantStyle(lbl, qty);
         });
       } else if (!selectedSize && hasColors) {
-        // No size selected yet: show global out-of-stock per color (if ALL sizes for that color are out)
         colorLabels.forEach(lbl => {
           const cVal = lbl.querySelector('input').value;
           if (hasSizes) {
             const activeSizes = (typeof p.sizes === 'string' ? JSON.parse(p.sizes) : p.sizes) || [];
             const allOut = activeSizes.every(sz => {
-              const found = stock.find(s => s.size === sz && s.color === cVal);
+              const found = stock.find(s => s.size === sz && s.color === cVal && isOptsMatch(s.options));
               const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
               return qty !== null && qty !== undefined && qty !== '' && Number(qty) <= 0;
             });
             applyVariantStyle(lbl, allOut ? 0 : 100);
           } else {
-            const found = stock.find(s => s.color === cVal);
+            const found = stock.find(s => s.color === cVal && isOptsMatch(s.options));
             const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
             applyVariantStyle(lbl, qty);
           }
         });
       }
       
-      // Update Sizes based on selected Color
+      // Update Sizes based on selected Color and Options
       if (selectedColor && hasSizes) {
         sizeLabels.forEach(lbl => {
           const sVal = lbl.querySelector('input').value;
-          const found = stock.find(s => s.size === sVal && s.color === selectedColor);
+          const found = stock.find(s => s.size === sVal && s.color === selectedColor && isOptsMatch(s.options));
           const qty = found ? found.qty : (p.stock !== undefined && p.stock !== null ? p.stock : 100);
           applyVariantStyle(lbl, qty);
         });
       } else if (!selectedColor && hasSizes) {
-        // No color selected yet: show global out-of-stock per size (if ALL colors for that size are out)
         sizeLabels.forEach(lbl => {
           const sVal = lbl.querySelector('input').value;
           if (hasColors) {
             const activeColors = (typeof p.colors === 'string' ? JSON.parse(p.colors) : p.colors) || [];
             const allOut = activeColors.every(cl => {
-              const found = stock.find(s => s.size === sVal && s.color === cl);
+              const found = stock.find(s => s.size === sVal && s.color === cl && isOptsMatch(s.options));
               const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
               return qty !== null && qty !== undefined && qty !== '' && Number(qty) <= 0;
             });
             applyVariantStyle(lbl, allOut ? 0 : 100);
           } else {
-            const found = stock.find(s => s.size === sVal);
+            const found = stock.find(s => s.size === sVal && isOptsMatch(s.options));
             const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
             applyVariantStyle(lbl, qty);
           }
+        });
+      }
+
+      // Update Custom Variants availability based on selected Size, Color, and other Options
+      if (Array.isArray(customVariantsData)) {
+        customVariantsData.forEach((cv, cvIdx) => {
+          const cvLabels = document.querySelectorAll(`.cv-group-container[data-piece="${pieceIndex}"][data-cv-idx="${cvIdx}"] label.cv-option`);
+          cvLabels.forEach(lbl => {
+            const val = lbl.querySelector('input').value;
+            const found = stock.find(s => 
+              (!selectedSize || s.size === selectedSize) &&
+              (!selectedColor || s.color === selectedColor) &&
+              isOptsMatch(s.options, { [cv.name]: val })
+            );
+            const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
+            applyVariantStyle(lbl, qty);
+          });
+        });
+      }
+
+      // Update selected variant labels shown next to the field title
+      const sizeLabel = document.getElementById(`sizeSelectedLabel_${pieceIndex}`);
+      const colorLabel = document.getElementById(`colorSelectedLabel_${pieceIndex}`);
+      if (sizeLabel) { sizeLabel.textContent = selectedSize || ''; sizeLabel.style.display = selectedSize ? 'inline-block' : 'none'; }
+      if (colorLabel) { colorLabel.textContent = selectedColor || ''; colorLabel.style.display = selectedColor ? 'inline-block' : 'none'; }
+      if (Array.isArray(customVariantsData)) {
+        customVariantsData.forEach((cv, cvIdx) => {
+          const cvLbl = document.getElementById(`cvSelectedLabel_${cvIdx}_${pieceIndex}`);
+          if (cvLbl) { cvLbl.textContent = selectedCvOptions[cv.name] || ''; cvLbl.style.display = selectedCvOptions[cv.name] ? 'inline-block' : 'none'; }
         });
       }
 
@@ -861,34 +1079,95 @@
       const finalQty = bundleInput ? parseInt(bundleInput.value) : 1;
       
       if (finalQty === 1) {
+        let customVariantsData = [];
+        if (p.custom_variants) {
+          try { customVariantsData = typeof p.custom_variants === 'string' ? JSON.parse(p.custom_variants) : p.custom_variants; } catch(e){}
+        }
+        const hasCustomVariantsData = Array.isArray(customVariantsData) && customVariantsData.length > 0;
+
         const sizeVal = hasSizes ? (document.querySelector(`input[name="product_size_0"]:checked`) ? document.querySelector(`input[name="product_size_0"]:checked`).value : null) : null;
         const colorVal = hasColors ? (document.querySelector(`input[name="product_color_0"]:checked`) ? document.querySelector(`input[name="product_color_0"]:checked`).value : null) : null;
         
-        if ((!hasSizes || sizeVal) && (!hasColors || colorVal)) {
-          const match = stock.find(v => 
-            (!hasSizes || v.size === sizeVal) && 
-            (!hasColors || v.color === colorVal)
-          );
-          
-          if (match && match.price) {
-            const priceNowEl = document.getElementById('mainPriceNow');
-            if (priceNowEl) {
-              priceNowEl.textContent = BirdCart.formatEGP(match.price);
-            }
-            document.querySelectorAll('.p-btn-add, .p-btn-buy-now').forEach(btn => {
-              btn.dataset.price = match.price;
-            });
-          } else {
-            const priceNowEl = document.getElementById('mainPriceNow');
-            if (priceNowEl) {
-              priceNowEl.textContent = BirdCart.formatEGP(p.price_after || p.price || 0);
-            }
-            document.querySelectorAll('.p-btn-add, .p-btn-buy-now').forEach(btn => {
-              btn.dataset.price = p.price_after || p.price || 0;
-            });
+        let selectedCvOptions = {};
+        if (hasCustomVariantsData) {
+          customVariantsData.forEach((cv, cvIdx) => {
+            const input = document.querySelector(`input[name="product_cv_${cvIdx}_0"]:checked`);
+            if (input) selectedCvOptions[cv.name] = input.value;
+          });
+        }
+
+        const isCvMatch = (v) => {
+          if (!hasCustomVariantsData) return true;
+          const vOpt = v.options || {};
+          return customVariantsData.every(cv => {
+            if (!selectedCvOptions[cv.name]) return true;
+            return vOpt[cv.name] === selectedCvOptions[cv.name];
+          });
+        };
+
+        const match = stock.find(v => 
+          (!hasSizes || !sizeVal || v.size === sizeVal) && 
+          (!hasColors || !colorVal || v.color === colorVal) &&
+          isCvMatch(v)
+        );
+        
+        if (match && match.price && Number(match.price) > 0) {
+          const priceNowEl = document.getElementById('mainPriceNow');
+          if (priceNowEl) {
+            priceNowEl.textContent = BirdCart.formatEGP(match.price);
           }
+          document.querySelectorAll('.p-btn-add, .p-btn-buy-now').forEach(btn => {
+            btn.dataset.price = match.price;
+          });
+        } else {
+          const priceNowEl = document.getElementById('mainPriceNow');
+          if (priceNowEl) {
+            priceNowEl.textContent = BirdCart.formatEGP(p.price_after || p.price || 0);
+          }
+          document.querySelectorAll('.p-btn-add, .p-btn-buy-now').forEach(btn => {
+            btn.dataset.price = p.price_after || p.price || 0;
+          });
         }
       }
+    };
+
+    window.findVariantMatch = function(p, pieceIdx) {
+      let variants = p.variants_stock || [];
+      if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch(e) { variants = []; } }
+      if (!Array.isArray(variants) || variants.length === 0) return null;
+
+      const hasSizes = p.sizes && p.sizes.length > 0;
+      const hasColors = p.colors && p.colors.length > 0;
+
+      const sizeInp = document.querySelector(`input[name="product_size_${pieceIdx}"]:checked`);
+      const colorInp = document.querySelector(`input[name="product_color_${pieceIdx}"]:checked`);
+      const sVal = sizeInp ? sizeInp.value : null;
+      const cVal = colorInp ? colorInp.value : null;
+
+      let customVariantsData = p.custom_variants || [];
+      if (typeof customVariantsData === 'string') { try { customVariantsData = JSON.parse(customVariantsData); } catch(e) { customVariantsData = []; } }
+      
+      let selectedCvOptions = {};
+      if (Array.isArray(customVariantsData)) {
+        customVariantsData.forEach((cv, cvIdx) => {
+          const cvInp = document.querySelector(`input[name="product_cv_${cvIdx}_${pieceIdx}"]:checked`);
+          if (cvInp && cvInp.value) {
+            selectedCvOptions[cv.name] = cvInp.value;
+          }
+        });
+      }
+
+      return variants.find(v => {
+        if (hasSizes && v.size !== sVal) return false;
+        if (hasColors && v.color !== cVal) return false;
+        if (Object.keys(selectedCvOptions).length > 0) {
+          const vOpts = v.options || {};
+          for (const k in selectedCvOptions) {
+            if (vOpts[k] !== selectedCvOptions[k]) return false;
+          }
+        }
+        return true;
+      });
     };
 
     window.updateStockIndicator = function() {
@@ -900,17 +1179,21 @@
       const hasSizes = p.sizes && p.sizes.length > 0;
       const hasColors = p.colors && p.colors.length > 0;
 
+      let customVariantsData = p.custom_variants || [];
+      if (typeof customVariantsData === 'string') { try { customVariantsData = JSON.parse(customVariantsData); } catch(e) { customVariantsData = []; } }
+      const hasCustomVariants = Array.isArray(customVariantsData) && customVariantsData.length > 0;
+
       const indicator = document.getElementById('stockIndicator');
       if (!indicator) return;
 
-      if (!hasSizes && !hasColors) {
+      if (!hasSizes && !hasColors && !hasCustomVariants) {
         const stock = p.stock || 0;
-        if (stock > 5) {
-          indicator.innerHTML = `<span class="badge-stock badge-stock-available"><i class="fa fa-check-circle"></i> متوفر في المخزن</span>`;
+        if (stock > 10) {
+          indicator.innerHTML = '';
         } else if (stock > 0) {
-          indicator.innerHTML = `<span class="badge-stock badge-stock-warning"><i class="fa fa-exclamation-triangle"></i> قارب على النفاد (متبقي ${stock} قطعة!)</span>`;
+          indicator.innerHTML = `<span class="badge-stock badge-stock-warning"><i class="fa fa-fire"></i> متبقي ${stock} قطعة فقط!</span>`;
         } else {
-          indicator.innerHTML = `<span class="badge-stock badge-stock-out"><i class="fa fa-times-circle"></i> نفد من المخزن</span>`;
+          indicator.innerHTML = `<span class="badge-stock badge-stock-out"><i class="fa fa-times-circle"></i> غير متوفر في المخزون</span>`;
         }
         return;
       }
@@ -925,20 +1208,17 @@
         let colorSelected = !hasColors || document.querySelector(`input[name="product_color_${i}"]:checked`);
 
         if (sizeSelected && colorSelected) {
-          const sizeVal = hasSizes ? document.querySelector(`input[name="product_size_${i}"]:checked`).value : null;
-          const colorVal = hasColors ? document.querySelector(`input[name="product_color_${i}"]:checked`).value : null;
-
-          let variants = p.variants_stock || []; if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch(e) { variants = []; } }
-          const match = variants.find(v => 
-            (!hasSizes || v.size === sizeVal) && 
-            (!hasColors || v.color === colorVal)
-          );
-
-          let qty = 100; if (match) { qty = (match.qty === null || match.qty === undefined || match.qty === '') ? 100 : Number(match.qty); } else if (p.stock !== undefined && p.stock !== null) { qty = Number(p.stock); }
+          const match = findVariantMatch(p, i);
+          let qty = 100;
+          if (match) {
+            qty = (match.qty === null || match.qty === undefined || match.qty === '') ? 100 : Number(match.qty);
+          } else if (p.stock !== undefined && p.stock !== null) {
+            qty = Number(p.stock);
+          }
           piecesStocks.push(qty);
           if (qty <= 0) {
             outOfStockCount++;
-          } else if (qty <= 5) {
+          } else if (qty <= 10) {
             warningCount++;
           }
         } else {
@@ -947,18 +1227,181 @@
       }
 
       if (!allSelectionsValid) {
-        // Show available by default when not all variants selected yet
-        indicator.innerHTML = `<span class="badge-stock badge-stock-available"><i class="fa fa-check-circle"></i> متوفر في المخزن</span>`;
+        indicator.innerHTML = '';
+      } else if (outOfStockCount > 0) {
+        indicator.innerHTML = `<span class="badge-stock badge-stock-out"><i class="fa fa-times-circle"></i> غير متوفر في المخزون</span>`;
+      } else if (warningCount > 0) {
+        const minStock = Math.min(...piecesStocks);
+        indicator.innerHTML = `<span class="badge-stock badge-stock-warning"><i class="fa fa-fire"></i> متبقي ${minStock} قطعة فقط!</span>`;
+      } else {
+        indicator.innerHTML = '';
+      }
+
+      // ── رسالة low-stock تحت أزرار المتغير المختار ──
+      for (let i = 0; i < finalQty; i++) {
+        const matchI = findVariantMatch(p, i);
+        const vQty = matchI 
+          ? (matchI.qty === null || matchI.qty === undefined || matchI.qty === '' ? 999 : Number(matchI.qty)) 
+          : (p.stock !== undefined ? Number(p.stock) : 999);
+
+        let lowStockEl = document.getElementById(`variantLowStockNotice_${i}`);
+        if (!lowStockEl && i === 0) {
+          lowStockEl = document.getElementById('variantLowStockMsg');
+          if (!lowStockEl) {
+            lowStockEl = document.createElement('div');
+            lowStockEl.id = 'variantLowStockMsg';
+            const variantsContainer = document.getElementById('variantsContainer');
+            if (variantsContainer) variantsContainer.insertAdjacentElement('afterend', lowStockEl);
+          }
+        }
+        if (lowStockEl) {
+          if (vQty > 0 && vQty <= 10) {
+            lowStockEl.innerHTML = `<div style="margin-top: 6px; font-size: 0.85rem; font-weight: 700; color: #dc2626; display: flex; align-items: center; gap: 5px;"><i class="fa fa-fire" style="color:#ef4444;"></i> متبقي ${vQty} قطعة فقط</div>`;
+          } else {
+            lowStockEl.innerHTML = '';
+          }
+        }
+      }
+
+      if (window.updateQuickCheckoutSummary) {
+        window.updateQuickCheckoutSummary();
+      }
+    };
+
+    window.calculateTotalPiecesPrice = function(p, finalQty) {
+      if (!p) return 0;
+      const bundleInput = document.querySelector('input[name="bundle_tier"]:checked');
+      if (bundleInput && bundleInput.dataset.price) {
+        return Number(bundleInput.dataset.price);
+      }
+
+      const baseUnitPrice = (p.price_after !== undefined && p.price_after !== null && p.price_after !== '') 
+        ? Number(p.price_after) 
+        : Number(p.price || 0);
+
+      let total = 0;
+      for (let i = 0; i < finalQty; i++) {
+        const match = findVariantMatch(p, i);
+        if (match && match.price && Number(match.price) > 0) {
+          total += Number(match.price);
+        } else {
+          total += baseUnitPrice;
+        }
+      }
+      return total;
+    };
+
+    window.updateQuickCheckoutSummary = function() {
+      const p = window.currentProductData;
+      if (!p) return;
+
+      const bundleInput = document.querySelector('input[name="bundle_tier"]:checked');
+      const qtyInput = document.getElementById('productQtyInput');
+      const qtyVal = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+      const finalQty = bundleInput ? parseInt(bundleInput.value) : qtyVal;
+      const productTotal = window.calculateTotalPiecesPrice(p, finalQty);
+
+      const priceNowEl = document.getElementById('mainPriceNow');
+      if (priceNowEl) {
+        priceNowEl.textContent = BirdCart.formatEGP(productTotal);
+      }
+
+      let shippingCost = 0;
+      const shippingEl = document.getElementById('qcShippingCost');
+      const govSelect = document.getElementById('quickGovernorateSelect');
+
+      if (p.shipping_type === 'free') {
+        shippingCost = 0;
+        if (shippingEl) {
+          shippingEl.textContent = 'شحن مجاني';
+          shippingEl.style.color = '#16a34a';
+        }
+      } else {
+        const govId = govSelect ? govSelect.value : null;
+        if (govId && window.governoratesData) {
+          const gov = window.governoratesData.find(g => String(g.id) === String(govId));
+          if (gov) shippingCost = Number(gov.shipping_cost) || 0;
+        }
+        if (shippingEl) {
+          if (shippingCost === 0) {
+            shippingEl.textContent = 'شحن مجاني';
+            shippingEl.style.color = '#16a34a';
+          } else {
+            shippingEl.textContent = new Intl.NumberFormat('en-EG').format(shippingCost) + ' ج.م';
+            shippingEl.style.color = '#334155';
+          }
+        }
+      }
+
+      const grandTotal = productTotal + shippingCost;
+      const totalEl = document.getElementById('qcTotalAmount');
+      if (totalEl) {
+        totalEl.textContent = new Intl.NumberFormat('en-EG').format(grandTotal) + ' ج.م';
+      }
+    };
+
+    window.getMaxAllowedProductQty = function() {
+      const p = window.currentProductData;
+      if (!p) return 999;
+
+      let maxQty = (p.stock !== undefined && p.stock !== null && p.stock !== '') ? Number(p.stock) : 999;
+      if (isNaN(maxQty) || maxQty < 0) maxQty = 999;
+
+      const bundleInput = document.querySelector('input[name="bundle_tier"]:checked');
+      const qtyInput = document.getElementById('productQtyInput');
+      const currentPieces = qtyInput ? (parseInt(qtyInput.value) || 1) : (bundleInput ? parseInt(bundleInput.value) : 1);
+
+      let variantCounts = {};
+
+      for (let i = 0; i < currentPieces; i++) {
+        const match = findVariantMatch(p, i);
+        if (match) {
+          const vQty = (match.qty === null || match.qty === undefined || match.qty === '') ? 999 : Number(match.qty);
+          maxQty = Math.min(maxQty, vQty);
+
+          const vKey = (match.size || '') + '|' + (match.color || '') + '|' + JSON.stringify(match.options || {});
+          variantCounts[vKey] = (variantCounts[vKey] || 0) + 1;
+          
+          if (variantCounts[vKey] >= vQty) {
+            maxQty = Math.min(maxQty, currentPieces);
+          }
+        }
+      }
+
+      return Math.max(1, maxQty);
+    };
+
+    window.changeProductQty = function(delta) {
+      const inp = document.getElementById('productQtyInput');
+      if (!inp) return;
+      let val = parseInt(inp.value) || 1;
+      const targetVal = val + delta;
+      if (targetVal < 1) return;
+
+      const maxAllowed = window.getMaxAllowedProductQty();
+
+      if (delta > 0 && targetVal > maxAllowed) {
+        alert(`عذراً، المتبقي في المخزن ${maxAllowed} قطعة فقط ولا يكفي لـ ${targetVal} قطع!`);
         return;
       }
 
-      if (outOfStockCount > 0) {
-        indicator.innerHTML = `<span class="badge-stock badge-stock-out"><i class="fa fa-times-circle"></i> نفد من المخزن</span>`;
-      } else if (warningCount > 0) {
-        const minStock = Math.min(...piecesStocks);
-        indicator.innerHTML = `<span class="badge-stock badge-stock-warning"><i class="fa fa-exclamation-triangle"></i> قارب على النفاد (متبقي ${minStock} قطع فقط!)</span>`;
+      inp.value = targetVal;
+
+      const tierRadio = document.querySelector(`input[name="bundle_tier"][value="${targetVal}"]`);
+      if (tierRadio) {
+        tierRadio.checked = true;
+        updateBundleSelection(tierRadio);
       } else {
-        indicator.innerHTML = `<span class="badge-stock badge-stock-available"><i class="fa fa-check-circle"></i> متوفر في المخزن</span>`;
+        document.querySelectorAll('input[name="bundle_tier"]').forEach(r => r.checked = false);
+
+        const vContainer = document.getElementById('variantsContainer');
+        if (vContainer && window.currentProductData) {
+          vContainer.innerHTML = renderSizesAndColors(window.currentProductData, targetVal);
+        }
+        if (window.updateVariantAvailability) {
+          for (let _pi = 0; _pi < targetVal; _pi++) { updateVariantAvailability(_pi); }
+        }
+        updateStockIndicator();
       }
     };
 
@@ -988,6 +1431,250 @@
       });
     })();
   </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load governorates immediately since form is always visible
+    if (!window.governoratesLoaded) {
+      window.governoratesLoaded = true;
+      fetch('/public-api/shipping-governorates')
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          window.governoratesData = res.data || [];
+          var select = document.getElementById('quickGovernorateSelect');
+          if(select) {
+              select.innerHTML = '<option value="">اختر المحافظة...</option>';
+              window.governoratesData.filter(function(gov){ return gov.is_active; }).forEach(function (gov) {
+                var opt = document.createElement('option');
+                opt.value = gov.id;
+                opt.textContent = gov.name;
+                select.appendChild(opt);
+              });
+              select.addEventListener('change', function() {
+                if (window.updateQuickCheckoutSummary) window.updateQuickCheckoutSummary();
+              });
+          }
+          if (window.updateQuickCheckoutSummary) window.updateQuickCheckoutSummary();
+        });
+    }
+
+    var quickForm = document.getElementById('quickCheckoutForm');
+    window.validateQuickForm = function(form) {
+      var isValid = true;
+      var firstErr = null;
+
+        var nameInput = form.querySelector('[name="name"]');
+        var nameErr = document.getElementById('qcNameError');
+        if (nameInput) {
+          var nameVal = nameInput.value ? nameInput.value.trim() : '';
+          if (!nameVal || nameVal.length < 2) {
+            nameInput.style.border = '2px solid #ef4444';
+            nameInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (nameErr) nameErr.style.display = 'block';
+            isValid = false;
+            if (!firstErr) firstErr = nameInput;
+          } else {
+            nameInput.style.border = '1px solid #e2e8f0';
+            nameInput.style.boxShadow = 'none';
+            if (nameErr) nameErr.style.display = 'none';
+          }
+        }
+
+        var phoneInput = form.querySelector('[name="phone"]');
+        var phoneErr = document.getElementById('qcPhoneError');
+        var phoneRegex = /^01[0125][0-9]{8}$/;
+        if (phoneInput) {
+          var phoneVal = phoneInput.value ? phoneInput.value.replace(/[\s\+\-]/g, '') : '';
+          if (phoneVal.startsWith('201')) phoneVal = '0' + phoneVal.substring(2);
+          else if (phoneVal.startsWith('00201')) phoneVal = '0' + phoneVal.substring(4);
+
+          if (!phoneVal || !phoneRegex.test(phoneVal)) {
+            phoneInput.style.border = '2px solid #ef4444';
+            phoneInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (phoneErr) phoneErr.style.display = 'block';
+            isValid = false;
+            if (!firstErr) firstErr = phoneInput;
+          } else {
+            phoneInput.style.border = '1px solid #e2e8f0';
+            phoneInput.style.boxShadow = 'none';
+            if (phoneErr) phoneErr.style.display = 'none';
+          }
+        }
+
+        var govSelect = form.querySelector('#quickGovernorateSelect');
+        var govErr = document.getElementById('qcGovError');
+        if (govSelect) {
+          if (!govSelect.value) {
+            govSelect.style.border = '2px solid #ef4444';
+            govSelect.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (govErr) govErr.style.display = 'block';
+            isValid = false;
+            if (!firstErr) firstErr = govSelect;
+          } else {
+            govSelect.style.border = '1px solid #e2e8f0';
+            govSelect.style.boxShadow = 'none';
+            if (govErr) govErr.style.display = 'none';
+          }
+        }
+
+        var addressInput = form.querySelector('[name="address"]');
+        var addressErr = document.getElementById('qcAddressError');
+        if (addressInput) {
+          var addressVal = addressInput.value ? addressInput.value.trim() : '';
+          if (!addressVal || addressVal.length < 3) {
+            addressInput.style.border = '2px solid #ef4444';
+            addressInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+            if (addressErr) addressErr.style.display = 'block';
+            isValid = false;
+            if (!firstErr) firstErr = addressInput;
+          } else {
+            addressInput.style.border = '1px solid #e2e8f0';
+            addressInput.style.boxShadow = 'none';
+            if (addressErr) addressErr.style.display = 'none';
+          }
+        }
+
+        if (!isValid && firstErr) {
+          firstErr.focus();
+          firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        return isValid;
+      };
+
+    if (quickForm) {
+      ['name', 'phone', 'address'].forEach(function(fName) {
+        var inp = quickForm.querySelector('[name="' + fName + '"]');
+        if (inp) {
+          inp.addEventListener('input', function() {
+            this.style.border = '1px solid #e2e8f0';
+            this.style.boxShadow = 'none';
+            var errId = 'qc' + fName.charAt(0).toUpperCase() + fName.slice(1) + 'Error';
+            var err = document.getElementById(errId);
+            if (err) err.style.display = 'none';
+          });
+        }
+      });
+
+      var govSel = quickForm.querySelector('#quickGovernorateSelect');
+      if (govSel) {
+        govSel.addEventListener('change', function() {
+          this.style.border = '1px solid #e2e8f0';
+          this.style.boxShadow = 'none';
+          var err = document.getElementById('qcGovError');
+          if (err) err.style.display = 'none';
+        });
+      }
+
+      quickForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!validateQuickForm(this)) {
+          return;
+        }
+
+        var btn = document.getElementById('quickSubmitBtn');
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> جاري تأكيد الطلب...';
+        btn.disabled = true;
+
+        var fd = new FormData(this);
+        
+        var getCartItems = function() {
+          if (window.BirdCart) {
+            if (typeof window.BirdCart.getCart === 'function') return window.BirdCart.getCart();
+            if (typeof window.BirdCart.getItems === 'function') return window.BirdCart.getItems();
+          }
+          return [];
+        };
+
+        var cart = getCartItems();
+        if(!cart || cart.length === 0) {
+           var buyNowBtn = document.querySelector('.p-btn-buy-now');
+           if(buyNowBtn) {
+               buyNowBtn.click();
+               await new Promise(resolve => setTimeout(resolve, 500));
+               cart = getCartItems();
+           }
+        }
+
+        if(!cart || cart.length === 0) {
+           alert("الرجاء اختيار المنتج أولاً.");
+           btn.innerHTML = originalText;
+           btn.disabled = false;
+           return;
+        }
+
+        var phoneVal = fd.get('phone') || '';
+        phoneVal = phoneVal.replace(/[\s\+\-]/g, '');
+        if (phoneVal.startsWith('201')) phoneVal = '0' + phoneVal.substring(2);
+        else if (phoneVal.startsWith('00201')) phoneVal = '0' + phoneVal.substring(4);
+
+        var payload = {
+          customer_name: fd.get('name'),
+          customer_phone: phoneVal,
+          governorate_id: fd.get('governorate'),
+          customer_address: fd.get('address'),
+          payment_method: fd.get('pay') || 'cod',
+          items: cart.map(function (i) {
+            return {
+              id: i.id,
+              name: i.name || 'منتج',
+              price: i.price,
+              qty: i.qty,
+              selectedSize: i.selectedSize || null,
+              selectedColor: i.selectedColor || null,
+              options: i.options || null,
+              piecesSelections: i.piecesSelections || null
+            };
+          })
+        };
+
+        try {
+          var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+          var csrf = csrfMeta ? csrfMeta.content : '';
+          var res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json', 
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRF-TOKEN': csrf 
+            },
+            body: JSON.stringify(payload)
+          });
+          var data = await res.json();
+          if (data.success) {
+            if(window.BirdCart) {
+                if(typeof window.BirdCart.clearCart === 'function') {
+                    window.BirdCart.clearCart();
+                } else {
+                    window.BirdCart.saveCart([]);
+                    window.BirdCart.updateCartCount();
+                }
+            }
+            window.location.href = '/shop/order-success.html?ref=' + data.data.reference_number;
+          } else {
+            var errorDetails = '';
+            if (data.errors) {
+               for (var key in data.errors) {
+                  errorDetails += '\n- ' + data.errors[key].join(', ');
+               }
+            }
+            alert((data.message || 'حدث خطأ أثناء إتمام الطلب') + errorDetails);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          }
+        } catch(err) {
+          alert('تعذر الاتصال بالخادم: ' + err.message);
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      });
+    }
+  });
+  </script>
+
 </body>
 
 </html>
