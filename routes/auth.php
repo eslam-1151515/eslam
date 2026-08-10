@@ -37,13 +37,7 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:password-reset')
         ->name('password.store');
 
-    // Google OAuth Routes
-    Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])
-        ->name('auth.google');
-    Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback']);
-    Route::get('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'showCompleteRegistration'])
-        ->name('auth.google.complete');
-    Route::post('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'completeRegistration']);
+    // Google OAuth Routes moved to web.php to avoid duplicate route names
 });
 
 Route::middleware('auth')->group(function () {
