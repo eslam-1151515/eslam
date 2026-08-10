@@ -34,13 +34,9 @@ if ($host && $host !== '127.0.0.1' && $host !== 'localhost') {
     }
 }
 
-// Global Google OAuth Routes (accessible on all hosts including localhost)
-Route::middleware(['web'])->group(function () {
-    Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
-    Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
-    Route::get('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'showCompleteRegistration'])->name('auth.google.complete');
-    Route::post('auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'completeRegistration']);
-});
+// Google OAuth Routes are handled per-domain:
+// - app.domain → auth_superadmin.php (auth.google)
+// - {tenant}.domain/admin → auth_merchant.php (merchant.auth.google)
 
 /*
 |--------------------------------------------------------------------------
