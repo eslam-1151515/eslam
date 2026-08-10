@@ -147,4 +147,44 @@ class SettingService
         // Merge tenant settings on top of global settings
         return array_merge($globalSettings, $tenantSettings);
     }
+
+    /**
+     * Get a global platform setting value (tenant_id is strictly null).
+     */
+    public function getGlobal(string $key, $default = null)
+    {
+        $globalValue = \Illuminate\Support\Facades\DB::table('settings')
+            ->whereNull('tenant_id')
+            ->where('key', $key)
+            ->value('value');
+
+        if ($globalValue !== null && $globalValue !== '') {
+            return $globalValue;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set/Save a global platform setting value (tenant_id is strictly null).
+     */
+    public function setGlobal(string $key, $value, string $group = 'general')
+    {
+        // First delete any old global setting key or tenant-specific duplicates for this platform key
+        \Illuminate\Support\Facades\DB::table('settings')
+            ->where('key', $key)
+            ->delete();
+
+        \Illuminate\Support\Facades\DB::table('settings')->insert([
+            'tenant_id'  => null,
+            'key'        => $key,
+            'value'      => $value,
+            'group'      => $group,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Cache::forget("setting:global:{$key}");
+        Cache::forget("setting:group:{$group}:global");
+    }
 }

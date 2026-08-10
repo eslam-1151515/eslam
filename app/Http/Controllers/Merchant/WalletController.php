@@ -23,9 +23,9 @@ class WalletController extends Controller
 
         // Platform payment gateway numbers for charging wallet
         $paymentInfo = [
-            'vodafone_cash' => Setting::get('vodafone_cash_number', '01012345678'),
-            'instapay'      => Setting::get('instapay_number', Setting::get('instapay_address', '01012345678')),
-            'support_phone' => Setting::get('support_phone', Setting::get('phone', '01012345678')),
+            'vodafone_cash' => Setting::getGlobal('vodafone_cash_number', Setting::get('vodafone_cash_number', '')),
+            'instapay'      => Setting::getGlobal('instapay_number', Setting::get('instapay_number', Setting::get('instapay_address', ''))),
+            'support_phone' => Setting::getGlobal('support_phone', Setting::get('support_phone', '')),
             'work_hours'    => 'من 10 صباحاً حتى 2 بعد منتصف الليل',
             'min_deposit'   => 300,
         ];

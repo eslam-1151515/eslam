@@ -68,8 +68,8 @@ class SubscriptionController extends Controller
         $plans = SubscriptionPlan::orderBy('price_monthly', 'asc')->get(['id', 'name', 'price_monthly']);
 
         $paymentSettings = [
-            'vodafone_cash_number' => \App\Models\Setting::get('vodafone_cash_number', '01012345678'),
-            'instapay_number'      => \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', '01012345678')),
+            'vodafone_cash_number' => \App\Models\Setting::getGlobal('vodafone_cash_number', \App\Models\Setting::get('vodafone_cash_number', '')),
+            'instapay_number'      => \App\Models\Setting::getGlobal('instapay_number', \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', ''))),
         ];
 
         return Inertia::render('SuperAdmin/Subscriptions/Receipts', [
@@ -91,8 +91,8 @@ class SubscriptionController extends Controller
             'instapay_number'      => ['required', 'string', 'max:50'],
         ]);
 
-        \App\Models\Setting::set('vodafone_cash_number', $request->vodafone_cash_number, 'payment');
-        \App\Models\Setting::set('instapay_number', $request->instapay_number, 'payment');
+        \App\Models\Setting::setGlobal('vodafone_cash_number', $request->vodafone_cash_number, 'payment');
+        \App\Models\Setting::setGlobal('instapay_number', $request->instapay_number, 'payment');
 
         return redirect()->back()->with('success', 'تم تحديث أرقام استقبال التحويلات بنجاح.');
     }

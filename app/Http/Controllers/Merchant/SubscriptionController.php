@@ -96,8 +96,8 @@ class SubscriptionController extends Controller
         ];
 
         $paymentSettings = [
-            'vodafone_cash_number' => \App\Models\Setting::get('vodafone_cash_number', '01012345678'),
-            'instapay_number'      => \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', '01012345678')),
+            'vodafone_cash_number' => \App\Models\Setting::getGlobal('vodafone_cash_number', \App\Models\Setting::get('vodafone_cash_number', '')),
+            'instapay_number'      => \App\Models\Setting::getGlobal('instapay_number', \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', ''))),
         ];
 
         return Inertia::render('Merchant/Subscription/Index', [

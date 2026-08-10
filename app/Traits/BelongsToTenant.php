@@ -16,7 +16,7 @@ trait BelongsToTenant
         static::addGlobalScope(new TenantScope);
 
         static::creating(function ($model) {
-            if (empty($model->tenant_id)) {
+            if (!array_key_exists('tenant_id', $model->getAttributes())) {
                 $tenantId = session()->get('tenant_id') ?? config('tenant.id');
                 if ($tenantId) {
                     $model->tenant_id = $tenantId;

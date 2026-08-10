@@ -33,4 +33,20 @@ class Setting extends Model
     {
         app(SettingService::class)->set($key, $value, $group, $tenantId);
     }
+
+    /**
+     * Get a global platform setting (tenant_id is null)
+     */
+    public static function getGlobal(string $key, $default = null)
+    {
+        return app(SettingService::class)->getGlobal($key, $default);
+    }
+
+    /**
+     * Set a global platform setting (tenant_id is null)
+     */
+    public static function setGlobal(string $key, $value, string $group = 'general'): void
+    {
+        app(SettingService::class)->setGlobal($key, $value, $group);
+    }
 }
