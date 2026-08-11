@@ -95,18 +95,33 @@ class Order extends Model
             if ($order->tenant_id) {
                 try {
                     $tenant = \App\Models\Tenant::find($order->tenant_id);
-                    if ($tenant && ($tenant->wallet_balance ?? 0) >= 2) {
-                        $tenant->decrement('wallet_balance', 2);
-                        \App\Models\WalletTransaction::create([
-                            'tenant_id'   => $tenant->id,
-                            'amount'      => 2,
-                            'type'        => 'debit',
-                            'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
-                        ]);
-                        static::where('id', $order->id)->update([
-                            'is_unlocked' => true,
-                            'unlocked_at' => now(),
-                        ]);
+                    if ($tenant) {
+                        $isTrial = ($tenant->subscription_status === 'trial') || 
+                                   ($tenant->subscription_ends_at && $tenant->subscription_ends_at->isFuture());
+
+                        $tenantOrdersCount = static::where('tenant_id', $tenant->id)->count();
+
+                        // 1. If tenant is in active 7-day trial and has <= 50 orders, unlock order for FREE
+                        if ($isTrial && $tenantOrdersCount <= 50) {
+                            static::where('id', $order->id)->update([
+                                'is_unlocked' => true,
+                                'unlocked_at' => now(),
+                            ]);
+                        }
+                        // 2. Otherwise (commission mode), check if wallet balance has at least 2 EGP
+                        elseif (($tenant->wallet_balance ?? 0) >= 2) {
+                            $tenant->decrement('wallet_balance', 2);
+                            \App\Models\WalletTransaction::create([
+                                'tenant_id'   => $tenant->id,
+                                'amount'      => 2,
+                                'type'        => 'debit',
+                                'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
+                            ]);
+                            static::where('id', $order->id)->update([
+                                'is_unlocked' => true,
+                                'unlocked_at' => now(),
+                            ]);
+                        }
                     }
                 } catch (\Exception $e) {
                     \Illuminate\Support\Facades\Log::warning('Order auto unlock fee failed: ' . $e->getMessage());

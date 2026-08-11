@@ -73,7 +73,7 @@ class MerchantRegisterController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['required', new \App\Rules\EgyptianPhone(null, null, true)],
             'store_name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'alpha_dash', 'max:255', 'unique:tenants,slug'],
             'activity' => ['nullable', 'string', 'max:255'],
@@ -111,20 +111,12 @@ class MerchantRegisterController extends Controller
                 'subscription_status' => 'trial',
                 'trial_ends_at' => now()->addDays(7),
                 'subscription_ends_at' => now()->addDays(7),
-                'wallet_balance' => 100.00,
+                'wallet_balance' => 0.00,
                 'is_active' => true,
                 'settings' => [
                     'activity' => $request->activity ?? 'تجارة عامة',
                     'phone' => $request->phone,
                 ],
-            ]);
-
-            // Record initial 100 EGP bonus transaction
-            \App\Models\WalletTransaction::create([
-                'tenant_id'   => $tenant->id,
-                'amount'      => 100.00,
-                'type'        => 'credit',
-                'description' => 'رصيد أول مرة',
             ]);
 
             // Save phone and whatsapp to settings table if provided

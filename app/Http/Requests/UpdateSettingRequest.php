@@ -19,9 +19,12 @@ class UpdateSettingRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = $this->user()?->id;
+        $tenantId = $this->user()?->tenant_id;
+
         return [
-            'phone' => ['nullable', 'string', 'regex:/^\+?[0-9]{10,15}$/'],
-            'whatsapp' => ['nullable', 'string', 'regex:/^\+?[0-9]{10,15}$/'],
+            'phone' => ['nullable', new \App\Rules\EgyptianPhone($userId, $tenantId, false)],
+            'whatsapp' => ['nullable', new \App\Rules\EgyptianPhone($userId, $tenantId, false)],
             'store_name' => ['nullable', 'string', 'max:100'],
             'facebook_pixel_id' => ['nullable', 'string', 'max:2000'],
             'tiktok_pixel_id' => ['nullable', 'string', 'max:2000'],
