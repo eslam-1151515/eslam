@@ -191,8 +191,13 @@ class DashboardController extends Controller
             'plan_name'            => $planName,
         ];
 
+        // Always fetch fresh wallet balance to prevent cache mismatch
+        $stats = $dashboardData['stats'];
+        $freshTenant = $tenant ? $tenant->fresh() : null;
+        $stats['wallet_balance'] = $freshTenant ? round((float) $freshTenant->wallet_balance, 2) : 0;
+
         return Inertia::render('Merchant/Dashboard', [
-            'stats'                => $dashboardData['stats'],
+            'stats'                => $stats,
             'recentOrders'         => $recentOrders,
             'chart'                => $dashboardData['chart'],
             'pendingReceiptsCount' => $pendingReceiptsCount,

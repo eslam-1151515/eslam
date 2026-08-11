@@ -383,6 +383,8 @@ class TenantController extends Controller
             ]);
         });
 
+        \App\Services\CacheService::invalidateDashboardStats($tenant->id);
+
         return redirect()->back()->with('success', 'تم إضافة الرصيد لمحفظة التاجر وتسجيل المعاملة بنجاح.');
     }
 
@@ -417,6 +419,8 @@ class TenantController extends Controller
                 'created_by'  => auth()->id(),
             ]);
         });
+
+        \App\Services\CacheService::invalidateDashboardStats($tenant->id);
 
         return redirect()->back()->with('success', 'تم خصم الرصيد من محفظة التاجر وتسجيل المعاملة بنجاح.');
     }

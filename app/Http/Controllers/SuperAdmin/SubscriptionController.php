@@ -193,6 +193,10 @@ class SubscriptionController extends Controller
             }
         });
 
+        if ($receipt->tenant_id) {
+            \App\Services\CacheService::invalidateDashboardStats($receipt->tenant_id);
+        }
+
         $msg = $receipt->type === 'wallet'
             ? 'تم تأكيد وصول المبلغ وإضافته إلى محفظة التاجر بنجاح.'
             : 'تم اعتماد إيصال الدفع وتفعيل الاشتراك بنجاح.';
@@ -241,6 +245,10 @@ class SubscriptionController extends Controller
             'status' => 'rejected',
             'rejection_reason' => $request->input('rejection_reason'),
         ]);
+
+        if ($receipt->tenant_id) {
+            \App\Services\CacheService::invalidateDashboardStats($receipt->tenant_id);
+        }
 
         return redirect()->back()->with('success', 'تم رفض إيصال الدفع.');
     }
