@@ -458,10 +458,10 @@ export default function Dashboard({ stats, recentOrders, chart, pendingReceiptsC
                                 {formatCurrency(stats.wallet_balance || 0)}
                             </span>
                             <Link
-                                href={route('settings.index')}
-                                className="px-3 py-1.5 bg-white text-indigo-600 hover:bg-indigo-50 rounded-lg text-xs font-bold transition-colors shadow-sm"
+                                href={route('merchant.wallet.index')}
+                                className="px-3.5 py-1.5 bg-white text-indigo-700 hover:bg-indigo-50 rounded-lg text-xs font-black transition-all shadow-sm hover:scale-105"
                             >
-                                شحن الرصيد
+                                اشحن
                             </Link>
                         </div>
                     </div>
