@@ -181,11 +181,13 @@ class DashboardController extends Controller
             }
         }
 
+        $endsAt = $activeSub?->ends_at ?? $activeSub?->trial_ends_at ?? $tenant?->subscription_ends_at ?? $tenant?->trial_ends_at;
+
         $subscriptionInfo = [
             'is_expired'           => $isExpired,
             'is_active'            => $tenant?->is_active ?? true,
             'subscription_status'  => $tenant?->subscription_status ?? 'active',
-            'subscription_ends_at' => $tenant?->subscription_ends_at?->format('Y-m-d'),
+            'subscription_ends_at' => $endsAt ? $endsAt->format('Y-m-d') : null,
             'plan_name'            => $planName,
         ];
 

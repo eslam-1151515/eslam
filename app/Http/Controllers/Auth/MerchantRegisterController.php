@@ -110,11 +110,21 @@ class MerchantRegisterController extends Controller
                 'email' => $email,
                 'subscription_status' => 'trial',
                 'trial_ends_at' => now()->addDays(7),
+                'subscription_ends_at' => now()->addDays(7),
+                'wallet_balance' => 100.00,
                 'is_active' => true,
                 'settings' => [
                     'activity' => $request->activity ?? 'تجارة عامة',
                     'phone' => $request->phone,
                 ],
+            ]);
+
+            // Record initial 100 EGP bonus transaction
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => 100.00,
+                'type'        => 'credit',
+                'description' => 'رصيد أول مرة',
             ]);
 
             // Save phone and whatsapp to settings table if provided
@@ -169,6 +179,7 @@ class MerchantRegisterController extends Controller
             }
 
             $trialDays = $plan ? ($plan->trial_days ?: 7) : 7;
+            $tenant->update(['subscription_ends_at' => now()->addDays($trialDays)]);
 
             Subscription::create([
                 'tenant_id' => $tenant->id,

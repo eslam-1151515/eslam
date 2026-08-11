@@ -667,17 +667,11 @@
                 
                 <!-- Brand Logo -->
                 <a href="/" class="flex items-center gap-3 group">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
-                        <i class="fa-solid fa-bolt text-white text-xl animate-bounce" style="animation-duration: 2s;"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans flex items-center gap-1.5">
-                            <span x-show="lang === 'ar'">فاست أوردر</span>
-                            <span x-show="lang === 'en'">Fast Order</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-600 dark:text-brand-400 border border-brand-500/30 font-bold">PRO</span>
-                        </span>
-                        <span class="text-[10px] text-slate-500 dark:text-gray-400 -mt-1 tracking-wider uppercase font-semibold">Fast Order Platform</span>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-11 w-auto max-h-11 object-contain group-hover:scale-105 transition-transform duration-300">
+                    <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
+                        <span x-show="lang === 'ar'">فاست أوردر</span>
+                        <span x-show="lang === 'en'">Fast Order</span>
+                    </span>
                 </a>
 
                 <!-- Desktop Navigation Links -->
@@ -712,18 +706,12 @@
                         <span x-text="lang === 'ar' ? 'EN' : 'العربية'"></span>
                     </button>
 
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-800 dark:text-white bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 hover:border-brand-500/50 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
-                            <i class="fa-solid fa-gauge-high ml-1.5 mr-1.5 text-brand-500 dark:text-brand-400"></i> <span x-text="trans('dashboard')"></span>
-                        </a>
-                    @else
-                        <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
-                            <span x-text="trans('login')"></span>
-                        </a>
-                        <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
-                            <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
-                        </a>
-                    @endauth
+                    <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
+                        <span x-text="trans('login')"></span>
+                    </a>
+                    <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
+                        <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
+                    </a>
                 </div>
 
                 <!-- Mobile Menu Control Center -->
@@ -767,18 +755,12 @@
                     </a>
                 </div>
                 <div class="pt-4 border-t border-slate-200 dark:border-white/10 flex flex-col gap-3">
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="w-full py-3 rounded-xl text-center font-bold text-white bg-brand-600 hover:bg-brand-500 transition-all">
-                            <span x-text="trans('dashboard')"></span>
-                        </a>
-                    @else
-                        <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="w-full py-3 rounded-xl text-center font-bold text-slate-700 dark:text-gray-200 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
-                            <span x-text="trans('login')"></span>
-                        </a>
-                        <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="w-full py-3 rounded-xl text-center font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:opacity-95 shadow-lg shadow-brand-500/25 transition-all">
-                            <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
-                        </a>
-                    @endauth
+                    <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="w-full py-3 rounded-xl text-center font-bold text-slate-700 dark:text-gray-200 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
+                        <span x-text="trans('login')"></span>
+                    </a>
+                    <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="w-full py-3 rounded-xl text-center font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:opacity-95 shadow-lg shadow-brand-500/25 transition-all">
+                        <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
+                    </a>
                 </div>
             </div>
         </header>
@@ -1418,13 +1400,10 @@
                     <!-- Col 1: Brand & Bio -->
                     <div class="lg:col-span-4 space-y-6">
                         <a href="/" class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-pink-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-                                <i class="fa-solid fa-bolt text-lg"></i>
-                            </div>
+                            <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-10 w-auto max-h-10 object-contain">
                             <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
                                 <span x-show="lang === 'ar'">فاست أوردر</span>
                                 <span x-show="lang === 'en'">Fast Order</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-600 dark:text-brand-400 border border-brand-500/30 font-bold">PRO</span>
                             </span>
                         </a>
                         <p class="text-slate-500 dark:text-gray-400 text-sm leading-relaxed pr-2" x-text="trans('footerDesc')">
@@ -1436,8 +1415,8 @@
                             <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all">
-                                <i class="fa-brands fa-x-twitter"></i>
+                            <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all" title="YouTube">
+                                <i class="fa-brands fa-youtube text-lg"></i>
                             </a>
                             <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all">
                                 <i class="fa-brands fa-tiktok"></i>

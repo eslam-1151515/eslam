@@ -124,10 +124,20 @@ class GoogleAuthController extends Controller
                     'email' => $userInfo['email'],
                     'subscription_status' => 'trial',
                     'trial_ends_at' => now()->addDays(7),
+                    'subscription_ends_at' => now()->addDays(7),
+                    'wallet_balance' => 100.00,
                     'is_active' => true,
                     'settings' => [
                         'activity' => 'تجارة عامة',
                     ],
+                ]);
+
+                // Record initial 100 EGP bonus transaction
+                \App\Models\WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => 100.00,
+                    'type'        => 'credit',
+                    'description' => 'رصيد أول مرة',
                 ]);
 
                 // 2. Create User

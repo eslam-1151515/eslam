@@ -387,8 +387,8 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                                 <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-100/60">
                                     <span className="block text-amber-600 font-semibold text-xs mb-1">تاريخ انتهاء الاشتراك</span>
                                     <span className="text-base font-extrabold text-amber-950 block mt-1">
-                                        {tenant.subscription_ends_at 
-                                            ? new Date(tenant.subscription_ends_at).toLocaleDateString('en-US')
+                                        {(activeSub?.ends_at || activeSub?.trial_ends_at || tenant.subscription_ends_at || tenant.trial_ends_at) 
+                                            ? new Date(activeSub?.ends_at || activeSub?.trial_ends_at || tenant.subscription_ends_at || tenant.trial_ends_at).toLocaleDateString('en-US')
                                             : 'غير محدد'}
                                     </span>
                                 </div>

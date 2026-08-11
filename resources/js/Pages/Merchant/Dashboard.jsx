@@ -385,7 +385,37 @@ export default function Dashboard({ stats, recentOrders, chart, pendingReceiptsC
                 </div>
             )}
 
-            {/* ====== Phone Alert ====== */}
+            {/* ====== Alert: حالة الباقة وتاريخ الانتهاء بالضبط ====== */}
+            {!isExpiredStore && (
+                <div className="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-4 mb-6 shadow-md border border-indigo-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                            ⭐
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs text-indigo-300 font-semibold">باقة متجرك الحالية:</span>
+                                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/40">
+                                    {subscriptionInfo?.plan_name || 'الباقة المجانية'}
+                                </span>
+                            </div>
+                            <p className="text-sm font-extrabold text-white mt-1">
+                                {subscriptionInfo?.subscription_ends_at ? (
+                                    <>تاريخ انتهاء الاشتراك بالظبط: <span className="font-mono dir-ltr text-amber-300 font-bold bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">{subscriptionInfo.subscription_ends_at}</span></>
+                                ) : (
+                                    'الاشتراك مفعّل وشغّال بكفاءة'
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                    <Link
+                        href={route('merchant.subscription.index')}
+                        className="text-xs font-extrabold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-indigo-500/25 flex-shrink-0"
+                    >
+                        ترقية الباقة أو التفاصيل 🚀
+                    </Link>
+                </div>
+            )}
 
             {/* ====== Alert: إيصالات الدفع المعلقة ====== */}
             <PendingReceiptsAlert count={pendingReceiptsCount} receipts={pendingReceiptsList} />
