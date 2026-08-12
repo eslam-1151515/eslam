@@ -26,7 +26,7 @@ function LogoImage({ logo, name }) {
     );
 }
 
-export default function Index({ tenants, filters, plans }) {
+export default function Index({ tenants, filters, plans, planCounts }) {
     // Ensure filters is a valid object and not an array, null, or undefined
     const safeFilters = (typeof filters === 'object' && filters !== null && !Array.isArray(filters)) ? filters : {};
     
@@ -215,7 +215,19 @@ export default function Index({ tenants, filters, plans }) {
                 {/* Header Section */}
                 <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-800">إدارة المتاجر والعملاء</h2>
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-xl font-bold text-gray-800">إدارة المتاجر والعملاء</h2>
+                            {planCounts && (
+                                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full text-xs font-extrabold shadow-2xs flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                                    {plan === 'free' ? `الباقة المجانية: ${planCounts.free} متجر` :
+                                     plan === 'monthly' ? `الباقة الشهرية: ${planCounts.monthly} متجر` :
+                                     plan === 'yearly' ? `الباقة السنوية: ${planCounts.yearly} متجر` :
+                                     plan === 'commission' ? `باقة العمولة: ${planCounts.commission} متجر` :
+                                     `إجمالي المتاجر: ${planCounts.all} متجر`}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-sm text-gray-500 mt-1">عرض وتصفية المتاجر المشتركة في المنصة والتحكم في حالاتهم.</p>
                     </div>
                     <div className="flex items-center gap-2 self-start md:self-auto">
@@ -276,7 +288,7 @@ export default function Index({ tenants, filters, plans }) {
                             </select>
                         </div>
 
-                        <div className="w-full md:w-52">
+                        <div className="w-full md:w-56">
                             <select
                                 value={plan}
                                 onChange={(e) => handlePlanFilterChange(e.target.value)}
@@ -288,11 +300,11 @@ export default function Index({ tenants, filters, plans }) {
                                 }}
                                 className="w-full pl-10 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none font-semibold text-gray-700"
                             >
-                                <option value="all">جميع الباقات</option>
-                                <option value="free">الباقة المجانية 🎁</option>
-                                <option value="monthly">الباقة الشهرية 📅</option>
-                                <option value="yearly">الباقة السنوية 👑</option>
-                                <option value="commission">باقة العمولة 💰</option>
+                                <option value="all">جميع الباقات {planCounts ? `(${planCounts.all})` : ''}</option>
+                                <option value="free">الباقة المجانية 🎁 {planCounts ? `(${planCounts.free})` : ''}</option>
+                                <option value="monthly">الباقة الشهرية 📅 {planCounts ? `(${planCounts.monthly})` : ''}</option>
+                                <option value="yearly">الباقة السنوية 👑 {planCounts ? `(${planCounts.yearly})` : ''}</option>
+                                <option value="commission">باقة العمولة 💰 {planCounts ? `(${planCounts.commission})` : ''}</option>
                             </select>
                         </div>
 
@@ -320,18 +332,17 @@ export default function Index({ tenants, filters, plans }) {
                         </thead>
                         <tbody className="divide-y divide-gray-100 text-sm">
                             {tenants.data && tenants.data.length > 0 ? (
-                                tenants.data.map((tenant, index) => {
+                                tenants.data.map((tenant) => {
                                     const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
                                     const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
                                     const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
-                                    const rowNumber = ((tenants.current_page || 1) - 1) * (tenants.per_page || 20) + index + 1;
 
                                     return (
                                         <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
-                                                        #{rowNumber}
+                                                        #{tenant.id}
                                                     </div>
                                                     <div>
                                                         <Link
@@ -354,9 +365,6 @@ export default function Index({ tenants, filters, plans }) {
                                             </td>
                                             <td className="px-6 py-4">
                                                 {renderPlanBadge(planToShow, tenant.subscription_status)}
-                                                <span className="block text-xs text-gray-400 mt-1 font-medium">
-                                                    الحالة: {tenant.subscription_status === 'active' ? 'نشط 🟢' : tenant.subscription_status === 'trial' ? 'فترة تجريبية ⏳' : 'منتهي / غير نشط 🔴'}
-                                                </span>
                                             </td>
                                             <td className="px-6 py-4 text-gray-600">
                                                 {tenant.subscription_ends_at ? (

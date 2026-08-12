@@ -62,10 +62,22 @@ class TenantController extends Controller
         $tenants = $query->paginate(20)->withQueryString();
         $plans = SubscriptionPlan::where('is_active', true)->get();
 
+        $planCounts = [
+            'all' => Tenant::count(),
+            'free' => Tenant::where(function($q) {
+                $q->where('subscription_status', 'trial')
+                  ->orWhereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'free')));
+            })->count(),
+            'monthly' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'monthly')))->count(),
+            'yearly' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'yearly')))->count(),
+            'commission' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'commission')))->count(),
+        ];
+
         return Inertia::render('SuperAdmin/Tenants/Index', [
             'tenants' => $tenants,
             'filters' => $request->only(['search', 'status', 'plan']),
             'plans' => $plans,
+            'planCounts' => $planCounts,
         ]);
     }
 

@@ -7,10 +7,10 @@ export default function SuperAdminLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-row" dir="rtl">
-            {/* Sidebar */}
-            <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-indigo-900 text-white transition-all duration-300 flex flex-col shrink-0 min-h-screen`}>
+            {/* Sidebar (Fixed position sticky to screen height) */}
+            <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-indigo-900 text-white transition-all duration-300 flex flex-col shrink-0 sticky top-0 h-screen overflow-y-auto`}>
                 {/* Logo Area */}
-                <div className="h-16 flex items-center justify-between px-4 border-b border-indigo-800">
+                <div className="h-16 flex items-center justify-between px-4 border-b border-indigo-800 shrink-0">
                     <span className={`font-bold text-lg whitespace-nowrap overflow-hidden ${!isSidebarOpen && 'hidden'}`}>
                         لوحة التحكم السوبر
                     </span>
@@ -77,7 +77,7 @@ export default function SuperAdminLayout({ children }) {
                 </nav>
 
                 {/* User Profile */}
-                <div className="p-4 border-t border-indigo-800 flex items-center justify-start mt-auto">
+                <div className="p-4 border-t border-indigo-800 flex items-center justify-start mt-auto shrink-0">
                     <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-center overflow-hidden font-bold">
                         {auth?.user?.name ? auth.user.name.substring(0, 2).toUpperCase() : 'AD'}
                     </div>
@@ -102,7 +102,7 @@ export default function SuperAdminLayout({ children }) {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
-                <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0">
+                <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 sticky top-0 z-10 shadow-xs">
                     <h1 className="text-xl font-semibold text-gray-800">لوحة تحكم المدير العام</h1>
                     <div className="flex items-center space-x-4 space-x-reverse">
                         <span className="text-sm text-gray-500">{auth?.user?.email}</span>
