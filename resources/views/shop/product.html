@@ -151,6 +151,8 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
     
     .p-main {
@@ -163,17 +165,24 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: zoom-in;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      box-sizing: border-box;
+      touch-action: pan-y;
     }
     
     .p-main img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      object-fit: contain !important;
+      object-position: center center !important;
       transition: transform 0.2s ease-out, opacity 0.2s ease;
       transform-origin: center center;
       opacity: 1;
+      display: block;
+      margin: auto;
     }
     
     .p-main img.fade-out {
@@ -184,13 +193,13 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border: 1px solid #e5e7eb;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.9);
       color: #111827;
-      font-size: 20px;
+      font-size: 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -215,28 +224,42 @@
     }
     
     .p-thumbs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px 0;
-      scrollbar-width: none;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 8px !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      padding: 6px 2px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      scrollbar-width: thin !important;
+      touch-action: pan-x !important;
     }
     
     .p-thumbs::-webkit-scrollbar {
-      display: none;
+      height: 4px;
+    }
+    .p-thumbs::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
     }
     
     .p-thumb {
-      width: 72px;
-      height: 72px;
-      flex-shrink: 0;
-      border-radius: 10px;
+      width: 68px !important;
+      height: 68px !important;
+      min-width: 68px !important;
+      min-height: 68px !important;
+      flex-shrink: 0 !important;
+      border-radius: 10px !important;
       border: 2px solid #e5e7eb;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.2s ease;
       background: #ffffff;
       padding: 2px;
+      box-sizing: border-box !important;
     }
     
     .p-thumb img {
@@ -249,6 +272,12 @@
     .p-thumb.active {
       border-color: var(--indigo);
       box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+
+    .bundle-option {
+      box-sizing: border-box !important;
+      width: 100% !important;
+      max-width: 100% !important;
     }
     
     /* Variant Attribute Selector Tiles */
@@ -457,9 +486,11 @@
       });
       thumbs.forEach(t => t.addEventListener('click', () => show(+t.dataset.idx)));
 
-      // Hover Zoom Effect
+      // Hover Zoom Effect - Desktop Only (disable on touch screens)
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+
       mainContainer.addEventListener('mousemove', (e) => {
-        if (window.innerWidth > 768) {
+        if (!isTouchDevice && window.innerWidth > 768) {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = ((e.clientX - rect.left) / rect.width) * 100;
           const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -467,7 +498,7 @@
         }
       });
       mainContainer.addEventListener('mouseenter', () => {
-        if (window.innerWidth > 768) {
+        if (!isTouchDevice && window.innerWidth > 768) {
           main.style.transform = 'scale(1.8)';
         }
       });
@@ -476,14 +507,18 @@
         main.style.transformOrigin = 'center center';
       });
 
-      // Mobile Swipe Logic
+      // Mobile Swipe & Reset Logic
       let startX = 0;
       mainContainer.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
+        main.style.transform = 'scale(1)';
+        main.style.transformOrigin = 'center center';
       }, { passive: true });
       mainContainer.addEventListener('touchend', (e) => {
+        main.style.transform = 'scale(1)';
+        main.style.transformOrigin = 'center center';
         const diffX = e.changedTouches[0].clientX - startX;
-        if (Math.abs(diffX) > 50) {
+        if (Math.abs(diffX) > 40) {
           if (diffX > 0) {
             show(idx - 1);
           } else {
@@ -871,17 +906,17 @@
       const basePriceBefore = p.price_before || basePrice;
 
       let html = `
-        <div style="margin: 16px 0;">
-          <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 1rem; color: #111827;">اختر العرض المناسب لك</label>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label class="bundle-option" style="border: 2px solid #2563eb; background: #eff6ff; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="radio" name="bundle_tier" value="1" data-price="${basePrice}" checked onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb;">
-                <span style="font-weight: 600; font-size: 1rem;">قطعة واحدة</span>
+        <div style="margin: 16px 0; width: 100%; box-sizing: border-box;">
+          <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 1rem; color: #111827;">اختر العرض المناسب لك</label>
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <label class="bundle-option" style="border: 2px solid #2563eb; background: #eff6ff; padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 12px; transition: all 0.2s; box-sizing: border-box; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto;">
+                <input type="radio" name="bundle_tier" value="1" data-price="${basePrice}" checked onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb; flex-shrink: 0;">
+                <span style="font-weight: 700; font-size: 0.95rem; color: #111827; white-space: nowrap;">قطعة واحدة</span>
               </div>
-              <div style="text-align: left;">
-                <div style="font-weight: bold; color: #2563eb; font-size: 1.1rem;">${BirdCart.formatEGP(basePrice)}</div>
-                ${basePriceBefore > basePrice ? `<div style="font-size: 0.85rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(basePriceBefore)}</div>` : ''}
+              <div style="text-align: left; flex-shrink: 0;">
+                <div style="font-weight: bold; color: #2563eb; font-size: 1.05rem;">${BirdCart.formatEGP(basePrice)}</div>
+                ${basePriceBefore > basePrice ? `<div style="font-size: 0.8rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(basePriceBefore)}</div>` : ''}
               </div>
             </label>
       `;
@@ -891,17 +926,17 @@
         const totalSavings = oldTotalPrice - t.price;
 
         html += `
-            <label class="bundle-option" style="border: 2px solid #e5e7eb; background: transparent; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="radio" name="bundle_tier" value="${t.min_qty}" data-price="${t.price}" onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb;">
-                <div style="display: flex; flex-direction: column;">
-                  <span style="font-weight: 600; font-size: 1rem; color: #111827;">${t.min_qty} قطع (توفير!)</span>
-                  ${totalSavings > 0 ? `<span style="font-size: 0.8rem; color: #16a34a; font-weight: 600;">وفر ${BirdCart.formatEGP(totalSavings)}</span>` : ''}
+            <label class="bundle-option" style="border: 2px solid #e5e7eb; background: transparent; padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 12px; transition: all 0.2s; box-sizing: border-box; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto;">
+                <input type="radio" name="bundle_tier" value="${t.min_qty}" data-price="${t.price}" onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb; flex-shrink: 0;">
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                  <span style="font-weight: 700; font-size: 0.95rem; color: #111827;">${t.min_qty} قطع (توفير!)</span>
+                  ${totalSavings > 0 ? `<span style="font-size: 0.8rem; color: #16a34a; font-weight: 700;">وفر ${BirdCart.formatEGP(totalSavings)}</span>` : ''}
                 </div>
               </div>
-              <div style="text-align: left;">
-                <div style="font-weight: bold; color: #2563eb; font-size: 1.1rem;">${BirdCart.formatEGP(t.price)} <span style="font-size:0.8rem;font-weight:normal;">/ الإجمالي</span></div>
-                ${oldTotalPrice > t.price ? `<div style="font-size: 0.85rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(oldTotalPrice)}</div>` : ''}
+              <div style="text-align: left; flex-shrink: 0;">
+                <div style="font-weight: bold; color: #2563eb; font-size: 1.05rem;">${BirdCart.formatEGP(t.price)} <span style="font-size:0.75rem;font-weight:normal;">/ الإجمالي</span></div>
+                ${oldTotalPrice > t.price ? `<div style="font-size: 0.8rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(oldTotalPrice)}</div>` : ''}
               </div>
             </label>
         `;
