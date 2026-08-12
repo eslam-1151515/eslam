@@ -30,7 +30,7 @@ class TenantController extends Controller
         }
 
         // Status filter
-        if ($request->has('status')) {
+        if ($request->has('status') && $request->input('status') !== 'all') {
             $status = $request->input('status');
             if ($status === 'active') {
                 $query->where('is_active', true);
@@ -39,22 +39,32 @@ class TenantController extends Controller
             }
         }
 
-        // Sorting filter
-        $sort = $request->input('sort', 'latest');
-        if ($sort === 'oldest') {
-            $query->orderBy('created_at', 'asc');
-        } elseif ($sort === 'alphabetical') {
-            $query->orderBy('name', 'asc');
-        } else {
-            $query->orderBy('created_at', 'desc');
+        // Plan filter
+        if ($planSlug = $request->input('plan')) {
+            if ($planSlug !== 'all') {
+                $query->where(function ($q) use ($planSlug) {
+                    $q->whereHas('subscriptions', function ($sq) use ($planSlug) {
+                        $sq->where('status', 'active')
+                          ->whereHas('plan', function ($pq) use ($planSlug) {
+                              $pq->where('slug', $planSlug);
+                          });
+                    });
+                    if ($planSlug === 'free') {
+                        $q->orWhere('subscription_status', 'trial');
+                    }
+                });
+            }
         }
+
+        // Always order by newest first
+        $query->orderBy('created_at', 'desc');
 
         $tenants = $query->paginate(20)->withQueryString();
         $plans = SubscriptionPlan::where('is_active', true)->get();
 
         return Inertia::render('SuperAdmin/Tenants/Index', [
             'tenants' => $tenants,
-            'filters' => $request->only(['search', 'status', 'sort']),
+            'filters' => $request->only(['search', 'status', 'plan']),
             'plans' => $plans,
         ]);
     }

@@ -31,8 +31,55 @@ export default function Index({ tenants, filters, plans }) {
     const safeFilters = (typeof filters === 'object' && filters !== null && !Array.isArray(filters)) ? filters : {};
     
     const [search, setSearch] = useState(safeFilters.search || '');
-    const [status, setStatus] = useState(safeFilters.status || '');
-    const [sort, setSort] = useState(safeFilters.sort || 'latest');
+    const [status, setStatus] = useState(safeFilters.status || 'all');
+    const [plan, setPlan] = useState(safeFilters.plan || 'all');
+
+    // Helper to render distinctive plan badges
+    const renderPlanBadge = (planObj, subStatus) => {
+        if (!planObj) {
+            return (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                    لا يوجد اشتراك
+                </span>
+            );
+        }
+        const slug = planObj.slug || '';
+        const name = planObj.name || '';
+
+        if (slug === 'free' || name.includes('مجانية')) {
+            return (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                    🎁 {name}
+                </span>
+            );
+        }
+        if (slug === 'monthly' || name.includes('شهرية')) {
+            return (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    📅 {name}
+                </span>
+            );
+        }
+        if (slug === 'yearly' || name.includes('سنوية')) {
+            return (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                    👑 {name}
+                </span>
+            );
+        }
+        if (slug === 'commission' || name.includes('عمولة') || name.includes('محفظة')) {
+            return (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    💰 {name}
+                </span>
+            );
+        }
+        return (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                ✨ {name}
+            </span>
+        );
+    };
     
     // Modal state
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -94,7 +141,7 @@ export default function Index({ tenants, filters, plans }) {
         e.preventDefault();
         router.get(
             route('superadmin.tenants.index'),
-            { search, status, sort },
+            { search, status, plan },
             { preserveState: true, replace: true }
         );
     };
@@ -103,16 +150,16 @@ export default function Index({ tenants, filters, plans }) {
         setStatus(newStatus);
         router.get(
             route('superadmin.tenants.index'),
-            { search, status: newStatus, sort },
+            { search, status: newStatus, plan },
             { preserveState: true, replace: true }
         );
     };
 
-    const handleSortChange = (newSort) => {
-        setSort(newSort);
+    const handlePlanFilterChange = (newPlan) => {
+        setPlan(newPlan);
         router.get(
             route('superadmin.tenants.index'),
-            { search, status, sort: newSort },
+            { search, status, plan: newPlan },
             { preserveState: true, replace: true }
         );
     };
@@ -223,27 +270,29 @@ export default function Index({ tenants, filters, plans }) {
                                 }}
                                 className="w-full pl-10 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none"
                             >
-                                <option value="">كل الحالات</option>
+                                <option value="all">كل الحالات</option>
                                 <option value="active">نشط</option>
                                 <option value="suspended">موقوف</option>
                             </select>
                         </div>
 
-                        <div className="w-full md:w-48">
+                        <div className="w-full md:w-52">
                             <select
-                                value={sort}
-                                onChange={(e) => handleSortChange(e.target.value)}
+                                value={plan}
+                                onChange={(e) => handlePlanFilterChange(e.target.value)}
                                 style={{
                                     backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E")`,
                                     backgroundPosition: 'left 0.75rem center',
                                     backgroundSize: '1.25rem',
                                     backgroundRepeat: 'no-repeat',
                                 }}
-                                className="w-full pl-10 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none"
+                                className="w-full pl-10 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none font-semibold text-gray-700"
                             >
-                                <option value="latest">الأحدث أولاً</option>
-                                <option value="oldest">الأقدم أولاً</option>
-                                <option value="alphabetical">أبجدياً (أ - ي)</option>
+                                <option value="all">جميع الباقات</option>
+                                <option value="free">الباقة المجانية 🎁</option>
+                                <option value="monthly">الباقة الشهرية 📅</option>
+                                <option value="yearly">الباقة السنوية 👑</option>
+                                <option value="commission">باقة العمولة 💰</option>
                             </select>
                         </div>
 
@@ -271,16 +320,18 @@ export default function Index({ tenants, filters, plans }) {
                         </thead>
                         <tbody className="divide-y divide-gray-100 text-sm">
                             {tenants.data && tenants.data.length > 0 ? (
-                                tenants.data.map((tenant) => {
+                                tenants.data.map((tenant, index) => {
                                     const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
                                     const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
                                     const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
+                                    const rowNumber = ((tenants.current_page || 1) - 1) * (tenants.per_page || 20) + index + 1;
+
                                     return (
                                         <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-bold text-gray-700 overflow-hidden flex-shrink-0">
-                                                        <LogoImage logo={tenant.logo} name={tenant.name} />
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
+                                                        #{rowNumber}
                                                     </div>
                                                     <div>
                                                         <Link
@@ -290,7 +341,7 @@ export default function Index({ tenants, filters, plans }) {
                                                             {tenant.name}
                                                         </Link>
                                                         <span className="block text-xs text-gray-400 mt-0.5" dir="ltr">
-                                                            {tenant.slug}.{window.location.host.replace('app.', '')}
+                                                            {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fast-order-eg.tech'}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -298,21 +349,13 @@ export default function Index({ tenants, filters, plans }) {
                                             <td className="px-6 py-4">
                                                 <div>
                                                     <p className="font-medium text-gray-700">{tenant.owner?.name || 'غير معروف'}</p>
-                                                    <p className="text-xs text-gray-400">{tenant.owner?.email}</p>
+                                                    <p className="text-xs text-gray-400">{tenant.owner?.email || tenant.email}</p>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {planToShow ? (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                                        {planToShow.name}
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                                        لا يوجد اشتراك
-                                                    </span>
-                                                )}
-                                                <span className="block text-xs text-gray-400 mt-1">
-                                                    حالة الاشتراك: {tenant.subscription_status === 'active' ? 'نشط' : tenant.subscription_status === 'trial' ? 'فترة تجريبية' : 'منتهي / غير نشط'}
+                                                {renderPlanBadge(planToShow, tenant.subscription_status)}
+                                                <span className="block text-xs text-gray-400 mt-1 font-medium">
+                                                    الحالة: {tenant.subscription_status === 'active' ? 'نشط 🟢' : tenant.subscription_status === 'trial' ? 'فترة تجريبية ⏳' : 'منتهي / غير نشط 🔴'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-gray-600">

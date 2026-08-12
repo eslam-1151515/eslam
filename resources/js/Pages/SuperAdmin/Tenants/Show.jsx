@@ -288,23 +288,9 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                         <h3 className="text-lg font-bold text-gray-800 border-b border-gray-100 pb-4 mb-4">بيانات المتجر</h3>
                         <div className="space-y-4 text-sm">
                             <div>
-                                <span className="block text-gray-400 font-medium">البريد الإلكتروني للمتجر</span>
-                                <span className="text-gray-700 font-semibold">{tenant.email || '-'}</span>
-                            </div>
-                            <div>
-                                <span className="block text-gray-400 font-medium">رقم الهاتف</span>
-                                <span className="text-gray-700 font-semibold">{tenant.phone || '-'}</span>
-                            </div>
-                            <div>
                                 <span className="block text-gray-400 font-medium">تاريخ التسجيل</span>
                                 <span className="text-gray-700 font-semibold">
                                     {new Date(tenant.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                </span>
-                            </div>
-                            <div>
-                                <span className="block text-gray-400 font-medium">معرف المتجر UUID</span>
-                                <span className="text-xs text-gray-500 font-mono select-all bg-gray-50 p-1.5 rounded block mt-1">
-                                    {tenant.uuid}
                                 </span>
                             </div>
                             <div className="pt-2 border-t border-gray-100">
@@ -340,7 +326,11 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                             </div>
                             <div>
                                 <span className="block text-gray-400 font-medium">البريد الإلكتروني للعميل</span>
-                                <span className="text-gray-700 font-semibold">{tenant.owner?.email || '-'}</span>
+                                <span className="text-gray-700 font-semibold">{tenant.owner?.email || tenant.email || '-'}</span>
+                            </div>
+                            <div>
+                                <span className="block text-gray-400 font-medium">رقم الهاتف</span>
+                                <span className="text-gray-700 font-semibold">{tenant.owner?.phone || tenant.phone || '-'}</span>
                             </div>
                             <div>
                                 <span className="block text-gray-400 font-medium">تاريخ إنشاء حساب العميل</span>
