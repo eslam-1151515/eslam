@@ -5,33 +5,32 @@
   <meta charset="utf-8">
   <meta name="facebook-domain-verification" content="thjq95dh1a88yu3cmr55fhq2xqvxr3" />
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>?????? ?????? - Store</title>
+  <title>تفاصيل المنتج - Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shop/styles.css?v=202604021">
-  <link rel="stylesheet" href="/shop/themes/starter/style.css?v=1.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
-<body class="theme-starter fast-theme">
+<body>
   <header class="container header">
     <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
       <img src="/images/logo.png?v=202604031" alt="Store"
         onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
       <span>Store</span>
     </a>
-    <button class="menu-toggle" aria-label="???????"><span></span><span></span><span></span></button>
+    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
     <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="???" aria-label="???"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="?????" aria-label="?????"><i
+      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
           class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
     </div>
     <nav class="nav">
-      <a href="/shop/index.html">????????</a>
-      <a href="/shop/categories.html">???????</a>
-      <a href="/shop/products.html">????????</a>
-      <a style="display:none !important;" href="/shop/contact.html">???? ???</a>
+      <a href="/shop/index.html">الرئيسية</a>
+      <a href="/shop/categories.html">الأقسام</a>
+      <a href="/shop/products.html">المنتجات</a>
+      <a style="display:none !important;" href="/shop/contact.html">اتصل بنا</a>
     </nav>
   </header>
 
@@ -48,23 +47,24 @@
         }
       </style>
       <div class="section-head" style="margin-bottom: 1.25rem; text-align: center;">
-        <h2 style="font-size: 1.2rem; font-weight: 800; color: #1e293b;">ظٹط±ط¬ظ‰ ط¥ط¯ط®ط§ظ„ ظ…ط¹ظ„ظˆظ…ط§طھظƒ ظ„ط¥ظƒظ…ط§ظ„ ط§ظ„ط·ظ„ط¨</h2>
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #1e293b;">يرجى إدخال معلوماتك لإكمال الطلب</h2>
       </div>
-      <form id="quickCheckoutForm" style="display:grid;gap:16px;">
+      <form id="quickCheckoutForm" style="display:grid;gap:16px;" novalidate>
         <div>
-          <label style="display:none;">ط§ظ„ط§ط³ظ… ط¨ط§ظ„ظƒط§ظ…ظ„</label>
+          <label style="display:none;">الاسم بالكامل</label>
           <div style="position: relative;">
             <i class="fa-regular fa-user" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-            <input required name="name" type="text" placeholder="ط§ط³ظ…ظƒ ط¨ط§ظ„ظƒط§ظ…ظ„" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff; transition: border-color 0.3s;">
-            <input required name="name" type="text" placeholder="اسمك بالكامل" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff; transition: border-color 0.3s;">
+            <input name="name" type="text" placeholder="اسمك بالكامل" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff; transition: all 0.3s;">
           </div>
+          <div id="qcNameError" class="qc-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: none; font-weight: 600;">يرجى كتابة الاسم بالكامل</div>
         </div>
         <div>
           <label style="display:none;">رقم الهاتف</label>
           <div style="position: relative;">
             <i class="fa-solid fa-phone" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-            <input required name="phone" type="tel" inputmode="numeric" maxlength="11" minlength="11" pattern="^01[0-9]{9}$" placeholder="رقم الهاتف" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff;text-align: right; transition: border-color 0.3s;" dir="rtl">
+            <input name="phone" type="tel" inputmode="text" maxlength="20" placeholder="رقم الهاتف (مثل: 01012345678)" style="width:100%;padding:12px 40px 12px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff;text-align: right; transition: all 0.3s;" dir="rtl">
           </div>
+          <div id="qcPhoneError" class="qc-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: none; font-weight: 600;">يجب أن يكون رقم الهاتف 11 رقماً ويبدأ بـ 01 (مثل: 01012345678)</div>
         </div>
         <div>
           <label style="display:none;">المحافظة</label>
@@ -103,9 +103,17 @@
       </form>
     </section>
 
+    <!-- Cross-sell section -->
+    <section class="section" id="crossSellSection" style="display:none; margin: 2rem 0; background: #fff; padding: 1.5rem; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+      <div class="section-head" style="margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">🛒 اشترى العملاء أيضاً (اقتراحات مكملة)</h2>
+      </div>
+      <div id="crossSellGrid" class="grid text-right"></div>
+    </section>
+
     <section class="section">
       <div class="section-head">
-        <h2>?????? ??????</h2>
+        <h2>منتجات مشابهة</h2>
       </div>
       <div id="relatedGrid" class="grid"></div>
     </section>
@@ -143,6 +151,8 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
     
     .p-main {
@@ -155,17 +165,24 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: zoom-in;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      box-sizing: border-box;
+      touch-action: pan-y;
     }
     
     .p-main img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      object-fit: contain !important;
+      object-position: center center !important;
       transition: transform 0.2s ease-out, opacity 0.2s ease;
       transform-origin: center center;
       opacity: 1;
+      display: block;
+      margin: auto;
     }
     
     .p-main img.fade-out {
@@ -176,13 +193,13 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border: 1px solid #e5e7eb;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.9);
       color: #111827;
-      font-size: 20px;
+      font-size: 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -207,28 +224,42 @@
     }
     
     .p-thumbs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px 0;
-      scrollbar-width: none;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 8px !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      padding: 6px 2px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      scrollbar-width: thin !important;
+      touch-action: pan-x !important;
     }
     
     .p-thumbs::-webkit-scrollbar {
-      display: none;
+      height: 4px;
+    }
+    .p-thumbs::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
     }
     
     .p-thumb {
-      width: 72px;
-      height: 72px;
-      flex-shrink: 0;
-      border-radius: 10px;
+      width: 68px !important;
+      height: 68px !important;
+      min-width: 68px !important;
+      min-height: 68px !important;
+      flex-shrink: 0 !important;
+      border-radius: 10px !important;
       border: 2px solid #e5e7eb;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.2s ease;
       background: #ffffff;
       padding: 2px;
+      box-sizing: border-box !important;
     }
     
     .p-thumb img {
@@ -241,6 +272,12 @@
     .p-thumb.active {
       border-color: var(--indigo);
       box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+
+    .bundle-option {
+      box-sizing: border-box !important;
+      width: 100% !important;
+      max-width: 100% !important;
     }
     
     /* Variant Attribute Selector Tiles */
@@ -309,12 +346,38 @@
     const root = document.getElementById('productRoot');
     const relatedGrid = document.getElementById('relatedGrid');
 
-    if (!id) { root.innerHTML = '<p class="muted">?? ??? ????? ????.</p>'; }
+    if (!id) { root.innerHTML = '<p class="muted">لم يتم تحديد منتج.</p>'; }
+    else if (root) {
+      root.innerHTML = `
+        <div class="card product-card-skeleton" style="padding: 16px;">
+          <div class="skeleton skeleton-img" style="height: 280px; border-radius: 8px;"></div>
+          <div class="skeleton-body" style="margin-top: 16px; gap: 12px;">
+            <div class="skeleton skeleton-title" style="height: 24px; width: 65%;"></div>
+            <div class="skeleton skeleton-price" style="height: 20px; width: 35%;"></div>
+            <div class="skeleton skeleton-btn" style="height: 48px; margin-top: 16px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      `;
+    }
 
     fetch(`${window.API_BASE}/products/${id}`).then(r => r.json()).then(({ data }) => {
+      window.currentProductData = data;
+      window.currentProductUpsells = data.upsells || [];
       renderProductDetails(data);
       loadRelated(data.category_id, data.id);
-    }).catch(() => { root.innerHTML = '<p class="muted">???? ????? ?????? ??????.</p>'; });
+      
+      // Load Cross-sells
+      if (data.cross_sells && data.cross_sells.length > 0) {
+        const crossSec = document.getElementById('crossSellSection');
+        if (crossSec) {
+          crossSec.style.display = 'block';
+          renderProducts(document.getElementById('crossSellGrid'), data.cross_sells);
+        }
+      }
+    }).catch((e) => { 
+      console.error(e);
+      root.innerHTML = '<p class="muted">تعذر تحميل تفاصيل المنتج.</p>'; 
+    });
 
     function renderProductDetails(p) {
       const imgs = [p.image_url, ...(p.images || [])].filter(Boolean);
@@ -325,24 +388,48 @@
           <div class="p-gallery">
             <div class="p-main">
               <img id="pMain" src="${imgs[0] || ''}" alt="${p.name || ''}">
-              <button class="p-arrow p-prev" aria-label="??????">‹</button>
-              <button class="p-arrow p-next" aria-label="??????">›</button>
+              <button class="p-arrow p-prev" aria-label="السابق">‹</button>
+              <button class="p-arrow p-next" aria-label="التالي">›</button>
             </div>
             <div class="p-thumbs">${imgs.map((src, i) => `<button class="p-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}"><img src="${src}" alt="thumb ${i + 1}"></button>`).join('')}</div>
           </div>
           <div>
-            <h1 style="margin:0 0 8px">${p.name || '????'}</h1>
+            <h1 style="margin:0 0 8px">${p.name || 'منتج'}</h1>
             <div class="muted" style="margin-bottom:8px">${p.category || ''}</div>
             <div class="price-block" style="text-align: right;">
               <div class="price-now" id="mainPriceNow" style="text-align: right;">${BirdCart.formatEGP(p.price_after || 0)}</div>
               <div class="price-row" id="mainPriceOld" style="justify-content: flex-start; gap: 8px;">
-                ${p.price_before && p.price_before > p.price_after ? `<span class='old'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount'><span>???</span><span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
+                ${p.price_before && p.price_before > p.price_after ? `<span class='old'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount'><span>خصم</span><span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
               </div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; align-items: center;">
-              ${p.shipping_type === 'free' ? `<div style="padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.875rem; font-weight: 600; display: inline-block;"><i class="fa fa-truck" style="margin-left: 6px;"></i>????? ??????</div>` : ''}
+              ${p.shipping_type === 'free' ? `<div style="padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.875rem; font-weight: 600; display: inline-block;"><i class="fa fa-truck" style="margin-left: 6px;"></i>الشحن مجاناً</div>` : ''}
               <div id="stockIndicator"></div>
             </div>
+            <!-- COUNTDOWN TIMER -->
+            ${p.price_before && p.price_before > (p.price_after || 0) ? `
+            <div id="productCountdown">
+              <div class="cd-label">
+                <i class="fa fa-fire"></i>
+                <span>الوقت المتبقي للخصم:</span>
+              </div>
+              <div class="cd-blocks">
+                <div class="cd-unit">
+                  <div class="cd-num" id="cd-hours">00</div>
+                  <div class="cd-text">ساعات</div>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <div class="cd-num" id="cd-minutes">00</div>
+                  <div class="cd-text">دقائق</div>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <div class="cd-num seconds" id="cd-seconds">00</div>
+                  <div class="cd-text">ثواني</div>
+                </div>
+              </div>
+            </div>` : ''}
             ${renderBundles(p)}
             <div id="variantsContainer">
               ${renderSizesAndColors(p, 1)}
@@ -354,20 +441,20 @@
                 <input type="number" id="productQtyInput" value="1" min="1" readonly style="width: 44px; height: 100%; border: none; text-align: center !important; text-align-last: center !important; font-size: 1.1rem; font-weight: 800; color: #111827; background: transparent; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0; padding: 0; outline: none; direction: ltr !important;">
                 <button type="button" class="qty-btn qty-minus" onclick="changeProductQty(-1)" style="width: 42px; height: 100%; border: none; background: #f3f4f6; color: #111827; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">-</button>
               </div>
-              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-cart-plus"></i> أضف إلى السلة</button>
+              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;">أضف إلى السلة</button>
               <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-bolt"></i> إتمام الشراء</button>
             </div>
           </div>
         </div>
-        ${descList ? `<div class="card" style="padding:16px;margin-top:12px"><h3 style="margin:0 0 10px">?????????</h3><ul class="desc-list">${descList}</ul></div>` : ''}
+        ${descList ? `<div class="card" style="padding:16px;margin-top:12px"><h3 style="margin:0 0 10px">المواصفات</h3><ul class="desc-list">${descList}</ul></div>` : ''}
         <div class="lightbox" id="pLightbox">
-          <button class="close" aria-label="?????">?</button>
-          <button class="p-arrow p-prev" aria-label="??????">‹</button>
+          <button class="close" aria-label="إغلاق">✕</button>
+          <button class="p-arrow p-prev" aria-label="السابق">‹</button>
           <img id="lbImg" src="${imgs[0] || ''}" alt="">
-          <button class="p-arrow p-next" aria-label="??????">›</button>
+          <button class="p-arrow p-next" aria-label="التالي">›</button>
         </div>
         <div class="sticky-buy-bar">
-          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fa fa-bolt"></i> ????? ?????? ????</button>
+          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fa fa-bolt"></i> إتمام الشراء الآن</button>
         </div>`;
 
       // Image gallery logic with transition & zoom
@@ -399,9 +486,11 @@
       });
       thumbs.forEach(t => t.addEventListener('click', () => show(+t.dataset.idx)));
 
-      // Hover Zoom Effect
+      // Hover Zoom Effect - Desktop Only (disable on touch screens)
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+
       mainContainer.addEventListener('mousemove', (e) => {
-        if (window.innerWidth > 768) {
+        if (!isTouchDevice && window.innerWidth > 768) {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = ((e.clientX - rect.left) / rect.width) * 100;
           const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -409,7 +498,7 @@
         }
       });
       mainContainer.addEventListener('mouseenter', () => {
-        if (window.innerWidth > 768) {
+        if (!isTouchDevice && window.innerWidth > 768) {
           main.style.transform = 'scale(1.8)';
         }
       });
@@ -418,14 +507,18 @@
         main.style.transformOrigin = 'center center';
       });
 
-      // Mobile Swipe Logic
+      // Mobile Swipe & Reset Logic
       let startX = 0;
       mainContainer.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
+        main.style.transform = 'scale(1)';
+        main.style.transformOrigin = 'center center';
       }, { passive: true });
       mainContainer.addEventListener('touchend', (e) => {
+        main.style.transform = 'scale(1)';
+        main.style.transformOrigin = 'center center';
         const diffX = e.changedTouches[0].clientX - startX;
-        if (Math.abs(diffX) > 50) {
+        if (Math.abs(diffX) > 40) {
           if (diffX > 0) {
             show(idx - 1);
           } else {
@@ -726,6 +819,38 @@
         const _qty = bundleInput ? parseInt(bundleInput.value) : 1;
         for (let _pi = 0; _pi < _qty; _pi++) { updateVariantAvailability(_pi); }
       }
+
+      // COUNTDOWN TIMER — random end time per session (4-23 hrs from now)
+      (() => {
+        const cdEl = document.getElementById('productCountdown');
+        if (!cdEl) return;
+        const KEY = 'fo_cd_end_' + (window.currentProductData?.id || '0');
+        let endTime = parseInt(localStorage.getItem(KEY) || '0');
+        const now = Date.now();
+        if (!endTime || endTime <= now) {
+          // Random 4–23 hours
+          const hrs = 4 + Math.floor(Math.random() * 20);
+          const mins = Math.floor(Math.random() * 60);
+          endTime = now + (hrs * 3600 + mins * 60) * 1000;
+          localStorage.setItem(KEY, endTime);
+        }
+        const hEl = document.getElementById('cd-hours');
+        const mEl = document.getElementById('cd-minutes');
+        const sEl = document.getElementById('cd-seconds');
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function tick() {
+          const diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+          const h = Math.floor(diff / 3600);
+          const m = Math.floor((diff % 3600) / 60);
+          const s = diff % 60;
+          if (hEl) hEl.textContent = pad(h);
+          if (mEl) mEl.textContent = pad(m);
+          if (sEl) sEl.textContent = pad(s);
+          if (diff <= 0) { localStorage.removeItem(KEY); }
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
     }
 
     window.updateBundleSelection = function(input) {
@@ -781,17 +906,17 @@
       const basePriceBefore = p.price_before || basePrice;
 
       let html = `
-        <div style="margin: 16px 0;">
-          <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 1rem; color: #111827;">اختر العرض المناسب لك</label>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label class="bundle-option" style="border: 2px solid #2563eb; background: #eff6ff; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="radio" name="bundle_tier" value="1" data-price="${basePrice}" checked onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb;">
-                <span style="font-weight: 600; font-size: 1rem;">قطعة واحدة</span>
+        <div style="margin: 16px 0; width: 100%; box-sizing: border-box;">
+          <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 1rem; color: #111827;">اختر العرض المناسب لك</label>
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <label class="bundle-option" style="border: 2px solid #2563eb; background: #eff6ff; padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 12px; transition: all 0.2s; box-sizing: border-box; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto;">
+                <input type="radio" name="bundle_tier" value="1" data-price="${basePrice}" checked onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb; flex-shrink: 0;">
+                <span style="font-weight: 700; font-size: 0.95rem; color: #111827; white-space: nowrap;">قطعة واحدة</span>
               </div>
-              <div style="text-align: left;">
-                <div style="font-weight: bold; color: #2563eb; font-size: 1.1rem;">${BirdCart.formatEGP(basePrice)}</div>
-                ${basePriceBefore > basePrice ? `<div style="font-size: 0.85rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(basePriceBefore)}</div>` : ''}
+              <div style="text-align: left; flex-shrink: 0;">
+                <div style="font-weight: bold; color: #2563eb; font-size: 1.05rem;">${BirdCart.formatEGP(basePrice)}</div>
+                ${basePriceBefore > basePrice ? `<div style="font-size: 0.8rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(basePriceBefore)}</div>` : ''}
               </div>
             </label>
       `;
@@ -801,17 +926,17 @@
         const totalSavings = oldTotalPrice - t.price;
 
         html += `
-            <label class="bundle-option" style="border: 2px solid #e5e7eb; background: transparent; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="radio" name="bundle_tier" value="${t.min_qty}" data-price="${t.price}" onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb;">
-                <div style="display: flex; flex-direction: column;">
-                  <span style="font-weight: 600; font-size: 1rem; color: #111827;">${t.min_qty} قطع (توفير!)</span>
-                  ${totalSavings > 0 ? `<span style="font-size: 0.8rem; color: #16a34a; font-weight: 600;">وفر ${BirdCart.formatEGP(totalSavings)}</span>` : ''}
+            <label class="bundle-option" style="border: 2px solid #e5e7eb; background: transparent; padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 12px; transition: all 0.2s; box-sizing: border-box; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto;">
+                <input type="radio" name="bundle_tier" value="${t.min_qty}" data-price="${t.price}" onchange="updateBundleSelection(this)" style="width: 18px; height: 18px; accent-color: #2563eb; flex-shrink: 0;">
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                  <span style="font-weight: 700; font-size: 0.95rem; color: #111827;">${t.min_qty} قطع (توفير!)</span>
+                  ${totalSavings > 0 ? `<span style="font-size: 0.8rem; color: #16a34a; font-weight: 700;">وفر ${BirdCart.formatEGP(totalSavings)}</span>` : ''}
                 </div>
               </div>
-              <div style="text-align: left;">
-                <div style="font-weight: bold; color: #2563eb; font-size: 1.1rem;">${BirdCart.formatEGP(t.price)} <span style="font-size:0.8rem;font-weight:normal;">/ الإجمالي</span></div>
-                ${oldTotalPrice > t.price ? `<div style="font-size: 0.85rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(oldTotalPrice)}</div>` : ''}
+              <div style="text-align: left; flex-shrink: 0;">
+                <div style="font-weight: bold; color: #2563eb; font-size: 1.05rem;">${BirdCart.formatEGP(t.price)} <span style="font-size:0.75rem;font-weight:normal;">/ الإجمالي</span></div>
+                ${oldTotalPrice > t.price ? `<div style="font-size: 0.8rem; color: #6b7280; text-decoration: line-through;">بدلاً من ${BirdCart.formatEGP(oldTotalPrice)}</div>` : ''}
               </div>
             </label>
         `;
@@ -850,7 +975,7 @@
         if (hasSizes) {
           html += `
             <div style="margin-bottom: 12px;">
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">المقاس <span style="color: #dc2626;">*</span><span id="sizeSelectedLabel_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
+              <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; color:#111827;">المقاس <span style="color: #dc2626;">*</span><span style="color:#6b7280; font-weight:400; font-size:0.85rem;">:</span><span id="sizeSelectedLabel_${i}" style="color:#111827; font-weight:700; font-size:0.88rem;"></span></label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="size-group-container" data-piece="${i}">
                 ${sizes.map(size => `
                   <label class="size-option" style="cursor: pointer; position: relative;">
@@ -867,7 +992,7 @@
         if (hasColors) {
           html += `
             <div style="margin-bottom: 12px;">
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">اللون <span style="color: #dc2626;">*</span><span id="colorSelectedLabel_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
+              <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; color:#111827;">اللون <span style="color: #dc2626;">*</span><span style="color:#6b7280; font-weight:400; font-size:0.85rem;">:</span><span id="colorSelectedLabel_${i}" style="color:#111827; font-weight:700; font-size:0.88rem;"></span></label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="color-group-container" data-piece="${i}">
                 ${colors.map(color => `
                   <label class="color-option" style="cursor: pointer; position: relative;">
@@ -886,7 +1011,7 @@
             if (!cv || !cv.name || !cv.values || !cv.values.length) return;
             html += `
               <div style="margin-bottom: 12px;">
-                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">${cv.name} <span style="color: #dc2626;">*</span><span id="cvSelectedLabel_${cvIdx}_${i}" style="display:none; background:#111827; color:#fff; font-size:0.78rem; font-weight:700; padding:1px 10px; border-radius:99px; letter-spacing:0.3px;"></span></label>
+                <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; color:#111827;">${cv.name} <span style="color: #dc2626;">*</span><span style="color:#6b7280; font-weight:400; font-size:0.85rem;">:</span><span id="cvSelectedLabel_${cvIdx}_${i}" style="color:#111827; font-weight:700; font-size:0.88rem;"></span></label>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="cv-group-container" data-piece="${i}" data-cv-idx="${cvIdx}">
                   ${cv.values.map(val => `
                     <label class="cv-option" style="cursor: pointer; position: relative;">
@@ -901,7 +1026,7 @@
           });
         }
 
-        html += `</div>`;
+        html += `<div id="variantLowStockNotice_${i}"></div></div>`;
       }
 
       return html;
@@ -918,6 +1043,9 @@
       const colorInput = document.querySelector(`input[name="product_color_${pieceIndex}"]:checked`);
       const selectedSize = sizeInput ? sizeInput.value : null;
       const selectedColor = colorInput ? colorInput.value : null;
+      
+      const sizeLabels = document.querySelectorAll(`.size-group-container[data-piece="${pieceIndex}"] label.size-option`);
+      const colorLabels = document.querySelectorAll(`.color-group-container[data-piece="${pieceIndex}"] label.color-option`);
       
       let customVariantsData = p.custom_variants || [];
       if (typeof customVariantsData === 'string') { try { customVariantsData = JSON.parse(customVariantsData); } catch(e) { customVariantsData = []; } }
@@ -941,9 +1069,6 @@
         return true;
       };
 
-      const sizeLabels = document.querySelectorAll(`.size-group-container[data-piece="${pieceIndex}"] label.size-option`);
-      const colorLabels = document.querySelectorAll(`.color-group-container[data-piece="${pieceIndex}"] label.color-option`);
-      
       // Helper: apply out-of-stock or low-stock styling to a label
       const applyVariantStyle = (lbl, qty) => {
         const btn = lbl.querySelector('.variant-btn');
@@ -990,55 +1115,47 @@
       };
 
       // Update Colors based on selected Size and Options
-      if (selectedSize && hasColors) {
+      if (hasColors) {
         colorLabels.forEach(lbl => {
           const cVal = lbl.querySelector('input').value;
-          const found = stock.find(s => s.size === selectedSize && s.color === cVal && isOptsMatch(s.options));
-          const qty = found ? found.qty : (p.stock !== undefined && p.stock !== null ? p.stock : 100);
-          applyVariantStyle(lbl, qty);
-        });
-      } else if (!selectedSize && hasColors) {
-        colorLabels.forEach(lbl => {
-          const cVal = lbl.querySelector('input').value;
-          if (hasSizes) {
-            const activeSizes = (typeof p.sizes === 'string' ? JSON.parse(p.sizes) : p.sizes) || [];
-            const allOut = activeSizes.every(sz => {
-              const found = stock.find(s => s.size === sz && s.color === cVal && isOptsMatch(s.options));
-              const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
-              return qty !== null && qty !== undefined && qty !== '' && Number(qty) <= 0;
-            });
-            applyVariantStyle(lbl, allOut ? 0 : 100);
+          const matches = stock.filter(s => {
+             if (s.color !== cVal) return false;
+             if (selectedSize && s.size !== selectedSize) return false;
+             if (!isOptsMatch(s.options)) return false;
+             return true;
+          });
+          if (stock.length > 0) {
+            if (matches.length === 0) {
+                applyVariantStyle(lbl, 0);
+            } else {
+                let maxQty = Math.max(...matches.map(m => (m.qty !== null && m.qty !== undefined && m.qty !== '') ? Number(m.qty) : (p.stock !== undefined && p.stock !== null ? Number(p.stock) : 100)));
+                applyVariantStyle(lbl, maxQty);
+            }
           } else {
-            const found = stock.find(s => s.color === cVal && isOptsMatch(s.options));
-            const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
-            applyVariantStyle(lbl, qty);
+            applyVariantStyle(lbl, p.stock !== undefined && p.stock !== null ? p.stock : 100);
           }
         });
       }
       
       // Update Sizes based on selected Color and Options
-      if (selectedColor && hasSizes) {
+      if (hasSizes) {
         sizeLabels.forEach(lbl => {
           const sVal = lbl.querySelector('input').value;
-          const found = stock.find(s => s.size === sVal && s.color === selectedColor && isOptsMatch(s.options));
-          const qty = found ? found.qty : (p.stock !== undefined && p.stock !== null ? p.stock : 100);
-          applyVariantStyle(lbl, qty);
-        });
-      } else if (!selectedColor && hasSizes) {
-        sizeLabels.forEach(lbl => {
-          const sVal = lbl.querySelector('input').value;
-          if (hasColors) {
-            const activeColors = (typeof p.colors === 'string' ? JSON.parse(p.colors) : p.colors) || [];
-            const allOut = activeColors.every(cl => {
-              const found = stock.find(s => s.size === sVal && s.color === cl && isOptsMatch(s.options));
-              const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
-              return qty !== null && qty !== undefined && qty !== '' && Number(qty) <= 0;
-            });
-            applyVariantStyle(lbl, allOut ? 0 : 100);
+          const matches = stock.filter(s => {
+             if (s.size !== sVal) return false;
+             if (selectedColor && s.color !== selectedColor) return false;
+             if (!isOptsMatch(s.options)) return false;
+             return true;
+          });
+          if (stock.length > 0) {
+            if (matches.length === 0) {
+                applyVariantStyle(lbl, 0);
+            } else {
+                let maxQty = Math.max(...matches.map(m => (m.qty !== null && m.qty !== undefined && m.qty !== '') ? Number(m.qty) : (p.stock !== undefined && p.stock !== null ? Number(p.stock) : 100)));
+                applyVariantStyle(lbl, maxQty);
+            }
           } else {
-            const found = stock.find(s => s.size === sVal && isOptsMatch(s.options));
-            const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
-            applyVariantStyle(lbl, qty);
+            applyVariantStyle(lbl, p.stock !== undefined && p.stock !== null ? p.stock : 100);
           }
         });
       }
@@ -1049,13 +1166,22 @@
           const cvLabels = document.querySelectorAll(`.cv-group-container[data-piece="${pieceIndex}"][data-cv-idx="${cvIdx}"] label.cv-option`);
           cvLabels.forEach(lbl => {
             const val = lbl.querySelector('input').value;
-            const found = stock.find(s => 
-              (!selectedSize || s.size === selectedSize) &&
-              (!selectedColor || s.color === selectedColor) &&
-              isOptsMatch(s.options, { [cv.name]: val })
-            );
-            const qty = found ? found.qty : (p.stock !== undefined ? p.stock : 100);
-            applyVariantStyle(lbl, qty);
+            const matches = stock.filter(s => {
+               if (selectedSize && s.size !== selectedSize) return false;
+               if (selectedColor && s.color !== selectedColor) return false;
+               if (!isOptsMatch(s.options, { [cv.name]: val })) return false;
+               return true;
+            });
+            if (stock.length > 0) {
+              if (matches.length === 0) {
+                  applyVariantStyle(lbl, 0);
+              } else {
+                  let maxQty = Math.max(...matches.map(m => (m.qty !== null && m.qty !== undefined && m.qty !== '') ? Number(m.qty) : (p.stock !== undefined && p.stock !== null ? Number(p.stock) : 100)));
+                  applyVariantStyle(lbl, maxQty);
+              }
+            } else {
+              applyVariantStyle(lbl, p.stock !== undefined && p.stock !== null ? p.stock : 100);
+            }
           });
         });
       }
@@ -1063,12 +1189,11 @@
       // Update selected variant labels shown next to the field title
       const sizeLabel = document.getElementById(`sizeSelectedLabel_${pieceIndex}`);
       const colorLabel = document.getElementById(`colorSelectedLabel_${pieceIndex}`);
-      if (sizeLabel) { sizeLabel.textContent = selectedSize || ''; sizeLabel.style.display = selectedSize ? 'inline-block' : 'none'; }
-      if (colorLabel) { colorLabel.textContent = selectedColor || ''; colorLabel.style.display = selectedColor ? 'inline-block' : 'none'; }
+      if (sizeLabel) { sizeLabel.textContent = selectedSize || ''; }
       if (Array.isArray(customVariantsData)) {
         customVariantsData.forEach((cv, cvIdx) => {
           const cvLbl = document.getElementById(`cvSelectedLabel_${cvIdx}_${pieceIndex}`);
-          if (cvLbl) { cvLbl.textContent = selectedCvOptions[cv.name] || ''; cvLbl.style.display = selectedCvOptions[cv.name] ? 'inline-block' : 'none'; }
+          if (cvLbl) { cvLbl.textContent = selectedCvOptions[cv.name] || ''; }
         });
       }
 

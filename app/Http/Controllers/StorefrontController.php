@@ -52,7 +52,12 @@ class StorefrontController extends Controller
             $page .= '.html';
         }
 
-        $filePath = resource_path("views/shop/{$page}");
+        $themeService = app(\App\Services\ThemeService::class);
+        $filePath = $themeService->resolveViewPath($page);
+
+        if (!file_exists($filePath)) {
+            $filePath = resource_path("views/shop/{$page}");
+        }
 
         if (!file_exists($filePath)) {
             abort(404);
