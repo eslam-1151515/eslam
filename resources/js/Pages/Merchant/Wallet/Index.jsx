@@ -339,13 +339,13 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
 
                                 {/* Receipt Image Upload Field */}
                                 <div className="space-y-2">
-                                    <label className="block text-xs font-bold text-gray-700">صورة إشعار التحويل (إسكرين شوت):</label>
+                                    <label className="block text-xs font-bold text-gray-700">صورة إيصال التحويل (إسكرين شوت):</label>
                                     <div className="flex flex-col sm:flex-row items-center gap-4">
                                         <label className="flex-1 w-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/20 transition-all text-center">
                                             <svg className="w-8 h-8 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
-                                            <span className="text-xs font-bold text-indigo-600">اختر صورة الإشعار للرفع</span>
+                                            <span className="text-xs font-bold text-indigo-600">اختر صورة الإيصال للرفع</span>
                                             <span className="text-[11px] text-gray-400 mt-0.5">PNG, JPG حتى 3 ميجابايت</span>
                                             <input
                                                 type="file"
@@ -357,7 +357,7 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                         </label>
                                         {previewImage && (
                                             <div className="w-24 h-24 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0 shadow-sm relative group">
-                                                <img src={previewImage} alt="معاينة الإشعار" className="w-full h-full object-cover" />
+                                                <img src={previewImage} alt="معاينة الإيصال" className="w-full h-full object-cover" />
                                                 <span className="absolute inset-0 bg-black/40 text-white text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                     معاينة
                                                 </span>
@@ -421,19 +421,19 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                     <table className="w-full text-right border-collapse">
                                         <thead>
                                             <tr className="bg-gray-50 text-gray-500 text-xs font-bold border-b border-gray-100">
-                                                <th className="px-4 py-3">الرقم المرجعي (6 أرقام)</th>
-                                                <th className="px-4 py-3">المبلغ</th>
-                                                <th className="px-4 py-3">وسيلة التحويل</th>
-                                                <th className="px-4 py-3">الرقم المحول منه</th>
-                                                <th className="px-4 py-3">الإشعار</th>
-                                                <th className="px-4 py-3">التاريخ والوقت</th>
-                                                <th className="px-4 py-3">الحالة</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">الرقم المرجعي (6 أرقام)</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">المبلغ</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">وسيلة التحويل</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">الرقم المحول منه</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">الإيصال</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">التاريخ والوقت</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">الحالة</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100 text-xs">
                                             {depositRequests.map((req) => (
                                                 <tr key={req.id} className="hover:bg-gray-50/50 transition-colors">
-                                                    <td className="px-4 py-3.5">
+                                                    <td className="px-4 py-3.5 whitespace-nowrap">
                                                         <div className="flex items-center gap-1.5" dir="ltr">
                                                             <span className="font-mono font-black text-indigo-900 bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-lg text-sm select-all">
                                                                 {req.reference_code}
@@ -448,46 +448,46 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                                             </button>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3.5 font-extrabold text-gray-900 text-sm">
+                                                    <td className="px-4 py-3.5 font-extrabold text-gray-900 text-sm whitespace-nowrap">
                                                         {Math.round(req.amount).toLocaleString('en-US')} ج.م
                                                     </td>
-                                                    <td className="px-4 py-3.5 font-bold text-gray-700">
+                                                    <td className="px-4 py-3.5 font-bold text-gray-700 whitespace-nowrap">
                                                         {req.payment_method === 'vodafone_cash' ? 'فودافون كاش 🔴' : 'إنستا باي ⚡'}
                                                     </td>
-                                                    <td className="px-4 py-3.5 font-mono font-bold text-gray-800" dir="ltr">{req.payment_reference}</td>
-                                                    <td className="px-4 py-3.5">
+                                                    <td className="px-4 py-3.5 font-mono font-bold text-gray-800 whitespace-nowrap" dir="ltr">{req.payment_reference}</td>
+                                                    <td className="px-4 py-3.5 whitespace-nowrap">
                                                         {req.receipt_url ? (
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setViewingReceipt(req.receipt_url)}
-                                                                className="text-xs font-bold text-indigo-600 hover:underline"
+                                                                className="text-xs font-bold text-indigo-600 hover:underline inline-flex items-center gap-1 whitespace-nowrap"
                                                             >
-                                                                عرض الإشعار 🖼️
+                                                                عرض الإيصال 🖼️
                                                             </button>
                                                         ) : (
                                                             <span className="text-gray-400">-</span>
                                                         )}
                                                     </td>
-                                                    <td className="px-4 py-3.5 text-gray-600">
-                                                        <div className="space-y-0.5">
-                                                            <span className="font-bold text-gray-800 block">{req.date_formatted}</span>
-                                                            <span className="text-[11px] text-gray-400 font-mono block" dir="ltr">{req.time_formatted}</span>
+                                                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2" dir="ltr">
+                                                            <span className="font-bold text-gray-800 text-xs">{req.date_formatted}</span>
+                                                            <span className="text-[11px] text-gray-400 font-mono">{req.time_formatted}</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3.5">
+                                                    <td className="px-4 py-3.5 whitespace-nowrap">
                                                         {req.status === 'pending' && (
-                                                            <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full font-bold inline-block">
+                                                            <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full font-bold inline-block whitespace-nowrap">
                                                                 ⏳ قيد المراجعة
                                                             </span>
                                                         )}
                                                         {req.status === 'approved' && (
-                                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-bold inline-block">
+                                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-bold inline-block whitespace-nowrap">
                                                                 ✅ مقبول ومُضاف
                                                             </span>
                                                         )}
                                                         {req.status === 'rejected' && (
                                                             <div className="space-y-1">
-                                                                <span className="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded-full font-bold inline-block">
+                                                                <span className="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded-full font-bold inline-block whitespace-nowrap">
                                                                     ❌ مرفوض
                                                                 </span>
                                                                 {req.rejection_reason && (
@@ -524,34 +524,34 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                     <table className="w-full text-right border-collapse">
                                         <thead>
                                             <tr className="bg-gray-50 text-gray-500 text-xs font-bold border-b border-gray-100">
-                                                <th className="px-4 py-3">نوع العملية</th>
-                                                <th className="px-4 py-3">المبلغ</th>
-                                                <th className="px-4 py-3">التفاصيل والوصف</th>
-                                                <th className="px-4 py-3">التاريخ والوقت</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">نوع العملية</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">المبلغ</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">التفاصيل والوصف</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">التاريخ والوقت</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100 text-xs">
                                             {transactions.map((tx) => (
                                                 <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
-                                                    <td className="px-4 py-3.5">
+                                                    <td className="px-4 py-3.5 whitespace-nowrap">
                                                         {tx.type === 'credit' ? (
-                                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">
+                                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold whitespace-nowrap">
                                                                 ➕ إيداع
                                                             </span>
                                                         ) : (
-                                                            <span className="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full font-bold">
+                                                            <span className="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full font-bold whitespace-nowrap">
                                                                 ➖ خصم
                                                             </span>
                                                         )}
                                                     </td>
-                                                    <td className={`px-4 py-3.5 font-mono font-extrabold text-sm ${tx.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    <td className={`px-4 py-3.5 font-mono font-extrabold text-sm whitespace-nowrap ${tx.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
                                                         {tx.type === 'credit' ? '+' : '-'}{Math.round(tx.amount).toLocaleString('en-US')} ج.م
                                                     </td>
                                                     <td className="px-4 py-3.5 font-semibold text-gray-800">{tx.description || '-'}</td>
-                                                    <td className="px-4 py-3.5 text-gray-600">
-                                                        <div className="space-y-0.5">
-                                                            <span className="font-bold text-gray-800 block">{tx.date_formatted}</span>
-                                                            <span className="text-[11px] text-gray-400 font-mono block" dir="ltr">{tx.time_formatted}</span>
+                                                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2" dir="ltr">
+                                                            <span className="font-bold text-gray-800 text-xs">{tx.date_formatted}</span>
+                                                            <span className="text-[11px] text-gray-400 font-mono">{tx.time_formatted}</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -575,7 +575,7 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
                     <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden p-4 space-y-4">
                         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                            <h4 className="font-bold text-gray-900 text-sm">صورة إشعار التحويل المرفقة</h4>
+                            <h4 className="font-bold text-gray-900 text-sm">صورة إيصال التحويل المرفقة</h4>
                             <button
                                 onClick={() => setViewingReceipt(null)}
                                 className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold"
@@ -584,7 +584,7 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                             </button>
                         </div>
                         <div className="max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200">
-                            <img src={viewingReceipt} alt="الإشعار" className="w-full h-auto object-contain" />
+                            <img src={viewingReceipt} alt="الإيصال" className="w-full h-auto object-contain" />
                         </div>
                     </div>
                 </div>
