@@ -449,35 +449,53 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                     لا توجد شرائح سعرية مضافة حالياً.
                                 </p>
                             ) : (
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     {priceTiers.map((tier, index) => (
-                                        <div key={index} className="flex flex-col sm:flex-row items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                            <div className="flex-1 flex items-center gap-2 w-full">
-                                                <span className="text-xs font-medium text-gray-700 whitespace-nowrap">عند شراء</span>
-                                                <input
-                                                    type="number"
-                                                    min="2"
-                                                    value={tier.min_qty}
-                                                    onChange={(e) => handlePriceTierChange(index, 'min_qty', e.target.value)}
-                                                    className="w-16 px-2 py-1.5 border border-gray-300 rounded-lg text-center text-xs focus:ring-1 focus:ring-orange-400"
-                                                />
-                                                <span className="text-xs font-medium text-gray-700 whitespace-nowrap">قطع، يصبح السعر الإجمالي:</span>
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    value={tier.price}
-                                                    onChange={(e) => handlePriceTierChange(index, 'price', e.target.value)}
-                                                    placeholder="السعر الإجمالي للعرض"
-                                                    className="flex-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-1 focus:ring-orange-400 min-w-[100px]"
-                                                />
+                                        <div key={index} className="bg-gray-50 p-3 rounded-xl border border-gray-200 shadow-sm space-y-2">
+                                            <div className="flex items-center justify-between gap-2 border-b border-gray-200/60 pb-2">
+                                                <span className="text-xs font-bold text-gray-800 flex items-center gap-1">
+                                                    🏷️ شريحة رقم {index + 1}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removePriceTier(index)}
+                                                    className="text-red-500 hover:text-red-700 p-1 px-2 rounded-lg hover:bg-red-50 text-xs font-bold transition-colors"
+                                                    title="حذف الشريحة"
+                                                >
+                                                    ✕ حذف
+                                                </button>
                                             </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => removePriceTier(index)}
-                                                className="text-red-500 hover:text-red-700 p-1.5 rounded-md hover:bg-red-50 transition-colors shrink-0"
-                                            >
-                                                ✕
-                                            </button>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center pt-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">عند شراء:</span>
+                                                    <div className="relative flex-1 sm:flex-initial">
+                                                        <input
+                                                            type="number"
+                                                            min="2"
+                                                            value={tier.min_qty}
+                                                            onChange={(e) => handlePriceTierChange(index, 'min_qty', e.target.value)}
+                                                            className="w-full sm:w-20 px-3 py-1.5 border border-gray-300 rounded-lg text-center text-xs font-bold focus:ring-2 focus:ring-orange-400 bg-white"
+                                                        />
+                                                    </div>
+                                                    <span className="text-xs font-medium text-gray-600 shrink-0">قطع</span>
+                                                </div>
+
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-semibold text-gray-700 whitespace-nowrap shrink-0">السعر الإجمالي:</span>
+                                                    <div className="relative flex-1">
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={tier.price}
+                                                            onChange={(e) => handlePriceTierChange(index, 'price', e.target.value)}
+                                                            placeholder="مثال: 750"
+                                                            className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-orange-400 bg-white"
+                                                        />
+                                                    </div>
+                                                    <span className="text-xs font-bold text-gray-500 shrink-0">ج.م</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
