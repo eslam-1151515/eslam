@@ -272,7 +272,9 @@ export default function Index({ tenants, filters, plans }) {
                         <tbody className="divide-y divide-gray-100 text-sm">
                             {tenants.data && tenants.data.length > 0 ? (
                                 tenants.data.map((tenant) => {
-                                    const activeSub = tenant.subscriptions && tenant.subscriptions[0];
+                                    const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
+                                    const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
+                                    const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
                                     return (
                                         <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
@@ -300,9 +302,9 @@ export default function Index({ tenants, filters, plans }) {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {activeSub?.plan ? (
+                                                {planToShow ? (
                                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                                        {activeSub.plan.name}
+                                                        {planToShow.name}
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">

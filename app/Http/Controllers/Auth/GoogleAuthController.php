@@ -126,11 +126,25 @@ class GoogleAuthController extends Controller
                     'trial_ends_at' => now()->addDays(7),
                     'subscription_ends_at' => now()->addDays(7),
                     'wallet_balance' => 0.00,
-                    'is_active' => true,
                     'settings' => [
                         'activity' => 'تجارة عامة',
                     ],
                 ]);
+
+                // Auto-attach Subscription record for free/trial plan
+                $freePlan = SubscriptionPlan::where('slug', 'free')->first() ?? SubscriptionPlan::first();
+                if ($freePlan) {
+                    Subscription::create([
+                        'tenant_id'     => $tenant->id,
+                        'plan_id'       => $freePlan->id,
+                        'status'        => 'active',
+                        'billing_cycle' => 'monthly',
+                        'price'         => 0,
+                        'starts_at'     => now(),
+                        'ends_at'       => now()->addDays(7),
+                        'trial_ends_at' => now()->addDays(7),
+                    ]);
+                }
 
                 // 2. Create User
                 $user = User::create([

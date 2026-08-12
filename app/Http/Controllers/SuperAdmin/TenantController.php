@@ -169,15 +169,25 @@ class TenantController extends Controller
                 'permissions' => json_encode(['*']),
             ]);
 
-            if ($request->filled('plan_id')) {
+            $planId = $request->input('plan_id') 
+                ?? (SubscriptionPlan::where('slug', 'free')->value('id') ?? SubscriptionPlan::value('id'));
+            
+            if ($planId) {
+                $endsAt = $request->ends_at ? \Carbon\Carbon::parse($request->ends_at) : now()->addDays(7);
                 Subscription::create([
                     'tenant_id' => $tenant->id,
-                    'plan_id' => $request->plan_id,
+                    'plan_id' => $planId,
                     'status' => 'active',
                     'billing_cycle' => 'monthly',
                     'price' => 0,
                     'starts_at' => now(),
-                    'ends_at' => $request->ends_at ? \Carbon\Carbon::parse($request->ends_at) : now()->addDays(30),
+                    'ends_at' => $endsAt,
+                    'trial_ends_at' => $endsAt,
+                ]);
+                $tenant->update([
+                    'subscription_status' => 'trial',
+                    'subscription_ends_at' => $endsAt,
+                    'trial_ends_at' => $endsAt,
                 ]);
             }
         });

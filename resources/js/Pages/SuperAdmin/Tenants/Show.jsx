@@ -133,8 +133,10 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
     };
 
     const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
-    const activePlan = activeSub?.plan || plans?.find(p => p.id === activeSub?.plan_id);
+    const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
+    const activePlan = activeSub?.plan || plans?.find(p => p.id === activeSub?.plan_id) || (tenant.subscription_status === 'trial' ? freePlan : null);
     const isCommissionPlan = activePlan?.slug === 'commission' || activePlan?.name?.includes('عمولة') || activePlan?.name?.includes('محفظة');
+    const activeEndsAt = activeSub?.ends_at || activeSub?.trial_ends_at || tenant.subscription_ends_at || tenant.trial_ends_at;
 
     return (
         <SuperAdminLayout>
@@ -387,8 +389,8 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                                 <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-100/60">
                                     <span className="block text-amber-600 font-semibold text-xs mb-1">تاريخ انتهاء الاشتراك</span>
                                     <span className="text-base font-extrabold text-amber-950 block mt-1">
-                                        {(activeSub?.ends_at || activeSub?.trial_ends_at || tenant.subscription_ends_at || tenant.trial_ends_at) 
-                                            ? new Date(activeSub?.ends_at || activeSub?.trial_ends_at || tenant.subscription_ends_at || tenant.trial_ends_at).toLocaleDateString('en-US')
+                                        {activeEndsAt 
+                                            ? new Date(activeEndsAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                                             : 'غير محدد'}
                                     </span>
                                 </div>

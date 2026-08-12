@@ -119,6 +119,21 @@ class MerchantRegisterController extends Controller
                 ],
             ]);
 
+            // Auto-attach Subscription record for free/trial plan
+            $freePlan = SubscriptionPlan::where('slug', 'free')->first() ?? SubscriptionPlan::first();
+            if ($freePlan) {
+                Subscription::create([
+                    'tenant_id'     => $tenant->id,
+                    'plan_id'       => $freePlan->id,
+                    'status'        => 'active',
+                    'billing_cycle' => 'monthly',
+                    'price'         => 0,
+                    'starts_at'     => now(),
+                    'ends_at'       => now()->addDays(7),
+                    'trial_ends_at' => now()->addDays(7),
+                ]);
+            }
+
             // Save phone and whatsapp to settings table if provided
             if (!empty($request->phone)) {
                 $whatsapp = $request->phone;
