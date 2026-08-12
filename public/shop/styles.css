@@ -300,10 +300,10 @@ html,body{margin:0;padding:0;font-family:var(--font-family);background:#f3f4f6;c
 	.nav.open{display:flex}
 	.nav a{width:100%}
 	.nav .call-now{text-align:center}
-		/* product main image: reliable fixed square on mobile */
-		.p-main{width:100%;aspect-ratio:auto;display:block;position:relative}
-		.p-main::before{content:"";display:block;padding-top:100%} /* 1:1 square space */
-		.p-main img{position:absolute;inset:0;width:100% !important;height:100% !important;object-fit:contain !important;object-position:center center;background:#fff}
+		/* product main image: clean square aspect ratio without pseudo-element padding bugs */
+		.p-main{width:100% !important;aspect-ratio:1 / 1 !important;display:flex !important;position:relative !important;align-items:center !important;justify-content:center !important;overflow:hidden !important}
+		.p-main::before{display:none !important;content:none !important}
+		.p-main img{position:absolute !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;height:100% !important;object-fit:contain !important;object-position:center center !important;background:#fff !important}
 }
 
 /* Contact page */
