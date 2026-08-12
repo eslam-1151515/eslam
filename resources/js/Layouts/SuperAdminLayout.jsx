@@ -7,8 +7,8 @@ export default function SuperAdminLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-row" dir="rtl">
-            {/* Sidebar (Fixed position sticky to screen height) */}
-            <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-indigo-900 text-white transition-all duration-300 flex flex-col shrink-0 sticky top-0 h-screen overflow-y-auto`}>
+            {/* Sidebar */}
+            <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-indigo-900 text-white transition-all duration-300 flex flex-col shrink-0 min-h-screen`}>
                 {/* Logo Area */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-indigo-800 shrink-0">
                     <span className={`font-bold text-lg whitespace-nowrap overflow-hidden ${!isSidebarOpen && 'hidden'}`}>
@@ -102,7 +102,7 @@ export default function SuperAdminLayout({ children }) {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
-                <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 sticky top-0 z-10 shadow-xs">
+                <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0">
                     <h1 className="text-xl font-semibold text-gray-800">لوحة تحكم المدير العام</h1>
                     <div className="flex items-center space-x-4 space-x-reverse">
                         <span className="text-sm text-gray-500">{auth?.user?.email}</span>

@@ -288,7 +288,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                             </select>
                         </div>
 
-                        <div className="w-full md:w-56">
+                        <div className="w-full md:w-52">
                             <select
                                 value={plan}
                                 onChange={(e) => handlePlanFilterChange(e.target.value)}
@@ -300,11 +300,11 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                 }}
                                 className="w-full pl-10 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none font-semibold text-gray-700"
                             >
-                                <option value="all">جميع الباقات {planCounts ? `(${planCounts.all})` : ''}</option>
-                                <option value="free">الباقة المجانية 🎁 {planCounts ? `(${planCounts.free})` : ''}</option>
-                                <option value="monthly">الباقة الشهرية 📅 {planCounts ? `(${planCounts.monthly})` : ''}</option>
-                                <option value="yearly">الباقة السنوية 👑 {planCounts ? `(${planCounts.yearly})` : ''}</option>
-                                <option value="commission">باقة العمولة 💰 {planCounts ? `(${planCounts.commission})` : ''}</option>
+                                <option value="all">جميع الباقات</option>
+                                <option value="free">الباقة المجانية 🎁</option>
+                                <option value="monthly">الباقة الشهرية 📅</option>
+                                <option value="yearly">الباقة السنوية 👑</option>
+                                <option value="commission">باقة العمولة 💰</option>
                             </select>
                         </div>
 
