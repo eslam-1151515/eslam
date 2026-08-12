@@ -393,16 +393,18 @@
       const price = window.BirdCart.formatPrice ? window.BirdCart.formatPrice(p.price_after, p.price_before) : '';
       const descList = (p.description || '').split(/\r?\n|\u2022|-/).map(s => s.trim()).filter(Boolean).map(s => `<li>${s}</li>`).join('');
       root.innerHTML = `
-        <div class="card p-details" style="padding:16px">
-          <div class="p-gallery">
-            <div class="p-main">
-              <img id="pMain" src="${imgs[0] || ''}" alt="${p.name || ''}">
-              <button class="p-arrow p-prev" aria-label="السابق">‹</button>
-              <button class="p-arrow p-next" aria-label="التالي">›</button>
+        <div class="p-details-container">
+          <div class="card p-gallery-card" style="padding:16px">
+            <div class="p-gallery">
+              <div class="p-main">
+                <img id="pMain" src="${imgs[0] || ''}" alt="${p.name || ''}">
+                <button class="p-arrow p-prev" aria-label="السابق">‹</button>
+                <button class="p-arrow p-next" aria-label="التالي">›</button>
+              </div>
+              <div class="p-thumbs">${imgs.map((src, i) => `<button class="p-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}"><img src="${src}" alt="thumb ${i + 1}"></button>`).join('')}</div>
             </div>
-            <div class="p-thumbs">${imgs.map((src, i) => `<button class="p-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}"><img src="${src}" alt="thumb ${i + 1}"></button>`).join('')}</div>
           </div>
-          <div>
+          <div class="card p-info-card" style="padding:16px">
             <h1 style="margin:0 0 8px">${p.name || 'منتج'}</h1>
             <div class="muted" style="margin-bottom:8px">${p.category || ''}</div>
             <div class="price-block" style="text-align: right;">
