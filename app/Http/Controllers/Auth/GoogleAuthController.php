@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Tenant;
+use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -131,21 +133,6 @@ class GoogleAuthController extends Controller
                     ],
                 ]);
 
-                // Auto-attach Subscription record for free/trial plan
-                $freePlan = SubscriptionPlan::where('slug', 'free')->first() ?? SubscriptionPlan::first();
-                if ($freePlan) {
-                    Subscription::create([
-                        'tenant_id'     => $tenant->id,
-                        'plan_id'       => $freePlan->id,
-                        'status'        => 'active',
-                        'billing_cycle' => 'monthly',
-                        'price'         => 0,
-                        'starts_at'     => now(),
-                        'ends_at'       => now()->addDays(7),
-                        'trial_ends_at' => now()->addDays(7),
-                    ]);
-                }
-
                 // 2. Create User
                 $user = User::create([
                     'tenant_id' => $tenant->id,
@@ -167,17 +154,22 @@ class GoogleAuthController extends Controller
                 ]);
 
                 // 5. Activate 7-Day Free Trial Subscription
-                $plan = \App\Models\SubscriptionPlan::where('is_active', true)->first();
-                \App\Models\Subscription::create([
-                    'tenant_id' => $tenant->id,
-                    'plan_id' => $plan ? $plan->id : null,
-                    'status' => 'trial',
-                    'billing_cycle' => 'monthly',
-                    'price' => 0,
-                    'starts_at' => now(),
-                    'trial_ends_at' => now()->addDays(7),
-                    'ends_at' => now()->addDays(7),
-                ]);
+                $freePlan = SubscriptionPlan::where('slug', 'free')->first()
+                    ?? SubscriptionPlan::where('is_active', true)->first()
+                    ?? SubscriptionPlan::first();
+
+                if ($freePlan) {
+                    Subscription::create([
+                        'tenant_id'     => $tenant->id,
+                        'plan_id'       => $freePlan->id,
+                        'status'        => 'trial',
+                        'billing_cycle' => 'monthly',
+                        'price'         => 0,
+                        'starts_at'     => now(),
+                        'trial_ends_at' => now()->addDays(7),
+                        'ends_at'       => now()->addDays(7),
+                    ]);
+                }
 
                 return $user;
             });
