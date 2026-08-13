@@ -224,23 +224,34 @@ class TenantController extends Controller
     {
         $request->validate([
             'plan_id' => ['required', 'integer', 'exists:subscription_plans,id'],
-            'ends_at' => ['required', 'date'],
+            'ends_at' => ['nullable', 'date'],
         ]);
 
-        $endsAt = \Carbon\Carbon::parse($request->ends_at);
+        $plan = SubscriptionPlan::find($request->plan_id);
+        $isCommission = $plan && ($plan->slug === 'commission' || str_contains(mb_strtolower($plan->name ?? ''), 'عمولة'));
+
+        if ($request->filled('ends_at')) {
+            $endsAt = \Carbon\Carbon::parse($request->ends_at);
+        } elseif ($isCommission) {
+            $endsAt = now()->addYears(10);
+        } else {
+            $endsAt = now()->addDays(30);
+        }
 
         Subscription::updateOrCreate(
             ['tenant_id' => $tenant->id],
             [
-                'plan_id' => $request->plan_id,
-                'status' => 'active',
-                'ends_at' => $endsAt,
-                'starts_at' => now(),
+                'plan_id'       => $request->plan_id,
+                'status'        => 'active',
+                'billing_cycle' => 'monthly',
+                'price'         => 0,
+                'starts_at'     => now(),
+                'ends_at'       => $endsAt,
             ]
         );
 
         $tenant->update([
-            'subscription_status' => 'active',
+            'subscription_status'  => 'active',
             'subscription_ends_at' => $endsAt,
         ]);
 
