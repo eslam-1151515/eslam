@@ -146,8 +146,9 @@ html,body{margin:0;padding:0;font-family:var(--font-family);background:#f3f4f6;c
 /* Tablet and larger: 4 columns for categories/offers */
 @media(min-width:768px){.grid#categoriesGrid,.grid#productsGrid,#categoriesGrid.grid,#productsGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:1200px){.grid#categoriesGrid,#categoriesGrid.grid,.subcategories-grid,#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr)}}
-/* Desktop: 5 columns for products catalog & offers on desktop screens (1024px+) */
-@media(min-width:1024px){.grid#productsGrid,#productsGrid.grid,.grid#offersGrid,#offersGrid.grid{grid-template-columns:repeat(5,1fr) !important;gap:16px !important}}
+/* Desktop: 5 columns for products catalog and 4 columns for offers on desktop screens (1024px+) */
+@media(min-width:1024px){.grid#productsGrid,#productsGrid.grid{grid-template-columns:repeat(5,1fr) !important;gap:16px !important}}
+@media(min-width:1024px){.grid#offersGrid,#offersGrid.grid{grid-template-columns:repeat(4,1fr) !important;gap:16px !important}}
 /* خاص بصفحة الأقسام - فرض 4 أعمدة في الشاشات الكبيرة */
 .subcategories-grid.grid{grid-template-columns:repeat(2,1fr)}
 @media(min-width:768px){.subcategories-grid.grid{grid-template-columns:repeat(4,1fr) !important}}

@@ -100,7 +100,7 @@ class StorefrontController extends Controller
         $featuredCats = Setting::get('homepage_featured_categories');
         $featuredCats = $featuredCats ? json_decode($featuredCats, true) : [];
 
-        $bestOffersLimit = (int) Setting::get('homepage_best_offers_limit', 5);
+        $bestOffersLimit = (int) Setting::get('homepage_best_offers_limit', 4);
         $latestProductsLimit = (int) Setting::get('homepage_latest_products_limit', 5);
 
         $activeMenus = \App\Models\Menu::active()->get()->groupBy('location')->map(function ($items) {
