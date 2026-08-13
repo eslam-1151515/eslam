@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shop/styles.css?v=202604021">
-  <link rel="stylesheet" href="/shop/themes/bold/style.css?v=1.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <meta name="robots" content="noindex">
   <meta http-equiv="Cache-Control" content="no-store" />
@@ -30,7 +29,7 @@
   <script>document.documentElement.classList.add('ready');</script>
 </head>
 
-<body class="theme-default classic-theme">
+<body>
   <header class="container header">
     <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
       <img id="siteLogo" src="/images/logo.png?v=202604031" alt="Store"
@@ -54,73 +53,29 @@
 
   <!-- Homepage Dynamic Sections Wrapper -->
   <main id="homepageSections">
-    <!-- Large Hero Image Slider Section -->
-    <section id="sec-hero_slider" class="hero-slider container" style="display: none; margin-top: 24px;">
-      <div class="hero-banner-large">
-        <div class="slider-container" style="width: 100%; height: 100%; position: relative;">
-          <div class="slides" style="height: 100%;">
+    <!-- Hero Slider -->
+    <section id="sec-hero_slider" class="hero-slider" style="display: none;">
+      <div class="slider-container">
+        <div class="slides">
+          <div class="slide active">
+            <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
           </div>
+          <div class="slide">
+            <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+          </div>
+        </div>
 
-          <!-- Navigation arrows -->
-          <button class="slider-btn prev" onclick="changeSlide(-1)" aria-label="السابق">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button class="slider-btn next" onclick="changeSlide(1)" aria-label="التالي">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Dynamic Fashion Bento Grid Section (Bold Theme Exclusive Feature) -->
-    <section id="sec-fashion_grid" class="section container fashion-grid-section">
-      <div class="section-head">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="display:inline-block;width:12px;height:32px;background:var(--gradient-primary);border-radius:var(--radius-pill);"></span>
-          <h2>تشكيلات الموضة الجريئة</h2>
-        </div>
-        <span class="hero-tag" style="margin:0;">✨ تصفح المجموعات الحصرية</span>
-      </div>
-      <div class="fashion-grid dynamic-grid">
-        <!-- Bento Item 1: Large Featured 2x2 -->
-        <div class="grid-item grid-item-featured">
-          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="أزياء الصيف الجريئة">
-          <div class="grid-item-content">
-            <span class="hero-tag" style="background:#ff0055;color:#fff;border:none;">جديد 2026</span>
-            <h3 class="grid-item-title">أزياء الصيف الجريئة</h3>
-            <p style="margin-bottom:16px;color:#f1f5f9;font-size:1.05rem;">تصاميم حصرية نابضة بالحياة تعكس أناقتك الفريدة وتمنحك ثقة لا حدود لها في كل خطوة</p>
-            <a href="/shop/products.html?category=summer" class="btn btn-vibrant">تصفح التشكيلة <i class="fa fa-arrow-left"></i></a>
-          </div>
-        </div>
-        <!-- Bento Item 2: Wide 2x1 -->
-        <div class="grid-item grid-item-wide">
-          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80" alt="إطلالات السهرة العصرية">
-          <div class="grid-item-content">
-            <span class="hero-tag" style="background:#7928ca;color:#fff;border:none;">إطلالات حصرية</span>
-            <h3 class="grid-item-title">إطلالات السهرة والمناسبات</h3>
-            <a href="/shop/products.html?category=evening" class="btn btn-outline" style="color:#fff;border-color:#fff;margin-top:8px;">تسوق الآن ←</a>
-          </div>
-        </div>
-        <!-- Bento Item 3: Standard 1x1 -->
-        <div class="grid-item">
-          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80" alt="إكسسوارات فاخرة">
-          <div class="grid-item-content">
-            <h3 class="grid-item-title" style="font-size:1.3rem;">إكسسوارات فاخرة</h3>
-            <a href="/shop/products.html?category=accessories" style="color:#00f0ff;font-weight:700;display:inline-block;margin-top:4px;">اكتشفي المزيد ←</a>
-          </div>
-        </div>
-        <!-- Bento Item 4: Standard 1x1 -->
-        <div class="grid-item">
-          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80" alt="الأحذية العصرية">
-          <div class="grid-item-content">
-            <h3 class="grid-item-title" style="font-size:1.3rem;">الأحذية العصرية</h3>
-            <a href="/shop/products.html?category=shoes" style="color:#ff0055;font-weight:700;display:inline-block;margin-top:4px;">اكتشفي المزيد ←</a>
-          </div>
-        </div>
+        <!-- Navigation arrows -->
+        <button class="slider-btn prev" onclick="changeSlide(-1)">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button class="slider-btn next" onclick="changeSlide(1)">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -240,19 +195,34 @@
     }
 
     function startSlider() {
+      const heroSlider = document.querySelector('.hero-slider');
+      if (heroSlider && (heroSlider.classList.contains('banner-layout-grid') || heroSlider.classList.contains('banner-layout-single-banner'))) {
+        stopAutoSlide();
+        return;
+      }
       showSlide(0);
-      startAutoSlide();
+      stopAutoSlide();
+      slideInterval = setInterval(() => {
+        showSlide(currentSlideIndex + 1);
+      }, 4000);
 
       // Pause auto-slide on hover
       const sliderContainer = document.querySelector('.slider-container');
       if (sliderContainer) {
         sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-        sliderContainer.addEventListener('mouseleave', startAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startSlider);
       }
     }
 
     function showSlide(index) {
       if (!slides || slides.length === 0) return;
+
+      const heroSlider = document.querySelector('.hero-slider');
+      if (heroSlider && (heroSlider.classList.contains('banner-layout-grid') || heroSlider.classList.contains('banner-layout-single-banner'))) {
+        const slidesContainer = document.querySelector('.slides');
+        if (slidesContainer) slidesContainer.style.transform = 'none';
+        return;
+      }
 
       // Ensure index is within bounds
       if (index >= totalSlides) index = 0;
@@ -315,6 +285,7 @@
       }
     }
 
+
     // Also initialize when window is fully loaded (fallback)
     window.addEventListener('load', function () {
       if (!slideInterval) {
@@ -366,25 +337,14 @@
       if (isHeroEnabled) {
         fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
           const slider = document.querySelector('.slides');
-          if (slider) {
-            if (data && data.length) {
-              slider.innerHTML = data.map((b, i) => `
-                <div class="slide ${i === 0 ? 'active' : ''}">
-                  <a href="${b.link ? b.link : '#'}">
-                    <img src="${b.image_url}" alt="${b.title || 'Store'}">
-                  </a>
-                </div>
-              `).join('');
-            } else {
-              slider.innerHTML = `
-                <div class="slide active">
-                  <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
-                </div>
-                <div class="slide">
-                  <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
-                </div>
-              `;
-            }
+          if (slider && data && data.length) {
+            slider.innerHTML = data.map((b, i) => `
+              <div class="slide ${i === 0 ? 'active' : ''}">
+                <a href="${b.link ? b.link : '#'}">
+                  <img src="${b.image_url}" alt="${b.title || 'Store'}">
+                </a>
+              </div>
+            `).join('');
           }
           setTimeout(function () {
             initSlider();
@@ -399,6 +359,7 @@
 
       // Load Featured Categories if enabled
       if (isCategoriesEnabled) {
+        renderSkeletonCategories(document.getElementById('categoriesGrid'), 4);
         fetch(`${window.API_BASE}/categories`).then(r => r.json()).then(({ data }) => {
           let featuredCats = data;
           if (settings.homepage_featured_categories && settings.homepage_featured_categories.length) {
@@ -415,6 +376,8 @@
 
       // Load Products if Best Offers or Latest Products is enabled
       if (isOffersEnabled || isLatestEnabled) {
+        if (isOffersEnabled) renderSkeletonProducts(document.getElementById('offersGrid'), 4);
+        if (isLatestEnabled) renderSkeletonProducts(document.getElementById('productsGrid'), 4);
         fetch(`${window.API_BASE}/products`).then(r => r.json()).then(({ data }) => {
           if (isOffersEnabled) {
             const discountedProducts = data.filter(product => {
@@ -429,7 +392,7 @@
               return discountB - discountA;
             });
 
-            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 4;
+            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 5;
 
             if (discountedProducts.length > 0) {
               renderProducts(document.getElementById('offersGrid'), discountedProducts.slice(0, bestOffersLimit));
@@ -439,7 +402,7 @@
           }
 
           if (isLatestEnabled) {
-            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 4;
+            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 5;
             renderProducts(document.getElementById('productsGrid'), data.slice(0, latestProductsLimit));
           }
         }).catch(() => {

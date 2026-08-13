@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shop/styles.css?v=202604021">
-  <link rel="stylesheet" href="/shop/themes/default/style.css?v=1.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <meta name="robots" content="noindex">
   <meta http-equiv="Cache-Control" content="no-store" />
@@ -30,7 +29,7 @@
   <script>document.documentElement.classList.add('ready');</script>
 </head>
 
-<body class="theme-default classic-theme">
+<body>
   <header class="container header">
     <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
       <img id="siteLogo" src="/images/logo.png?v=202604031" alt="Store"
@@ -58,6 +57,12 @@
     <section id="sec-hero_slider" class="hero-slider" style="display: none;">
       <div class="slider-container">
         <div class="slides">
+          <div class="slide active">
+            <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
+          </div>
+          <div class="slide">
+            <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
+          </div>
         </div>
 
         <!-- Navigation arrows -->
@@ -190,19 +195,34 @@
     }
 
     function startSlider() {
+      const heroSlider = document.querySelector('.hero-slider');
+      if (heroSlider && (heroSlider.classList.contains('banner-layout-grid') || heroSlider.classList.contains('banner-layout-single-banner'))) {
+        stopAutoSlide();
+        return;
+      }
       showSlide(0);
-      startAutoSlide();
+      stopAutoSlide();
+      slideInterval = setInterval(() => {
+        showSlide(currentSlideIndex + 1);
+      }, 4000);
 
       // Pause auto-slide on hover
       const sliderContainer = document.querySelector('.slider-container');
       if (sliderContainer) {
         sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-        sliderContainer.addEventListener('mouseleave', startAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startSlider);
       }
     }
 
     function showSlide(index) {
       if (!slides || slides.length === 0) return;
+
+      const heroSlider = document.querySelector('.hero-slider');
+      if (heroSlider && (heroSlider.classList.contains('banner-layout-grid') || heroSlider.classList.contains('banner-layout-single-banner'))) {
+        const slidesContainer = document.querySelector('.slides');
+        if (slidesContainer) slidesContainer.style.transform = 'none';
+        return;
+      }
 
       // Ensure index is within bounds
       if (index >= totalSlides) index = 0;
@@ -265,6 +285,7 @@
       }
     }
 
+
     // Also initialize when window is fully loaded (fallback)
     window.addEventListener('load', function () {
       if (!slideInterval) {
@@ -316,25 +337,14 @@
       if (isHeroEnabled) {
         fetch(`${window.API_BASE}/banners`).then(r => r.json()).then(({ data }) => {
           const slider = document.querySelector('.slides');
-          if (slider) {
-            if (data && data.length) {
-              slider.innerHTML = data.map((b, i) => `
-                <div class="slide ${i === 0 ? 'active' : ''}">
-                  <a href="${b.link ? b.link : '#'}">
-                    <img src="${b.image_url}" alt="${b.title || 'Store'}">
-                  </a>
-                </div>
-              `).join('');
-            } else {
-              slider.innerHTML = `
-                <div class="slide active">
-                  <img src="/shop/assets/slider/1.jpg?v=202604031" alt="عرض خاص">
-                </div>
-                <div class="slide">
-                  <img src="/shop/assets/slider/2.jpg?v=202604031" alt="منتجات جديدة">
-                </div>
-              `;
-            }
+          if (slider && data && data.length) {
+            slider.innerHTML = data.map((b, i) => `
+              <div class="slide ${i === 0 ? 'active' : ''}">
+                <a href="${b.link ? b.link : '#'}">
+                  <img src="${b.image_url}" alt="${b.title || 'Store'}">
+                </a>
+              </div>
+            `).join('');
           }
           setTimeout(function () {
             initSlider();
@@ -349,6 +359,7 @@
 
       // Load Featured Categories if enabled
       if (isCategoriesEnabled) {
+        renderSkeletonCategories(document.getElementById('categoriesGrid'), 4);
         fetch(`${window.API_BASE}/categories`).then(r => r.json()).then(({ data }) => {
           let featuredCats = data;
           if (settings.homepage_featured_categories && settings.homepage_featured_categories.length) {
@@ -365,6 +376,8 @@
 
       // Load Products if Best Offers or Latest Products is enabled
       if (isOffersEnabled || isLatestEnabled) {
+        if (isOffersEnabled) renderSkeletonProducts(document.getElementById('offersGrid'), 4);
+        if (isLatestEnabled) renderSkeletonProducts(document.getElementById('productsGrid'), 4);
         fetch(`${window.API_BASE}/products`).then(r => r.json()).then(({ data }) => {
           if (isOffersEnabled) {
             const discountedProducts = data.filter(product => {
@@ -379,7 +392,7 @@
               return discountB - discountA;
             });
 
-            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 4;
+            const bestOffersLimit = settings.homepage_best_offers_limit ? parseInt(settings.homepage_best_offers_limit) : 5;
 
             if (discountedProducts.length > 0) {
               renderProducts(document.getElementById('offersGrid'), discountedProducts.slice(0, bestOffersLimit));
@@ -389,7 +402,7 @@
           }
 
           if (isLatestEnabled) {
-            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 4;
+            const latestProductsLimit = settings.homepage_latest_products_limit ? parseInt(settings.homepage_latest_products_limit) : 5;
             renderProducts(document.getElementById('productsGrid'), data.slice(0, latestProductsLimit));
           }
         }).catch(() => {

@@ -43,16 +43,16 @@ export default function ProfileEdit({ user: propUser }) {
 
     const handleProfileSubmit = (e) => {
         e.preventDefault();
-        patchProfile('/admin/profile', {
+        patchProfile('/profile', {
             preserveScroll: true
         });
     };
 
     const handlePasswordSubmit = (e) => {
         e.preventDefault();
-        putPassword('/admin/password', {
+        putPassword('/password', {
             preserveScroll: true,
-            onSuccess: () => resetPassword(),
+            onSuccess: () => resetPassword('current_password', 'password', 'password_confirmation'),
         });
     };
 
