@@ -27,8 +27,39 @@ const InputField = ({ label, name, data, setData, errors, type = 'text', require
     </div>
 );
 
-export default function ProductCreate({ categories }) {
-    const [mainImagePreview, setMainImagePreview] = useState(null);
+export default function ProductCreate({ categories, duplicateFrom, allProducts = [] }) {
+    const getProductImage = (p) => {
+        if (!p) return null;
+        if (p.image_display_url) return p.image_display_url;
+        const img = p.image_url || p.main_image_path;
+        if (!img) return null;
+        if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+
+    const parseJSON = (val) => {
+        if (!val) return [];
+        try {
+            const arr = typeof val === 'string' ? JSON.parse(val) : (Array.isArray(val) ? val : []);
+            return arr.map(t => {
+                if (t && typeof t === 'object' && t.price !== undefined) {
+                    return { ...t, price: t.price ? Math.round(Number(t.price)) : '' };
+                }
+                return t;
+            });
+        } catch (e) {
+            return [];
+        }
+    };
+
+    const initialGalleryPreviews = duplicateFrom?.images
+        ? duplicateFrom.images.map(img => {
+            const p = img.image_path;
+            return (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('/')) ? p : `/storage/${p}`;
+        })
+        : [];
+
+    const [mainImagePreview, setMainImagePreview] = useState(getProductImage(duplicateFrom));
     const mainImageRef = useRef(null);
     const galleryInputRef = useRef(null);
     
@@ -37,27 +68,31 @@ export default function ProductCreate({ categories }) {
     const [customVariantInputs, setCustomVariantInputs] = useState({});
 
     // Extra Features States
-    const [priceTiers, setPriceTiers] = useState([]);
-    const [variantsStock, setVariantsStock] = useState([]);
-    const [galleryPreviews, setGalleryPreviews] = useState([]);
+    const [priceTiers, setPriceTiers] = useState(parseJSON(duplicateFrom?.price_tiers));
+    const [variantsStock, setVariantsStock] = useState(parseJSON(duplicateFrom?.variants_stock));
+    const [galleryPreviews, setGalleryPreviews] = useState(initialGalleryPreviews);
     const [showVariantsStockSection, setShowVariantsStockSection] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        description: '',
-        price_before: '',
-        price_after: '',
-        stock: '100',
-        low_stock_threshold: '5',
-        category_id: '',
-        shipping_type: 'free',
+        name: duplicateFrom ? (duplicateFrom.name + ' (نسخة)') : '',
+        description: duplicateFrom ? (duplicateFrom.description || '') : '',
+        price_before: duplicateFrom?.price_before ? Math.round(Number(duplicateFrom.price_before)) : '',
+        price_after: duplicateFrom?.price_after ? Math.round(Number(duplicateFrom.price_after)) : '',
+        stock: duplicateFrom?.stock !== undefined ? duplicateFrom.stock : '100',
+        low_stock_threshold: duplicateFrom?.low_stock_threshold !== undefined ? duplicateFrom.low_stock_threshold : '5',
+        category_id: duplicateFrom?.category_id || '',
+        shipping_type: duplicateFrom?.shipping_type || 'free',
         main_image: null,
+        existing_main_image: duplicateFrom ? (duplicateFrom.main_image_path || duplicateFrom.image_url) : null,
         gallery: [],
-        sizes: [],
-        colors: [],
-        custom_variants: [],
-        price_tiers_json: '[]',
-        variants_stock: '',
+        existing_gallery: duplicateFrom?.images ? duplicateFrom.images.map(img => img.image_path) : [],
+        sizes: parseJSON(duplicateFrom?.sizes),
+        colors: parseJSON(duplicateFrom?.colors),
+        custom_variants: parseJSON(duplicateFrom?.custom_variants),
+        price_tiers_json: duplicateFrom?.price_tiers ? (typeof duplicateFrom.price_tiers === 'string' ? duplicateFrom.price_tiers : JSON.stringify(duplicateFrom.price_tiers)) : '[]',
+        variants_stock: duplicateFrom?.variants_stock ? (typeof duplicateFrom.variants_stock === 'string' ? duplicateFrom.variants_stock : JSON.stringify(duplicateFrom.variants_stock)) : '',
+        upsell_ids: (duplicateFrom?.upsells || []).map(p => p.id),
+        cross_sell_ids: (duplicateFrom?.cross_sells || duplicateFrom?.crossSells || []).map(p => p.id),
     });
 
     const addCustomVariant = () => {
@@ -323,8 +358,23 @@ export default function ProductCreate({ categories }) {
                     <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                     </svg>
-                    <span className="text-gray-800 font-medium">إضافة منتج جديد</span>
+                    <span className="text-gray-800 font-medium">{duplicateFrom ? `استنساخ: ${duplicateFrom.name}` : 'إضافة منتج جديد'}</span>
                 </nav>
+
+                {duplicateFrom && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-center justify-between shadow-sm animate-fade-in">
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl">📋</span>
+                            <div>
+                                <h4 className="font-bold text-amber-900 text-sm">جاري استنساخ المنتج "{duplicateFrom.name}"</h4>
+                                <p className="text-xs text-amber-700 mt-0.5">تم نسْخ كافة بيانات المنتج والأسعار والتصنيفات والخيارات والصور، يمكنك التعديل عليها وحفظ المنتج كنسخة جديدة.</p>
+                            </div>
+                        </div>
+                        <Link href="/admin/products/create" className="text-xs font-semibold text-amber-800 hover:text-amber-950 bg-white px-3 py-1.5 rounded-lg border border-amber-300 shadow-xs transition-colors shrink-0">
+                            إلغاء الاستنساخ ✕
+                        </Link>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
                     {/* Basic Info */}

@@ -52,12 +52,26 @@ class ProductController extends Controller
     /**
      * صفحة إنشاء منتج جديد
      */
-    public function create()
+    public function create(\Illuminate\Http\Request $request)
     {
         $categories = Category::orderBy('name')->get(['id', 'name', 'name_ar']);
 
+        $duplicateFrom = null;
+        if ($request->filled('duplicate_from')) {
+            $sourceProduct = Product::with(['images', 'upsells', 'crossSells'])
+                ->find($request->query('duplicate_from'));
+
+            if ($sourceProduct) {
+                $duplicateFrom = $sourceProduct;
+            }
+        }
+
+        $allProducts = Product::orderBy('name')->get(['id', 'name', 'price_after', 'main_image_path']);
+
         return Inertia::render('Merchant/Products/Create', [
-            'categories' => $categories,
+            'categories'    => $categories,
+            'duplicateFrom' => $duplicateFrom,
+            'allProducts'   => $allProducts,
         ]);
     }
 
@@ -113,6 +127,8 @@ class ProductController extends Controller
         if ($request->hasFile('main_image')) {
             $path = \App\Services\ImageCompressionService::compressAndStore($request->file('main_image'), 'products', 'public');
             $data['main_image_path'] = $path;
+        } elseif ($request->filled('existing_main_image')) {
+            $data['main_image_path'] = $request->input('existing_main_image');
         }
 
         // tenant_id يُعبأ تلقائياً عبر BelongsToTenant trait
@@ -137,6 +153,35 @@ class ProductController extends Controller
                         'image_path' => $gpath,
                     ]);
                 }
+            }
+        } elseif ($request->has('existing_gallery') && is_array($request->existing_gallery)) {
+            foreach ($request->existing_gallery as $gpath) {
+                if ($gpath) {
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $gpath,
+                    ]);
+                }
+            }
+        }
+
+        if ($request->has('upsell_ids') && is_array($request->upsell_ids)) {
+            foreach ($request->upsell_ids as $targetId) {
+                ProductRecommendation::create([
+                    'product_id'             => $product->id,
+                    'recommended_product_id' => $targetId,
+                    'type'                   => 'upsell',
+                ]);
+            }
+        }
+
+        if ($request->has('cross_sell_ids') && is_array($request->cross_sell_ids)) {
+            foreach ($request->cross_sell_ids as $targetId) {
+                ProductRecommendation::create([
+                    'product_id'             => $product->id,
+                    'recommended_product_id' => $targetId,
+                    'type'                   => 'cross_sell',
+                ]);
             }
         }
 
