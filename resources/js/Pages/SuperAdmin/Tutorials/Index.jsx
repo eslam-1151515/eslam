@@ -52,14 +52,14 @@ export default function TutorialsIndex({ tutorials, categories }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (editingTutorial) {
-            put(`/super-admin/tutorials/${editingTutorial.id}`, {
+            put(`/tutorials/${editingTutorial.id}`, {
                 onSuccess: () => {
                     setShowModal(false);
                     reset();
                 },
             });
         } else {
-            post('/super-admin/tutorials', {
+            post('/tutorials', {
                 onSuccess: () => {
                     setShowModal(false);
                     reset();
@@ -69,12 +69,12 @@ export default function TutorialsIndex({ tutorials, categories }) {
     };
 
     const handleToggle = (tutorial) => {
-        router.patch(`/super-admin/tutorials/${tutorial.id}/toggle`, {}, { preserveScroll: true });
+        router.patch(`/tutorials/${tutorial.id}/toggle`, {}, { preserveScroll: true });
     };
 
     const handleDelete = (tutorial) => {
         if (confirm(`هل أنت متأكد من حذف الشرح "${tutorial.title}"؟`)) {
-            router.delete(`/super-admin/tutorials/${tutorial.id}`, { preserveScroll: true });
+            router.delete(`/tutorials/${tutorial.id}`, { preserveScroll: true });
         }
     };
 

@@ -48,14 +48,14 @@ export default function SupportContactsIndex({ contacts }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (editingContact) {
-            put(`/super-admin/support-contacts/${editingContact.id}`, {
+            put(`/support-contacts/${editingContact.id}`, {
                 onSuccess: () => {
                     setShowModal(false);
                     reset();
                 },
             });
         } else {
-            post('/super-admin/support-contacts', {
+            post('/support-contacts', {
                 onSuccess: () => {
                     setShowModal(false);
                     reset();
@@ -65,12 +65,12 @@ export default function SupportContactsIndex({ contacts }) {
     };
 
     const handleToggle = (contact) => {
-        router.patch(`/super-admin/support-contacts/${contact.id}/toggle`, {}, { preserveScroll: true });
+        router.patch(`/support-contacts/${contact.id}/toggle`, {}, { preserveScroll: true });
     };
 
     const handleDelete = (contact) => {
         if (confirm(`هل أنت متأكد من حذف رقم الدعم "${contact.title}"؟`)) {
-            router.delete(`/super-admin/support-contacts/${contact.id}`, { preserveScroll: true });
+            router.delete(`/support-contacts/${contact.id}`, { preserveScroll: true });
         }
     };
 
