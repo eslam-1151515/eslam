@@ -335,8 +335,8 @@ html,body{margin:0;padding:0;font-family:var(--font-family);background:#f3f4f6;c
 .icon-location{background:#ef4444}
 .icon-btn:hover{filter:brightness(.95)}
 
-/* Floating WhatsApp */
-.wapp-float{position:fixed;inset-inline-end:16px;bottom:80px;width:52px;height:52px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid #16a34a;box-shadow:0 6px 20px rgba(34,197,94,.35);z-index:50;font-size:20px}
+/* Floating WhatsApp (Hidden) */
+.wapp-float{display:none !important;position:fixed;inset-inline-end:16px;bottom:80px;width:52px;height:52px;border-radius:50%;background:#22c55e;color:#fff;align-items:center;justify-content:center;text-decoration:none;border:1px solid #16a34a;box-shadow:0 6px 20px rgba(34,197,94,.35);z-index:50;font-size:20px}
 .wapp-float:hover{filter:brightness(.95)}
 /* Map embed */
 .map-embed{width:100%;height:360px;border:0;border-top:1px solid #e5e7eb}
