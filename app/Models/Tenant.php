@@ -58,11 +58,26 @@ class Tenant extends Model
             // 2. Auto-seed Default Main Category ("ملابس") in settings
             Setting::set('main_categories', json_encode(['ملابس'], JSON_UNESCAPED_UNICODE), 'general', $tenant->id);
 
-            // 3. Auto-seed Default Subcategories under "ملابس"
+            // 3. Auto-seed Default Subcategories under "ملابس" with high-quality square images
             $defaultCategories = [
-                ['name_ar' => 'ملابس حريمي', 'name' => 'ملابس حريمي', 'main_category' => 'ملابس'],
-                ['name_ar' => 'ملابس رجالي', 'name' => 'ملابس رجالي', 'main_category' => 'ملابس'],
-                ['name_ar' => 'ملابس اطفالي', 'name' => 'ملابس اطفالي', 'main_category' => 'ملابس'],
+                [
+                    'name_ar' => 'ملابس حريمي',
+                    'name' => 'ملابس حريمي',
+                    'main_category' => 'ملابس',
+                    'image_path' => '/images/default_categories/womens_clothing.jpg',
+                ],
+                [
+                    'name_ar' => 'ملابس رجالي',
+                    'name' => 'ملابس رجالي',
+                    'main_category' => 'ملابس',
+                    'image_path' => '/images/default_categories/mens_clothing.jpg',
+                ],
+                [
+                    'name_ar' => 'ملابس اطفالي',
+                    'name' => 'ملابس اطفالي',
+                    'main_category' => 'ملابس',
+                    'image_path' => '/images/default_categories/kids_clothing.jpg',
+                ],
             ];
 
             foreach ($defaultCategories as $catData) {
