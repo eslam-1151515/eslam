@@ -820,38 +820,38 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                 </button>
 
                                 {showVariantsStockSection && (
-                                    <div className="mt-4 border rounded-xl overflow-hidden border-gray-200 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="mt-4 border rounded-xl overflow-hidden border-gray-200 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200 overflow-x-auto">
                                         <table className="min-w-full divide-y divide-gray-200 bg-white">
                                             <thead className="bg-gray-50">
                                                 <tr>
-                                                    {activeSizes.length > 0 && <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">المقاس</th>}
-                                                    {activeColors.length > 0 && <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">اللون</th>}
+                                                    {activeSizes.length > 0 && <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">المقاس</th>}
+                                                    {activeColors.length > 0 && <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">اللون</th>}
                                                     {activeCustomVariants.map((cv, i) => (
-                                                        <th key={i} className="px-4 py-3 text-right text-xs font-bold text-gray-500">{cv.name}</th>
+                                                        <th key={i} className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">{cv.name}</th>
                                                     ))}
-                                                    <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
-                                                    <th className="px-4 py-3 text-right text-xs font-bold text-gray-500">الكمية المتاحة</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">الكمية المتاحة</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-200">
                                                 {combinations.map((combo, idx) => (
                                                     <tr key={idx} className="hover:bg-gray-50/50">
-                                                        {activeSizes.length > 0 && <td className="px-4 py-3 text-sm font-semibold text-gray-900">{combo.size}</td>}
+                                                        {activeSizes.length > 0 && <td className="px-1.5 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-gray-900">{combo.size}</td>}
                                                         {activeColors.length > 0 && (
-                                                            <td className="px-4 py-3 text-sm text-gray-500">
-                                                                <span className="px-2.5 py-1 bg-gray-100 rounded-lg text-gray-700 text-xs border border-gray-200">
+                                                            <td className="px-1.5 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500">
+                                                                <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-gray-100 rounded-lg text-gray-700 text-xs border border-gray-200 inline-block">
                                                                     {combo.color}
                                                                 </span>
                                                             </td>
                                                         )}
                                                         {activeCustomVariants.map((cv, i) => (
-                                                            <td key={i} className="px-4 py-3 text-sm text-gray-700 font-medium">
-                                                                <span className="px-2.5 py-1 bg-orange-50 text-orange-800 rounded-lg text-xs border border-orange-200">
+                                                            <td key={i} className="px-1.5 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 font-medium">
+                                                                <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-orange-50 text-orange-800 rounded-lg text-xs border border-orange-200 inline-block">
                                                                     {combo.options ? combo.options[cv.name] : '-'}
                                                                 </span>
                                                             </td>
                                                         ))}
-                                                        <td className="px-4 py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
                                                             <input
                                                                 type="number"
                                                                 step="0.01"
@@ -859,17 +859,17 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                                 placeholder={data.price_after ? `مثال: ${data.price_after}` : 'السعر الأصلي'}
                                                                 value={getVariantPriceValue(combo)}
                                                                 onChange={(e) => handleVariantPriceChange(combo, e.target.value)}
-                                                                className="w-full max-w-[130px] px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white"
+                                                                className="w-full min-w-[70px] sm:max-w-[130px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
                                                             />
                                                         </td>
-                                                        <td className="px-4 py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
                                                             <input
                                                                 type="number"
                                                                 min="0"
                                                                 placeholder="غير محدود"
                                                                 value={getVariantStockValue(combo)}
                                                                 onChange={(e) => handleVariantStockChange(combo, e.target.value)}
-                                                                className="w-full max-w-[110px] px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white"
+                                                                className="w-full min-w-[65px] sm:max-w-[110px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
                                                             />
                                                         </td>
                                                     </tr>
