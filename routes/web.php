@@ -92,6 +92,7 @@ Route::domain('app.' . $baseDomain)->group(function () {
         Route::post('/subscriptions/receipts', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'storeReceipt'])->name('superadmin.subscriptions.receipts.store');
         Route::post('/subscriptions/receipts/{receipt}/approve', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'approveReceipt'])->name('superadmin.subscriptions.receipts.approve');
         Route::post('/subscriptions/receipts/{receipt}/reject', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'rejectReceipt'])->name('superadmin.subscriptions.receipts.reject');
+        Route::delete('/subscriptions/receipts/{receipt}', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'destroyReceipt'])->name('superadmin.subscriptions.receipts.destroy');
         Route::post('/subscriptions/payment-settings', [App\Http\Controllers\SuperAdmin\SubscriptionController::class, 'updatePaymentSettings'])->name('superadmin.subscriptions.update-payment-settings');
 
         // Backup & Data Export Management

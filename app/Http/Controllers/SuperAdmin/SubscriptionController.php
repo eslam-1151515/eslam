@@ -252,4 +252,18 @@ class SubscriptionController extends Controller
 
         return redirect()->back()->with('success', 'تم رفض إيصال الدفع.');
     }
+
+    /**
+     * Delete a subscription receipt.
+     */
+    public function destroyReceipt(SubscriptionReceipt $receipt): RedirectResponse
+    {
+        $receipt->delete();
+
+        if ($receipt->tenant_id) {
+            \App\Services\CacheService::invalidateDashboardStats($receipt->tenant_id);
+        }
+
+        return redirect()->back()->with('success', 'تم حذف إيصال الدفع بنجاح.');
+    }
 }

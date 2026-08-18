@@ -72,6 +72,16 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
         }
     };
 
+    const handleDeleteReceipt = (receipt) => {
+        if (confirm('هل أنت متأكد من حذف هذا الإيصال نهائياً؟')) {
+            setProcessing(true);
+            router.delete(route('superadmin.subscriptions.receipts.destroy', receipt.id), {
+                preserveScroll: true,
+                onFinish: () => setProcessing(false),
+            });
+        }
+    };
+
     const openRejectModal = (receipt) => {
         setSelectedReceipt(receipt);
         setRejectionReason('');
@@ -467,9 +477,24 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                         >
                                                             رفض
                                                         </button>
+                                                        <button
+                                                            onClick={() => handleDeleteReceipt(receipt)}
+                                                            disabled={processing}
+                                                            className="px-2.5 py-1.5 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 rounded-md text-xs font-bold transition-colors"
+                                                            title="حذف الإيصال"
+                                                        >
+                                                            🗑️
+                                                        </button>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-xs text-gray-400 font-semibold">-</span>
+                                                    <button
+                                                        onClick={() => handleDeleteReceipt(receipt)}
+                                                        disabled={processing}
+                                                        className="px-2.5 py-1 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-md text-xs font-bold transition-colors"
+                                                        title="حذف الإيصال"
+                                                    >
+                                                        🗑️ حذف
+                                                    </button>
                                                 )}
                                             </td>
                                         </tr>
