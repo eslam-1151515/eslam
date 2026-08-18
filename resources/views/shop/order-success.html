@@ -292,6 +292,11 @@
                 const orderData = JSON.parse(sessionStorage.getItem('orderSuccess') || '{}');
                 const totalValue = orderData.total || 0;
                 const items = orderData.items || [];
+
+                const fbPixelId = (window.__SITE_SETTINGS__ && window.__SITE_SETTINGS__.facebook_pixel_id) || '';
+                if (fbPixelId && typeof fbq !== 'undefined') {
+                    try { fbq('init', fbPixelId); } catch(e) {}
+                }
                 
                 if (typeof window.trackPurchaseEvent === 'function') {
                     window.trackPurchaseEvent(totalValue, items, referenceNumber);
