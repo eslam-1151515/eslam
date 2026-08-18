@@ -755,7 +755,7 @@ export default function ProductCreate({ categories, duplicateFrom, allProducts =
                                                     <label className="block text-xs font-bold text-gray-700 mb-1">اسم المتغير (مثل: عروض / الموديل):</label>
                                                     <input
                                                         type="text"
-                                                        placeholder="أدخل اسم المتغير (مثل: عروض)"
+                                                        placeholder="عروض، الموديل، الوزن، النوع..."
                                                         value={variant.name}
                                                         onChange={(e) => updateCustomVariantName(vIdx, e.target.value)}
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 font-semibold"
@@ -764,9 +764,12 @@ export default function ProductCreate({ categories, duplicateFrom, allProducts =
                                                 <button
                                                     type="button"
                                                     onClick={() => removeCustomVariant(vIdx)}
-                                                    className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 text-xs font-bold self-end"
+                                                    className="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition-colors self-end mb-0.5 flex-shrink-0"
+                                                    title="حذف المتغير"
                                                 >
-                                                    حذف المتغير ✕
+                                                    <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
                                                 </button>
                                             </div>
 
@@ -840,8 +843,8 @@ export default function ProductCreate({ categories, duplicateFrom, allProducts =
                                                     {activeCustomVariants.map((cv, i) => (
                                                         <th key={i} className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">{cv.name}</th>
                                                     ))}
-                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
-                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">الكمية المتاحة</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-center text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-center text-xs font-bold text-gray-500">الكمية المتاحة</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-200">
@@ -862,7 +865,7 @@ export default function ProductCreate({ categories, duplicateFrom, allProducts =
                                                                 </span>
                                                             </td>
                                                         ))}
-                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3 text-center">
                                                             <input
                                                                 type="number"
                                                                 step="0.01"
@@ -870,17 +873,17 @@ export default function ProductCreate({ categories, duplicateFrom, allProducts =
                                                                 placeholder={data.price_after ? `مثال: ${data.price_after}` : 'السعر الأصلي'}
                                                                 value={getVariantPriceValue(combo)}
                                                                 onChange={(e) => handleVariantPriceChange(combo, e.target.value)}
-                                                                className="w-full min-w-[70px] sm:max-w-[130px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
+                                                                className="w-full min-w-[70px] sm:max-w-[130px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center"
                                                             />
                                                         </td>
-                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3 text-center">
                                                             <input
                                                                 type="number"
                                                                 min="0"
                                                                 placeholder="غير محدود"
                                                                 value={getVariantStockValue(combo)}
                                                                 onChange={(e) => handleVariantStockChange(combo, e.target.value)}
-                                                                className="w-full min-w-[65px] sm:max-w-[110px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
+                                                                className="w-full min-w-[65px] sm:max-w-[110px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center"
                                                             />
                                                         </td>
                                                     </tr>

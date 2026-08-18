@@ -356,14 +356,29 @@ export default function Edit({ product, categories, allProducts = [] }) {
             <Head title={`تعديل ${product.name}`} />
 
             <div className="max-w-3xl mx-auto mb-10">
-                {/* Breadcrumb */}
-                <nav className="flex items-center gap-2 text-sm text-gray-500 mb-5">
-                    <Link href="/admin/products" className="hover:text-orange-600 transition-colors">المنتجات</Link>
-                    <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                    <span className="text-gray-800 font-medium">تعديل المنتج</span>
-                </nav>
+                {/* Breadcrumb & View Product Button */}
+                <div className="flex items-center justify-between gap-3 mb-5">
+                    <nav className="flex items-center gap-2 text-sm text-gray-500">
+                        <Link href="/admin/products" className="hover:text-orange-600 transition-colors">المنتجات</Link>
+                        <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                        <span className="text-gray-800 font-medium">تعديل المنتج</span>
+                    </nav>
+
+                    <a
+                        href={`/shop/product.html?id=${product.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-colors"
+                    >
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        مشاهدة المنتج
+                    </a>
+                </div>
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
                     {/* Basic Info */}
@@ -744,7 +759,7 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                     <label className="block text-xs font-bold text-gray-700 mb-1">اسم المتغير (مثل: عروض / الموديل):</label>
                                                     <input
                                                         type="text"
-                                                        placeholder="أدخل اسم المتغير (مثل: عروض)"
+                                                        placeholder="عروض، الموديل، الوزن، النوع..."
                                                         value={variant.name}
                                                         onChange={(e) => updateCustomVariantName(vIdx, e.target.value)}
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 font-semibold"
@@ -753,9 +768,12 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeCustomVariant(vIdx)}
-                                                    className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 text-xs font-bold self-end"
+                                                    className="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition-colors self-end mb-0.5 flex-shrink-0"
+                                                    title="حذف المتغير"
                                                 >
-                                                    حذف المتغير ✕
+                                                    <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
                                                 </button>
                                             </div>
 
@@ -829,8 +847,8 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                     {activeCustomVariants.map((cv, i) => (
                                                         <th key={i} className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">{cv.name}</th>
                                                     ))}
-                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
-                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-right text-xs font-bold text-gray-500">الكمية المتاحة</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-center text-xs font-bold text-gray-500">السعر المخصص (ج.م)</th>
+                                                    <th className="px-1.5 sm:px-4 py-2 sm:py-3 text-center text-xs font-bold text-gray-500">الكمية المتاحة</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-200">
@@ -851,7 +869,7 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                                 </span>
                                                             </td>
                                                         ))}
-                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3 text-center">
                                                             <input
                                                                 type="number"
                                                                 step="0.01"
@@ -859,17 +877,17 @@ export default function Edit({ product, categories, allProducts = [] }) {
                                                                 placeholder={data.price_after ? `مثال: ${data.price_after}` : 'السعر الأصلي'}
                                                                 value={getVariantPriceValue(combo)}
                                                                 onChange={(e) => handleVariantPriceChange(combo, e.target.value)}
-                                                                className="w-full min-w-[70px] sm:max-w-[130px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
+                                                                className="w-full min-w-[70px] sm:max-w-[130px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center"
                                                             />
                                                         </td>
-                                                        <td className="px-1 sm:px-4 py-2 sm:py-3">
+                                                        <td className="px-1 sm:px-4 py-2 sm:py-3 text-center">
                                                             <input
                                                                 type="number"
                                                                 min="0"
                                                                 placeholder="غير محدود"
                                                                 value={getVariantStockValue(combo)}
                                                                 onChange={(e) => handleVariantStockChange(combo, e.target.value)}
-                                                                className="w-full min-w-[65px] sm:max-w-[110px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center sm:text-right"
+                                                                className="w-full min-w-[65px] sm:max-w-[110px] px-1.5 py-1 sm:px-2.5 sm:py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-1 focus:ring-purple-400 focus:border-transparent bg-white text-center"
                                                             />
                                                         </td>
                                                     </tr>
