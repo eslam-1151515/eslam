@@ -430,6 +430,10 @@ Route::prefix('admin')->group(function () {
 
         // Public JSON endpoints for static frontend
         Route::get('/public-api/categories', function () {
+            if (!config('tenant.id') && !app()->bound(\App\Models\Tenant::class)) {
+                return response()->json(['data' => []])->header('Access-Control-Allow-Origin', '*');
+            }
+
             $formatImg = function($path) {
                 if (!$path) return null;
                 if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
@@ -460,6 +464,9 @@ Route::prefix('admin')->group(function () {
         });
 
         Route::get('/public-api/products', function () {
+            if (!config('tenant.id') && !app()->bound(\App\Models\Tenant::class)) {
+                return response()->json(['data' => []])->header('Access-Control-Allow-Origin', '*');
+            }
             $formatImg = function($path) {
                 if (!$path) return null;
                 if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {

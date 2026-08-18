@@ -42,12 +42,36 @@ class TenantMiddleware
             // Forget the tenant parameter so it is not passed to the controller methods
             $request->route()->forgetParameter('tenant');
         } else {
-            // Check if subdomain tenant is bound
-            $subdomain = explode('.', $request->getHost())[0] ?? null;
-            if ($subdomain && !in_array(strtolower($subdomain), ['app', 'www', 'admin'])) {
-                $tenant = Tenant::where('slug', $subdomain)->first();
+            $host = $request->getHost();
+            $appUrl = config('app.url');
+            $baseHost = parse_url($appUrl, PHP_URL_HOST);
+
+            $subdomain = null;
+            if ($baseHost && str_ends_with($host, '.' . $baseHost)) {
+                $subdomain = substr($host, 0, -strlen('.' . $baseHost));
+            } else {
+                $parts = explode('.', $host);
+                if (count($parts) > 1 && !filter_var($host, FILTER_VALIDATE_IP)) {
+                    $subdomain = $parts[0];
+                }
             }
 
+            $isSubdomain = $subdomain && !in_array(strtolower($subdomain), ['app', 'www', 'admin']);
+            $isCustomDomain = !$isSubdomain && $baseHost && $host !== $baseHost && !in_array(strtolower($host), ['localhost', '127.0.0.1']);
+
+            $tenant = null;
+            if ($isSubdomain) {
+                $tenant = Tenant::where('slug', $subdomain)->first();
+            } elseif ($isCustomDomain) {
+                $tenant = Tenant::where('custom_domain', $host)->first();
+            }
+
+            // If accessing a store subdomain or custom domain, but the tenant does NOT exist in DB (deleted/non-existent)
+            if (!$tenant && ($isSubdomain || $isCustomDomain)) {
+                abort(404, 'المتجر غير موجود أو تم إغلاقه');
+            }
+
+            // Fallbacks for main domain app.domain.com dashboard access
             if (!$tenant && auth()->check() && !auth()->user()->isSuperAdmin()) {
                 $user = auth()->user();
                 $tenant = $user->ownedTenants()->first() ?? $user->currentTenant;
@@ -59,10 +83,6 @@ class TenantMiddleware
 
             if (!$tenant && app()->bound(Tenant::class)) {
                 $tenant = app(Tenant::class);
-            }
-
-            if (!$tenant) {
-                $tenant = Tenant::where('custom_domain', $request->getHost())->first();
             }
 
             if ($tenant) {
