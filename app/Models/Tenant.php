@@ -158,4 +158,16 @@ class Tenant extends Model
     {
         return $this->hasMany(LandingPage::class);
     }
+
+    /**
+     * Check if tenant is currently on Commission Plan
+     */
+    public function isCommissionPlan(): bool
+    {
+        $activeSub = $this->subscriptions()->where('status', 'active')->latest()->first();
+        if ($activeSub && $activeSub->plan) {
+            return $activeSub->plan->slug === 'commission' || str_contains(mb_strtolower($activeSub->plan->name ?? ''), 'عمولة');
+        }
+        return false;
+    }
 }
