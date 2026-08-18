@@ -57,40 +57,56 @@ export default function OrderShow({ order }) {
         const cleanPhone = getCleanWhatsAppPhone(orderData.customer_phone);
         
         const itemsList = (orderData.items || []).map((item, idx) => {
+            const unitPrice = Math.round(Number(item.price));
+            const itemTotal = Math.round(Number(item.total));
+            const mainLine = `${idx + 1}. ${item.name} (${item.quantity}x ${unitPrice}) = ${itemTotal}`;
+
             let variantDetails = [];
-            if (item.selectedSize) variantDetails.push(`مقاس: ${item.selectedSize}`);
-            if (item.selectedColor) variantDetails.push(`لون: ${item.selectedColor}`);
+            if (item.selectedColor) variantDetails.push(`اللون: ${item.selectedColor}`);
+            if (item.selectedSize) variantDetails.push(`المقاس: ${item.selectedSize}`);
             if (item.options && typeof item.options === 'object') {
                 Object.entries(item.options).forEach(([k, v]) => {
                     if (v) variantDetails.push(`${k}: ${v}`);
                 });
             }
-            const varStr = variantDetails.length > 0 ? ` (${variantDetails.join(' - ')})` : '';
-            const unitPrice = Math.round(Number(item.price));
-            const itemTotal = Math.round(Number(item.total));
-            return `${idx + 1}. ${item.name}${varStr} (${item.quantity}x ${unitPrice}) = ${itemTotal}`;
+
+            if (variantDetails.length > 0) {
+                return `${mainLine}\n${variantDetails.join(', ')}`;
+            }
+            return mainLine;
         }).join('\n');
 
         const subtotal = Math.round(Number(orderData.subtotal));
-        const shipping = Math.round(Number(orderData.shipping_cost));
+        const shipping = Math.round(Number(orderData.shipping_cost || 0));
         const total = Math.round(Number(orderData.total));
         const refNum = orderData.reference_number ? `#${orderData.reference_number}` : `#${orderData.id}`;
 
+        let totalsBlock = `مجموع سعر المنتجات: ${subtotal}`;
+        if (shipping > 0) {
+            totalsBlock += `\nرسوم التوصيل: ${shipping}`;
+        }
+        totalsBlock += `\nالاجمالي: ${total} ج.م`;
+
+        let shippingLines = [];
+        if (orderData.governorate) {
+            shippingLines.push(`المحافظة: ${orderData.governorate}`);
+        }
+        if (orderData.customer_address) {
+            shippingLines.push(`العنوان: ${orderData.customer_address}`);
+        }
+        let shippingBlock = '';
+        if (shippingLines.length > 0) {
+            shippingBlock = `\n\nبيانات الشحن:\n\n${shippingLines.join('\n')}`;
+        }
+
         const text = `مرحبا: ${orderData.customer_name || ''}
 
-*ملخص الطلب:*
+ملخص الطلب:
 
-*معرف الطلب: ${refNum}*
-*عناصر السلة:*
+معرف الطلب: ${refNum}
+عناصر السلة:
 ${itemsList}
-مجموع سعر المنتجات: ${subtotal}
-رسوم التوصيل: ${shipping}
-*الاجمالي: ${total} ج.م*
-
-*بيانات الشحن:*
-
-المحافظة: ${orderData.governorate || ''}
-العنوان: ${orderData.customer_address || ''}`;
+${totalsBlock}${shippingBlock}`;
 
         const encodedText = encodeURIComponent(text);
         return `https://api.whatsapp.com/send/?phone=%2B${cleanPhone}&text=${encodedText}`;
