@@ -17,12 +17,12 @@ const ToggleSwitch = ({ checked, onChange }) => (
 /* ===== Modal wrapper (Moved Outside) ===== */
 const Modal = ({ title, onClose, children }) => (
     <div
-        className="fixed inset-0 bg-black/50 overflow-y-auto h-full w-full z-50"
+        className="fixed inset-0 bg-black/50 overflow-y-auto h-full w-full z-50 p-4 flex items-center justify-center"
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-        <div className="relative top-20 mx-auto border-0 shadow-2xl rounded-2xl bg-white max-w-sm animate-in fade-in zoom-in-95 duration-200">
-            {/* Gradient header — like backup */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+        <div className="relative mx-auto border-0 shadow-2xl rounded-2xl bg-white w-full max-w-sm animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+            {/* Gradient header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 flex items-center justify-between">
                 <h3 className="text-base font-bold">{title}</h3>
                 <button
                     onClick={onClose}
@@ -173,9 +173,9 @@ export default function ShippingIndex({ governorates }) {
 
                     <button
                         onClick={openAddModal}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition-colors w-fit self-start sm:self-auto"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                         </svg>
                         إضافة محافظة
