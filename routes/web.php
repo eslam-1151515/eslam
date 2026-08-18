@@ -430,12 +430,20 @@ Route::prefix('admin')->group(function () {
 
         // Public JSON endpoints for static frontend
         Route::get('/public-api/categories', function () {
+            $formatImg = function($path) {
+                if (!$path) return null;
+                if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+                    return url($path);
+                }
+                return asset('storage/' . ltrim($path, '/'));
+            };
+
             $locale = app()->getLocale();
             $items = Category::query()
                 ->select(['id', 'name', 'name_ar', 'name_en', 'description', 'image_path', 'parent_id', 'main_category'])
                 ->orderByDesc('id')
                 ->get()
-                ->map(function ($c) use ($locale) {
+                ->map(function ($c) use ($locale, $formatImg) {
                     $name = $locale === 'en' 
                         ? ($c->name_en ?: ($c->name ?: $c->name_ar))
                         : ($c->name_ar ?: ($c->name ?: $c->name_en));
@@ -443,7 +451,7 @@ Route::prefix('admin')->group(function () {
                         'id' => $c->id,
                         'name' => $name,
                         'description' => $c->description,
-                        'image_url' => $c->image_path ? asset('storage/' . $c->image_path) : null,
+                        'image_url' => $formatImg($c->image_path),
                         'parent_id' => $c->parent_id,
                         'main_category' => $c->main_category,
                     ];
