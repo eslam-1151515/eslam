@@ -54,6 +54,20 @@ class Tenant extends Model
             foreach ($governorates as $gov) {
                 $tenant->shippingGovernorates()->create($gov);
             }
+
+            // 2. Auto-seed Default Main Category ("ملابس") in settings
+            Setting::set('main_categories', json_encode(['ملابس'], JSON_UNESCAPED_UNICODE), 'general', $tenant->id);
+
+            // 3. Auto-seed Default Subcategories under "ملابس"
+            $defaultCategories = [
+                ['name_ar' => 'ملابس حريمي', 'name' => 'ملابس حريمي', 'main_category' => 'ملابس'],
+                ['name_ar' => 'ملابس رجالي', 'name' => 'ملابس رجالي', 'main_category' => 'ملابس'],
+                ['name_ar' => 'ملابس اطفالي', 'name' => 'ملابس اطفالي', 'main_category' => 'ملابس'],
+            ];
+
+            foreach ($defaultCategories as $catData) {
+                Category::create(array_merge($catData, ['tenant_id' => $tenant->id]));
+            }
         });
     }
 
