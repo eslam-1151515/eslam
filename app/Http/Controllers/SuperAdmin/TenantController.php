@@ -18,7 +18,7 @@ class TenantController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = Tenant::with(['owner', 'subscriptions.plan']);
+        $query = Tenant::with(['owner', 'subscriptions.plan'])->withCount('orders');
 
         // Search filter
         if ($search = $request->input('search')) {

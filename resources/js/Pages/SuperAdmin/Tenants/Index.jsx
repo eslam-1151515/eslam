@@ -324,6 +324,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                             <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
                                 <th className="px-6 py-4">المتجر</th>
                                 <th className="px-6 py-4">المالك</th>
+                                <th className="px-6 py-4">عدد الطلبات</th>
                                 <th className="px-6 py-4">الاشتراك الحالي</th>
                                 <th className="px-6 py-4">تاريخ الانتهاء</th>
                                 <th className="px-6 py-4">الحالة</th>
@@ -362,6 +363,12 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                                     <p className="font-medium text-gray-700">{tenant.owner?.name || 'غير معروف'}</p>
                                                     <p className="text-xs text-gray-400">{tenant.owner?.email || tenant.email}</p>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-2xs">
+                                                    <span>📦</span>
+                                                    <span>{tenant.orders_count !== undefined ? tenant.orders_count : 0} طلب</span>
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {renderPlanBadge(planToShow, tenant.subscription_status)}
