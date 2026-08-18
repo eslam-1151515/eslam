@@ -44,6 +44,58 @@ export default function OrderShow({ order }) {
         return Math.round(Number(amount)).toLocaleString('en-US') + ' ج.م';
     };
 
+    const getCleanWhatsAppPhone = (phone) => {
+        if (!phone) return '';
+        let cleaned = phone.replace(/[^0-9]/g, '');
+        if (cleaned.startsWith('01')) {
+            cleaned = '20' + cleaned.substring(1);
+        }
+        return cleaned;
+    };
+
+    const generateWhatsAppUrl = (orderData) => {
+        const cleanPhone = getCleanWhatsAppPhone(orderData.customer_phone);
+        
+        const itemsList = (orderData.items || []).map((item, idx) => {
+            let variantDetails = [];
+            if (item.selectedSize) variantDetails.push(`مقاس: ${item.selectedSize}`);
+            if (item.selectedColor) variantDetails.push(`لون: ${item.selectedColor}`);
+            if (item.options && typeof item.options === 'object') {
+                Object.entries(item.options).forEach(([k, v]) => {
+                    if (v) variantDetails.push(`${k}: ${v}`);
+                });
+            }
+            const varStr = variantDetails.length > 0 ? ` (${variantDetails.join(' - ')})` : '';
+            const unitPrice = Math.round(Number(item.price));
+            const itemTotal = Math.round(Number(item.total));
+            return `${idx + 1}. ${item.name}${varStr} (${item.quantity}x ${unitPrice}) = ${itemTotal}`;
+        }).join('\n');
+
+        const subtotal = Math.round(Number(orderData.subtotal));
+        const shipping = Math.round(Number(orderData.shipping_cost));
+        const total = Math.round(Number(orderData.total));
+        const refNum = orderData.reference_number ? `#${orderData.reference_number}` : `#${orderData.id}`;
+
+        const text = `مرحبا: ${orderData.customer_name || ''}
+
+*ملخص الطلب:*
+
+*معرف الطلب: ${refNum}*
+*عناصر السلة:*
+${itemsList}
+مجموع سعر المنتجات: ${subtotal}
+رسوم التوصيل: ${shipping}
+*الاجمالي: ${total} ج.م*
+
+*بيانات الشحن:*
+
+المحافظة: ${orderData.governorate || ''}
+العنوان: ${orderData.customer_address || ''}`;
+
+        const encodedText = encodeURIComponent(text);
+        return `https://api.whatsapp.com/send/?phone=%2B${cleanPhone}&text=${encodedText}`;
+    };
+
     return (
         <MerchantLayout title={`تفاصيل الطلب ${order.reference_number}`}>
             <Head title={`طلب ${order.reference_number}`} />
@@ -83,19 +135,34 @@ export default function OrderShow({ order }) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-500">تحديث حالة الطلب:</span>
-                        <select
-                            value={order.status}
-                            onChange={(e) => handleStatusChange(e.target.value)}
-                            className="bg-white border border-gray-300 rounded-lg text-xs px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-gray-800"
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-500">تحديث حالة الطلب:</span>
+                            <select
+                                value={order.status}
+                                onChange={(e) => handleStatusChange(e.target.value)}
+                                className="bg-white border border-gray-300 rounded-lg text-xs px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-gray-800"
+                            >
+                                <option value="pending">في الانتظار</option>
+                                <option value="confirmed">مؤكد</option>
+                                <option value="shipped">في التوصيل</option>
+                                <option value="delivered">تم التسليم</option>
+                                <option value="cancelled">ملغي</option>
+                            </select>
+                        </div>
+
+                        <a
+                            href={generateWhatsAppUrl(order)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm shadow-emerald-100 shrink-0 cursor-pointer"
+                            title="إرسال ملخص التفاصيل للعميل عبر الواتساب لتأكيد الطلب"
                         >
-                            <option value="pending">في الانتظار</option>
-                            <option value="confirmed">مؤكد</option>
-                            <option value="shipped">في التوصيل</option>
-                            <option value="delivered">تم التسليم</option>
-                            <option value="cancelled">ملغي</option>
-                        </select>
+                            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                            <span>التأكيد عبر الواتساب</span>
+                        </a>
                     </div>
                 </div>
 
@@ -254,7 +321,19 @@ export default function OrderShow({ order }) {
                                 </div>
                                 <div>
                                     <span className="text-xs text-gray-400 block mb-0.5">الهاتف:</span>
-                                    <span className="font-mono font-semibold text-gray-900" dir="ltr">{order.customer_phone}</span>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="font-mono font-semibold text-gray-900" dir="ltr">{order.customer_phone}</span>
+                                        <a
+                                            href={generateWhatsAppUrl(order)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md text-xs font-bold transition-colors cursor-pointer"
+                                        >
+                                            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                            </svg>                                            واتساب
+                                        </a>
+                                    </div>
                                 </div>
                                 <div>
                                     <span className="text-xs text-gray-400 block mb-0.5">المحافظة:</span>
