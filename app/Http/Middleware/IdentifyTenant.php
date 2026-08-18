@@ -18,30 +18,33 @@ class IdentifyTenant
         $appUrl = config('app.url');
         $baseHost = parse_url($appUrl, PHP_URL_HOST);
 
-        $tenant = null;
-        $subdomain = null;
+        // Extract subdomain if request host ends with base host
+        if ($baseHost && str_ends_with($host, '.' . $baseHost)) {
+            $subdomain = substr($host, 0, -strlen('.' . $baseHost));
+        } else {
+            $parts = explode('.', $host);
+            if (count($parts) > 1 && !filter_var($host, FILTER_VALIDATE_IP)) {
+                $subdomain = $parts[0];
+            }
+        }
+
+        $isSubdomainRequest = $subdomain && !in_array(strtolower($subdomain), ['www', 'app', 'admin']);
+        $isCustomDomainRequest = !$isSubdomainRequest && $baseHost && $host !== $baseHost && !in_array(strtolower($host), ['localhost', '127.0.0.1']);
 
         // 1. Try to match by custom domain first
         $tenant = Tenant::where('custom_domain', $host)->first();
 
-        if (!$tenant) {
-            // 2. Extract subdomain if request host ends with base host
-            if ($baseHost && str_ends_with($host, '.' . $baseHost)) {
-                $subdomain = substr($host, 0, -strlen('.' . $baseHost));
-            } else {
-                $parts = explode('.', $host);
-                if (count($parts) > 1 && !filter_var($host, FILTER_VALIDATE_IP)) {
-                    $subdomain = $parts[0];
-                }
-            }
-
-            // Skip lookup for main domains and common subdomains
-            if ($subdomain && !in_array(strtolower($subdomain), ['www', 'app', 'admin'])) {
-                $tenant = Tenant::where('slug', $subdomain)->first();
-            }
+        if (!$tenant && $isSubdomainRequest) {
+            // 2. Try to match by subdomain
+            $tenant = Tenant::where('slug', $subdomain)->first();
         }
 
-        // 3. If request is on app domain or main domain (or no tenant by subdomain)
+        // 3. If this is a store subdomain or custom domain request but the tenant is deleted or not found
+        if (!$tenant && ($isSubdomainRequest || $isCustomDomainRequest)) {
+            abort(404, 'المتجر غير موجود أو تم إغلاقه');
+        }
+
+        // 4. Main domain fallbacks (for app.domain.com dashboard access)
         if (!$tenant) {
             // A. If logged in merchant user, resolve directly from user's tenant
             if (auth()->check() && !auth()->user()->isSuperAdmin()) {
@@ -60,16 +63,9 @@ class IdentifyTenant
             }
         }
 
-        // If a tenant was expected on a subdomain but not found, abort
-        if (!$tenant) {
-            $isMainDomain = ($host === $baseHost || 
-                             in_array(strtolower($subdomain), ['www', 'app', 'admin']) || 
-                             $host === 'localhost' || 
-                             $host === '127.0.0.1');
-
-            if (!$isMainDomain && str_contains($request->getPathInfo(), '/shop')) {
-                abort(404, 'Store not found');
-            }
+        // 5. If tenant is deactivated
+        if ($tenant && !$tenant->is_active && !auth()->check() && !session()->has('impersonated_tenant_id')) {
+            abort(403, 'المتجر معطل حالياً');
         }
 
         if ($tenant) {

@@ -393,6 +393,14 @@ class TenantController extends Controller
             $owner->delete();
         }
 
+        // Delete all products, categories, orders, settings, and shipping governorates of this tenant
+        \App\Models\Product::withoutGlobalScopes()->where('tenant_id', $tenant->id)->delete();
+        \App\Models\Category::withoutGlobalScopes()->where('tenant_id', $tenant->id)->delete();
+        \App\Models\Order::withoutGlobalScopes()->where('tenant_id', $tenant->id)->delete();
+        \App\Models\Setting::where('tenant_id', $tenant->id)->delete();
+        \App\Models\ShippingGovernorate::where('tenant_id', $tenant->id)->delete();
+        \App\Models\WalletTransaction::where('tenant_id', $tenant->id)->delete();
+
         $tenant->forceDelete();
 
         return redirect()->route('superadmin.tenants.index')->with('success', 'تم حذف المتجر وجميع بياناته بنجاح.');
