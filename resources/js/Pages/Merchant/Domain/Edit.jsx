@@ -111,7 +111,7 @@ export default function DomainEdit({ currentSlug, baseDomain, currentUrl, scheme
                 {/* Header Info Card */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
-                        <div className="flex items-center gap-2 mb-1.5">
+                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
                             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
                                 اسم المتجر الفرعي (Subdomain)
                             </span>
@@ -120,7 +120,7 @@ export default function DomainEdit({ currentSlug, baseDomain, currentUrl, scheme
                             </span>
                         </div>
                         <h2 className="text-xl font-extrabold text-gray-900">رابط متجرك الحالي</h2>
-                        <p className="text-sm font-mono text-indigo-600 font-extrabold mt-1 dir-ltr text-right" dir="ltr">
+                        <p className="text-sm font-mono text-indigo-600 font-extrabold mt-1 dir-ltr text-left break-all" dir="ltr">
                             {displayScheme}://{currentSlug}.{baseDomain}
                         </p>
                     </div>
@@ -179,8 +179,8 @@ export default function DomainEdit({ currentSlug, baseDomain, currentUrl, scheme
                             </label>
                             
                             {/* Input container with proper spacing and clean borders */}
-                            <div className="flex items-center gap-2 dir-ltr" dir="ltr">
-                                <span className="bg-slate-100 border border-slate-200 text-slate-700 font-mono text-sm px-3.5 py-3 rounded-xl select-none font-bold flex items-center gap-1 shadow-sm">
+                            <div className="flex items-center gap-1 sm:gap-2 dir-ltr w-full max-w-full overflow-hidden" dir="ltr">
+                                <span className="bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs sm:text-sm px-2 py-2.5 sm:px-3.5 sm:py-3 rounded-xl select-none font-bold flex items-center gap-0.5 sm:gap-1 shadow-sm flex-shrink-0">
                                     <span>🔒</span>
                                     <span>{displayScheme}://</span>
                                 </span>
@@ -190,7 +190,7 @@ export default function DomainEdit({ currentSlug, baseDomain, currentUrl, scheme
                                     value={slugInput}
                                     onChange={handleInputChange}
                                     placeholder="my-store-name"
-                                    className={`flex-1 px-4 py-3 rounded-xl border font-mono text-base font-bold focus:outline-none transition-all shadow-sm ${
+                                    className={`flex-1 min-w-0 px-2.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border font-mono text-xs sm:text-base font-bold focus:outline-none transition-all shadow-sm ${
                                         checkStatus.available === true && !checkStatus.is_current
                                             ? 'border-emerald-500 bg-emerald-50/20 text-emerald-900 ring-2 ring-emerald-100'
                                             : (checkStatus.available === false
@@ -202,7 +202,7 @@ export default function DomainEdit({ currentSlug, baseDomain, currentUrl, scheme
                                     maxLength={50}
                                 />
 
-                                <span className="bg-slate-100 border border-slate-200 text-slate-700 font-mono text-sm px-3.5 py-3 rounded-xl select-none font-bold shadow-sm">
+                                <span className="bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs sm:text-sm px-2 py-2.5 sm:px-3.5 sm:py-3 rounded-xl select-none font-bold shadow-sm flex-shrink-0 max-w-[130px] sm:max-w-none truncate">
                                     .{baseDomain}
                                 </span>
                             </div>
