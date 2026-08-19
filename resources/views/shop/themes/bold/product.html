@@ -1486,7 +1486,7 @@
         const govId = govSelect ? govSelect.value : null;
         if (govId && window.governoratesData) {
           const gov = window.governoratesData.find(g => String(g.id) === String(govId));
-          if (gov) shippingCost = Number(gov.shipping_cost) || 0;
+          if (gov) shippingCost = Number(gov.price !== undefined ? gov.price : (gov.shipping_cost || 0)) || 0;
         }
         if (shippingEl) {
           if (shippingCost === 0) {

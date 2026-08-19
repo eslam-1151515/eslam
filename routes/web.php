@@ -638,6 +638,7 @@ Route::prefix('admin')->group(function () {
                     'id' => $gov->id,
                     'name' => $gov->name,
                     'price' => $gov->price,
+                    'shipping_cost' => $gov->price,
                     'is_active' => $gov->is_active,
                     'formatted_price' => $gov->price . ($locale === 'en' ? ' EGP' : ' جنيه')
                 ];
