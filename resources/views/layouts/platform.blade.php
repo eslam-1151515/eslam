@@ -421,10 +421,11 @@
     <a href="{{ $whatsappContact?->action_url ?? '#' }}" 
        target="_blank" 
        rel="noopener noreferrer" 
-       class="fixed bottom-6 left-6 z-50 group flex items-center gap-3 p-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl shadow-emerald-600/50 hover:scale-105 transition-all duration-300"
+       class="fixed bottom-6 left-6 z-50 group flex items-center p-3.5 rounded-full text-white shadow-2xl hover:scale-105 transition-all duration-300 shadow-emerald-500/40"
+       style="background-color: #25D366;"
        title="تواصل معنا عبر الواتساب">
-        <i class="fa-brands fa-whatsapp text-3xl animate-pulse"></i>
-        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-sm font-bold pl-1 pr-2">
+        <i class="fa-brands fa-whatsapp text-3xl animate-pulse shrink-0"></i>
+        <span class="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:opacity-100 group-hover:px-2 transition-all duration-500 ease-in-out text-sm font-bold">
             تواصل معنا عبر الواتساب
         </span>
     </a>
