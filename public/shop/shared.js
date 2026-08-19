@@ -54,12 +54,17 @@
     // 1. Facebook Pixel
     if (typeof fbq !== 'undefined') {
       try {
-        fbq('track', 'Purchase', {
+        var fbParams = {
           value: val,
           currency: 'EGP',
           content_type: 'product',
           content_ids: contentIds
-        });
+        };
+        if (orderId) {
+          fbq('track', 'Purchase', fbParams, { eventID: String(orderId) });
+        } else {
+          fbq('track', 'Purchase', fbParams);
+        }
       } catch (e) { console.error('FB Purchase Error', e); }
     }
 

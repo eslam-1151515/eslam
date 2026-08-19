@@ -1822,14 +1822,18 @@
               }));
             } catch(e) {}
             try {
-              if (typeof fbq !== 'undefined') {
-                fbq('track', 'Purchase', { value: Number(payload.total), currency: 'EGP' });
-              }
-              if (typeof ttq !== 'undefined') {
-                ttq.track('PlaceAnOrder', { value: Number(payload.total), currency: 'EGP' });
-              }
-              if (typeof snaptr !== 'undefined') {
-                snaptr('track', 'PURCHASE', { price: Number(payload.total), currency: 'EGP' });
+              if (typeof window.trackPurchaseEvent === 'function') {
+                window.trackPurchaseEvent(payload.total, payload.items, data.data.reference_number);
+              } else {
+                if (typeof fbq !== 'undefined') {
+                  fbq('track', 'Purchase', { value: Number(payload.total), currency: 'EGP' }, { eventID: String(data.data.reference_number || '') });
+                }
+                if (typeof ttq !== 'undefined') {
+                  ttq.track('PlaceAnOrder', { value: Number(payload.total), currency: 'EGP' });
+                }
+                if (typeof snaptr !== 'undefined') {
+                  snaptr('track', 'PURCHASE', { price: Number(payload.total), currency: 'EGP' });
+                }
               }
             } catch(e) {}
             if(window.BirdCart) {
@@ -1840,6 +1844,7 @@
                     window.BirdCart.updateCartCount();
                 }
             }
+            await new Promise(function(r) { setTimeout(r, 250); });
             window.location.href = '/shop/order-success.html?ref=' + data.data.reference_number;
           } else {
             var errorDetails = '';
