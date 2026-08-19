@@ -709,20 +709,17 @@
                     <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
                         <span x-text="trans('login')"></span>
                     </a>
-                    <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
+                    <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
                         <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
                     </a>
                 </div>
 
-                <!-- Mobile Menu Control Center -->
+                <!-- Mobile Header Control Center (Direct Start Now button + Menu Toggle) -->
                 <div class="flex items-center gap-2.5 md:hidden">
-                    <button @click="toggleDarkMode()" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-700 dark:text-gray-300">
-                        <i class="fa-solid" :class="darkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
-                    </button>
-                    <button @click="setLang(lang === 'ar' ? 'en' : 'ar')" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-xs font-bold text-slate-700 dark:text-gray-300">
-                        <span x-text="lang === 'ar' ? 'EN' : 'ع'"></span>
-                    </button>
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-300 focus:outline-none">
+                    <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 shadow-md shadow-brand-500/20 active:scale-95 transition-all">
+                        <i class="fa-solid fa-rocket ml-1"></i> <span x-text="trans('startNow')"></span>
+                    </a>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-300 focus:outline-none" aria-label="Toggle Menu">
                         <i class="fa-solid text-base" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
                     </button>
                 </div>
@@ -737,6 +734,19 @@
                  x-transition:leave-start="opacity-100 translate-y-0" 
                  x-transition:leave-end="opacity-0 -translate-y-4" 
                  class="md:hidden bg-white/95 dark:bg-dark-card/95 border-b border-slate-200 dark:border-white/10 px-6 py-6 space-y-4 backdrop-blur-2xl">
+                
+                <!-- Mobile Language & Theme Controls -->
+                <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-white/10">
+                    <button @click="setLang(lang === 'ar' ? 'en' : 'ar')" class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-gray-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
+                        <i class="fa-solid fa-globe text-brand-500"></i>
+                        <span x-text="lang === 'ar' ? 'English (EN)' : 'العربية (AR)'"></span>
+                    </button>
+                    <button @click="toggleDarkMode()" class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-gray-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
+                        <i class="fa-solid" :class="darkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-400'"></i>
+                        <span x-text="darkMode ? (lang === 'ar' ? 'فاتح ☀️' : 'Light ☀️') : (lang === 'ar' ? 'داكن 🌙' : 'Dark 🌙')"></span>
+                    </button>
+                </div>
+
                 <div class="flex flex-col space-y-3 font-semibold text-slate-700 dark:text-gray-200">
                     <a href="#features" @click="mobileMenuOpen = false" class="py-2.5 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-3">
                         <i class="fa-solid fa-star text-brand-500 dark:text-brand-400 w-5"></i> <span x-text="trans('features')"></span>
@@ -758,7 +768,7 @@
                     <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="w-full py-3 rounded-xl text-center font-bold text-slate-700 dark:text-gray-200 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
                         <span x-text="trans('login')"></span>
                     </a>
-                    <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="w-full py-3 rounded-xl text-center font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:opacity-95 shadow-lg shadow-brand-500/25 transition-all">
+                    <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="w-full py-3 rounded-xl text-center font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:opacity-95 shadow-lg shadow-brand-500/25 transition-all">
                         <i class="fa-solid fa-rocket ml-1.5 mr-1.5"></i> <span x-text="trans('startNow')"></span>
                     </a>
                 </div>
@@ -1497,6 +1507,18 @@
         </footer>
 
     </div>
+
+    <!-- Floating Sticky WhatsApp Button -->
+    <a href="{{ $whatsappContact?->action_url ?? '#' }}" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="fixed bottom-6 left-6 z-50 group flex items-center gap-3 p-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl shadow-emerald-600/50 hover:scale-105 transition-all duration-300"
+       title="تواصل معنا عبر الواتساب">
+        <i class="fa-brands fa-whatsapp text-3xl animate-pulse"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-sm font-bold pl-1 pr-2">
+            تواصل معنا عبر الواتساب
+        </span>
+    </a>
 
 </body>
 </html>

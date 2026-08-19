@@ -239,16 +239,21 @@
                     <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                         تسجيل الدخول
                     </a>
-                    <a href="{{ route('main.home') }}#pricing" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
+                    <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
                         <i class="fa-solid fa-rocket ml-1.5"></i> ابدأ متجرك الآن
                     </a>
                 @endauth
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2.5 rounded-xl bg-dark-card border border-white/10 text-gray-300 hover:text-white focus:outline-none" aria-label="{{ __('القائمة الرئيسية') }}" :aria-expanded="mobileMenuOpen.toString()">
-                <i class="fa-solid text-lg" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'" aria-hidden="true"></i>
-            </button>
+            <!-- Mobile Header Control Center -->
+            <div class="flex items-center gap-2.5 md:hidden">
+                <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 shadow-md shadow-brand-500/20 active:scale-95 transition-all">
+                    <i class="fa-solid fa-rocket ml-1"></i> ابدأ
+                </a>
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2.5 rounded-xl bg-dark-card border border-white/10 text-gray-300 hover:text-white focus:outline-none" aria-label="{{ __('القائمة الرئيسية') }}" :aria-expanded="mobileMenuOpen.toString()">
+                    <i class="fa-solid text-lg" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile Menu -->
@@ -287,7 +292,7 @@
                     <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="w-full text-center py-3 rounded-xl font-bold text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                         تسجيل الدخول
                     </a>
-                    <a href="{{ route('main.home') }}#pricing" class="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 shadow-lg shadow-brand-500/25 transition-all">
+                    <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 shadow-lg shadow-brand-500/25 transition-all">
                         ابدأ متجرك الآن
                     </a>
                 @endauth
@@ -411,6 +416,18 @@
 
         </div>
     </footer>
+
+    <!-- Floating Sticky WhatsApp Button -->
+    <a href="{{ $whatsappContact?->action_url ?? '#' }}" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="fixed bottom-6 left-6 z-50 group flex items-center gap-3 p-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl shadow-emerald-600/50 hover:scale-105 transition-all duration-300"
+       title="تواصل معنا عبر الواتساب">
+        <i class="fa-brands fa-whatsapp text-3xl animate-pulse"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-sm font-bold pl-1 pr-2">
+            تواصل معنا عبر الواتساب
+        </span>
+    </a>
 
 </body>
 </html>
