@@ -62,12 +62,19 @@
 
           <div>
             <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">المحافظة <span style="color:#ef4444">*</span></label>
-            <select required name="governorate" id="governorateSelect"
-              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;background:#fff;cursor:pointer;appearance:none;transition:border-color .2s;"
-              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
-              onchange="updateShipping()">
-              <option value="">جاري تحميل المحافظات...</option>
-            </select>
+            <div style="position:relative;">
+              <select required name="governorate" id="governorateSelect"
+                style="width:100%;padding:12px 40px 12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;background:#fff;cursor:pointer;appearance:none;-webkit-appearance:none;transition:border-color .2s;"
+                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
+                onchange="updateShipping()">
+                <option value="">جاري تحميل المحافظات...</option>
+              </select>
+              <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#64748b;">
+                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div>
