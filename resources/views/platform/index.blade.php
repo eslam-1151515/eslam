@@ -456,6 +456,39 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #6366f1;
         }
+
+        /* Scroll Animations Engine */
+        .reveal {
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
+            will-change: transform, opacity;
+        }
+        .reveal-up { transform: translateY(35px); }
+        .reveal-down { transform: translateY(-35px); }
+        .reveal-left { transform: translateX(45px); }
+        .reveal-right { transform: translateX(-45px); }
+        .reveal-zoom { transform: scale(0.88); }
+        .reveal-flip { transform: perspective(800px) rotateX(20deg) translateY(30px); }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1) perspective(1000px) rotateX(0deg);
+        }
+
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .reveal {
+                transition-duration: 0.6s;
+            }
+            .reveal-left, .reveal-right {
+                transform: translateY(30px);
+            }
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-500 selection:text-white" x-data="{ mobileMenuOpen: false }">
@@ -1014,7 +1047,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal reveal-up">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> <span x-text="trans('featuresSub')"></span>
                         </div>
@@ -1026,8 +1059,12 @@
 
                     <!-- Features Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($features as $feature)
-                            <div class="glass-card glass-card-hover rounded-3xl p-8 relative overflow-hidden group">
+                        @foreach($features as $index => $feature)
+                            @php
+                                $animClass = ['reveal-left', 'reveal-up', 'reveal-right', 'reveal-zoom', 'reveal-flip', 'reveal-up'][$index % 6];
+                                $delayClass = 'delay-' . (($index % 3 + 1) * 100);
+                            @endphp
+                            <div class="glass-card glass-card-hover rounded-3xl p-8 relative overflow-hidden group reveal {{ $animClass }} {{ $delayClass }}">
                                 
                                 <!-- Icon Background Glow -->
                                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr {{ $feature['color'] }} flex items-center justify-center text-white text-2xl mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -1051,7 +1088,7 @@
                     </div>
 
                     <!-- Extra Highlight Banner -->
-                    <div class="mt-16 rounded-3xl bg-gradient-to-r from-brand-500/10 via-indigo-500/5 to-pink-500/10 dark:from-brand-900/60 dark:via-indigo-900/40 dark:to-pink-900/60 border border-brand-500/20 dark:border-brand-500/30 p-8 lg:p-12 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <div class="mt-16 reveal reveal-zoom rounded-3xl bg-gradient-to-r from-brand-500/10 via-indigo-500/5 to-pink-500/10 dark:from-brand-900/60 dark:via-indigo-900/40 dark:to-pink-900/60 border border-brand-500/20 dark:border-brand-500/30 p-8 lg:p-12 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
                         <div class="absolute -right-20 -top-20 w-60 h-60 bg-brand-500/10 dark:bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
                         <div class="space-y-3 text-center lg:text-right relative z-10 max-w-2xl">
                             <span class="px-3 py-1 rounded-full bg-pink-500/10 dark:bg-pink-500/20 text-pink-600 dark:text-pink-300 text-xs font-bold border border-pink-500/20 dark:border-pink-500/30 inline-block" x-text="trans('transferBadge')"></span>
@@ -1074,7 +1111,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
-                    <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                    <div class="text-center max-w-3xl mx-auto mb-20 space-y-4 reveal reveal-up">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-500 dark:text-pink-400 text-xs font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-shoe-prints"></i> <span x-text="trans('howSub')"></span>
                         </div>
@@ -1091,7 +1128,11 @@
                         <div class="hidden lg:block absolute top-24 right-1/6 left-1/6 h-0.5 bg-gradient-to-r from-brand-500/10 via-brand-500/40 to-brand-500/10 z-0"></div>
 
                         @foreach($steps as $index => $step)
-                            <div class="relative z-10 flex flex-col items-center text-center group">
+                            @php
+                                $stepAnim = ['reveal-left', 'reveal-up', 'reveal-right'][$index % 3];
+                                $stepDelay = 'delay-' . (($index + 1) * 100);
+                            @endphp
+                            <div class="relative z-10 flex flex-col items-center text-center group reveal {{ $stepAnim }} {{ $stepDelay }}">
                                 
                                 <!-- Step Number Badge -->
                                 <div class="w-20 h-20 rounded-3xl bg-white dark:bg-dark-card border-2 border-brand-500/40 flex items-center justify-center text-2xl font-black text-brand-600 dark:text-brand-400 mb-6 shadow-xl shadow-brand-500/5 group-hover:scale-110 group-hover:border-brand-500 group-hover:text-white group-hover:bg-brand-600 transition-all duration-300">
@@ -1115,8 +1156,8 @@
                     </div>
 
                     <!-- Action CTA inside How It Works -->
-                    <div class="mt-16 text-center">
-                        <a href="{{ Route::has('register') ? route('register') : '#pricing' }}" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-1 transition-all duration-300">
+                    <div class="mt-16 text-center reveal reveal-zoom">
+                        <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-1 transition-all duration-300">
                             <span x-text="trans('howCta')"></span>
                             <i class="fa-solid" :class="lang === 'ar' ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
                         </a>
@@ -1130,7 +1171,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal reveal-up">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-tag"></i> <span x-text="trans('pricingSub')"></span>
                         </div>
@@ -1142,8 +1183,12 @@
 
                     <!-- Pricing Cards Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-                        @foreach($plans as $plan)
-                            <div class="glass-card rounded-3xl p-8 border flex flex-col justify-between relative transition-all duration-500 {{ $plan['featured'] ? 'border-brand-500 shadow-2xl dark:shadow-brand-500/20 bg-white dark:bg-gradient-to-b dark:from-dark-card dark:via-brand-950/20 dark:to-dark-card lg:-translate-y-4' : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20' }}">
+                        @foreach($plans as $index => $plan)
+                            @php
+                                $planAnim = ['reveal-left', 'reveal-zoom', 'reveal-right'][$index % 3];
+                                $planDelay = 'delay-' . (($index + 1) * 100);
+                            @endphp
+                            <div class="glass-card rounded-3xl p-8 border flex flex-col justify-between relative transition-all duration-500 reveal {{ $planAnim }} {{ $planDelay }} {{ $plan['featured'] ? 'border-brand-500 shadow-2xl dark:shadow-brand-500/20 bg-white dark:bg-gradient-to-b dark:from-dark-card dark:via-brand-950/20 dark:to-dark-card lg:-translate-y-4' : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20' }}">
                                 
                                 <div>
                                     <!-- Badge Header -->
@@ -1221,7 +1266,7 @@
                     </div>
 
                     <!-- Guarantee Notice -->
-                    <div class="mt-12 text-center text-sm text-slate-500 dark:text-gray-400 flex items-center justify-center gap-2">
+                    <div class="mt-12 text-center text-sm text-slate-500 dark:text-gray-400 flex items-center justify-center gap-2 reveal reveal-up">
                         <i class="fa-solid fa-shield-halved text-brand-500 dark:text-brand-400"></i>
                         <span x-text="trans('pricingGuarantee')"></span>
                     </div>
@@ -1234,7 +1279,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal reveal-up">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-quote-right"></i> <span x-text="trans('testimSub')"></span>
                         </div>
@@ -1247,8 +1292,12 @@
 
                     <!-- Testimonials Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        @foreach($testimonials as $testim)
-                            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between relative">
+                        @foreach($testimonials as $index => $testim)
+                            @php
+                                $testimAnim = ['reveal-flip', 'reveal-up', 'reveal-zoom'][$index % 3];
+                                $testimDelay = 'delay-' . (($index + 1) * 100);
+                            @endphp
+                            <div class="glass-card glass-card-hover rounded-3xl p-8 flex flex-col justify-between relative reveal {{ $testimAnim }} {{ $testimDelay }}">
                                 
                                 <!-- Rating Stars -->
                                 <div>
@@ -1285,7 +1334,7 @@
                     </div>
 
                     <!-- Brand Logos Trust Strip -->
-                    <div class="mt-20 pt-12 border-t border-slate-200 dark:border-white/5 text-center">
+                    <div class="mt-20 pt-12 border-t border-slate-200 dark:border-white/5 text-center reveal reveal-up">
                         <div class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-gray-400 mb-8" x-text="trans('trustStripTitle')"></div>
                         <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-16 opacity-60 hover:opacity-90 transition-opacity">
                             <span class="text-lg font-black text-slate-800 dark:text-white tracking-wider flex items-center gap-2"><i class="fa-solid fa-credit-card text-brand-500"></i> VISA & MasterCard</span>
@@ -1304,7 +1353,7 @@
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Section Header -->
-                    <div class="text-center mb-16 space-y-4">
+                    <div class="text-center mb-16 space-y-4 reveal reveal-up">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-circle-question"></i> <span x-text="trans('faqSub')"></span>
                         </div>
@@ -1318,7 +1367,10 @@
                     <!-- Accordion List -->
                     <div class="space-y-4">
                         @foreach($faqs as $index => $faq)
-                            <div class="glass-card rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden transition-all duration-300"
+                            @php
+                                $faqDelay = 'delay-' . (($index % 4 + 1) * 100);
+                            @endphp
+                            <div class="glass-card rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden transition-all duration-300 reveal reveal-up {{ $faqDelay }}"
                                  :class="active === {{ $index }} ? 'border-brand-500/50 bg-slate-50 dark:bg-white/[0.03]' : ''">
                                 <button @click="active = (active === {{ $index }} ? null : {{ $index }})" 
                                         class="w-full px-6 py-5 flex items-center justify-between gap-4 focus:outline-none"
@@ -1353,7 +1405,7 @@
                     </div>
 
                     <!-- Still Have Questions Banner -->
-                    <div class="mt-12 text-center p-8 rounded-3xl bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div class="mt-12 text-center p-8 rounded-3xl bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 reveal reveal-zoom">
                         <div class="text-right" :class="lang === 'ar' ? 'text-right' : 'text-left'">
                             <div class="text-lg font-bold text-slate-900 dark:text-white mb-1" x-text="trans('faqContactTitle')"></div>
                             <div class="text-sm text-slate-500 dark:text-gray-400" x-text="trans('faqContactDesc')"></div>
@@ -1370,7 +1422,7 @@
             <!-- Final CTA Section -->
             <section id="contact" class="py-20 relative overflow-hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-900 to-pink-900 border border-brand-500/40 p-8 sm:p-14 lg:p-20 text-center relative overflow-hidden shadow-2xl shadow-brand-950/80">
+                    <div class="rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-900 to-pink-900 border border-brand-500/40 p-8 sm:p-14 lg:p-20 text-center relative overflow-hidden shadow-2xl shadow-brand-950/80 reveal reveal-zoom">
                         
                         <!-- Background Glows -->
                         <div class="absolute -top-32 -left-32 w-80 h-80 bg-pink-500/30 rounded-full blur-3xl pointer-events-none"></div>
@@ -1519,6 +1571,26 @@
             تواصل معنا عبر الواتساب
         </span>
     </a>
+
+    <!-- Scroll Reveal Animation Observer Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -40px 0px',
+                threshold: 0.1
+            };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+    </script>
 
 </body>
 </html>
