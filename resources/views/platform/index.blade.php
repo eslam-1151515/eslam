@@ -1348,7 +1348,7 @@
                             <div class="text-lg font-bold text-slate-900 dark:text-white mb-1" x-text="trans('faqContactTitle')"></div>
                             <div class="text-sm text-slate-500 dark:text-gray-400" x-text="trans('faqContactDesc')"></div>
                         </div>
-                        <a href="https://wa.me/201146520922" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all shrink-0 flex items-center justify-center gap-2">
+                        <a href="{{ $whatsappContact?->action_url ?? '#' }}" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all shrink-0 flex items-center justify-center gap-2">
                             <i class="fa-brands fa-whatsapp text-lg"></i>
                             <span x-text="trans('faqContactCta')"></span>
                         </a>
@@ -1378,8 +1378,8 @@
                                     <span x-text="trans('heroCtaStart')"></span>
                                     <i class="fa-solid fa-arrow-left text-brand-600"></i>
                                 </a>
-                                <a href="mailto:support@fastorder.test" class="w-full sm:w-auto px-8 py-5 rounded-2xl font-bold text-base text-white bg-dark-bg/60 hover:bg-dark-bg/80 border border-white/20 transition-all text-center flex items-center justify-center gap-2">
-                                    <i class="fa-regular fa-envelope text-pink-400"></i>
+                                <a href="{{ $whatsappContact?->action_url ?? ($phoneContact?->action_url ?? '#') }}" target="_blank" class="w-full sm:w-auto px-8 py-5 rounded-2xl font-bold text-base text-white bg-emerald-600/90 hover:bg-emerald-600 border border-emerald-400/30 transition-all text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40">
+                                    <i class="fa-brands fa-whatsapp text-xl"></i>
                                     <span x-text="trans('finalCtaSupport')"></span>
                                 </a>
                             </div>
@@ -1415,7 +1415,7 @@
                             <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all" title="YouTube">
+                            <a href="https://www.youtube.com/@RadyEmam-x4z" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-red-600 border border-slate-200 dark:border-white/10 hover:border-red-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all" title="YouTube">
                                 <i class="fa-brands fa-youtube text-lg"></i>
                             </a>
                             <a href="#" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 hover:bg-brand-600 border border-slate-200 dark:border-white/10 hover:border-brand-500 flex items-center justify-center text-slate-500 dark:text-gray-300 hover:text-white transition-all">
@@ -1450,24 +1450,24 @@
                     <div class="lg:col-span-3 space-y-4">
                         <h4 class="text-base font-bold text-slate-900 dark:text-white tracking-wide" x-text="trans('footerContactUs')"></h4>
                         <div class="space-y-3 text-sm text-slate-700 dark:text-gray-300">
-                            <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                            <a href="{{ $phoneContact?->action_url ?? ($whatsappContact ? 'tel:'.$whatsappContact->phone_number : '#') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-brand-500/50 transition-all">
                                 <div class="w-9 h-9 rounded-lg bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-phone"></i>
                                 </div>
                                 <div>
                                     <div class="text-xs text-slate-400" x-text="trans('footerPhoneLabel')"></div>
-                                    <div class="font-bold text-slate-900 dark:text-white font-mono">01146520922</div>
+                                    <div class="font-bold text-slate-900 dark:text-white font-mono">{{ $phoneContact?->phone_number ?? ($whatsappContact?->phone_number ?? '') }}</div>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5">
-                                <div class="w-9 h-9 rounded-lg bg-pink-500/20 text-pink-600 dark:text-pink-400 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-envelope"></i>
+                            </a>
+                            <a href="{{ $whatsappContact?->action_url ?? '#' }}" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-emerald-500/50 transition-all">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-slate-400" x-text="trans('footerEmailLabel')"></div>
-                                    <div class="font-bold text-slate-900 dark:text-white font-mono text-xs">support@fastorder.test</div>
+                                    <div class="text-xs text-slate-400">واتساب الدعم الفني</div>
+                                    <div class="font-bold text-slate-900 dark:text-white font-mono text-xs">{{ $whatsappContact?->phone_number ?? 'تواصل عبر واتساب' }}</div>
                                 </div>
-                            </div>
+                            </a>
                             <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5">
                                 <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-clock"></i>

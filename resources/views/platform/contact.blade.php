@@ -29,35 +29,25 @@
                     <h3 class="text-xl font-bold text-white">معلومات الاتصال المباشر</h3>
                     
                     <div class="space-y-4">
-                        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-brand-500/30 transition-all">
+                        <a href="{{ $phoneContact?->action_url ?? ($whatsappContact ? 'tel:'.$whatsappContact->phone_number : '#') }}" class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-brand-500/30 transition-all">
                             <div class="w-11 h-11 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-phone"></i>
                             </div>
                             <div>
                                 <div class="text-xs text-gray-400">رقم الهاتف والدعم</div>
-                                <div class="font-bold text-white font-mono mt-0.5">01146520922</div>
+                                <div class="font-bold text-white font-mono mt-0.5">{{ $phoneContact?->phone_number ?? ($whatsappContact?->phone_number ?? '') }}</div>
                             </div>
-                        </div>
+                        </a>
 
-                        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-pink-500/30 transition-all">
-                            <div class="w-11 h-11 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-envelope"></i>
+                        <a href="{{ $whatsappContact?->action_url ?? '#' }}" target="_blank" class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-all">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                                <i class="fa-brands fa-whatsapp text-xl"></i>
                             </div>
                             <div>
-                                <div class="text-xs text-gray-400">البريد الإلكتروني للدعم</div>
-                                <div class="font-bold text-white font-mono mt-0.5 text-sm">support@fastorder.test</div>
+                                <div class="text-xs text-gray-400">واتساب الدعم الفني</div>
+                                <div class="font-bold text-white font-mono mt-0.5 text-sm">{{ $whatsappContact?->phone_number ?? 'تواصل عبر واتساب' }}</div>
                             </div>
-                        </div>
-
-                        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-amber-500/30 transition-all">
-                            <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-business-time"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-400">المبيعات والشراكات</div>
-                                <div class="font-bold text-white font-mono mt-0.5 text-sm">sales@fastorder.test</div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -68,7 +58,7 @@
                     </div>
                     <h4 class="text-lg font-bold text-white">دردشة فورية عبر واتساب</h4>
                     <p class="text-gray-400 text-sm">تواصل مع خدمة العملاء مباشرة لحل استفسارك في ثوانٍ معدودة.</p>
-                    <a href="https://wa.me/201146520922" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/25">
+                    <a href="{{ $whatsappContact?->action_url ?? '#' }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/25">
                         <span>ابدأ المحادثة الآن</span>
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                     </a>
@@ -112,7 +102,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="phone" class="block text-sm font-bold text-gray-300 mb-2">رقم الهاتف (اختياري)</label>
-                                <input type="tel" name="phone" id="phone" class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all font-mono text-left" placeholder="01146520922">
+                                <input type="tel" name="phone" id="phone" class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all font-mono text-left" placeholder="01012345678">
                                 @error('phone')
                                     <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
                                 @enderror

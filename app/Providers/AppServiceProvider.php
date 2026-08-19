@@ -36,6 +36,22 @@ class AppServiceProvider extends ServiceProvider
             // تجاهل الخطأ لتجنب توقف أوامر الأرتيزان
         }
 
+        \Illuminate\Support\Facades\View::composer('platform.*', function ($view) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('support_contacts')) {
+                    $whatsappContact = \App\Models\SupportContact::where('is_active', true)->where('type', 'whatsapp')->orderBy('sort_order', 'asc')->first();
+                    $phoneContact = \App\Models\SupportContact::where('is_active', true)->where('type', 'phone')->orderBy('sort_order', 'asc')->first();
+                    $supportContacts = \App\Models\SupportContact::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+
+                    $view->with('whatsappContact', $whatsappContact)
+                         ->with('phoneContact', $phoneContact)
+                         ->with('supportContacts', $supportContacts);
+                }
+            } catch (\Exception $e) {
+                // Ignore if table missing during migration
+            }
+        });
+
         // تسجيل الـ Queries البطيئة (Slow Queries)
         \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) {
             $threshold = env('SLOW_QUERY_THRESHOLD_MS', 500); // 500ms

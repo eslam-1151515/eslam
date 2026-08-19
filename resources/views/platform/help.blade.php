@@ -179,7 +179,7 @@
                     <i class="fa-solid fa-envelope"></i>
                     <span>فتح تذكرة دعم فني</span>
                 </a>
-                <a href="https://wa.me/201146520922" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2">
+                <a href="{{ $whatsappContact?->action_url ?? '#' }}" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2">
                     <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span>تواصل معنا عبر واتساب</span>
                 </a>
