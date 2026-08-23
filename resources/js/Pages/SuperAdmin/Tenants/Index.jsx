@@ -383,6 +383,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                     const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
                                     const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
                                     const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
+                                    const isCommission = planToShow && (planToShow.slug === 'commission' || planToShow.name?.includes('عمولة') || planToShow.name?.includes('المحفظة'));
 
                                     return (
                                         <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
@@ -426,7 +427,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                                 {renderPlanBadge(planToShow, tenant.subscription_status)}
                                             </td>
                                             <td className="px-6 py-4 text-gray-700 font-semibold font-mono text-xs">
-                                                {formatDate(tenant.subscription_ends_at)}
+                                                {isCommission ? '-' : formatDate(tenant.subscription_ends_at)}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {renderStatusBadge(tenant, planToShow)}
