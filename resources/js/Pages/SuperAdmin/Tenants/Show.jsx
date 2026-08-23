@@ -186,12 +186,12 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 w-full md:w-auto">
                         <a
                             href={`${typeof window !== 'undefined' ? window.location.protocol : 'http:'}//${tenant.slug}.${typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fastorder.localhost'}/shop/index.html`}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                            className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                         >
                             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             فتح واجهة المتجر
@@ -200,22 +200,22 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                         <button
                             type="button"
                             onClick={() => window.open(route('superadmin.tenants.impersonate', tenant.id), '_blank')}
-                            className="px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                            className="px-3.5 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                         >
                             <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-                            دخول للوحة تحكم التاجر
+                            دخول لوحة التاجر
                         </button>
 
                         <button
                             onClick={handleOpenAssignModal}
-                            className="px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5"
+                            className="px-3.5 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             تعديل الاشتراك
                         </button>
                         <button
                             onClick={() => setIsDeleteModalOpen(true)}
-                            className="px-4 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-sm font-semibold transition-colors"
+                            className="px-3.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center"
                         >
                             حذف المتجر
                         </button>

@@ -28,31 +28,31 @@ function PendingReceiptsAlert({ count, receipts }) {
 
     return (
         <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-5">
-                <div className="flex items-center gap-4">
-                    <span className="relative flex h-4 w-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:px-6 sm:py-5 gap-3">
+                <div className="flex items-center gap-3">
+                    <span className="relative flex h-4 w-4 shrink-0">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
                     </span>
                     <div>
-                        <p className="font-bold text-red-900 text-lg">
+                        <p className="font-bold text-red-900 text-base sm:text-lg">
                             عاجل: {count === 1 ? 'يوجد إيصال دفع واحد قيد المراجعة' : `يوجد ${count} إيصالات دفع قيد المراجعة`}
                         </p>
-                        <p className="text-sm text-red-700 mt-1">
+                        <p className="text-xs sm:text-sm text-red-700 mt-0.5">
                             يرجى مراجعة هذه الطلبات في أسرع وقت لتفعيل خدمات التجار لتجنب توقف متاجرهم.
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
                     <Link
                         href={route('superadmin.subscriptions.receipts')}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition-colors shadow-sm text-sm"
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 sm:px-4 rounded-xl transition-colors shadow-sm text-xs sm:text-sm"
                     >
                         المراجعة الآن
                     </Link>
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className="flex items-center gap-1.5 text-sm font-semibold text-red-800 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-2 rounded-xl transition-colors"
+                        className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-red-800 hover:text-red-900 bg-red-100 hover:bg-red-200 px-2.5 sm:px-3 py-2 rounded-xl transition-colors"
                     >
                         {expanded ? 'إخفاء ▲' : 'عرض التفاصيل ▼'}
                     </button>
@@ -60,72 +60,74 @@ function PendingReceiptsAlert({ count, receipts }) {
             </div>
 
             {expanded && receipts && receipts.length > 0 && (
-                <div className="border-t border-red-200 bg-white">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-right">
-                            <thead>
-                                <tr className="bg-red-50/50 text-red-800 border-b border-red-100">
-                                    <th className="px-6 py-3 font-bold">التاجر</th>
-                                    <th className="px-6 py-3 font-bold">رقم المرجع</th>
-                                    <th className="px-6 py-3 font-bold">النوع</th>
-                                    <th className="px-6 py-3 font-bold">المبلغ</th>
-                                    <th className="px-6 py-3 font-bold">طريقة الدفع / رقم التحويل</th>
-                                    <th className="px-6 py-3 font-bold">تاريخ الإرسال</th>
+                <div className="border-t border-red-200 bg-white overflow-x-auto">
+                    <table className="w-full text-xs sm:text-sm text-right min-w-[550px]">
+                        <thead>
+                            <tr className="bg-red-50/50 text-red-800 border-b border-red-100">
+                                <th className="px-4 sm:px-6 py-3 font-bold">التاجر</th>
+                                <th className="px-4 sm:px-6 py-3 font-bold">رقم المرجع</th>
+                                <th className="px-4 sm:px-6 py-3 font-bold">النوع</th>
+                                <th className="px-4 sm:px-6 py-3 font-bold">المبلغ</th>
+                                <th className="px-4 sm:px-6 py-3 font-bold">طريقة الدفع / رقم التحويل</th>
+                                <th className="px-4 sm:px-6 py-3 font-bold">تاريخ الإرسال</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-red-50">
+                            {receipts.map((r) => (
+                                <tr key={r.id} className="text-gray-800 hover:bg-red-50/30 transition-colors">
+                                    <td className="px-4 sm:px-6 py-4">
+                                        <div className="font-bold text-gray-900">{r.tenant_name}</div>
+                                        {r.tenant_phone && <div className="text-xs text-gray-500 font-mono mt-0.5">{r.tenant_phone}</div>}
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 font-mono font-bold text-indigo-700">#{r.reference_code}</td>
+                                    <td className="px-4 sm:px-6 py-4">
+                                        <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${
+                                            r.type === 'wallet' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'
+                                        }`}>
+                                            {typeLabel(r.type)}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 font-extrabold text-gray-900">{formatCurrency(r.amount)}</td>
+                                    <td className="px-4 sm:px-6 py-4">
+                                        <div className="font-semibold text-xs">{paymentMethodLabel(r.payment_method)}</div>
+                                        <div className="text-[11px] text-gray-500 font-mono mt-0.5">{r.payment_reference || '—'}</div>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 text-gray-600 text-xs">
+                                        <span title={r.created_at} className="font-semibold">{r.created_at_human}</span>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody className="divide-y divide-red-50">
-                                {receipts.map((r) => (
-                                    <tr key={r.id} className="text-gray-800 hover:bg-red-50/30 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="font-bold text-gray-900">{r.tenant_name}</div>
-                                            {r.tenant_phone && <div className="text-xs text-gray-500 font-mono mt-0.5">{r.tenant_phone}</div>}
-                                        </td>
-                                        <td className="px-6 py-4 font-mono font-bold text-indigo-700">#{r.reference_code}</td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${
-                                                r.type === 'wallet' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'
-                                            }`}>
-                                                {typeLabel(r.type)}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 font-extrabold text-gray-900">{formatCurrency(r.amount)}</td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-semibold text-xs">{paymentMethodLabel(r.payment_method)}</div>
-                                            <div className="text-[11px] text-gray-500 font-mono mt-0.5">{r.payment_reference || '—'}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-600 text-xs">
-                                            <span title={r.created_at} className="font-semibold">{r.created_at_human}</span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
     );
 }
 
+// ========================================================
+// Expiring Subscriptions Alert Component
+// ========================================================
 function ExpiringSubscriptionsAlert({ subscriptions }) {
     if (!subscriptions || subscriptions.length === 0) return null;
 
     return (
-        <div className="mb-6 rounded-2xl border border-amber-200 bg-white shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 bg-amber-50/50 border-b border-amber-100">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-sm">
-                        ⏳
-                    </div>
+        <div className="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden mb-6">
+            <div className="p-4 sm:p-5 bg-amber-50/60 border-b border-amber-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-amber-600 font-bold text-lg">⚠️</span>
                     <div>
-                        <h3 className="font-bold text-gray-900">متاجر يقترب انتهاء اشتراكها</h3>
-                        <p className="text-[11px] text-gray-500 mt-0.5">خلال الـ 7 أيام القادمة</p>
+                        <h3 className="font-bold text-amber-950 text-sm">اشتراكات تنتهي قريباً (خلال 7 أيام)</h3>
+                        <p className="text-[11px] text-amber-800 mt-0.5">يرجى متابعتهم للتجديد قبل التوقف التلقائي</p>
                     </div>
                 </div>
+                <span className="bg-amber-200 text-amber-900 font-extrabold px-2.5 py-1 rounded-full text-xs">
+                    {subscriptions.length}
+                </span>
             </div>
-            <div className="p-0">
-                {subscriptions.map((sub, idx) => (
-                    <div key={sub.id} className={`flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors ${idx !== subscriptions.length -1 ? 'border-b border-gray-50' : ''}`}>
+            <div className="p-3 divide-y divide-gray-50 max-h-64 overflow-y-auto">
+                {subscriptions.map((sub) => (
+                    <div key={sub.id} className="py-2.5 px-2 flex items-center justify-between text-xs hover:bg-slate-50 rounded-xl transition-colors">
                         <div>
                             <p className="text-sm font-bold text-gray-900">{sub.tenant_name}</p>
                             <p className="text-xs text-gray-500 font-mono mt-0.5">{sub.tenant_phone || 'لا يوجد هاتف'}</p>
@@ -159,16 +161,16 @@ function StatCard({ title, value, sub, icon, color }) {
     const c = colors[color] || colors.indigo;
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between relative overflow-hidden">
-            <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${c.bg} ${c.icon}`}>
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between relative overflow-hidden">
+            <div className="flex justify-between items-start mb-3">
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-sm text-white ${c.icon}`}>
                     {icon}
                 </div>
             </div>
             <div>
-                <h3 className={`text-3xl font-extrabold ${c.text} mb-1 tracking-tight`}>{value}</h3>
-                <p className="text-sm font-semibold text-gray-600">{title}</p>
-                {sub && <p className="text-[11px] text-gray-400 mt-1 font-medium">{sub}</p>}
+                <h3 className={`text-2xl sm:text-3xl font-extrabold ${c.text} mb-1 tracking-tight`}>{value}</h3>
+                <p className="text-xs sm:text-sm font-semibold text-gray-600">{title}</p>
+                {sub && <p className="text-[11px] text-gray-400 mt-1 font-medium leading-normal">{sub}</p>}
             </div>
             <div className={`absolute -bottom-6 -left-6 w-24 h-24 rounded-full ${c.bg} opacity-50 group-hover:scale-150 transition-transform duration-500 ease-in-out`}></div>
         </div>
@@ -183,16 +185,16 @@ export default function Dashboard({ stats, pendingReceipts, expiringSubscription
         <SuperAdminLayout>
             <Head title="مركز القيادة - لوحة تحكم الإدارة" />
 
-            <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto bg-[#F8FAFC] min-h-screen">
+            <div className="p-2 sm:p-4 md:p-6 max-w-[1600px] mx-auto bg-[#F8FAFC] min-h-screen">
                 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">مركز القيادة <span className="text-indigo-600">والتحليلات</span></h1>
-                        <p className="text-sm text-slate-500 mt-1.5 font-medium">نظرة شاملة وعميقة على أداء المنصة والمتاجر المشتركة</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">مركز القيادة <span className="text-indigo-600">والتحليلات</span></h1>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">نظرة شاملة وعميقة على أداء المنصة والمتاجر المشتركة</p>
                     </div>
                     <div className="flex gap-3">
-                        <Link href={route('superadmin.tenants.index')} className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 shadow-sm transition-all">
+                        <Link href={route('superadmin.tenants.index')} className="w-full sm:w-auto text-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-50 shadow-sm transition-all">
                             إدارة المتاجر
                         </Link>
                     </div>
