@@ -26,6 +26,16 @@ function LogoImage({ logo, name }) {
     );
 }
 
+const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '-';
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
 export default function Index({ tenants, filters, plans, planCounts }) {
     // Ensure filters is a valid object and not an array, null, or undefined
     const safeFilters = (typeof filters === 'object' && filters !== null && !Array.isArray(filters)) ? filters : {};
@@ -33,6 +43,41 @@ export default function Index({ tenants, filters, plans, planCounts }) {
     const [search, setSearch] = useState(safeFilters.search || '');
     const [status, setStatus] = useState(safeFilters.status || 'all');
     const [plan, setPlan] = useState(safeFilters.plan || 'all');
+
+    // Helper to render status badge
+    const renderStatusBadge = (tenant, planObj) => {
+        const isCommission = planObj && (planObj.slug === 'commission' || planObj.name?.includes('عمولة'));
+        const isExpired = !isCommission && (
+            tenant.subscription_status === 'expired' ||
+            (tenant.subscription_ends_at && new Date(tenant.subscription_ends_at) < new Date()) ||
+            (tenant.trial_ends_at && new Date(tenant.trial_ends_at) < new Date() && !tenant.subscription_ends_at)
+        );
+
+        if (!tenant.is_active) {
+            return (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                    موقوف
+                </span>
+            );
+        }
+
+        if (isExpired) {
+            return (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                    منتهي
+                </span>
+            );
+        }
+
+        return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                نشط
+            </span>
+        );
+    };
 
     // Helper to render distinctive plan badges
     const renderPlanBadge = (planObj, subStatus) => {
@@ -284,6 +329,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                             >
                                 <option value="all">كل الحالات</option>
                                 <option value="active">نشط</option>
+                                <option value="expired">منتهي ⚠️</option>
                                 <option value="suspended">موقوف</option>
                             </select>
                         </div>
@@ -324,7 +370,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                             <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
                                 <th className="px-6 py-4">المتجر</th>
                                 <th className="px-6 py-4">المالك</th>
-                                <th className="px-6 py-4">عدد الطلبات</th>
+                                <th className="px-6 py-4">المنتجات والطلبات</th>
                                 <th className="px-6 py-4">الاشتراك الحالي</th>
                                 <th className="px-6 py-4">تاريخ الانتهاء</th>
                                 <th className="px-6 py-4">الحالة</th>
@@ -365,33 +411,25 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-2xs">
-                                                    <span>📦</span>
-                                                    <span>{tenant.orders_count !== undefined ? tenant.orders_count : 0} طلب</span>
-                                                </span>
+                                                <div className="flex flex-col gap-1.5 items-start">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-2xs">
+                                                        <span>📦</span>
+                                                        <span>{tenant.orders_count !== undefined ? tenant.orders_count : 0} طلب</span>
+                                                    </span>
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-2xs">
+                                                        <span>🛍️</span>
+                                                        <span>{tenant.products_count !== undefined ? tenant.products_count : 0} منتج</span>
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {renderPlanBadge(planToShow, tenant.subscription_status)}
                                             </td>
-                                            <td className="px-6 py-4 text-gray-600">
-                                                {tenant.subscription_ends_at ? (
-                                                    new Date(tenant.subscription_ends_at).toLocaleDateString('en-US')
-                                                ) : (
-                                                    '-'
-                                                )}
+                                            <td className="px-6 py-4 text-gray-700 font-semibold font-mono text-xs">
+                                                {formatDate(tenant.subscription_ends_at)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {tenant.is_active ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        نشط
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                                        موقوف
-                                                    </span>
-                                                )}
+                                                {renderStatusBadge(tenant, planToShow)}
                                             </td>
                                             <td className="px-6 py-4 text-left">
                                                 <div className="flex items-center justify-end gap-2">

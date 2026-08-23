@@ -23,6 +23,9 @@ class EnsureTenantIsActive
             $activeSub = $tenant->subscriptions()->where('status', 'active')->latest()->first();
             $isCommission = $activeSub && ($activeSub->plan?->slug === 'commission' || str_contains($activeSub->plan?->name ?? '', 'عمولة'));
 
+            $subExpired = false;
+            $trialExpired = false;
+
             if (!$isCommission) {
                 $subExpired = $tenant->subscription_ends_at && $tenant->subscription_ends_at->isPast();
                 $trialExpired = $tenant->trial_ends_at && $tenant->trial_ends_at->isPast() && !$tenant->subscription_ends_at;
@@ -36,12 +39,16 @@ class EnsureTenantIsActive
                 }
             }
 
-            // Only block public storefront if the store was manually suspended by SuperAdmin (is_active === false & subscription_status !== 'expired')
-            if (!$tenant->is_active && $tenant->subscription_status !== 'expired') {
+            // Determine if store is expired or suspended
+            $isExpired = !$isCommission && ($tenant->subscription_status === 'expired' || $subExpired || $trialExpired);
+            $isSuspended = !$tenant->is_active;
+
+            // Block access for non-superadmin users if store is suspended or expired
+            if (($isSuspended || $isExpired) && !$isSuperAdmin) {
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'عذراً، هذا المتجر موقوف مؤقتاً بواسطة الإدارة.',
+                        'message' => $isExpired ? 'عذراً، هذا المتجر متوقف مؤقتاً لانتهاء مدة الاشتراك.' : 'عذراً، هذا المتجر موقوف مؤقتاً بواسطة الإدارة.',
                     ], 403);
                 }
 

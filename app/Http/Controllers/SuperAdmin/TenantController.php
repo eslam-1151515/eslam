@@ -19,9 +19,14 @@ class TenantController extends Controller
     public function index(Request $request): Response
     {
         $query = Tenant::with(['owner', 'subscriptions.plan'])
-            ->withCount(['orders' => function ($q) {
-                $q->withoutGlobalScopes();
-            }]);
+            ->withCount([
+                'orders' => function ($q) {
+                    $q->withoutGlobalScopes();
+                },
+                'products' => function ($q) {
+                    $q->withoutGlobalScopes();
+                }
+            ]);
 
         // Search filter
         if ($search = $request->input('search')) {
@@ -36,9 +41,17 @@ class TenantController extends Controller
         if ($request->has('status') && $request->input('status') !== 'all') {
             $status = $request->input('status');
             if ($status === 'active') {
-                $query->where('is_active', true);
+                $query->where('is_active', true)->where('subscription_status', '!=', 'expired');
             } elseif ($status === 'suspended') {
                 $query->where('is_active', false);
+            } elseif ($status === 'expired') {
+                $query->where(function ($q) {
+                    $q->where('subscription_status', 'expired')
+                      ->orWhere(function ($sq) {
+                          $sq->whereNotNull('subscription_ends_at')
+                             ->where('subscription_ends_at', '<', now());
+                      });
+                });
             }
         }
 
