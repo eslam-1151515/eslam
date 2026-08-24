@@ -1,6 +1,6 @@
-@extends('layouts.platform')
+﻿@extends('layouts.platform')
 
-@section('title', 'مركز المساعدة والشروحات | فاست أوردر (Fast Order) - دليلك للنجاح')
+@section('title', 'مركز المساعدة والشروحات | فاست أوردر (Order Saif) - دليلك للنجاح')
 
 @section('meta_description', 'تصفح شروحات ودليل استخدام منصة فاست أوردر. تعلم كيفية إنشاء متجرك، وإضافة منتجاتك، وتفعيل إعدادات الدفع والشحن، وربط دومين مخصص بسهولة.')
 
@@ -110,7 +110,7 @@
                         <li>اكتب النطاق الخاص بك (مثال: <code class="text-brand-300">mystore.com</code>).</li>
                         <li>توجه لحسابك لدى مسجل النطاق (مثل GoDaddy أو Namecheap) وقم بتهيئة سجلات DNS:
                             <ul class="list-disc list-inside pr-6 mt-1 space-y-1">
-                                <li>إنشاء سجل <strong class="text-white">CNAME</strong> يوجه من <code class="text-brand-300">www</code> إلى <code class="text-brand-300">app.fastorder.test</code></li>
+                                <li>إنشاء سجل <strong class="text-white">CNAME</strong> يوجه من <code class="text-brand-300">www</code> إلى <code class="text-brand-300">app.OrderSaif.test</code></li>
                                 <li>أو إنشاء سجل <strong class="text-white">A Record</strong> يوجه إلى عنوان الـ IP الخاص بالمنصة.</li>
                             </ul>
                         </li>

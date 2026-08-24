@@ -1,4 +1,4 @@
-<x-guest-layout title="Fast Order — إنشاء حساب تاجر">
+﻿<x-guest-layout title="Order Saif — إنشاء حساب تاجر">
     <div style="text-align: center; margin-bottom: 24px;">
         <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">إنشاء حساب تاجر جديد</h2>
         <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">انضم إلينا وابدأ متجرك الإلكتروني في دقائق</p>
@@ -113,7 +113,7 @@
                             $baseDomain = $cleanHost;
                         }
                     } else {
-                        $baseDomain = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+                        $baseDomain = parse_url(config('app.url'), PHP_URL_HOST) ?: 'OrderSaif.localhost';
                         if (str_starts_with($baseDomain, 'app.')) {
                             $baseDomain = substr($baseDomain, 4);
                         }

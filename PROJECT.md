@@ -1,14 +1,14 @@
-# FastOrder — وثائق المشروع الكاملة
+﻿# OrderSaif — وثائق المشروع الكاملة
 > ملف مرجعي للذكاء الاصطناعي لفهم المشروع بسرعة في أي جلسة جديدة
 
 ---
 
 ## نظرة عامة
 
-**FastOrder** منصة SaaS لإنشاء متاجر إلكترونية متعددة المستأجرين (Multi-Tenant).
+**OrderSaif** منصة SaaS لإنشاء متاجر إلكترونية متعددة المستأجرين (Multi-Tenant).
 كل تاجر يسجل على المنصة يحصل على متجر منفصل على Subdomain خاص بيه.
 
-- **المسار المحلي:** `e:\programing\flutter project\fast order`
+- **المسار المحلي:** `e:\programing\flutter project\Order Saif`
 - **Stack:** Laravel 12 + Inertia.js + React (JSX) + MySQL
 - **بيئة التطوير:** Windows — `php artisan serve --host=0.0.0.0 --port=8000` + `npm run dev`
 
@@ -20,16 +20,16 @@
 
 | الغرض | الرابط |
 |---|---|
-| الصفحة الرئيسية | http://fastorder.localhost:8000 |
-| لوحة السوبر أدمن | http://app.fastorder.localhost:8000/dashboard |
-| تسجيل دخول السوبر أدمن | http://app.fastorder.localhost:8000/login |
-| لوحة التاجر | http://{slug}.fastorder.localhost:8000/admin/dashboard |
-| واجهة المتجر | http://{slug}.fastorder.localhost:8000 |
+| الصفحة الرئيسية | http://OrderSaif.localhost:8000 |
+| لوحة السوبر أدمن | http://app.OrderSaif.localhost:8000/dashboard |
+| تسجيل دخول السوبر أدمن | http://app.OrderSaif.localhost:8000/login |
+| لوحة التاجر | http://{slug}.OrderSaif.localhost:8000/admin/dashboard |
+| واجهة المتجر | http://{slug}.OrderSaif.localhost:8000 |
 
 ### ملف .env الأساسي
 ```
-APP_URL=http://fastorder.localhost:8000
-SESSION_DOMAIN=.fastorder.localhost
+APP_URL=http://OrderSaif.localhost:8000
+SESSION_DOMAIN=.OrderSaif.localhost
 DB_DATABASE=bird_store7
 DB_USERNAME=root
 DB_PASSWORD=
@@ -40,7 +40,7 @@ DB_PASSWORD=
 ## البنية المعمارية (Multi-Tenancy)
 
 ### كيف يُعرَّف الـ Tenant؟
-1. Request يجي لـ {slug}.fastorder.localhost:8000
+1. Request يجي لـ {slug}.OrderSaif.localhost:8000
 2. IdentifyTenant Middleware يشيل slug من Host Header
 3. يبحث في جدول tenants بـ column slug
 4. يحط الـ Tenant في app()->instance() و session('tenant_id')
@@ -61,7 +61,7 @@ routes/
 
 ### routes/web.php — المحاور الثلاثة
 ```php
-$baseDomain = parse_url(config('app.url'), PHP_URL_HOST); // 'fastorder.localhost'
+$baseDomain = parse_url(config('app.url'), PHP_URL_HOST); // 'OrderSaif.localhost'
 Route::domain($baseDomain)->group(...)                     // الرئيسية
 Route::domain('app.' . $baseDomain)->group(...)            // السوبر أدمن
 Route::domain('{tenant}.' . $baseDomain)->group(...)       // التجار
@@ -225,7 +225,7 @@ php artisan optimize:clear                        # بعد تغيير routes/con
 
 | الدور | البريد | كلمة السر |
 |---|---|---|
-| Super Admin | admin@fastorder.test | password |
+| Super Admin | admin@OrderSaif.test | password |
 | Merchant (demo) | merchant@demo.com | password |
 
 ---

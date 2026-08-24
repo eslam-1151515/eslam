@@ -1,6 +1,6 @@
-@extends('layouts.platform')
+﻿@extends('layouts.platform')
 
-@section('title', 'شروط الخدمة | فاست أوردر (Fast Order) - التزامات وقواعد واضحة')
+@section('title', 'شروط الخدمة | فاست أوردر (Order Saif) - التزامات وقواعد واضحة')
 
 @section('meta_description', 'اقرأ شروط وأحكام استخدام منصة فاست أوردر لبناء المتاجر الإلكترونية، وقواعد الاستخدام المقبول وحقوق الملكية الفكرية والالتزامات المالية.')
 
@@ -26,7 +26,7 @@
                     1. قبول الشروط والأحكام
                 </h2>
                 <p class="text-sm sm:text-base">
-                    باستخدامك لمنصة فاست أوردر (Fast Order) أو تسجيل حساب فيها، فإنك توافق على الالتزام الكامل بشروط الخدمة هذه وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على أي من هذه الشروط، فيرجى التوقف فوراً عن استخدام خدماتنا.
+                    باستخدامك لمنصة فاست أوردر (Order Saif) أو تسجيل حساب فيها، فإنك توافق على الالتزام الكامل بشروط الخدمة هذه وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على أي من هذه الشروط، فيرجى التوقف فوراً عن استخدام خدماتنا.
                 </p>
             </div>
 
@@ -89,7 +89,7 @@
             <div class="space-y-4 pt-6 border-t border-white/10">
                 <h3 class="text-lg font-bold text-white">هل لديك استفسارات قانونية حول الاتفاقية؟</h3>
                 <p class="text-sm text-gray-400">
-                    يسعدنا تواصلك مع القسم القانوني عبر البريد الإلكتروني: <a href="mailto:legal@fastorder.test" class="text-brand-400 font-mono underline">legal@fastorder.test</a>
+                    يسعدنا تواصلك مع القسم القانوني عبر البريد الإلكتروني: <a href="mailto:legal@OrderSaif.test" class="text-brand-400 font-mono underline">legal@OrderSaif.test</a>
                 </p>
             </div>
 

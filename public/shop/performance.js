@@ -1,5 +1,5 @@
-/**
- * Fast Order Storefront Performance Library
+﻿/**
+ * Order Saif Storefront Performance Library
  * Phase 65: Lazy Loading, Image Optimization (WebP), Skeleton Loaders, & PWA Registration
  */
 
@@ -229,9 +229,9 @@
                         rgba(255, 255, 255, 0.7) 60%,
                         rgba(255, 255, 255, 0) 100%
                     );
-                    animation: fastOrderShimmer 1.5s infinite;
+                    animation: OrderSaifShimmer 1.5s infinite;
                 }
-                @keyframes fastOrderShimmer {
+                @keyframes OrderSaifShimmer {
                     100% {
                         transform: translateX(100%);
                     }

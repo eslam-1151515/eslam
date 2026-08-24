@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Head, router, useForm, usePage, Link } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
@@ -258,7 +258,7 @@ export default function ThemeMarketplaceShow({
                                                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
                                                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                                             </div>
-                                            <span className="text-slate-300">fastorder.eg/shop/preview/{theme.slug}</span>
+                                            <span className="text-slate-300">OrderSaif.eg/shop/preview/{theme.slug}</span>
                                             <span>معاينة سريعة</span>
                                         </div>
 
@@ -529,7 +529,7 @@ export default function ThemeMarketplaceShow({
                             </div>
                         </div>
 
-                        {/* Fast order Guarantee Badge */}
+                        {/* Order Saif Guarantee Badge */}
                         <div className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6 text-right space-y-3">
                             <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center text-xl shadow-md">
                                 🛡️

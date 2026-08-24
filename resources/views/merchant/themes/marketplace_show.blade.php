@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             تفاصيل ثيم {{ $theme->name }}
@@ -212,7 +212,7 @@
                                         <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
                                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                                     </div>
-                                    <span class="text-slate-300">fastorder.eg/shop/preview/{{ $theme->slug }}</span>
+                                    <span class="text-slate-300">OrderSaif.eg/shop/preview/{{ $theme->slug }}</span>
                                     <span>معاينة سريعة</span>
                                 </div>
 
@@ -479,7 +479,7 @@
                         </div>
                     </div>
 
-                    <!-- Fast Order Guarantee -->
+                    <!-- Order Saif Guarantee -->
                     <div class="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6 text-right space-y-3">
                         <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center text-xl shadow-md">
                             🛡️

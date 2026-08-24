@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('author')->default('Fast Order Team');
+            $table->string('author')->default('Order Saif Team');
             $table->string('version')->default('1.0.0');
             $table->string('type')->default('free'); // free, paid
             $table->decimal('price', 10, 2)->default(0.00);

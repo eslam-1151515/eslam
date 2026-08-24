@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import SuperAdminLayout from '@/Layouts/SuperAdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
@@ -400,7 +400,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                                             {tenant.name}
                                                         </Link>
                                                         <span className="block text-xs text-gray-400 mt-0.5" dir="ltr">
-                                                            {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fast-order-eg.tech'}
+                                                            {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'ordersaif.com'}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -575,7 +575,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                             className="w-full px-3 py-2 border border-gray-200 rounded-l-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-left"
                                         />
                                         <span className="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-gray-200 bg-gray-50 text-gray-500 text-sm font-mono">
-                                            .{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fastorder.localhost'}
+                                            .{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'OrderSaif.localhost'}
                                         </span>
                                     </div>
                                     {createErrors.slug && (

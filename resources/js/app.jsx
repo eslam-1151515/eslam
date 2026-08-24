@@ -1,11 +1,11 @@
-import './bootstrap';
+﻿import './bootstrap';
 import '../css/app.css';
 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Fast Order';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Order Saif';
 
 const appElement = document.getElementById('app');
 if (appElement) {

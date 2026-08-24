@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 class PlatformController extends Controller
 {
     /**
-     * Display the platform landing page (fastorder.test).
+     * Display the platform landing page (OrderSaif.test).
      */
     public function index(Request $request)
     {
@@ -125,7 +125,7 @@ class PlatformController extends Controller
                 'period_ar' => 'تجربة أولى',
                 'period_en' => 'first trial',
                 'description_ar' => 'باقة مجانية شاملة لمدة 7 أيام لتجربة منصة فاست أوردر واستكشاف كافة المميزات بدون أي مخاطرة أو بطاقة ائتمان.',
-                'description_en' => 'Full access to all platform features for 7 days free to explore Fast Order with zero risk and no credit card.',
+                'description_en' => 'Full access to all platform features for 7 days free to explore Order Saif with zero risk and no credit card.',
                 'featured' => false,
                 'features_ar' => [
                     'تجربة مجانية كاملة لمدة 7 أيام',
@@ -224,7 +224,7 @@ class PlatformController extends Controller
                 'role_en' => 'Founder of "Anaka Fashion"',
                 'avatar' => 'https://ui-avatars.com/api/?name=أحمد+محمد&background=6366f1&color=fff&size=128',
                 'quote_ar' => 'انتقالنا إلى منصة فاست أوردر كان أفضل قرار اتخذناه هذا العام. سرعة المتجر ارتفعت بشكل ملحوظ ومعدل تحويل الزوار إلى مشترين زاد بنسبة 35% خلال أول شهر فقط!',
-                'quote_en' => 'Moving to Fast Order was the best decision we made this year. Store speed increased significantly, and our conversion rate jumped by 35% in the first month!',
+                'quote_en' => 'Moving to Order Saif was the best decision we made this year. Store speed increased significantly, and our conversion rate jumped by 35% in the first month!',
                 'rating' => 5,
             ],
             [
@@ -244,7 +244,7 @@ class PlatformController extends Controller
                 'role_en' => 'General Manager of "TechZone Electronics"',
                 'avatar' => 'https://ui-avatars.com/api/?name=محمود+علي&background=3b82f6&color=fff&size=128',
                 'quote_ar' => 'كنا نعاني من بطء السيرفرات وعمولات المنصات الأخرى. مع فاست أوردر حصلنا على استقرار 100% وعمولة صفر! لوحة التحكم وإدارة الطلبات والشحن أصبحت أسهل بكثير.',
-                'quote_en' => 'We used to suffer from slow servers and commissions on other platforms. With Fast Order, we got 100% stability and zero commission! The control panel is extremely easy.',
+                'quote_en' => 'We used to suffer from slow servers and commissions on other platforms. With Order Saif, we got 100% stability and zero commission! The control panel is extremely easy.',
                 'rating' => 5,
             ],
         ];
@@ -254,7 +254,7 @@ class PlatformController extends Controller
                 'question_ar' => 'هل أحتاج إلى أي خبرة تقنية أو برمجية لإنشاء متجري؟',
                 'question_en' => 'Do I need any technical or programming experience to create my store?',
                 'answer_ar' => 'على الإطلاق! منصة فاست أوردر مصممة لتكون سهلة وبسيطة للغاية. يمكنك إنشاء وتخصيص وإطلاق متجرك الإلكتروني بالكامل في أقل من 5 دقائق باستخدام واجهات مرئية وبدون كتابة سطر كود واحد.',
-                'answer_en' => 'Not at all! Fast Order is designed to be extremely simple. You can create, customize, and launch your online store in under 5 minutes using visual interfaces and without writing a single line of code.',
+                'answer_en' => 'Not at all! Order Saif is designed to be extremely simple. You can create, customize, and launch your online store in under 5 minutes using visual interfaces and without writing a single line of code.',
             ],
             [
                 'question_ar' => 'هل توجد أي عمولات على المبيعات التي أحققها؟',

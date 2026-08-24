@@ -1,6 +1,6 @@
-# دليل المطورين لنظام Fast Order (Developer Guide)
+﻿# دليل المطورين لنظام Order Saif (Developer Guide)
 
-مرحباً بك في دليل المطورين لمنصة **Fast Order**، وهي منصة تجارة إلكترونية متعددة التجار (SaaS Multi-Tenant) مبنية باستخدام إطار العمل Laravel للباك إند، وInertia.js مع React 19 للفرونت إند الخاص بلوحة تحكم التجار، بالإضافة إلى صفحات Blade وAlpine.js لواجهة المتجر (Storefront).
+مرحباً بك في دليل المطورين لمنصة **Order Saif**، وهي منصة تجارة إلكترونية متعددة التجار (SaaS Multi-Tenant) مبنية باستخدام إطار العمل Laravel للباك إند، وInertia.js مع React 19 للفرونت إند الخاص بلوحة تحكم التجار، بالإضافة إلى صفحات Blade وAlpine.js لواجهة المتجر (Storefront).
 
 ---
 
@@ -22,7 +22,7 @@ graph TD
 تتم عملية تحديد المتجر الحالي عبر طلب الويب من خلال اثنين من الـ Middlewares الرئيسية:
 1. **[IdentifyTenant](file:///e:/programing/flutter%20project/fast%20order/app/Http/Middleware/IdentifyTenant.php)**: 
    - يقوم بقراءة الـ Host الخاص بالطلب ومقارنته بالنطاقات المخصصة (`custom_domain`) في جدول `tenants`.
-   - في حال عدم وجود مطابقة، يستخرج النطاق الفرعي (Subdomain) من النطاق الأساسي للمنصة (مثال: `merchant.fastorder.com` -> المتجر `merchant`).
+   - في حال عدم وجود مطابقة، يستخرج النطاق الفرعي (Subdomain) من النطاق الأساسي للمنصة (مثال: `merchant.OrderSaif.com` -> المتجر `merchant`).
    - يقوم بربط كائن المتجر الحالي بداخل الـ Service Container الخاص بـ Laravel كـ Singleton: `app()->instance(Tenant::class, $tenant)`.
    - يضبط إعدادات الكونفيج: `config(['tenant.id' => $tenant->id])` لتسهيل الوصول إليها.
 
@@ -84,22 +84,22 @@ graph TD
 5. **تهيئة النطاقات المحلية (Local Domains):**
    يدعم المشروع نظام النطاقات الفرعية. لتشغيل ذلك محلياً، يجب إضافة النطاقات إلى ملف الـ `hosts` في نظام التشغيل الخاص بك (المسار في ويندوز: `C:\Windows\System32\drivers\etc\hosts`):
    ```text
-   127.0.0.1   fastorder.test
-   127.0.0.1   merchant1.fastorder.test
-   127.0.0.1   merchant2.fastorder.test
+   127.0.0.1   OrderSaif.test
+   127.0.0.1   merchant1.OrderSaif.test
+   127.0.0.1   merchant2.OrderSaif.test
    ```
    *ملاحظة:* يوجد سكربت PowerShell جاهز في جذر المشروع باسم `setup-hosts.ps1` يمكن تشغيله كمسؤول لتنفيذ هذه الخطوة تلقائياً.
 
 6. **إعداد الجلسات عبر النطاقات الفرعية (Wildcard Sessions):**
    تأكد من ضبط القيم التالية في ملف `.env` لكي تتمكن الجلسات من الانتقال بحرية بين النطاق الرئيسي والنطاقات الفرعية للتاجر:
    ```env
-   APP_URL=http://fastorder.test
-   SESSION_DOMAIN=.fastorder.test
+   APP_URL=http://OrderSaif.test
+   SESSION_DOMAIN=.OrderSaif.test
    ```
 
 7. **تشغيل سيرفر التطوير:**
    قم بتشغيل خادم Laravel وخادم Vite بالتوازي:
-   - لتشغيل Laravel: `php artisan serve --host=fastorder.test --port=8000`
+   - لتشغيل Laravel: `php artisan serve --host=OrderSaif.test --port=8000`
    - لتشغيل Vite: `npm run dev`
 
 ---
@@ -135,7 +135,7 @@ sequenceDiagram
    - يتم تخزين السلة في جدول `abandoned_carts` مع حفظ محتويات السلة (المنتجات، الكميات، المجموع) بصيغة JSON في حقل `cart_data` وتوليد `recovery_token` فريد وتخزين الـ `session_id`.
 
 2. **الاستعادة وإعادة التوجيه (`recover`):**
-   عندما يضغط العميل على رابط التذكير الترويجي في بريده الإلكتروني بالصيغة: `http://{tenant}.fastorder.test/recover/{token}?coupon={discount_code}`
+   عندما يضغط العميل على رابط التذكير الترويجي في بريده الإلكتروني بالصيغة: `http://{tenant}.OrderSaif.test/recover/{token}?coupon={discount_code}`
    - الكنترولر المسؤول: `StorefrontCartRecoveryController@recover`
    - يتم التحقق من صحة التوكن وعدم استخدام السلة سابقاً (`recovered_at` فارغ).
    - يتم استخدام `CartService` لتفريغ سلة العميل الحالية بالكامل، وإعادة بناء السلة من المنتجات المخزنة بداخل `cart_data`.
@@ -191,7 +191,7 @@ sequenceDiagram
 #### 2. نظام الـ Webhooks للأحداث اللحظية
 يقوم النظام بإرسال أحداث فورية (Webhooks) إلى السيرفرات الخارجية التي يسجلها التاجر عند حدوث إجراءات معينة (مثل: `order.created`, `order_return.completed`).
 - **تأمين البيانات (HMAC Signature):** 
-  لضمان أن الطلب قادم بالفعل من نظام Fast Order، يتم إرسال ترويسة (Header) مخصصة باسم `X-FastOrder-Signature`.
+  لضمان أن الطلب قادم بالفعل من نظام Order Saif، يتم إرسال ترويسة (Header) مخصصة باسم `X-OrderSaif-Signature`.
   تحتوي هذه التوقيع الرقمي يتم احتسابه كالتالي:
   ```php
   $signature = hash_hmac('sha256', json_encode($payload), $webhook->secret);

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -143,7 +143,7 @@ class PlatformPricingController extends Controller
                     ['name' => 'إدارة المخزون وتنبيهات نفاد الكمية', 'basic' => true, 'pro' => true, 'enterprise' => true],
                     ['name' => 'تصدير واستيراد المنتجات (Excel / CSV)', 'basic' => false, 'pro' => true, 'enterprise' => true],
                     ['name' => 'إدارة متغيرات المنتجات (الألوان والمقاسات)', 'basic' => true, 'pro' => true, 'enterprise' => true],
-                    ['name' => 'الطلبات السريعة (Fast Order / One-Click Checkout)', 'basic' => true, 'pro' => true, 'enterprise' => true],
+                    ['name' => 'الطلبات السريعة (Order Saif / One-Click Checkout)', 'basic' => true, 'pro' => true, 'enterprise' => true],
                 ],
             ],
             [

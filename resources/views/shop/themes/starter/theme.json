@@ -1,9 +1,9 @@
-{
+﻿{
     "name": "Starter (Simple & Fast)",
     "name_ar": "الثيم المبدئي السريع (Starter)",
     "slug": "starter",
     "version": "1.0.0",
-    "author": "Fast Order Team",
+    "author": "Order Saif Team",
     "description": "تصميم مبسط وسريع جداً مخصص للمبتدئين وللأجهزة الضعيفة والاتصالات البطيئة، يتميز بأقل عناصر ممكنة وبنية خفيفة مع التركيز التام على السرعة القصوى (Ultra-Fast Loading) ودعم كامل للغتين العربية والإنجليزية RTL & LTR.",
     "thumbnail": "/shop/themes/starter/thumbnail.png",
     "preview_image": "/shop/themes/starter/preview.webp",

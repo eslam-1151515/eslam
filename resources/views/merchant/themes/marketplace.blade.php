@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             سوق الثيمات والتصميمات
@@ -175,7 +175,7 @@
                                     <h3 class="text-xl font-black text-white drop-shadow-md tracking-wide">
                                         {{ $theme->name }}
                                     </h3>
-                                    <p class="text-xs text-white/80 mt-1">بواسطة {{ $theme->author ?? 'Fast Order Team' }}</p>
+                                    <p class="text-xs text-white/80 mt-1">بواسطة {{ $theme->author ?? 'Order Saif Team' }}</p>
                                 </div>
 
                                 <!-- Bottom Quick Overlay -->

@@ -1,4 +1,4 @@
-<x-guest-layout title="Fast Order — استعادة كلمة السر">
+﻿<x-guest-layout title="Order Saif — استعادة كلمة السر">
     <div style="text-align: center; margin-bottom: 24px;">
         <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">استعادة كلمة السر</h2>
         <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">أدخل البريد الإلكتروني وسنرسل لك رابطاً لإعادة التعيين</p>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 
 export default function ThemePreview({
@@ -232,7 +232,7 @@ export default function ThemePreview({
                                     </div>
                                     <div className="overflow-hidden">
                                         <h4 className="text-xs font-bold truncate">{tConfig.name}</h4>
-                                        <span className="text-[10px] text-gray-400">{tConfig.author || 'Fast Order'}</span>
+                                        <span className="text-[10px] text-gray-400">{tConfig.author || 'Order Saif'}</span>
                                     </div>
                                 </a>
                             ))}
@@ -380,7 +380,7 @@ export default function ThemePreview({
                                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                             </div>
                             <span className="text-gray-300 font-bold">{getViewportLabel()}</span>
-                            <div className="text-xs">⚡ Fast Order Live</div>
+                            <div className="text-xs">⚡ Order Saif Live</div>
                         </div>
 
                         {/* Iframe */}

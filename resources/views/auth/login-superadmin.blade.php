@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fast Order — دخول المشرف</title>
+    <title>Order Saif — دخول المشرف</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -242,11 +242,11 @@
     <div class="logo-wrap">
         <div class="logo-icon">
             <div class="logo-icon-inner">
-                <img src="{{ asset('images/logo.png') }}" alt="Fast Order Logo">
+                <img src="{{ asset('images/logo.png') }}" alt="Order Saif Logo">
             </div>
         </div>
         <div class="logo-text">
-            <h1>Fast Order</h1>
+            <h1>Order Saif</h1>
         </div>
     </div>
 
@@ -346,7 +346,7 @@
         </a>
     </div>
 
-    <p class="footer-note">محمي بواسطة <span>Fast Order Security</span> © {{ date('Y') }}</p>
+    <p class="footer-note">محمي بواسطة <span>Order Saif Security</span> © {{ date('Y') }}</p>
 </div>
 </body>
 </html>

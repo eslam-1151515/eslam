@@ -1,4 +1,4 @@
-@php
+﻿@php
     $stats = $stats ?? [
         'active_stores' => ['ar' => '+1,500', 'en' => '+1,500', 'label_ar' => 'متجر إلكتروني نشط', 'label_en' => 'Active Online Stores'],
         'daily_orders' => ['ar' => '+50,000', 'en' => '+50,000', 'label_ar' => 'طلب يتم معالجته يومياً', 'label_en' => 'Orders Processed Daily'],
@@ -191,7 +191,7 @@
             'role_en' => 'Founder of "Anaka Fashion"',
             'avatar' => 'https://ui-avatars.com/api/?name=أحمد+محمد&background=6366f1&color=fff&size=128',
             'quote_ar' => 'انتقالنا إلى منصة فاست أوردر كان أفضل قرار اتخذناه هذا العام. سرعة المتجر ارتفعت بشكل ملحوظ ومعدل تحويل الزوار إلى مشترين زاد بنسبة 35% خلال أول شهر فقط!',
-            'quote_en' => 'Moving to Fast Order was the best decision we made this year. Store speed increased significantly, and our conversion rate jumped by 35% in the first month!',
+            'quote_en' => 'Moving to Order Saif was the best decision we made this year. Store speed increased significantly, and our conversion rate jumped by 35% in the first month!',
             'rating' => 5,
         ],
         [
@@ -211,7 +211,7 @@
             'role_en' => 'General Manager of "TechZone Electronics"',
             'avatar' => 'https://ui-avatars.com/api/?name=محمود+علي&background=3b82f6&color=fff&size=128',
             'quote_ar' => 'كنا نعاني من بطء السيرفرات وعمولات المنصات الأخرى. مع فاست أوردر حصلنا على استقرار 100% وعمولة صفر! لوحة التحكم وإدارة الطلبات والشحن أصبحت أسهل بكثير.',
-            'quote_en' => 'We used to suffer from slow servers and commissions on other platforms. With Fast Order, we got 100% stability and zero commission! The control panel is extremely easy.',
+            'quote_en' => 'We used to suffer from slow servers and commissions on other platforms. With Order Saif, we got 100% stability and zero commission! The control panel is extremely easy.',
             'rating' => 5,
         ],
     ];
@@ -221,7 +221,7 @@
             'question_ar' => 'هل أحتاج إلى أي خبرة تقنية أو برمجية لإنشاء متجري؟',
             'question_en' => 'Do I need any technical or programming experience to create my store?',
             'answer_ar' => 'على الإطلاق! منصة فاست أوردر مصممة لتكون سهلة وبسيطة للغاية. يمكنك إنشاء وتخصيص وإطلاق متجرك الإلكتروني بالكامل في أقل من 5 دقائق باستخدام واجهات مرئية وبدون كتابة سطر كود واحد.',
-            'answer_en' => 'Not at all! Fast Order is designed to be extremely simple. You can create, customize, and launch your online store in under 5 minutes using visual interfaces and without writing a single line of code.',
+            'answer_en' => 'Not at all! Order Saif is designed to be extremely simple. You can create, customize, and launch your online store in under 5 minutes using visual interfaces and without writing a single line of code.',
         ],
         [
             'question_ar' => 'هل توجد أي عمولات على المبيعات التي أحققها؟',
@@ -278,7 +278,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>فاست أوردر (Fast Order) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ</title>
+    <title>فاست أوردر (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ</title>
     <meta name="description" content="المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك.">
     
     <!-- Fonts -->
@@ -533,7 +533,7 @@
                 mockupConvRate: 'معدل تحويل المتجر',
                 mockupAboveAvg: '4.8% (أعلى 3x من المتوسط)',
                 
-                featuresSub: 'لماذا تختار Fast Order؟',
+                featuresSub: 'لماذا تختار Order Saif؟',
                 featuresTitle: 'كل ما تحتاجه للنجاح في التجارة الإلكترونية في منصة واحدة',
                 featuresDesc: 'تم تصميم منصتنا بأحدث التقنيات العالمية لتوفير أقصى سرعة وأعلى معدل تحويل، مع أدوات تسويق وإدارة ذكية تغنيك عن عشرات الإضافات والاشتراكات.',
                 
@@ -554,12 +554,12 @@
                 pricingGuarantee: 'جميع الباقات تشمل استضافة سحابية فائقة الأمان، شهادة SSL مجانية، ونسخ احتياطي يومي تلقائي.',
                 
                 testimSub: 'قصص نجاح ملهمة',
-                testimTitle: 'ماذا يقول التجار عن تجربة Fast Order؟',
+                testimTitle: 'ماذا يقول التجار عن تجربة Order Saif؟',
                 testimDesc: 'انضم لأكثر من 1,500 تاجر ورائد أعمال يثقون في منصتنا لتنمية مبيعاتهم وتحقيق أحلامهم يومياً.',
                 trustStripTitle: 'شركاء حلول الدفع والشحن المتكاملة',
                 
                 faqSub: 'إجابات واضحة',
-                faqTitle: 'الأسئلة الشائعة حول منصة Fast Order',
+                faqTitle: 'الأسئلة الشائعة حول منصة Order Saif',
                 faqDesc: 'هل لديك استفسار آخر؟ يمكنك التواصل مع فريق الدعم الفني المتاح لخدمتك على مدار الساعة.',
                 faqContactTitle: 'لم تجد إجابة لسؤالك؟',
                 faqContactDesc: 'فريقنا جاهز للإجابة على جميع استفساراتك ومساعدتك في اختيار الباقة الأنسب لمتجرك.',
@@ -580,7 +580,7 @@
                 footerEmailLabel: 'البريد الإلكتروني',
                 footerHoursLabel: 'ساعات العمل',
                 footerHoursValue: 'دعم فني متواصل 24/7',
-                footerCopyright: 'جميع الحقوق محفوظة © 2026 فاست أوردر (Fast Order). صُنع بشغف لتمكين التجارة الإلكترونية العربية.',
+                footerCopyright: 'جميع الحقوق محفوظة © 2026 فاست أوردر (Order Saif). صُنع بشغف لتمكين التجارة الإلكترونية العربية.',
                 footerTerms: 'شروط الاستخدام',
                 footerPrivacy: 'سياسة الخصوصية',
                 footerRefund: 'سياسة الاسترجاع والأمان',
@@ -622,12 +622,12 @@
                 mockupConvRate: 'Store Conversion Rate',
                 mockupAboveAvg: '4.8% (3x higher than average)',
                 
-                featuresSub: 'Why Choose Fast Order?',
+                featuresSub: 'Why Choose Order Saif?',
                 featuresTitle: 'Everything You Need to Succeed in E-Commerce in One Place',
                 featuresDesc: 'Our platform is designed with the latest technologies to provide maximum speed and highest conversion rates, with smart marketing and management tools.',
                 
                 transferBadge: 'New Update 🚀',
-                transferTitle: 'Do you have an existing store and want to transfer to Fast Order?',
+                transferTitle: 'Do you have an existing store and want to transfer to Order Saif?',
                 transferDesc: 'Our technical team will transfer your store, products, and customer data for free with zero downtime in less than 24 hours!',
                 transferCta: 'Contact Free Migration Team',
                 
@@ -646,12 +646,12 @@
                 pricingGuarantee: 'All plans include ultra-secure cloud hosting, free SSL certificate, and automatic daily backups.',
                 
                 testimSub: 'Inspiring Success Stories',
-                testimTitle: 'What do merchants say about their Fast Order experience?',
+                testimTitle: 'What do merchants say about their Order Saif experience?',
                 testimDesc: 'Join over 1,500 merchants and entrepreneurs who trust our platform to grow their sales and achieve their dreams.',
                 trustStripTitle: 'Integrated Payment and Shipping Partners',
                 
                 faqSub: 'Clear Answers',
-                faqTitle: 'Frequently Asked Questions about Fast Order',
+                faqTitle: 'Frequently Asked Questions about Order Saif',
                 faqDesc: 'Have another question? You can contact our support team available to serve you around the clock.',
                 faqContactTitle: 'Didn\'t find an answer to your question?',
                 faqContactDesc: 'Our team is ready to answer all your inquiries and help you choose the best plan for your store.',
@@ -662,7 +662,7 @@
                 finalCtaDesc: 'Create your store now in less than 3 minutes, enjoy 7 days free, and never pay any commission on your sales!',
                 finalCtaSupport: 'Contact Support',
                 
-                footerDesc: 'Fast Order is the all-in-one platform for building and growing e-commerce stores in the Arab world with blazing speeds and smart technologies, designed to enable merchants to grow without commissions or tech limits.',
+                footerDesc: 'Order Saif is the all-in-one platform for building and growing e-commerce stores in the Arab world with blazing speeds and smart technologies, designed to enable merchants to grow without commissions or tech limits.',
                 footerQuickLinks: 'Quick Links',
                 footerHelpSupport: 'Help & Technical Support',
                 footerHelpCenter: 'Help Center & Tutorials',
@@ -672,7 +672,7 @@
                 footerEmailLabel: 'Email Address',
                 footerHoursLabel: 'Business Hours',
                 footerHoursValue: '24/7 Continuous Support',
-                footerCopyright: 'All Rights Reserved © 2026 Fast Order. Made with passion to empower Arab E-Commerce.',
+                footerCopyright: 'All Rights Reserved © 2026 Order Saif. Made with passion to empower Arab E-Commerce.',
                 footerTerms: 'Terms of Use',
                 footerPrivacy: 'Privacy Policy',
                 footerRefund: 'Refund & Security Policy',
@@ -703,7 +703,7 @@
                     <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-11 w-auto max-h-11 object-contain group-hover:scale-105 transition-transform duration-300">
                     <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
                         <span x-show="lang === 'ar'">فاست أوردر</span>
-                        <span x-show="lang === 'en'">Fast Order</span>
+                        <span x-show="lang === 'en'">Order Saif</span>
                     </span>
                 </a>
 
@@ -886,7 +886,7 @@
                                             <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                                         </div>
                                         <div class="text-xs text-slate-500 dark:text-gray-400 font-mono bg-slate-100 dark:bg-dark-bg/60 px-3 py-1 rounded-full border border-slate-200 dark:border-white/5">
-                                            https://my-store.fastorder.test/admin
+                                            https://my-store.OrderSaif.test/admin
                                         </div>
                                         <div class="w-6"></div>
                                     </div>
@@ -1465,7 +1465,7 @@
                             <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-10 w-auto max-h-10 object-contain">
                             <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
                                 <span x-show="lang === 'ar'">فاست أوردر</span>
-                                <span x-show="lang === 'en'">Fast Order</span>
+                                <span x-show="lang === 'en'">Order Saif</span>
                             </span>
                         </a>
                         <p class="text-slate-500 dark:text-gray-400 text-sm leading-relaxed pr-2" x-text="trans('footerDesc')">

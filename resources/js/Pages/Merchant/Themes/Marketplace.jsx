@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
@@ -272,7 +272,7 @@ export default function ThemeMarketplace({
                                                 <h3 className="text-xl font-black text-white drop-shadow-md tracking-wide">
                                                     {theme.name}
                                                 </h3>
-                                                <p className="text-xs text-white/80 mt-1">بواسطة {theme.author || 'Fast Order Team'}</p>
+                                                <p className="text-xs text-white/80 mt-1">بواسطة {theme.author || 'Order Saif Team'}</p>
                                             </div>
 
                                             {/* Bottom Quick Overlay */}
@@ -375,7 +375,7 @@ export default function ThemeMarketplace({
                                         {activeModalTheme.type === 'free' ? '🎁 ثيم مجاني' : `💎 ثيم مدفوع (${Math.round(activeModalTheme.price)} ج.م)`}
                                     </span>
                                     <h2 className="text-2xl font-black">{activeModalTheme.name}</h2>
-                                    <p className="text-xs text-white/80 mt-1">بواسطة {activeModalTheme.author || 'Fast Order Team'} - الإصدار {activeModalTheme.version || '1.0.0'}</p>
+                                    <p className="text-xs text-white/80 mt-1">بواسطة {activeModalTheme.author || 'Order Saif Team'} - الإصدار {activeModalTheme.version || '1.0.0'}</p>
                                 </div>
                                 <button
                                     onClick={() => setActiveModalTheme(null)}

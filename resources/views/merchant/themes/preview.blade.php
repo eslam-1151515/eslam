@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'معاينة وتخصيص الثيم - ' . ($themeConfig['name'] ?? $theme))
 
@@ -88,7 +88,7 @@
                             </div>
                             <div class="overflow-hidden">
                                 <h4 class="text-xs font-bold truncate">{{ $tConfig['name'] }}</h4>
-                                <span class="text-[10px] text-gray-400">{{ $tConfig['author'] ?? 'Fast Order' }}</span>
+                                <span class="text-[10px] text-gray-400">{{ $tConfig['author'] ?? 'Order Saif' }}</span>
                             </div>
                         </a>
                     @endforeach
@@ -220,7 +220,7 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                     </div>
                     <span id="viewport-label" class="text-gray-300 font-bold">1440px × 100% (Desktop View)</span>
-                    <div class="text-xs">⚡ Fast Order Live</div>
+                    <div class="text-xs">⚡ Order Saif Live</div>
                 </div>
 
                 <!-- Live Iframe -->

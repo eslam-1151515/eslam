@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -901,7 +901,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} لـ {{ $tenant->name ?? 'المتجر الرسمي' }} | تم التطوير بواسطة Fast Order</p>
+        <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} لـ {{ $tenant->name ?? 'المتجر الرسمي' }} | تم التطوير بواسطة Order Saif</p>
     </footer>
 
     <!-- Scripts -->

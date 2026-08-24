@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إعادة تعيين كلمة السر — Fast Order</title>
+    <title>إعادة تعيين كلمة السر — Order Saif</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; color: #e2e8f0;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0f172a; padding: 40px 10px;">
@@ -20,7 +20,7 @@
                                     <span style="font-size: 26px; line-height: 56px;">⚡</span>
                                 </div>
                             </div>
-                            <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Fast Order</h1>
+                            <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Order Saif</h1>
                             <p style="margin: 4px 0 0 0; font-size: 13px; color: #a5b4fc; font-weight: 600;">منصة التجارة الإلكترونية السريعة</p>
                         </td>
                     </tr>
@@ -32,7 +32,7 @@
                                 مرحباً {{ $name ?: 'عزيزنا التاجر' }} 👋
                             </h2>
                             <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.7; color: #cbd5e1;">
-                                لقد تلقينا طلباً لإعادة تعيين كلمة السر الخاصة بحسابك على منصة <strong style="color: #818cf8;">فاست أوردر (Fast Order)</strong>. يمكنك تعيين كلمة سر جديدة بالضغط على الزر أدناه:
+                                لقد تلقينا طلباً لإعادة تعيين كلمة السر الخاصة بحسابك على منصة <strong style="color: #818cf8;">فاست أوردر (Order Saif)</strong>. يمكنك تعيين كلمة سر جديدة بالضغط على الزر أدناه:
                             </p>
 
                             <!-- CTA Button -->
@@ -59,7 +59,7 @@
 
                             <p style="margin: 0; font-size: 14px; font-weight: 600; color: #cbd5e1;">
                                 مع تحيات،<br>
-                                <span style="color: #818cf8;">فريق دعم Fast Order 🚀</span>
+                                <span style="color: #818cf8;">فريق دعم Order Saif 🚀</span>
                             </p>
 
                             <!-- Fallback Link Divider -->
@@ -78,7 +78,7 @@
                     <tr>
                         <td style="padding: 20px 30px; text-align: center; background-color: #0f172a; border-top: 1px solid rgba(255, 255, 255, 0.08);">
                             <p style="margin: 0; font-size: 12px; color: #64748b;">
-                                © {{ date('Y') }} جميع الحقوق محفوظة — منصة فاست أوردر (Fast Order)
+                                © {{ date('Y') }} جميع الحقوق محفوظة — منصة فاست أوردر (Order Saif)
                             </p>
                         </td>
                     </tr>

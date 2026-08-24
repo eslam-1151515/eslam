@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -209,7 +209,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'default',
                 'name' => 'الثيم الافتراضي الكلاسيكي (Default Theme)',
                 'description' => 'الثيم الافتراضي السريع والمتجاوب لجميع المتاجر، يتميز بتجربة تسوق سلسة وبسيطة مع دعم كامل للغتين العربية والإنجليزية وسرعة تحميل فائقة.',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'version' => '1.0.0',
                 'type' => 'free',
                 'price' => 0.00,
@@ -260,7 +260,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'modern_minimalist',
                 'name' => 'الثيم العصري الحديث (Modern Minimalist)',
                 'description' => 'تصميم عصري ونظيف يركز على المساحات البيضاء وعرض صور المنتجات بوضوح عالٍ وبشكل سينمائي جذاب مع تأثيرات الزجاج الحديثة (Glassmorphism).',
-                'author' => 'Fast Order Design Lab',
+                'author' => 'Order Saif Design Lab',
                 'version' => '1.2.0',
                 'type' => 'free',
                 'price' => 0.00,
@@ -304,7 +304,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'bold',
                 'name' => 'الثيم الجريء المبهج (Bold & Vibrant)',
                 'description' => 'ثيم احترافي مدفوع يتميز بالألوان الجريئة والتباين العالي، مصمم خصيصاً لجذب انتباه العملاء وزيادة المبيعات وحملات العروض الخاصة.',
-                'author' => 'Fast Order Design Lab',
+                'author' => 'Order Saif Design Lab',
                 'version' => '1.0.0',
                 'type' => 'paid',
                 'price' => 299.00,
@@ -348,7 +348,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'starter',
                 'name' => 'ثيم البداية السريعة (Starter Express)',
                 'description' => 'ثيم خفيف وسريع للغاية مصمم للمتاجر الناشئة والطلبات السريعة، يركز على سهولة الاستخدام وإتمام الطلب في ثوانٍ معدودة دون أي تعقيد.',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'version' => '1.0.0',
                 'type' => 'free',
                 'price' => 0.00,
@@ -392,7 +392,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'dark_elegance',
                 'name' => 'ثيم الأناقة الداكنة (Dark Elegance)',
                 'description' => 'تصميم فاخر بالوضع الداكن (Dark Mode) مع لمسات ذهبية وزرقاء أنيقة، مثالي لمتاجر العطور والساعات والمجوهرات والأزياء الفاخرة.',
-                'author' => 'Fast Order Design Lab',
+                'author' => 'Order Saif Design Lab',
                 'version' => '1.1.0',
                 'type' => 'paid',
                 'price' => 499.00,
@@ -436,7 +436,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'fresh_market',
                 'name' => 'ثيم السوق الطازج (Fresh Market)',
                 'description' => 'تصميم حيوي ومشرق بالألوان الخضراء الطبيعية، مصمم خصيصاً لمتاجر المواد الغذائية، المكملات الصحية، والمنتجات العضوية والطازجة.',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'version' => '1.0.0',
                 'type' => 'paid',
                 'price' => 399.00,
@@ -473,7 +473,7 @@ class ThemeMarketplace extends Model
                 'slug' => 'tech_store',
                 'name' => 'ثيم التكنولوجيا والمعدات (Tech Pro)',
                 'description' => 'تصميم تقني حاد يتميز بالألوان الزرقاء والسيان مع تقسيمات شبكية دقيقة لعرض المواصفات التقنية والأجهزة والإلكترونيات بشكل احترافي.',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'version' => '1.0.0',
                 'type' => 'free',
                 'price' => 0.00,

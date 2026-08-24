@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>الباقات والأسعار - فاست أوردر (Fast Order)</title>
+    <title>الباقات والأسعار - فاست أوردر (Order Saif)</title>
     
     <!-- Google Fonts: Cairo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -418,7 +418,7 @@
                 <a href="https://wa.me/966000000000" target="_blank" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all">
                     <i class="fa-brands fa-whatsapp text-lg"></i> تواصل معنا عبر الواتساب
                 </a>
-                <a href="mailto:support@fastorder.com" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm flex items-center gap-2 transition-all border border-slate-700">
+                <a href="mailto:support@OrderSaif.com" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm flex items-center gap-2 transition-all border border-slate-700">
                     <i class="fa-solid fa-envelope text-indigo-400"></i> راسلنا عبر البريد
                 </a>
             </div>
@@ -455,7 +455,7 @@
     <footer class="mt-auto border-t border-slate-900 bg-slate-950/80 py-8 px-4 text-center text-slate-500 text-sm z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-                <span class="font-bold text-white">فاست أوردر (Fast Order)</span>
+                <span class="font-bold text-white">فاست أوردر (Order Saif)</span>
                 <span>• منصة التجارة الإلكترونية الأسرع والأسهل في الوطن العربي</span>
             </div>
             <div>

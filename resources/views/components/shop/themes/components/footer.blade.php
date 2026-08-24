@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'storeName' => null,
     'description' => null,
     'links' => [],
@@ -8,7 +8,7 @@
 ])
 
 @php
-    $fStoreName = $storeName ?? (isset($store) ? data_get($store, 'name') : config('app.name', 'Fast Order'));
+    $fStoreName = $storeName ?? (isset($store) ? data_get($store, 'name') : config('app.name', 'Order Saif'));
     $fDescription = $description ?? __('Your premium destination for seamless online shopping with fast and reliable delivery.');
     $fCopyright = $copyright ?? __('All Rights Reserved.');
     
@@ -87,7 +87,7 @@
                 &copy; {{ date('Y') }} {{ $fStoreName }}. {{ $fCopyright }}
             </div>
             <div style="display: flex; gap: 1rem; align-items: center; color: var(--theme-text-muted);">
-                <span>{{ __('Powered by Fast Order') }}</span>
+                <span>{{ __('Powered by Order Saif') }}</span>
             </div>
         </div>
     </div>

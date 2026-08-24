@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Services;
 
@@ -226,7 +226,7 @@ class ThemeService
         $fontUrl = $fontLinks[$fontFamily] ?? $fontLinks['Cairo'];
         $fontStack = "'{$fontFamily}', system-ui, -apple-system, sans-serif";
 
-        $html = '<!-- Fast Order Phase 66 Theme Architecture Styles -->';
+        $html = '<!-- Order Saif Phase 66 Theme Architecture Styles -->';
         $html .= "\n" . '<link rel="preconnect" href="https://fonts.googleapis.com">';
         $html .= "\n" . '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
         $html .= "\n" . '<link href="' . e($fontUrl) . '" rel="stylesheet">';
@@ -348,7 +348,7 @@ class ThemeService
             'name' => 'ثيم غير مسمّى',
             'slug' => 'custom',
             'version' => '1.0.0',
-            'author' => 'Fast Order',
+            'author' => 'Order Saif',
             'description' => 'ثيم مخصص لمتجر فاست أوردر',
             'preview_image' => '/shop/images/themes/default-preview.webp',
             'support_rtl' => true,
@@ -371,7 +371,7 @@ class ThemeService
     }
 
     /**
-     * Built-in preset theme definitions for Fast Order platform.
+     * Built-in preset theme definitions for Order Saif platform.
      */
     protected function getBuiltInThemePresets(): array
     {
@@ -380,7 +380,7 @@ class ThemeService
                 'name' => 'الثيم الافتراضي (Default Theme)',
                 'slug' => 'default',
                 'version' => '1.0.0',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'description' => 'الثيم الافتراضي السريع والمتجاوب لجميع المتاجر، مصمم لتجربة تسوق سلسة ودعم كامل للغتين العربية والإنجليزية.',
                 'preview_image' => '/shop/images/themes/default-preview.webp',
                 'support_rtl' => true,
@@ -400,7 +400,7 @@ class ThemeService
                 'name' => 'الثيم العصري (Modern Minimalist)',
                 'slug' => 'modern_minimalist',
                 'version' => '1.1.0',
-                'author' => 'Fast Order Design Lab',
+                'author' => 'Order Saif Design Lab',
                 'description' => 'تصميم عصري ونظيف يركز على مساحات الفراغ وعرض صور المنتجات بوضوح عالٍ مع تأثيرات Glassmorphism.',
                 'preview_image' => '/shop/images/themes/modern-preview.webp',
                 'support_rtl' => true,
@@ -420,7 +420,7 @@ class ThemeService
                 'name' => 'ثيم الأناقة الداكنة (Dark Elegance)',
                 'slug' => 'dark_elegance',
                 'version' => '1.0.0',
-                'author' => 'Fast Order Design Lab',
+                'author' => 'Order Saif Design Lab',
                 'description' => 'تصميم فاخر بالوضع الداكن Dark Mode مع لمسات ذهبية وزرقاء، مثالي لمتاجر العطور والساعات والأزياء الفاخرة.',
                 'preview_image' => '/shop/images/themes/dark-preview.webp',
                 'support_rtl' => true,
@@ -440,7 +440,7 @@ class ThemeService
                 'name' => 'ثيم السوق الطازج (Fresh Market)',
                 'slug' => 'fresh_market',
                 'version' => '1.0.0',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'description' => 'تصميم حيوي ومشرق بالألوان الخضراء الطبيعية، مصمم خصيصاً لمتاجر المواد الغذائية والمكملات والمنتجات العضوية.',
                 'preview_image' => '/shop/images/themes/fresh-preview.webp',
                 'support_rtl' => true,
@@ -460,7 +460,7 @@ class ThemeService
                 'name' => 'ثيم التكنولوجيا والمعدات (Tech Pro)',
                 'slug' => 'tech_store',
                 'version' => '1.0.0',
-                'author' => 'Fast Order Team',
+                'author' => 'Order Saif Team',
                 'description' => 'تصميم تقني حاد يتميز بالألوان الزرقاء والسيان مع تقسيمات شبكية دقيقة لعرض المواصفات التقنية للمنتجات والإلكترونيات.',
                 'preview_image' => '/shop/images/themes/tech-preview.webp',
                 'support_rtl' => true,

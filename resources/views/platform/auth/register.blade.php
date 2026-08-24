@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -343,7 +343,7 @@
                                 <input type="text" name="slug" x-model="form.slug" @input.debounce.500ms="checkSlugAvailability()"
                                        class="w-full bg-black/40 border-y border-white/10 px-3 py-3.5 text-brand-300 font-mono text-sm focus:outline-none focus:border-brand-500 transition"
                                        placeholder="my-store" required>
-                                <span class="bg-white/5 border border-l-0 border-white/10 rounded-r-xl px-3.5 py-3.5 text-gray-400 text-xs sm:text-sm font-mono whitespace-nowrap">.fastorder.com</span>
+                                <span class="bg-white/5 border border-l-0 border-white/10 rounded-r-xl px-3.5 py-3.5 text-gray-400 text-xs sm:text-sm font-mono whitespace-nowrap">.OrderSaif.com</span>
                             </div>
                             
                             <!-- Slug Availability Feedback -->
@@ -368,7 +368,7 @@
                                         </span>
                                     </template>
                                 </div>
-                                <span class="text-gray-500 font-mono text-[11px]" x-show="form.slug">رابطك: <span class="text-brand-300 font-bold" x-text="form.slug + '.fastorder.com'"></span></span>
+                                <span class="text-gray-500 font-mono text-[11px]" x-show="form.slug">رابطك: <span class="text-brand-300 font-bold" x-text="form.slug + '.OrderSaif.com'"></span></span>
                             </div>
                         </div>
 
@@ -512,7 +512,7 @@
                             </div>
                             <div class="flex justify-between items-center py-1.5 border-b border-white/5">
                                 <span class="text-gray-400">رابط المتجر:</span>
-                                <span class="font-mono text-brand-300 font-bold" dir="ltr" x-text="form.slug ? form.slug + '.fastorder.com' : '---'"></span>
+                                <span class="font-mono text-brand-300 font-bold" dir="ltr" x-text="form.slug ? form.slug + '.OrderSaif.com' : '---'"></span>
                             </div>
                             <div class="flex justify-between items-center py-1.5">
                                 <span class="text-gray-400">الباقة المختارة:</span>
@@ -561,7 +561,7 @@
 
     <!-- Footer -->
     <footer class="max-w-4xl mx-auto w-full text-center mt-8 text-xs text-gray-500">
-        <p>© {{ date('Y') }} فاست أوردر (Fast Order). جميع الحقوق محفوظة. بتسجيلك أنت توافق على <a href="#" class="text-gray-400 underline">شروط الخدمة</a> و <a href="#" class="text-gray-400 underline">سياسة الخصوصية</a>.</p>
+        <p>© {{ date('Y') }} فاست أوردر (Order Saif). جميع الحقوق محفوظة. بتسجيلك أنت توافق على <a href="#" class="text-gray-400 underline">شروط الخدمة</a> و <a href="#" class="text-gray-400 underline">سياسة الخصوصية</a>.</p>
     </footer>
 
     <!-- Alpine.js Wizard Logic -->

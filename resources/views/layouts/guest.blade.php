@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Fast Order — استعادة كلمة السر' }}</title>
+    <title>{{ $title ?? 'Order Saif — استعادة كلمة السر' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -166,11 +166,11 @@
                         $logoPath = $isTenantDomain ? \App\Models\Setting::get('logo') : null;
                         $logoUrl  = $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png?v=202604031');
                     @endphp
-                    <img src="{{ $logoUrl }}" alt="Fast Order" />
+                    <img src="{{ $logoUrl }}" alt="Order Saif" />
                 </div>
             </a>
             <div class="logo-text">
-                <h1>Fast Order</h1>
+                <h1>Order Saif</h1>
             </div>
         </div>
 

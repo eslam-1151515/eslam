@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 
 export default function Pricing({ plans = [], faqs = [], comparisonCategories = [] }) {
@@ -11,7 +11,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white relative overflow-x-hidden" dir="rtl">
-            <Head title="الباقات والأسعار - فاست أوردر (Fast Order)" />
+            <Head title="الباقات والأسعار - فاست أوردر (Order Saif)" />
 
             {/* Glowing Background Elements */}
             <div className="absolute -top-32 -right-32 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
@@ -376,7 +376,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
                         <a href="https://wa.me/966000000000" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all">
                             <span>💬</span> تواصل معنا عبر الواتساب
                         </a>
-                        <a href="mailto:support@fastorder.com" className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm flex items-center gap-2 transition-all border border-slate-700">
+                        <a href="mailto:support@OrderSaif.com" className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm flex items-center gap-2 transition-all border border-slate-700">
                             <span>✉️</span> راسلنا عبر البريد
                         </a>
                     </div>
@@ -410,7 +410,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
             <footer className="mt-auto border-t border-slate-900 bg-slate-950/80 py-8 px-4 text-center text-slate-500 text-sm z-10">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <span className="font-bold text-white">فاست أوردر (Fast Order)</span>
+                        <span className="font-bold text-white">فاست أوردر (Order Saif)</span>
                         <span>• منصة التجارة الإلكترونية الأسرع والأسهل في الوطن العربي</span>
                     </div>
                     <div>

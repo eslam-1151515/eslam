@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'storeName' => null,
     'logoUrl' => null,
     'navLinks' => [],
@@ -9,7 +9,7 @@
 ])
 
 @php
-    $nStoreName = $storeName ?? (isset($store) ? data_get($store, 'name') : config('app.name', 'Fast Order'));
+    $nStoreName = $storeName ?? (isset($store) ? data_get($store, 'name') : config('app.name', 'Order Saif'));
     $nLogoUrl = $logoUrl ?? (isset($store) ? data_get($store, 'logo_url') : null);
     
     // Default navigation links if empty

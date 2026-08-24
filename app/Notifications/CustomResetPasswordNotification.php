@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Notifications;
 
@@ -30,8 +30,8 @@ class CustomResetPasswordNotification extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('🔑 طلب إعادة تعيين كلمة السر — Fast Order')
-            ->from(config('mail.from.address', 'emamrady631@gmail.com'), 'Fast Order — دعم الحسابات')
+            ->subject('🔑 طلب إعادة تعيين كلمة السر — Order Saif')
+            ->from(config('mail.from.address', 'emamrady631@gmail.com'), 'Order Saif — دعم الحسابات')
             ->view('emails.reset_password', [
                 'resetUrl' => $resetUrl,
                 'name' => $notifiable->name,

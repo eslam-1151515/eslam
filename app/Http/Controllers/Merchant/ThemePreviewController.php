@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Merchant;
 
@@ -211,7 +211,7 @@ class ThemePreviewController extends Controller
 
         // Inject dynamic theme styles and live postMessage listener script
         $injections = '
-<!-- Fast Order Live Theme Preview Injection -->
+<!-- Order Saif Live Theme Preview Injection -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="' . e($fontUrl) . '" rel="stylesheet" id="live-theme-font">
@@ -576,7 +576,7 @@ class ThemePreviewController extends Controller
             'slug' => $slug,
             'name' => $name,
             'description' => $config['description'] ?? '',
-            'author' => $config['author'] ?? 'Fast Order Team',
+            'author' => $config['author'] ?? 'Order Saif Team',
             'version' => $config['version'] ?? '1.0.0',
             'preview_image' => $config['preview_image'] ?? "/shop/images/themes/{$slug}-preview.webp",
             'svg_thumbnail' => 'data:image/svg+xml;base64,' . base64_encode($svg),

@@ -1,9 +1,9 @@
-{
+﻿{
     "name": "Default Classic Store",
     "name_ar": "الثيم الافتراضي (كلاسيك)",
     "slug": "default",
     "version": "1.0.0",
-    "author": "Fast Order Team",
+    "author": "Order Saif Team",
     "description": "تصميم كلاسيكي نظيف وأنيق مناسب لكافة أنواع المتاجر الإلكترونية، يتميز بتجاوب كامل مع الشاشات، دعم كامل للاتجاهين RTL و LTR، وتخصيص مرن للألوان والخطوط عبر متغيرات CSS.",
     "thumbnail": "/shop/themes/default/thumbnail.png",
     "layouts": {

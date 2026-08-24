@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="dark scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'فاست أوردر (Fast Order) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ')</title>
+    <title>@yield('title', 'فاست أوردر (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ')</title>
     <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك وتجربة مجانية لمدة 7 أيام.')">
-    <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, فاست أوردر, Fast Order, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, استرجاع السلات المتروكة, تسويق إلكتروني">
-    <meta name="author" content="Fast Order Platform">
+    <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, فاست أوردر, Order Saif, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, استرجاع السلات المتروكة, تسويق إلكتروني">
+    <meta name="author" content="Order Saif Platform">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Open Graph / Facebook / WhatsApp Meta Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Fast Order — فاست أوردر" />
-    <meta property="og:title" content="@yield('og_title', 'فاست أوردر (Fast Order) | منصة التجارة الإلكترونية الأسرع في الوطن العربي')" />
+    <meta property="og:site_name" content="Order Saif — فاست أوردر" />
+    <meta property="og:title" content="@yield('og_title', 'فاست أوردر (Order Saif) | منصة التجارة الإلكترونية الأسرع في الوطن العربي')" />
     <meta property="og:description" content="@yield('og_description', 'أنشئ متجرك الإلكتروني المتكامل مجاناً في أقل من 3 دقائق بدون عمولات على مبيعاتك وبتقنيات سرعة فائقة.')" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:locale" content="ar_EG" />
@@ -28,12 +28,12 @@
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "Fast Order",
+      "name": "Order Saif",
       "alternateName": "فاست أوردر",
       "operatingSystem": "All",
       "applicationCategory": "BusinessApplication",
       "description": "منصة متكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بدون عمولات وبتقنيات سرعة فائقة.",
-      "url": "https://fast-order-eg.tech",
+      "url": "https://ordersaif.com",
       "offers": {
         "@type": "Offer",
         "price": "500",
@@ -203,7 +203,7 @@
                     <span class="text-2xl font-black tracking-tight text-white font-sans flex items-center gap-1.5">
                         فاست أوردر <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-bold">PRO</span>
                     </span>
-                    <span class="text-[10px] text-gray-400 -mt-1 tracking-wider uppercase font-semibold">Fast Order Platform</span>
+                    <span class="text-[10px] text-gray-400 -mt-1 tracking-wider uppercase font-semibold">Order Saif Platform</span>
                 </div>
             </a>
 
@@ -385,7 +385,7 @@
                             </div>
                             <div>
                                 <div class="text-xs text-gray-400">البريد الإلكتروني</div>
-                                <div class="font-bold text-white font-mono text-xs">support@fastorder.test</div>
+                                <div class="font-bold text-white font-mono text-xs">support@OrderSaif.test</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
@@ -405,7 +405,7 @@
             <!-- Bottom Copyright & Legal -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-gray-400">
                 <div>
-                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-white">فاست أوردر (Fast Order)</strong>. صُنع بشغف لتمكين التجارة الإلكترونية العربية.
+                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-white">فاست أوردر (Order Saif)</strong>. صُنع بشغف لتمكين التجارة الإلكترونية العربية.
                 </div>
                 <div class="flex items-center gap-6">
                     <a href="{{ route('main.terms') }}" class="hover:text-white transition-colors">شروط الاستخدام</a>

@@ -1,6 +1,6 @@
-@extends('layouts.platform')
+﻿@extends('layouts.platform')
 
-@section('title', 'اتفاقية مستوى الخدمة (SLA) | فاست أوردر (Fast Order) - استقرار وضمان لأعمالك')
+@section('title', 'اتفاقية مستوى الخدمة (SLA) | فاست أوردر (Order Saif) - استقرار وضمان لأعمالك')
 
 @section('meta_description', 'تعرف على التزامات منصة فاست أوردر بخصوص وقت تشغيل الخوادم (Uptime)، والتعويضات المستحقة، ومستويات الدعم الفني لضمان استمرارية متجرك الإلكتروني.')
 
@@ -26,7 +26,7 @@
                     1. ضمان وقت تشغيل الخدمة (Uptime Guarantee)
                 </h2>
                 <p class="text-sm sm:text-base">
-                    تلتزم منصة فاست أوردر (Fast Order) بتوفير معدل وقت تشغيل خوادم وسيرفرات لا يقل عن <strong class="text-emerald-400 font-mono">99.9%</strong> على مدار الشهر الميلادي. يُقاس وقت التشغيل من خلال أنظمة المراقبة الخارجية المعتمدة لدينا، ولا يشمل فترات الصيانة المجدولة مسبقاً.
+                    تلتزم منصة فاست أوردر (Order Saif) بتوفير معدل وقت تشغيل خوادم وسيرفرات لا يقل عن <strong class="text-emerald-400 font-mono">99.9%</strong> على مدار الشهر الميلادي. يُقاس وقت التشغيل من خلال أنظمة المراقبة الخارجية المعتمدة لدينا، ولا يشمل فترات الصيانة المجدولة مسبقاً.
                 </p>
             </div>
 
@@ -102,7 +102,7 @@
             <div class="space-y-4 pt-6 border-t border-white/10">
                 <h3 class="text-lg font-bold text-white">هل ترغب في طلب رصيد خدمة تعويضي؟</h3>
                 <p class="text-sm text-gray-400">
-                    يمكنك إرسال تذكرة دعم فني تحتوي على تفاصيل وقت تعطل الخدمة والأدلة الخاصة بك عبر البريد: <a href="mailto:sla@fastorder.test" class="text-brand-400 font-mono underline">sla@fastorder.test</a>
+                    يمكنك إرسال تذكرة دعم فني تحتوي على تفاصيل وقت تعطل الخدمة والأدلة الخاصة بك عبر البريد: <a href="mailto:sla@OrderSaif.test" class="text-brand-400 font-mono underline">sla@OrderSaif.test</a>
                 </p>
             </div>
 

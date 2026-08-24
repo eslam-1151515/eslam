@@ -1,9 +1,9 @@
-{
+﻿{
     "name": "Vibrant Bold Fashion",
     "name_ar": "الثيم الجريء (Vibrant & Dynamic)",
     "slug": "bold",
     "version": "1.0.0",
-    "author": "Fast Order Team",
+    "author": "Order Saif Team",
     "description": "تصميم جريء وألوان نابضة بالحياة مصمم خصيصاً لمتاجر الموضة والملابس والعلامات التجارية العصرية. يتميز بصور هيرو ضخمة (Large Hero Images)، شبكات عرض ديناميكية (Dynamic Grid Layouts)، وحركات تفاعلية مبهرة (Micro-animations) مع دعم كامل للغتين العربية والإنجليزية (RTL & LTR).",
     "thumbnail": "/shop/themes/bold/thumbnail.png",
     "direction": "rtl,ltr",
