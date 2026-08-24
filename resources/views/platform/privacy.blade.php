@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'سياسة الخصوصية | فاست أوردر (Order Saif) - أمان بياناتك أولويتنا')
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Order Saif Storefront Performance Library
  * Phase 65: Lazy Loading, Image Optimization (WebP), Skeleton Loaders, & PWA Registration
  */

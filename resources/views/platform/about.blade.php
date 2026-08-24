@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'من نحن | فاست أوردر (Order Saif) - ثورة في التجارة الإلكترونية العربية')
 

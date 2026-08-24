@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'معاينة وتخصيص الثيم - ' . ($themeConfig['name'] ?? $theme))
 

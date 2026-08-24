@@ -1,4 +1,4 @@
-﻿@php
+@php
     $stats = $stats ?? [
         'active_stores' => ['ar' => '+1,500', 'en' => '+1,500', 'label_ar' => 'متجر إلكتروني نشط', 'label_en' => 'Active Online Stores'],
         'daily_orders' => ['ar' => '+50,000', 'en' => '+50,000', 'label_ar' => 'طلب يتم معالجته يومياً', 'label_en' => 'Orders Processed Daily'],

@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 
 let file = fs.readFileSync('resources/views/auth/register.blade.php', 'utf8');
 

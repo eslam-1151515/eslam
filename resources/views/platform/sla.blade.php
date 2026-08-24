@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'اتفاقية مستوى الخدمة (SLA) | فاست أوردر (Order Saif) - استقرار وضمان لأعمالك')
 

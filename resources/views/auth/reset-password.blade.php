@@ -1,4 +1,4 @@
-﻿<x-guest-layout title="Order Saif — تعيين كلمة السر الجديدة">
+<x-guest-layout title="Order Saif — تعيين كلمة السر الجديدة">
     <div style="text-align: center; margin-bottom: 24px;">
         <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">تعيين كلمة سر جديدة</h2>
         <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">أدخل كلمة المرور الجديدة للحساب</p>

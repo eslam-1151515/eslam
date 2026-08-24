@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'مركز المساعدة والشروحات | فاست أوردر (Order Saif) - دليلك للنجاح')
 

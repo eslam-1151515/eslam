@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import SuperAdminLayout from '@/Layouts/SuperAdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 

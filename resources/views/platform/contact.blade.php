@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'اتصل بنا | فاست أوردر (Order Saif) - دعم فني متواصل 24/7')
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Order Saif Storefront Service Worker
  * Phase 65: Storefront Performance & PWA Cache
  */

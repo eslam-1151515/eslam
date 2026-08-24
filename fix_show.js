@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 let file = fs.readFileSync('resources/js/Pages/SuperAdmin/Tenants/Show.jsx', 'utf8');
 
 // 1. Add useState, Modal components, etc.

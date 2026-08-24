@@ -1,4 +1,4 @@
-﻿# نظام النشر بدون توقف (Zero-Downtime Deployment)
+# نظام النشر بدون توقف (Zero-Downtime Deployment)
 
 ## الفكرة الأساسية
 تم تجهيز هذا المشروع بنظام CI/CD عبر GitHub Actions لرفع التحديثات إلى خادم (CyberPanel / OpenLiteSpeed) بدون أي توقف (Zero-Downtime). 

@@ -1,4 +1,4 @@
-﻿@props([
+@props([
     'storeName' => null,
     'description' => null,
     'links' => [],

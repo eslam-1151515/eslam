@@ -1,4 +1,4 @@
-﻿@extends('layouts.platform')
+@extends('layouts.platform')
 
 @section('title', 'شروط الخدمة | فاست أوردر (Order Saif) - التزامات وقواعد واضحة')
 

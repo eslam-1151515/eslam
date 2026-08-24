@@ -1,4 +1,4 @@
-﻿# دليل المطورين لنظام Order Saif (Developer Guide)
+# دليل المطورين لنظام Order Saif (Developer Guide)
 
 مرحباً بك في دليل المطورين لمنصة **Order Saif**، وهي منصة تجارة إلكترونية متعددة التجار (SaaS Multi-Tenant) مبنية باستخدام إطار العمل Laravel للباك إند، وInertia.js مع React 19 للفرونت إند الخاص بلوحة تحكم التجار، بالإضافة إلى صفحات Blade وAlpine.js لواجهة المتجر (Storefront).
 
