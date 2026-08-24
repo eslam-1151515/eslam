@@ -155,23 +155,10 @@
 </head>
 <body>
     <div class="card">
-        <div class="logo-wrap">
-            <a href="/" class="logo-icon">
-                <div class="logo-icon-inner">
-                    @php
-                        $isTenantDomain = false;
-                        if (function_exists('tenant') && tenant()) {
-                            $isTenantDomain = true;
-                        }
-                        $logoPath = $isTenantDomain ? \App\Models\Setting::get('logo') : null;
-                        $logoUrl  = $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png?v=202604031');
-                    @endphp
-                    <img src="{{ $logoUrl }}" alt="Order Saif" />
-                </div>
+        <div class="logo-wrap" style="margin-bottom: 24px;">
+            <a href="/" style="display: inline-block;">
+                <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" style="max-height: 80px; max-width: 260px; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 0 20px rgba(99,102,241,0.5));">
             </a>
-            <div class="logo-text">
-                <h1>Order Saif</h1>
-            </div>
         </div>
 
         {{ $slot }}

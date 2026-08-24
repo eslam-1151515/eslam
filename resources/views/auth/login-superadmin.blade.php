@@ -239,15 +239,10 @@
 </head>
 <body>
 <div class="card">
-    <div class="logo-wrap">
-        <div class="logo-icon">
-            <div class="logo-icon-inner">
-                <img src="{{ asset('images/logo.png') }}" alt="Order Saif Logo">
-            </div>
-        </div>
-        <div class="logo-text">
-            <h1>Order Saif</h1>
-        </div>
+    <div class="logo-wrap" style="margin-bottom: 24px;">
+        <a href="/" style="display: inline-block;">
+            <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" style="max-height: 85px; max-width: 280px; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 0 20px rgba(99,102,241,0.5));">
+        </a>
     </div>
 
     <h2>تسجيل الدخول</h2>

@@ -7,13 +7,13 @@
         <div class="flex flex-col items-center mb-6 select-none">
             @php
                 $logoSetting = \App\Models\Setting::get('logo');
-                $logoPath = $logoSetting ? public_path('storage/' . $logoSetting) : public_path('images/logo.png');
-                $logoUrl  = $logoSetting ? asset('storage/' . $logoSetting) : asset('images/logo.png') . '?v=202604031';
+                $logoPath = $logoSetting ? public_path('storage/' . $logoSetting) : public_path('images/logo2.png');
+                $logoUrl  = $logoSetting ? asset('storage/' . $logoSetting) : asset('images/logo2.png') . '?v=' . time();
             @endphp
             @if(file_exists($logoPath))
-                <img src="{{ $logoUrl }}" alt="{{ $storeName ?? 'Store' }}" class="h-32 w-32 rounded-2xl border border-gray-200 object-cover" width="128" height="128" style="width:128px;height:128px;" />
+                <img src="{{ $logoUrl }}" alt="{{ $storeName ?? 'Order Saif' }}" class="h-20 w-auto max-h-20 object-contain" />
             @else
-                <img src="https://dummyimage.com/128x128/111827/ffffff&text=SM" alt="{{ $storeName ?? 'Store' }}" class="h-32 w-32 rounded-2xl border border-gray-200 object-cover" width="128" height="128" style="width:128px;height:128px;" />
+                <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="{{ $storeName ?? 'Order Saif' }}" class="h-20 w-auto max-h-20 object-contain" />
             @endif
             <div class="mt-2 text-2xl font-extrabold text-gray-900 leading-none" style="text-align: center;">{{ $storeName ?? 'Store' }}</div>
         </div>

@@ -700,7 +700,7 @@
                 
                 <!-- Brand Logo -->
                 <a href="/" class="flex items-center gap-3 group">
-                    <img src="{{ asset('images/logo.png') }}" alt="أوردر سيف" class="h-11 w-auto max-h-11 object-contain group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="أوردر سيف" class="h-10 w-auto max-h-10 object-contain group-hover:scale-105 transition-transform duration-300">
                     <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
                         <span x-show="lang === 'ar'">أوردر سيف</span>
                         <span x-show="lang === 'en'">Order Saif</span>
@@ -1462,7 +1462,7 @@
                     <!-- Col 1: Brand & Bio -->
                     <div class="lg:col-span-4 space-y-6">
                         <a href="/" class="flex items-center gap-3">
-                            <img src="{{ asset('images/logo.png') }}" alt="أوردر سيف" class="h-10 w-auto max-h-10 object-contain">
+                            <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="أوردر سيف" class="h-10 w-auto max-h-10 object-contain">
                             <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
                                 <span x-show="lang === 'ar'">أوردر سيف</span>
                                 <span x-show="lang === 'en'">Order Saif</span>

@@ -5,16 +5,9 @@
             <div class="flex flex-col items-end gap-1">
                 <!-- Brand: Logo + Name -->
                 <div class="flex items-center gap-2">
-                    <a href="/admin/dashboard" class="inline-flex items-center gap-2" aria-label="{{ __('لوحة التحكم - بيرد') }}">
-                        @php
-                            $logoPath = public_path('images/logo.png?v=202604031');
-                        @endphp
-                        @if (file_exists($logoPath))
-                            <img src="{{ asset('images/logo.png?v=202604031') }}" alt="{{ __('شعار بيرد') }}" class="h-10 w-10 max-h-10 max-w-10 rounded-full border border-gray-200 object-cover shrink-0" width="40" height="40" style="width:40px;height:40px;" />
-                        @else
-                            <img src="https://dummyimage.com/40x40/111827/ffffff&text=K" alt="{{ __('شعار بيرد') }}" class="h-10 w-10 max-h-10 max-w-10 rounded-full border border-gray-200 object-cover shrink-0" width="40" height="40" style="width:40px;height:40px;" />
-                        @endif
-                        <span class="text-lg font-bold text-gray-800 leading-none">Bird</span>
+                    <a href="/admin/dashboard" class="inline-flex items-center gap-2" aria-label="{{ __('لوحة التحكم - أوردر سيف') }}">
+                        <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" class="h-9 w-auto max-h-9 object-contain shrink-0" />
+                        <span class="text-lg font-bold text-gray-800 leading-none">Order Saif</span>
                     </a>
                 </div>
 
