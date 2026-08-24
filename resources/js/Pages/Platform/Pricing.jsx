@@ -11,7 +11,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white relative overflow-x-hidden" dir="rtl">
-            <Head title="الباقات والأسعار - فاست أوردر (Order Saif)" />
+            <Head title="الباقات والأسعار - أوردر سيف (Order Saif)" />
 
             {/* Glowing Background Elements */}
             <div className="absolute -top-32 -right-32 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
@@ -332,7 +332,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
                         الأسئلة الشائعة <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">حول الباقات والأسعار</span>
                     </h2>
                     <p className="text-slate-400 text-base sm:text-lg">
-                        إليك كل ما تحتاج معرفته عن الاشتراك، فترات التجربة، وطرق الدفع في منصة فاست أوردر
+                        إليك كل ما تحتاج معرفته عن الاشتراك، فترات التجربة، وطرق الدفع في منصة أوردر سيف
                     </p>
                 </div>
 
@@ -393,7 +393,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
                         جاهز لإطلاق متجرك الإلكتروني ومضاعفة مبيعاتك؟ 🚀
                     </h2>
                     <p className="text-indigo-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto mb-8 relative z-10">
-                        انضم لآلاف المتاجر الناجحة على فاست أوردر. ابدأ تجربتك المجانية لمدة 14 يوماً الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
+                        انضم لآلاف المتاجر الناجحة على أوردر سيف. ابدأ تجربتك المجانية لمدة 14 يوماً الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
                         <Link href="/register" className="px-8 py-4 rounded-2xl bg-white text-slate-950 hover:bg-slate-100 font-black text-base shadow-xl transition-all transform hover:-translate-y-1">
@@ -410,11 +410,11 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
             <footer className="mt-auto border-t border-slate-900 bg-slate-950/80 py-8 px-4 text-center text-slate-500 text-sm z-10">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <span className="font-bold text-white">فاست أوردر (Order Saif)</span>
+                        <span className="font-bold text-white">أوردر سيف (Order Saif)</span>
                         <span>• منصة التجارة الإلكترونية الأسرع والأسهل في الوطن العربي</span>
                     </div>
                     <div>
-                        &copy; {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة فاست أوردر.
+                        &copy; {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة أوردر سيف.
                     </div>
                 </div>
             </footer>

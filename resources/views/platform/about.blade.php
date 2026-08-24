@@ -1,8 +1,8 @@
 @extends('layouts.platform')
 
-@section('title', 'من نحن | فاست أوردر (Order Saif) - ثورة في التجارة الإلكترونية العربية')
+@section('title', 'من نحن | أوردر سيف (Order Saif) - ثورة في التجارة الإلكترونية العربية')
 
-@section('meta_description', 'تعرف على قصة فاست أوردر ورؤيتنا لتمكين ملايين التجار والشركات الناشئة في العالم العربي من إطلاق متاجرهم الإلكترونية الفائقة السرعة وبدون عمولات.')
+@section('meta_description', 'تعرف على قصة أوردر سيف ورؤيتنا لتمكين ملايين التجار والشركات الناشئة في العالم العربي من إطلاق متاجرهم الإلكترونية الفائقة السرعة وبدون عمولات.')
 
 @section('content')
 <!-- About Hero Section -->
@@ -16,7 +16,7 @@
             <span class="text-gradient-primary">بسرعة خارقة وعمولة 0%</span>
         </h1>
         <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            بدأت فاست أوردر كفكرة بسيطة: لماذا يجب على التاجر العربي أن يعاني من تعقيدات البرمجة وعمولات المنصات المرتفعة؟ لقد أعدنا تعريف التجارة الإلكترونية لنمنحك السيطرة الكاملة على عملك.
+            بدأت أوردر سيف كفكرة بسيطة: لماذا يجب على التاجر العربي أن يعاني من تعقيدات البرمجة وعمولات المنصات المرتفعة؟ لقد أعدنا تعريف التجارة الإلكترونية لنمنحك السيطرة الكاملة على عملك.
         </p>
     </div>
 </section>
@@ -124,7 +124,7 @@
                         <div class="w-16 h-16 rounded-full bg-brand-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-brand-500/30 mb-4">
                             <i class="fa-solid fa-cubes text-2xl"></i>
                         </div>
-                        <h4 class="font-black text-lg text-white">منصة فاست أوردر السحابية</h4>
+                        <h4 class="font-black text-lg text-white">منصة أوردر سيف السحابية</h4>
                         <p class="text-xs text-gray-400 mt-1">نظام تشغيل متكامل للتجارة الإلكترونية</p>
                     </div>
                     <ul class="space-y-3.5 text-sm">

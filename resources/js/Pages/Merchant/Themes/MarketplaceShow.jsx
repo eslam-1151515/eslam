@@ -534,7 +534,7 @@ export default function ThemeMarketplaceShow({
                             <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center text-xl shadow-md">
                                 🛡️
                             </div>
-                            <h4 className="text-sm font-black text-orange-600 dark:text-orange-400">ضمان جودة وأمان فاست أوردر</h4>
+                            <h4 className="text-sm font-black text-orange-600 dark:text-orange-400">ضمان جودة وأمان أوردر سيف</h4>
                             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                                 جميع الثيمات المعروضة في سوقنا يتم مراجعتها برمجياً وفحصها للتأكد من خلوها من أي مشاكل برمجية أو أكواد ضارة، لضمان أعلى مستويات الأداء والأمان لمتجرك وسرعة تحميل لا تضاهى.
                             </p>

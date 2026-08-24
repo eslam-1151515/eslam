@@ -11,7 +11,7 @@ export default function SupportContactsIndex({ contacts }) {
         type: 'whatsapp',
         title: '',
         phone_number: '',
-        whatsapp_message: 'مرحباً، أحتاج مساعدة في نظام فاست أوردر.',
+        whatsapp_message: 'مرحباً، أحتاج مساعدة في نظام أوردر سيف.',
         is_active: true,
         sort_order: 0,
     });
@@ -24,7 +24,7 @@ export default function SupportContactsIndex({ contacts }) {
             type: 'whatsapp',
             title: '',
             phone_number: '',
-            whatsapp_message: 'مرحباً، أحتاج مساعدة في نظام فاست أوردر.',
+            whatsapp_message: 'مرحباً، أحتاج مساعدة في نظام أوردر سيف.',
             is_active: true,
             sort_order: 0,
         });

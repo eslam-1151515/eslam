@@ -3,24 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'فاست أوردر (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ')</title>
+    <title>@yield('title', 'أوردر سيف (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ')</title>
     <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك وتجربة مجانية لمدة 7 أيام.')">
-    <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, فاست أوردر, Order Saif, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, استرجاع السلات المتروكة, تسويق إلكتروني">
+    <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, أوردر سيف, Order Saif, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, استرجاع السلات المتروكة, تسويق إلكتروني">
     <meta name="author" content="Order Saif Platform">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Open Graph / Facebook / WhatsApp Meta Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Order Saif — فاست أوردر" />
-    <meta property="og:title" content="@yield('og_title', 'فاست أوردر (Order Saif) | منصة التجارة الإلكترونية الأسرع في الوطن العربي')" />
+    <meta property="og:site_name" content="Order Saif — أوردر سيف" />
+    <meta property="og:title" content="@yield('og_title', 'أوردر سيف (Order Saif) | منصة التجارة الإلكترونية الأسرع في الوطن العربي')" />
     <meta property="og:description" content="@yield('og_description', 'أنشئ متجرك الإلكتروني المتكامل مجاناً في أقل من 3 دقائق بدون عمولات على مبيعاتك وبتقنيات سرعة فائقة.')" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:locale" content="ar_EG" />
     
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('og_title', 'فاست أوردر | أنشئ متجرك الإلكتروني المتكامل')">
+    <meta name="twitter:title" content="@yield('og_title', 'أوردر سيف | أنشئ متجرك الإلكتروني المتكامل')">
     <meta name="twitter:description" content="@yield('og_description', 'المنصة الأسرع والأذكى لإدارة تجارتك الإلكترونية بدون عمولات على المبيعات وبتقنيات حديثة.')">
 
     <!-- JSON-LD Structured Data Schema for Google -->
@@ -29,7 +29,7 @@
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "Order Saif",
-      "alternateName": "فاست أوردر",
+      "alternateName": "أوردر سيف",
       "operatingSystem": "All",
       "applicationCategory": "BusinessApplication",
       "description": "منصة متكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بدون عمولات وبتقنيات سرعة فائقة.",
@@ -201,7 +201,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-2xl font-black tracking-tight text-white font-sans flex items-center gap-1.5">
-                        فاست أوردر <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-bold">PRO</span>
+                        أوردر سيف <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-bold">PRO</span>
                     </span>
                     <span class="text-[10px] text-gray-400 -mt-1 tracking-wider uppercase font-semibold">Order Saif Platform</span>
                 </div>
@@ -317,11 +317,11 @@
                             <i class="fa-solid fa-bolt text-lg"></i>
                         </div>
                         <span class="text-2xl font-black tracking-tight text-white font-sans">
-                            فاست أوردر <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-bold">PRO</span>
+                            أوردر سيف <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-bold">PRO</span>
                         </span>
                     </a>
                     <p class="text-gray-400 text-sm leading-relaxed pr-2">
-                        فاست أوردر هي المنصة المتكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بسرعات فائقة وتقنيات ذكية، مصممة لتمكين التجار من النمو بدون عمولات أو قيود تقنية.
+                        أوردر سيف هي المنصة المتكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بسرعات فائقة وتقنيات ذكية، مصممة لتمكين التجار من النمو بدون عمولات أو قيود تقنية.
                     </p>
                     <div class="flex items-center gap-3 pt-2">
                         <a href="#" aria-label="{{ __('فيسبوك') }}" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-brand-600 border border-white/10 hover:border-brand-500 flex items-center justify-center text-gray-300 hover:text-white transition-all">
@@ -405,7 +405,7 @@
             <!-- Bottom Copyright & Legal -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-gray-400">
                 <div>
-                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-white">فاست أوردر (Order Saif)</strong>. صُنع بشغف لتمكين التجارة الإلكترونية العربية.
+                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-white">أوردر سيف (Order Saif)</strong>. صُنع بشغف لتمكين التجارة الإلكترونية العربية.
                 </div>
                 <div class="flex items-center gap-6">
                     <a href="{{ route('main.terms') }}" class="hover:text-white transition-colors">شروط الاستخدام</a>

@@ -1,11 +1,11 @@
 @extends('emails.layouts.base')
 
-@section('title', 'تأكيد التسجيل - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', 'تأكيد التسجيل - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">
     <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
-    <h2>مرحباً بك في {{ $storeName ?? 'فاست أوردر' }}!</h2>
+    <h2>مرحباً بك في {{ $storeName ?? 'أوردر سيف' }}!</h2>
     <p style="color: #666; font-size: 16px;">سعداء بانضمامك لعائلتنا، تم تأكيد حسابك بنجاح.</p>
 </div>
 

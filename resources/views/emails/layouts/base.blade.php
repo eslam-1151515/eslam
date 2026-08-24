@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'فاست أوردر')</title>
+    <title>@yield('title', 'أوردر سيف')</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f5f7fa; direction: rtl; }
@@ -31,14 +31,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚡ فاست أوردر</h1>
+            <h1>⚡ أوردر سيف</h1>
             <p>منصة المتاجر الإلكترونية</p>
         </div>
         <div class="body">
             @yield('content')
         </div>
         <div class="footer">
-            <p>هذا البريد أُرسل تلقائياً من منصة فاست أوردر.<br>
+            <p>هذا البريد أُرسل تلقائياً من منصة أوردر سيف.<br>
             إذا لم تكن تتوقع هذا البريد، يمكنك تجاهله بأمان.</p>
         </div>
     </div>

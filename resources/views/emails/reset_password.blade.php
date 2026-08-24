@@ -32,7 +32,7 @@
                                 مرحباً {{ $name ?: 'عزيزنا التاجر' }} 👋
                             </h2>
                             <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.7; color: #cbd5e1;">
-                                لقد تلقينا طلباً لإعادة تعيين كلمة السر الخاصة بحسابك على منصة <strong style="color: #818cf8;">فاست أوردر (Order Saif)</strong>. يمكنك تعيين كلمة سر جديدة بالضغط على الزر أدناه:
+                                لقد تلقينا طلباً لإعادة تعيين كلمة السر الخاصة بحسابك على منصة <strong style="color: #818cf8;">أوردر سيف (Order Saif)</strong>. يمكنك تعيين كلمة سر جديدة بالضغط على الزر أدناه:
                             </p>
 
                             <!-- CTA Button -->
@@ -78,7 +78,7 @@
                     <tr>
                         <td style="padding: 20px 30px; text-align: center; background-color: #0f172a; border-top: 1px solid rgba(255, 255, 255, 0.08);">
                             <p style="margin: 0; font-size: 12px; color: #64748b;">
-                                © {{ date('Y') }} جميع الحقوق محفوظة — منصة فاست أوردر (Order Saif)
+                                © {{ date('Y') }} جميع الحقوق محفوظة — منصة أوردر سيف (Order Saif)
                             </p>
                         </td>
                     </tr>

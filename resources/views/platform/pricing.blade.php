@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>الباقات والأسعار - فاست أوردر (Order Saif)</title>
+    <title>الباقات والأسعار - أوردر سيف (Order Saif)</title>
     
     <!-- Google Fonts: Cairo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -377,7 +377,7 @@
                 الأسئلة الشائعة <span class="gradient-text">حول الباقات والأسعار</span>
             </h2>
             <p class="text-slate-400 text-base sm:text-lg">
-                إليك كل ما تحتاج معرفته عن الاشتراك، فترات التجربة، وطرق الدفع في منصة فاست أوردر
+                إليك كل ما تحتاج معرفته عن الاشتراك، فترات التجربة، وطرق الدفع في منصة أوردر سيف
             </p>
         </div>
 
@@ -436,7 +436,7 @@
                 جاهز لإطلاق متجرك الإلكتروني ومضاعفة مبيعاتك؟ 🚀
             </h2>
             <p class="text-indigo-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto mb-8 relative z-10">
-                انضم لآلاف المتاجر الناجحة على فاست أوردر. ابدأ تجربتك المجانية لمدة 7 أيام الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
+                انضم لآلاف المتاجر الناجحة على أوردر سيف. ابدأ تجربتك المجانية لمدة 7 أيام الآن دون أي مخاطرة وبدون عمولات على مبيعاتك!
             </p>
             <div class="flex flex-wrap items-center justify-center gap-4 relative z-10">
                 @if (Route::has('register'))
@@ -455,11 +455,11 @@
     <footer class="mt-auto border-t border-slate-900 bg-slate-950/80 py-8 px-4 text-center text-slate-500 text-sm z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-                <span class="font-bold text-white">فاست أوردر (Order Saif)</span>
+                <span class="font-bold text-white">أوردر سيف (Order Saif)</span>
                 <span>• منصة التجارة الإلكترونية الأسرع والأسهل في الوطن العربي</span>
             </div>
             <div>
-                &copy; {{ date('Y') }} جميع الحقوق محفوظة لمنصة فاست أوردر.
+                &copy; {{ date('Y') }} جميع الحقوق محفوظة لمنصة أوردر سيف.
             </div>
         </div>
     </footer>

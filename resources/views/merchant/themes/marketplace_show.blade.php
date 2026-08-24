@@ -417,7 +417,7 @@
                                                         {{ mb_substr($rev['reviewer'] ?? 'ت', 0, 1) }}
                                                     </div>
                                                     <div>
-                                                        <span class="text-sm font-bold text-slate-800 block">{{ $rev['reviewer'] ?? 'تاجر فاست أوردر' }}</span>
+                                                        <span class="text-sm font-bold text-slate-800 block">{{ $rev['reviewer'] ?? 'تاجر أوردر سيف' }}</span>
                                                         <span class="text-[10px] text-slate-400">{{ $rev['date'] ?? '' }}</span>
                                                     </div>
                                                 </div>
@@ -484,7 +484,7 @@
                         <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center text-xl shadow-md">
                             🛡️
                         </div>
-                        <h4 class="text-sm font-black text-orange-600">ضمان جودة وأمان فاست أوردر</h4>
+                        <h4 class="text-sm font-black text-orange-600">ضمان جودة وأمان أوردر سيف</h4>
                         <p class="text-xs text-slate-600 leading-relaxed">
                             جميع الثيمات المعروضة في سوقنا يتم مراجعتها برمجياً وفحصها للتأكد من خلوها من أي مشاكل برمجية أو أكواد ضارة، لضمان أعلى مستويات الأداء والأمان لمتجرك وسرعة تحميل لا تضاهى.
                         </p>

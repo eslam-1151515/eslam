@@ -1,6 +1,6 @@
 @extends('emails.layouts.base')
 
-@section('title', ($title ?? 'عروض جديدة') . ' - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', ($title ?? 'عروض جديدة') . ' - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">

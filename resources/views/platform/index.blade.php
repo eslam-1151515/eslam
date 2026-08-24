@@ -190,7 +190,7 @@
             'role_ar' => 'مؤسس براند "أناقة للملابس"',
             'role_en' => 'Founder of "Anaka Fashion"',
             'avatar' => 'https://ui-avatars.com/api/?name=أحمد+محمد&background=6366f1&color=fff&size=128',
-            'quote_ar' => 'انتقالنا إلى منصة فاست أوردر كان أفضل قرار اتخذناه هذا العام. سرعة المتجر ارتفعت بشكل ملحوظ ومعدل تحويل الزوار إلى مشترين زاد بنسبة 35% خلال أول شهر فقط!',
+            'quote_ar' => 'انتقالنا إلى منصة أوردر سيف كان أفضل قرار اتخذناه هذا العام. سرعة المتجر ارتفعت بشكل ملحوظ ومعدل تحويل الزوار إلى مشترين زاد بنسبة 35% خلال أول شهر فقط!',
             'quote_en' => 'Moving to Order Saif was the best decision we made this year. Store speed increased significantly, and our conversion rate jumped by 35% in the first month!',
             'rating' => 5,
         ],
@@ -210,7 +210,7 @@
             'role_ar' => 'مدير عام "تِك زون للإلكترونيات"',
             'role_en' => 'General Manager of "TechZone Electronics"',
             'avatar' => 'https://ui-avatars.com/api/?name=محمود+علي&background=3b82f6&color=fff&size=128',
-            'quote_ar' => 'كنا نعاني من بطء السيرفرات وعمولات المنصات الأخرى. مع فاست أوردر حصلنا على استقرار 100% وعمولة صفر! لوحة التحكم وإدارة الطلبات والشحن أصبحت أسهل بكثير.',
+            'quote_ar' => 'كنا نعاني من بطء السيرفرات وعمولات المنصات الأخرى. مع أوردر سيف حصلنا على استقرار 100% وعمولة صفر! لوحة التحكم وإدارة الطلبات والشحن أصبحت أسهل بكثير.',
             'quote_en' => 'We used to suffer from slow servers and commissions on other platforms. With Order Saif, we got 100% stability and zero commission! The control panel is extremely easy.',
             'rating' => 5,
         ],
@@ -220,7 +220,7 @@
         [
             'question_ar' => 'هل أحتاج إلى أي خبرة تقنية أو برمجية لإنشاء متجري؟',
             'question_en' => 'Do I need any technical or programming experience to create my store?',
-            'answer_ar' => 'على الإطلاق! منصة فاست أوردر مصممة لتكون سهلة وبسيطة للغاية. يمكنك إنشاء وتخصيص وإطلاق متجرك الإلكتروني بالكامل في أقل من 5 دقائق باستخدام واجهات مرئية وبدون كتابة سطر كود واحد.',
+            'answer_ar' => 'على الإطلاق! منصة أوردر سيف مصممة لتكون سهلة وبسيطة للغاية. يمكنك إنشاء وتخصيص وإطلاق متجرك الإلكتروني بالكامل في أقل من 5 دقائق باستخدام واجهات مرئية وبدون كتابة سطر كود واحد.',
             'answer_en' => 'Not at all! Order Saif is designed to be extremely simple. You can create, customize, and launch your online store in under 5 minutes using visual interfaces and without writing a single line of code.',
         ],
         [
@@ -278,7 +278,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>فاست أوردر (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ</title>
+    <title>أوردر سيف (Order Saif) | أنشئ متجرك الإلكتروني المتكامل في ثوانٍ</title>
     <meta name="description" content="المنصة الأسرع والأذكى في الوطن العربي لإدارة تجارتك الإلكترونية دون تعقيد برمجيات، مع عمولة 0% وباقات تناسب نمو عملك.">
     
     <!-- Fonts -->
@@ -538,7 +538,7 @@
                 featuresDesc: 'تم تصميم منصتنا بأحدث التقنيات العالمية لتوفير أقصى سرعة وأعلى معدل تحويل، مع أدوات تسويق وإدارة ذكية تغنيك عن عشرات الإضافات والاشتراكات.',
                 
                 transferBadge: 'تحديث جديد 🚀',
-                transferTitle: 'هل تمتلك متجراً حالياً وتريد نقله إلى فاست أوردر؟',
+                transferTitle: 'هل تمتلك متجراً حالياً وتريد نقله إلى أوردر سيف؟',
                 transferDesc: 'فريقنا الفني متخصص في نقل متجرك، منتجاتك، وبيانات عملائك مجاناً وبدون أي توقف لعملياتك البيعية في أقل من 24 ساعة!',
                 transferCta: 'تواصل مع فريق الانتقال المجاني',
                 
@@ -570,7 +570,7 @@
                 finalCtaDesc: 'أنشئ متجرك الآن في أقل من 3 دقائق، استمتع بـ 7 أيام مجاناً، ولا تدفع أي عمولات على مبيعاتك أبداً!',
                 finalCtaSupport: 'تواصل مع الدعم الفني',
                 
-                footerDesc: 'فاست أوردر هي المنصة المتكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بسرعات فائقة وتقنيات ذكية، مصممة لتمكين التجار من النمو بدون عمولات أو قيود تقنية.',
+                footerDesc: 'أوردر سيف هي المنصة المتكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بسرعات فائقة وتقنيات ذكية، مصممة لتمكين التجار من النمو بدون عمولات أو قيود تقنية.',
                 footerQuickLinks: 'روابط سريعة',
                 footerHelpSupport: 'المساعدة والدعم الفني',
                 footerHelpCenter: 'مركز المساعدة والشروحات',
@@ -580,7 +580,7 @@
                 footerEmailLabel: 'البريد الإلكتروني',
                 footerHoursLabel: 'ساعات العمل',
                 footerHoursValue: 'دعم فني متواصل 24/7',
-                footerCopyright: 'جميع الحقوق محفوظة © 2026 فاست أوردر (Order Saif). صُنع بشغف لتمكين التجارة الإلكترونية العربية.',
+                footerCopyright: 'جميع الحقوق محفوظة © 2026 أوردر سيف (Order Saif). صُنع بشغف لتمكين التجارة الإلكترونية العربية.',
                 footerTerms: 'شروط الاستخدام',
                 footerPrivacy: 'سياسة الخصوصية',
                 footerRefund: 'سياسة الاسترجاع والأمان',
@@ -700,9 +700,9 @@
                 
                 <!-- Brand Logo -->
                 <a href="/" class="flex items-center gap-3 group">
-                    <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-11 w-auto max-h-11 object-contain group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ asset('images/logo.png') }}" alt="أوردر سيف" class="h-11 w-auto max-h-11 object-contain group-hover:scale-105 transition-transform duration-300">
                     <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
-                        <span x-show="lang === 'ar'">فاست أوردر</span>
+                        <span x-show="lang === 'ar'">أوردر سيف</span>
                         <span x-show="lang === 'en'">Order Saif</span>
                     </span>
                 </a>
@@ -1462,9 +1462,9 @@
                     <!-- Col 1: Brand & Bio -->
                     <div class="lg:col-span-4 space-y-6">
                         <a href="/" class="flex items-center gap-3">
-                            <img src="{{ asset('images/logo.png') }}" alt="فاست أوردر" class="h-10 w-auto max-h-10 object-contain">
+                            <img src="{{ asset('images/logo.png') }}" alt="أوردر سيف" class="h-10 w-auto max-h-10 object-contain">
                             <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-sans">
-                                <span x-show="lang === 'ar'">فاست أوردر</span>
+                                <span x-show="lang === 'ar'">أوردر سيف</span>
                                 <span x-show="lang === 'en'">Order Saif</span>
                             </span>
                         </a>

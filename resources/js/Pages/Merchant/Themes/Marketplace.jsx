@@ -69,7 +69,7 @@ export default function ThemeMarketplace({
                 // Temporarily update modal theme reviews locally
                 const newRev = {
                     id: 'new_' + Date.now(),
-                    reviewer: reviewData.reviewer || 'تاجر فاست أوردر',
+                    reviewer: reviewData.reviewer || 'تاجر أوردر سيف',
                     rating: Number(reviewData.rating),
                     comment: reviewData.comment,
                     date: new Date().toISOString().split('T')[0]
@@ -105,7 +105,7 @@ export default function ThemeMarketplace({
 
     return (
         <MerchantLayout>
-            <Head title="سوق الثيمات والتصميمات | فاست أوردر" />
+            <Head title="سوق الثيمات والتصميمات | أوردر سيف" />
 
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-100 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-gray-950 p-4 md:p-8 font-sans" dir="rtl">
                 {/* Flash Messages */}
@@ -137,7 +137,7 @@ export default function ThemeMarketplace({
                                 <span>✨ متجر التصميمات الاحترافية</span>
                             </div>
                             <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                                سوق ثيمات فاست أوردر
+                                سوق ثيمات أوردر سيف
                             </h1>
                             <p className="text-slate-300 text-sm md:text-base leading-relaxed">
                                 اختر من بين مجموعة واجهات احترافية ومحسنة لتحويل الزوار إلى مشترين. جميع الثيمات متجاوبة بنسبة 100% مع الجوال ومحسنة لسرعة التحميل ومحركات البحث.

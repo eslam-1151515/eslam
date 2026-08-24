@@ -268,7 +268,7 @@ export default function ImportExportIndex() {
                                             🚀
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-sm text-gray-900">قالب فاست أوردر</h4>
+                                            <h4 className="font-bold text-sm text-gray-900">قالب أوردر سيف</h4>
                                             <p className="text-xxs text-gray-400 mt-0.5">الملف الافتراضي المنسق للنظام</p>
                                         </div>
                                     </div>

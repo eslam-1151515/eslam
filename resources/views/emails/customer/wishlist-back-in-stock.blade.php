@@ -1,6 +1,6 @@
 @extends('emails.layouts.base')
 
-@section('title', 'منتج متاح الآن في المخزون! - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', 'منتج متاح الآن في المخزون! - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">

@@ -29,7 +29,7 @@ export default function TutorialsIndex({ tutorials, categories }) {
                             🎓 مركز الشروحات والدروس التعليمية
                         </div>
                         <h1 className="text-2xl sm:text-3xl font-black text-white">
-                            دليلك الشامل لتعلم واستخدام منصة فاست أوردر
+                            دليلك الشامل لتعلم واستخدام منصة أوردر سيف
                         </h1>
                         <p className="text-xs text-gray-300 leading-relaxed">
                             شروحات بالفيديو تغطي كافة ميزات متجرك — اختر الدرس وابدأ في التعلم والتطوير مباشرة.

@@ -122,7 +122,7 @@ export default function SettingsIndex({ settings }) {
         if (clean.startsWith('01') && clean.length === 11) {
             clean = '2' + clean;
         }
-        window.open(`https://wa.me/${clean}?text=${encodeURIComponent('اختبار رقم الواتساب من لوحة التحكم - متجر فاست أوردر')}`, '_blank');
+        window.open(`https://wa.me/${clean}?text=${encodeURIComponent('اختبار رقم الواتساب من لوحة التحكم - متجر أوردر سيف')}`, '_blank');
     };
 
     return (

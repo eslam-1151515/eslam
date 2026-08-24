@@ -1,7 +1,7 @@
 @extends('emails.layouts.base')
 @section('content')
 <h2>مرحباً {{ $merchantName }}! 🎉</h2>
-<p>يسعدنا انضمامك إلى منصة <strong>فاست أوردر</strong>. متجرك <strong>{{ $storeName }}</strong> جاهز الآن ويمكنك البدء في إضافة منتجاتك.</p>
+<p>يسعدنا انضمامك إلى منصة <strong>أوردر سيف</strong>. متجرك <strong>{{ $storeName }}</strong> جاهز الآن ويمكنك البدء في إضافة منتجاتك.</p>
 <div class="info-box">
     <div class="info-row">
         <span class="info-label">اسم المتجر</span>

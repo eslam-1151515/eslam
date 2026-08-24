@@ -1,8 +1,8 @@
 @extends('layouts.platform')
 
-@section('title', 'اتصل بنا | فاست أوردر (Order Saif) - دعم فني متواصل 24/7')
+@section('title', 'اتصل بنا | أوردر سيف (Order Saif) - دعم فني متواصل 24/7')
 
-@section('meta_description', 'تواصل مع فريق الدعم الفني أو المبيعات في فاست أوردر. نحن هنا لمساعدتك في الإجابة على استفساراتك وتوسيع نطاق مبيعات متجرك.')
+@section('meta_description', 'تواصل مع فريق الدعم الفني أو المبيعات في أوردر سيف. نحن هنا لمساعدتك في الإجابة على استفساراتك وتوسيع نطاق مبيعات متجرك.')
 
 @section('content')
 <section class="py-16 md:py-24 relative overflow-hidden bg-grid-pattern">

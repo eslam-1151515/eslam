@@ -38,7 +38,7 @@
                             <span>✨ متجر التصميمات الاحترافية</span>
                         </div>
                         <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight" style="font-size: 1.875rem; font-weight: 900;">
-                            سوق ثيمات فاست أوردر
+                            سوق ثيمات أوردر سيف
                         </h1>
                         <p class="text-slate-300 text-sm md:text-base leading-relaxed">
                             اختر من بين مجموعة واجهات احترافية ومحسنة لتحويل الزوار إلى مشترين. جميع الثيمات متجاوبة بنسبة 100% مع الجوال ومحسنة لسرعة التحميل ومحركات البحث.

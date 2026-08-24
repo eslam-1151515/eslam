@@ -1,11 +1,11 @@
 @extends('emails.layouts.base')
 
-@section('title', 'تأكيد طلبك #' . ($orderNumber ?? '') . ' - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', 'تأكيد طلبك #' . ($orderNumber ?? '') . ' - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">
     <div style="font-size: 48px; margin-bottom: 10px;">📦</div>
-    <h2>شكراً لطلبك من {{ $storeName ?? 'فاست أوردر' }}!</h2>
+    <h2>شكراً لطلبك من {{ $storeName ?? 'أوردر سيف' }}!</h2>
     <p style="color: #666; font-size: 16px;">تم استلام طلبك بنجاح وهو الآن قيد التجهيز والمراجعة.</p>
 </div>
 

@@ -1,12 +1,12 @@
 @extends('emails.layouts.base')
 
-@section('title', 'سلة تسوقك في انتظارك - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', 'سلة تسوقك في انتظارك - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">
     <div style="font-size: 54px; margin-bottom: 10px;">🛒</div>
     <h2 style="color: #3182ce; font-size: 24px;">هل نسيت شيئاً في سلة تسوقك؟</h2>
-    <p style="color: #555; font-size: 16px;">لاحظنا أن لديك منتجات رائعة في سلتك بمتجر <strong>{{ $storeName ?? 'فاست أوردر' }}</strong> لم تكتمل عملية شرائها بعد.</p>
+    <p style="color: #555; font-size: 16px;">لاحظنا أن لديك منتجات رائعة في سلتك بمتجر <strong>{{ $storeName ?? 'أوردر سيف' }}</strong> لم تكتمل عملية شرائها بعد.</p>
 </div>
 
 <div class="info-box" style="border-right-color: #3182ce; background: #ebf8ff;">

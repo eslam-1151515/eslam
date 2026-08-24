@@ -1,12 +1,12 @@
 @extends('emails.layouts.base')
 
-@section('title', 'تحديث حالة الطلب #' . ($orderNumber ?? '') . ' - ' . ($storeName ?? 'فاست أوردر'))
+@section('title', 'تحديث حالة الطلب #' . ($orderNumber ?? '') . ' - ' . ($storeName ?? 'أوردر سيف'))
 
 @section('content')
 <div style="text-align: center; margin-bottom: 25px;">
     <div style="font-size: 48px; margin-bottom: 10px;">{{ $statusIcon ?? '🔔' }}</div>
     <h2>تحديث مهم بخصوص طلبك</h2>
-    <p style="color: #666; font-size: 16px;">تم تغيير حالة طلبك رقم #{{ $orderNumber ?? '' }} من {{ $storeName ?? 'فاست أوردر' }}.</p>
+    <p style="color: #666; font-size: 16px;">تم تغيير حالة طلبك رقم #{{ $orderNumber ?? '' }} من {{ $storeName ?? 'أوردر سيف' }}.</p>
 </div>
 
 <div class="info-box">
@@ -52,5 +52,5 @@
     <a href="{{ $actionUrl ?? url('/account') }}" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; padding: 14px 35px; border-radius: 30px; font-weight: bold; display: inline-block;">عرض تفاصيل الطلب 📄</a>
 </div>
 
-<p style="font-size: 14px; color: #888; text-align: center;">شكراً لتسوقك من {{ $storeName ?? 'فاست أوردر' }}. نتمنى لك يوماً سعيداً!</p>
+<p style="font-size: 14px; color: #888; text-align: center;">شكراً لتسوقك من {{ $storeName ?? 'أوردر سيف' }}. نتمنى لك يوماً سعيداً!</p>
 @endsection

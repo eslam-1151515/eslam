@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العروض والتخفيضات الحصرية - {{ $tenant->name ?? 'فاست أوردر' }}</title>
+    <title>العروض والتخفيضات الحصرية - {{ $tenant->name ?? 'أوردر سيف' }}</title>
     <meta name="description" content="اكتشف أقوى عروض الفلاش سيل والخصومات الموسمية الحصرية من {{ $tenant->name ?? 'متجرنا' }}. تسوق الآن بأفضل الأسعار قبل نفاد الكمية!">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -675,7 +675,7 @@
         <div class="nav-container">
             <a href="/shop/index.html" class="logo">
                 <i class="fa-solid fa-bolt-lightning"></i>
-                <span>{{ $tenant->name ?? 'فاست أوردر' }}</span>
+                <span>{{ $tenant->name ?? 'أوردر سيف' }}</span>
             </a>
             <div class="nav-actions">
                 <a href="/shop/index.html" class="btn-nav btn-shop">
