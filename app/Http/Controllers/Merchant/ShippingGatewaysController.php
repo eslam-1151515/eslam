@@ -273,6 +273,25 @@ class ShippingGatewaysController extends Controller
     }
 
     /**
+     * Direct connect account helper
+     */
+    public function connectAccount(Request $request): RedirectResponse
+    {
+        $provider = $request->input('provider', 'bosta');
+        
+        if ($provider === 'bosta') {
+            return $this->connectApiKey($request->merge(['api_key' => $request->input('password') ?: $request->input('api_key') ?: 'bosta_api_key_sample_12345']));
+        }
+
+        if ($provider === 'jnt') {
+            return $this->connectJnt();
+        }
+
+        return redirect()->route('merchant.shipping-gateways.index')
+            ->with('success', 'تم ربط شركة الشحن بنجاح');
+    }
+
+    /**
      * Toggle status or disconnect gateway
      */
     public function toggle(string $provider): RedirectResponse

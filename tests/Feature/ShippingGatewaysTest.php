@@ -90,6 +90,15 @@ class ShippingGatewaysTest extends TestCase
 
     public function test_merchant_can_create_shipment_for_order()
     {
+        ShippingGateway::create([
+            'tenant_id' => $this->tenant->id,
+            'provider' => 'bosta',
+            'is_active' => true,
+            'credentials' => [
+                'api_key' => 'bosta_test_key_1234567890',
+            ],
+        ]);
+
         $order = Order::create([
             'tenant_id' => $this->tenant->id,
             'reference_number' => 'ORD-1001',

@@ -48,6 +48,7 @@ class ProfileTest extends TestCase
             ->patch('http://merchantprofile.fastorder.test/admin/profile', [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'phone' => '01012345678',
             ]);
 
         $response
@@ -68,6 +69,7 @@ class ProfileTest extends TestCase
             ->patch('http://merchantprofile.fastorder.test/admin/profile', [
                 'name' => 'Test User',
                 'email' => $this->user->email,
+                'phone' => '01012345678',
             ]);
 
         $response

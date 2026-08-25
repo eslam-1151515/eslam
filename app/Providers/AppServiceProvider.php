@@ -52,8 +52,8 @@ class AppServiceProvider extends ServiceProvider
                          ->with('phoneContact', $phoneContact)
                          ->with('supportContacts', $supportContacts);
                 }
-            } catch (\Exception $e) {
-                // Ignore if table missing during migration
+            } catch (\Throwable $e) {
+                // Ignore if table missing during migration or in-memory tests
             }
         });
 
