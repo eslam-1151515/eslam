@@ -2,8 +2,16 @@ import './bootstrap';
 import '../css/app.css';
 
 import { createRoot } from 'react-dom/client';
-import { createInertiaApp } from '@inertiajs/react';
+import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+// Automatic 419 (Page Expired / CSRF Mismatch) handling
+router.on('invalid', (event) => {
+    if (event.detail.response?.status === 419) {
+        event.preventDefault();
+        window.location.reload();
+    }
+});
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Order Saif';
 

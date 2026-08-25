@@ -176,7 +176,7 @@ class GoogleAuthController extends Controller
         }
 
         // Log the user in
-        Auth::login($user);
+        Auth::login($user, true);
         if ($user->currentTenant) {
             session(['tenant_id' => $user->currentTenant->id]);
         }
@@ -222,7 +222,7 @@ class GoogleAuthController extends Controller
             return redirect()->route('login')->withErrors(['error' => 'المستخدم غير موجود.']);
         }
 
-        Auth::login($user);
+        Auth::login($user, true);
 
         if ($user->currentTenant) {
             session(['tenant_id' => $user->currentTenant->id]);
@@ -295,7 +295,7 @@ class GoogleAuthController extends Controller
 
         session()->forget('google_user');
 
-        Auth::login($user);
+        Auth::login($user, true);
 
         // Redirect to the merchant's dashboard on their subdomain
         $host = parse_url(config('app.url'), PHP_URL_HOST);

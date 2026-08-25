@@ -208,7 +208,7 @@ class MerchantRegisterController extends Controller
             session()->forget('google_user');
         }
 
-        Auth::login($user);
+        Auth::login($user, true);
 
         // Store active tenant in session
         if ($user->currentTenant) {

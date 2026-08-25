@@ -87,7 +87,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        Auth::login($user, true);
 
         // Redirect to the merchant's dashboard on their subdomain
         $host    = parse_url(config('app.url'), PHP_URL_HOST);

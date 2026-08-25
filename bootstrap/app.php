@@ -132,6 +132,16 @@ return Application::configure(basePath: dirname(__DIR__))
                 'input' => request()?->except(['password', 'password_confirmation']),
             ]);
         });
+
+        // معالجة ذكية لخطأ 419 وتجديد الجلسة بدون إظهار صفحة بيضاء
+        $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $e, \Illuminate\Http\Request $request) {
+            if ($response->getStatusCode() === 419) {
+                return back()->with([
+                    'error' => 'انتهت صلاحية الصفحة وتم تجديد الجلسة، برجاء المحاولة مرة أخرى.',
+                ]);
+            }
+            return $response;
+        });
     })
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
         // نسخ احتياطي يومي لقاعدة البيانات الساعة 2:00 صباحاً
