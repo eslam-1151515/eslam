@@ -174,9 +174,9 @@ class ThemeService
             $defaultVars = $config['css_variables'] ?? [];
 
             // Store settings override theme defaults
-            $primaryColor = Setting::get('primary_color', $defaultVars['primary_color'] ?? '#4f46e5', $dbTenantId);
-            $secondaryColor = Setting::get('secondary_color', $defaultVars['secondary_color'] ?? '#64748b', $dbTenantId);
-            $accentColor = Setting::get('accent_color', $defaultVars['accent_color'] ?? '#f59e0b', $dbTenantId);
+            $primaryColor = Setting::get('primary_color', $defaultVars['primary_color'] ?? '#09090b', $dbTenantId);
+            $secondaryColor = Setting::get('secondary_color', $defaultVars['secondary_color'] ?? '#18181b', $dbTenantId);
+            $accentColor = Setting::get('accent_color', $defaultVars['accent_color'] ?? '#09090b', $dbTenantId);
             $fontFamily = Setting::get('font_family', $defaultVars['font_family'] ?? 'Cairo', $dbTenantId);
 
             // Check if there are theme-specific custom color overrides stored in JSON
@@ -353,9 +353,9 @@ class ThemeService
             'preview_image' => '/shop/images/themes/default-preview.webp',
             'support_rtl' => true,
             'css_variables' => [
-                'primary_color' => '#4f46e5',
-                'secondary_color' => '#64748b',
-                'accent_color' => '#f59e0b',
+                'primary_color' => '#09090b',
+                'secondary_color' => '#18181b',
+                'accent_color' => '#09090b',
                 'background_color' => '#ffffff',
                 'text_color' => '#1e293b',
                 'border_color' => '#e2e8f0',
@@ -385,9 +385,9 @@ class ThemeService
                 'preview_image' => '/shop/images/themes/default-preview.webp',
                 'support_rtl' => true,
                 'css_variables' => [
-                    'primary_color' => '#4f46e5',
-                    'secondary_color' => '#64748b',
-                    'accent_color' => '#f59e0b',
+                    'primary_color' => '#09090b',
+                    'secondary_color' => '#18181b',
+                    'accent_color' => '#09090b',
                     'background_color' => '#ffffff',
                     'text_color' => '#1e293b',
                     'border_color' => '#e2e8f0',

@@ -137,7 +137,7 @@ function ExpiringSubscriptionsAlert({ subscriptions }) {
                             <span className={`inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold ${
                                 sub.days_left <= 2 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
                             }`}>
-                                ينتهي بعد {sub.days_left} يوم
+                                ينتهي بعد {Math.ceil(Number(sub.days_left) || 0)} يوم
                             </span>
                         </div>
                     </div>

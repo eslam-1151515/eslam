@@ -48,7 +48,9 @@ php artisan migrate --force
 echo "🔗 Linking public storage..."
 php artisan storage:link || true
 
-echo "🧹 Caching configurations..."
+echo "🧹 Clearing old caches and compiling fresh config/routes/views..."
+php artisan optimize:clear
+php artisan cache:clear || true
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

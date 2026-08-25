@@ -62,14 +62,26 @@ class SubscriptionController extends Controller
             $query->where('type', $type);
         }
 
+        if ($tenantId = $request->input('tenant_id')) {
+            $query->where('tenant_id', $tenantId);
+        }
+
         $receipts = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         $tenants = Tenant::orderBy('name', 'asc')->get(['id', 'name', 'slug']);
         $plans = SubscriptionPlan::orderBy('price_monthly', 'asc')->get(['id', 'name', 'price_monthly']);
 
         $paymentSettings = [
-            'vodafone_cash_number' => \App\Models\Setting::getGlobal('vodafone_cash_number', \App\Models\Setting::get('vodafone_cash_number', '')),
-            'instapay_number'      => \App\Models\Setting::getGlobal('instapay_number', \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', ''))),
+            'vodafone_cash_number'         => \App\Models\Setting::getGlobal('vodafone_cash_number', \App\Models\Setting::get('vodafone_cash_number', '')),
+            'instapay_number'              => \App\Models\Setting::getGlobal('instapay_number', \App\Models\Setting::get('instapay_number', \App\Models\Setting::get('instapay_address', ''))),
+            'paymob_api_key'               => \App\Models\Setting::getGlobal('paymob_api_key', \App\Models\Setting::get('paymob_api_key', '')),
+            'paymob_secret_key'            => \App\Models\Setting::getGlobal('paymob_secret_key', \App\Models\Setting::get('paymob_secret_key', '')),
+            'paymob_public_key'            => \App\Models\Setting::getGlobal('paymob_public_key', \App\Models\Setting::get('paymob_public_key', '')),
+            'paymob_card_integration_id'   => \App\Models\Setting::getGlobal('paymob_card_integration_id', \App\Models\Setting::get('paymob_card_integration_id', '')),
+            'paymob_wallet_integration_id' => \App\Models\Setting::getGlobal('paymob_wallet_integration_id', \App\Models\Setting::get('paymob_wallet_integration_id', '')),
+            'paymob_iframe_id'             => \App\Models\Setting::getGlobal('paymob_iframe_id', \App\Models\Setting::get('paymob_iframe_id', '')),
+            'paymob_hmac_secret'           => \App\Models\Setting::getGlobal('paymob_hmac_secret', \App\Models\Setting::get('paymob_hmac_secret', '')),
+            'paymob_webhook_url'           => url('/api/webhooks/paymob'),
         ];
 
         return Inertia::render('SuperAdmin/Subscriptions/Receipts', [
@@ -77,24 +89,56 @@ class SubscriptionController extends Controller
             'tenants'         => $tenants,
             'plans'           => $plans,
             'paymentSettings' => $paymentSettings,
-            'filters'         => $request->only(['search', 'date', 'status', 'type']),
+            'filters'         => $request->only(['search', 'date', 'status', 'type', 'tenant_id']),
         ]);
     }
 
     /**
-     * Update platform payment numbers for wallet & subscription transfers.
+     * Update platform payment numbers and Paymob settings.
      */
     public function updatePaymentSettings(Request $request): RedirectResponse
     {
         $request->validate([
-            'vodafone_cash_number' => ['required', 'string', 'max:50'],
-            'instapay_number'      => ['required', 'string', 'max:50'],
+            'vodafone_cash_number'         => ['nullable', 'string', 'max:50'],
+            'instapay_number'              => ['nullable', 'string', 'max:50'],
+            'paymob_api_key'               => ['nullable', 'string', 'max:500'],
+            'paymob_secret_key'            => ['nullable', 'string', 'max:500'],
+            'paymob_public_key'            => ['nullable', 'string', 'max:500'],
+            'paymob_card_integration_id'   => ['nullable', 'string', 'max:100'],
+            'paymob_wallet_integration_id' => ['nullable', 'string', 'max:100'],
+            'paymob_iframe_id'             => ['nullable', 'string', 'max:100'],
+            'paymob_hmac_secret'           => ['nullable', 'string', 'max:500'],
         ]);
 
-        \App\Models\Setting::setGlobal('vodafone_cash_number', $request->vodafone_cash_number, 'payment');
-        \App\Models\Setting::setGlobal('instapay_number', $request->instapay_number, 'payment');
+        if ($request->has('vodafone_cash_number')) {
+            \App\Models\Setting::setGlobal('vodafone_cash_number', $request->vodafone_cash_number, 'payment');
+        }
+        if ($request->has('instapay_number')) {
+            \App\Models\Setting::setGlobal('instapay_number', $request->instapay_number, 'payment');
+        }
+        if ($request->has('paymob_api_key')) {
+            \App\Models\Setting::setGlobal('paymob_api_key', $request->paymob_api_key, 'payment');
+        }
+        if ($request->has('paymob_secret_key')) {
+            \App\Models\Setting::setGlobal('paymob_secret_key', $request->paymob_secret_key, 'payment');
+        }
+        if ($request->has('paymob_public_key')) {
+            \App\Models\Setting::setGlobal('paymob_public_key', $request->paymob_public_key, 'payment');
+        }
+        if ($request->has('paymob_card_integration_id')) {
+            \App\Models\Setting::setGlobal('paymob_card_integration_id', $request->paymob_card_integration_id, 'payment');
+        }
+        if ($request->has('paymob_wallet_integration_id')) {
+            \App\Models\Setting::setGlobal('paymob_wallet_integration_id', $request->paymob_wallet_integration_id, 'payment');
+        }
+        if ($request->has('paymob_iframe_id')) {
+            \App\Models\Setting::setGlobal('paymob_iframe_id', $request->paymob_iframe_id, 'payment');
+        }
+        if ($request->has('paymob_hmac_secret')) {
+            \App\Models\Setting::setGlobal('paymob_hmac_secret', $request->paymob_hmac_secret, 'payment');
+        }
 
-        return redirect()->back()->with('success', 'تم تحديث أرقام استقبال التحويلات بنجاح.');
+        return redirect()->back()->with('success', 'تم تحديث إعدادات الدفع وبوابة Paymob بنجاح.');
     }
 
     /**

@@ -17,8 +17,8 @@ class DashboardController extends Controller
     public function index(): Response
     {
         // 1. Platform Health Metrics
-        $totalStores = Tenant::count();
-        $activeStores = Tenant::where('is_active', true)->count();
+        $totalStores = Tenant::whereDoesntHave('owner', fn($q) => $q->where('user_type', 'super_admin'))->count();
+        $activeStores = Tenant::whereDoesntHave('owner', fn($q) => $q->where('user_type', 'super_admin'))->where('is_active', true)->count();
         $suspendedStores = $totalStores - $activeStores;
         
         $totalSubscriptions = Subscription::where('status', 'active')->count();
@@ -60,13 +60,14 @@ class DashboardController extends Controller
             ->take(5)
             ->get()
             ->map(function ($sub) {
+                $days = $sub->ends_at ? (int) ceil(Carbon::now()->floatDiffInDays(Carbon::parse($sub->ends_at))) : 0;
                 return [
                     'id' => $sub->id,
                     'tenant_name' => $sub->tenant ? $sub->tenant->name : 'غير معروف',
                     'tenant_phone' => $sub->tenant ? $sub->tenant->phone : null,
                     'plan_name' => $sub->plan ? $sub->plan->name : 'غير محدد',
                     'ends_at' => $sub->ends_at ? Carbon::parse($sub->ends_at)->format('Y-m-d') : null,
-                    'days_left' => $sub->ends_at ? Carbon::now()->diffInDays(Carbon::parse($sub->ends_at)) : 0,
+                    'days_left' => max(1, $days),
                 ];
             });
 

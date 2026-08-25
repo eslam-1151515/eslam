@@ -61,16 +61,16 @@ class Tenant extends Model
             // 3. Auto-seed Default Subcategories under "ملابس" with high-quality square images
             $defaultCategories = [
                 [
-                    'name_ar' => 'ملابس حريمي',
-                    'name' => 'ملابس حريمي',
-                    'main_category' => 'ملابس',
-                    'image_path' => '/images/default_categories/womens_clothing.jpg',
-                ],
-                [
                     'name_ar' => 'ملابس رجالي',
                     'name' => 'ملابس رجالي',
                     'main_category' => 'ملابس',
                     'image_path' => '/images/default_categories/mens_clothing.jpg',
+                ],
+                [
+                    'name_ar' => 'ملابس حريمي',
+                    'name' => 'ملابس حريمي',
+                    'main_category' => 'ملابس',
+                    'image_path' => '/images/default_categories/womens_clothing.jpg',
                 ],
                 [
                     'name_ar' => 'ملابس اطفالي',
@@ -82,6 +82,28 @@ class Tenant extends Model
 
             foreach ($defaultCategories as $catData) {
                 Category::create(array_merge($catData, ['tenant_id' => $tenant->id]));
+            }
+
+            // 4. Auto-seed Default Promotional Banners
+            $defaultBanners = [
+                [
+                    'tenant_id' => $tenant->id,
+                    'title' => 'عروض حصرية وخصومات حتى 60%',
+                    'image_path' => 'banners/default_banner_1.jpg',
+                    'is_active' => true,
+                    'order' => 1,
+                ],
+                [
+                    'tenant_id' => $tenant->id,
+                    'title' => 'تشكيلة الموسم الجديد - تسوق الآن',
+                    'image_path' => 'banners/default_banner_2.jpg',
+                    'is_active' => true,
+                    'order' => 2,
+                ],
+            ];
+
+            foreach ($defaultBanners as $bannerData) {
+                Banner::create($bannerData);
             }
         });
     }

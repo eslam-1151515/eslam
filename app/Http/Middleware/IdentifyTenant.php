@@ -18,18 +18,24 @@ class IdentifyTenant
         $appUrl = config('app.url');
         $baseHost = parse_url($appUrl, PHP_URL_HOST);
 
-        // Extract subdomain if request host ends with base host
-        if ($baseHost && str_ends_with($host, '.' . $baseHost)) {
-            $subdomain = substr($host, 0, -strlen('.' . $baseHost));
-        } else {
+        $subdomain = null;
+        if (!filter_var($host, FILTER_VALIDATE_IP) && $host !== 'localhost') {
             $parts = explode('.', $host);
-            if (count($parts) > 1 && !filter_var($host, FILTER_VALIDATE_IP)) {
+            if (str_ends_with($host, '.localhost')) {
+                if (count($parts) >= 3) {
+                    $subdomain = $parts[0];
+                } elseif (count($parts) === 2 && in_array(strtolower($parts[0]), ['app', 'admin', 'www'])) {
+                    $subdomain = $parts[0];
+                }
+            } elseif ($baseHost && str_ends_with($host, '.' . $baseHost)) {
+                $subdomain = substr($host, 0, -strlen('.' . $baseHost));
+            } elseif (count($parts) > 2) {
                 $subdomain = $parts[0];
             }
         }
 
         $isSubdomainRequest = $subdomain && !in_array(strtolower($subdomain), ['www', 'app', 'admin']);
-        $isCustomDomainRequest = !$isSubdomainRequest && $baseHost && $host !== $baseHost && !in_array(strtolower($host), ['localhost', '127.0.0.1']);
+        $isCustomDomainRequest = !$isSubdomainRequest && $baseHost && $host !== $baseHost && !str_ends_with($host, '.localhost') && !in_array(strtolower($host), ['localhost', '127.0.0.1']);
 
         // 1. Try to match by custom domain first
         $tenant = Tenant::where('custom_domain', $host)->first();

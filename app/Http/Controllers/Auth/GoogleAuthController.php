@@ -209,26 +209,29 @@ class GoogleAuthController extends Controller
     {
         $token = $request->query('token');
         if (!$token) {
-            return redirect()->route('login');
+            return redirect('/admin/login');
         }
 
         $data = \Illuminate\Support\Facades\Cache::pull('google_login_token_' . $token);
         if (!$data) {
-            return redirect()->route('login')->withErrors(['error' => 'رابط الدخول المؤقت غير صالح أو انتهت صلاحيته.']);
+            return redirect('/admin/login')->withErrors(['error' => 'رابط الدخول المؤقت غير صالح أو انتهت صلاحيته.']);
         }
 
         $user = User::find($data['user_id']);
         if (!$user) {
-            return redirect()->route('login')->withErrors(['error' => 'المستخدم غير موجود.']);
+            return redirect('/admin/login')->withErrors(['error' => 'المستخدم غير موجود.']);
         }
 
         Auth::login($user, true);
 
         if ($user->currentTenant) {
             session(['tenant_id' => $user->currentTenant->id]);
+            if ($request->hasSession()) {
+                $request->session()->regenerate();
+            }
         }
 
-        return redirect()->route('merchant.dashboard');
+        return redirect('/admin/dashboard');
     }
 
     /**

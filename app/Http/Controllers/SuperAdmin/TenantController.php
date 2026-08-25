@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class TenantController extends Controller
 {
@@ -19,6 +20,9 @@ class TenantController extends Controller
     public function index(Request $request): Response
     {
         $query = Tenant::with(['owner', 'subscriptions.plan'])
+            ->whereDoesntHave('owner', function ($q) {
+                $q->where('user_type', 'super_admin');
+            })
             ->withCount([
                 'orders' => function ($q) {
                     $q->withoutGlobalScopes();
@@ -78,15 +82,17 @@ class TenantController extends Controller
         $tenants = $query->paginate(20)->withQueryString();
         $plans = SubscriptionPlan::where('is_active', true)->get();
 
+        $nonAdminTenant = fn() => Tenant::whereDoesntHave('owner', fn($q) => $q->where('user_type', 'super_admin'));
+
         $planCounts = [
-            'all' => Tenant::count(),
-            'free' => Tenant::where(function($q) {
+            'all' => $nonAdminTenant()->count(),
+            'free' => $nonAdminTenant()->where(function($q) {
                 $q->where('subscription_status', 'trial')
                   ->orWhereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'free')));
             })->count(),
-            'monthly' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'monthly')))->count(),
-            'yearly' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'yearly')))->count(),
-            'commission' => Tenant::whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'commission')))->count(),
+            'monthly' => $nonAdminTenant()->whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'monthly')))->count(),
+            'yearly' => $nonAdminTenant()->whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'yearly')))->count(),
+            'commission' => $nonAdminTenant()->whereHas('subscriptions', fn($sq) => $sq->where('status', 'active')->whereHas('plan', fn($pq) => $pq->where('slug', 'commission')))->count(),
         ];
 
         return Inertia::render('SuperAdmin/Tenants/Index', [
@@ -370,32 +376,17 @@ class TenantController extends Controller
             abort(404, 'المتجر غير موجود.');
         }
 
-        // Store a long-lived token in cache (8 hours) for cookie-based auth
-        $longToken = \Illuminate\Support\Str::random(64);
-        \Illuminate\Support\Facades\Cache::put(
-            'impersonate_token_' . $longToken,
-            ['user_id' => $user->id, 'tenant_id' => $tenant->id],
-            now()->addHours(8)
-        );
+        // تسجيل دخول التاجر في جلسة المتجر بشكل كامل
+        Auth::login($user, true);
 
-        $host         = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
-        if (str_starts_with($host, 'app.')) {
-            $host = substr($host, 4);
+        if ($request->hasSession()) {
+            $request->session()->put('tenant_id', $tenant->id);
+            $request->session()->put('impersonated_tenant_id', $tenant->id);
+            $request->session()->put('impersonated_by_superadmin', true);
+            $request->session()->regenerate();
         }
-        $cookieDomain = $tenant->slug . '.' . $host;
 
-        $cookie = cookie(
-            name:     'impersonate_token',
-            value:    $longToken,
-            minutes:  480,          // 8 hours
-            path:     '/',
-            domain:   $cookieDomain, // tenant subdomain ONLY (isolated)
-            secure:   false,
-            httpOnly: true,
-            sameSite: 'Lax'
-        );
-
-        return redirect('/admin/dashboard')->withCookie($cookie);
+        return redirect('/admin/dashboard');
     }
 
     /**

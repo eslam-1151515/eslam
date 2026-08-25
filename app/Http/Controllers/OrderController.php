@@ -105,6 +105,16 @@ class OrderController extends Controller
         // Trigger Webhook order.created
         \App\Services\WebhookSender::trigger('order.created', $order->toArray(), $order->tenant_id);
 
+        // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
+        try {
+            if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false)) {
+                $whatsAppService = new \App\Services\MetaWhatsAppService();
+                $whatsAppService->sendOrderConfirmation($order);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('WhatsApp auto confirm in OrderController@store failed: ' . $e->getMessage());
+        }
+
         $redirectUrl = route('orders.success', $order->reference_number) . '?clear_cart=1';
         return redirect($redirectUrl);
     }
@@ -262,6 +272,16 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+            // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
+            try {
+                if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false)) {
+                    $whatsAppService = new \App\Services\MetaWhatsAppService();
+                    $whatsAppService->sendOrderConfirmation($order);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp auto confirm in storeApi failed: ' . $e->getMessage());
+            }
 
             // Trigger Webhook order.created
             try {

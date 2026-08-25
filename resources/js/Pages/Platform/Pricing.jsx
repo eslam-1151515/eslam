@@ -27,7 +27,7 @@ export default function Pricing({ plans = [], faqs = [], comparisonCategories = 
                                 <span className="text-white font-black text-xl">⚡</span>
                             </div>
                             <span className="text-2xl font-black tracking-tight text-white">
-                                فاست <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">أوردر</span>
+                                Order <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Saif</span>
                             </span>
                         </Link>
                     </div>

@@ -14,24 +14,31 @@
 </head>
 
 <body>
-  <header class="container header">
-    <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
-      <img src="/images/logo.png?v=202604031" alt="Store"
-        onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
-      <span>Store</span>
-    </a>
-    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
-    <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
-          class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/shop/index.html" class="brand">
+        <img src="/images/logo.png?v=202604031" alt="Store"
+          onerror="this.src='https://dummyimage.com/48x48/09090b/ffffff&text=S'" />
+        <span>Store</span>
+      </a>
+
+      <nav class="nav">
+        <a href="/shop/index.html">الرئيسية</a>
+        <a href="/shop/products.html">جميع المنتجات</a>
+        <a href="/shop/categories.html">الأقسام</a>
+        <a href="/shop/products.html?sort=discount">عروض حصرية</a>
+        <a style="display:none !important;" href="/shop/contact.html">اتصل بنا</a>
+      </nav>
+
+      <div class="icons">
+        <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+        <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cartCount"></span>
+        </a>
+        <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="/shop/index.html">الرئيسية</a>
-      <a href="/shop/categories.html">الأقسام</a>
-      <a href="/shop/products.html">المنتجات</a>
-      <a style="display:none !important;" href="/shop/contact.html">اتصل بنا</a>
-    </nav>
   </header>
 
   <main class="container">
@@ -125,8 +132,25 @@
       <div id="relatedGrid" class="grid"></div>
     </section>
 
-    <!-- Reviews Section -->
-    
+    <!-- Product Trust Features Banner in Footer -->
+    <div class="product-trust-badges-bar" style="background: #09090b; color: #ffffff; border-radius: 16px; padding: 20px 16px; margin: 2.5rem 0 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
+      <div style="display: flex; align-items: center; justify-content: space-around; gap: 16px; flex-wrap: wrap; text-align: center;">
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.95rem;">
+          <i class="fa-solid fa-truck-fast" style="color: #4ade80; font-size: 1.25rem;"></i>
+          <span>شحن سريع لجميع المحافظات</span>
+        </div>
+        <span class="trust-badge-dot" style="color: #52525b; font-size: 1.2rem;">•</span>
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.95rem;">
+          <i class="fa-solid fa-shield-halved" style="color: #4ade80; font-size: 1.25rem;"></i>
+          <span>الدفع عند الاستلام والمعاينة قبل الدفع</span>
+        </div>
+        <span class="trust-badge-dot" style="color: #52525b; font-size: 1.2rem;">•</span>
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.95rem;">
+          <i class="fa-solid fa-rotate-left" style="color: #4ade80; font-size: 1.25rem;"></i>
+          <span>ضمان استبدال واسترجاع 14 يوم</span>
+        </div>
+      </div>
+    </div>
   </main>
   <style>
     .sticky-buy-bar {
@@ -134,6 +158,13 @@
     }
 
     @media (max-width: 768px) {
+      .trust-badge-dot {
+        display: none !important;
+      }
+      .product-trust-badges-bar > div {
+        flex-direction: column !important;
+        gap: 12px !important;
+      }
       .sticky-buy-bar {
         display: block;
         position: fixed;
@@ -429,45 +460,46 @@
             <h1 style="margin:0 0 8px">${p.name || 'منتج'}</h1>
             <div class="muted" style="margin-bottom:8px">${p.category || ''}</div>
             <!-- Live Visitors Watching Banner -->
-            <div class="fake_visitors_container" style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e5e7eb; border-radius: 26px; padding: 6px 14px; background: #f9fafb; font-size: 0.85rem; color: #374151; font-family: Cairo, sans-serif; font-weight: 600; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div class="live-viewers-badge" style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid #09090b; border-radius: 30px; padding: 7px 16px; background: #ffffff; font-size: 0.88rem; color: #09090b; font-family: Cairo, sans-serif; font-weight: 700; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
               <span style="position: relative; display: inline-flex; width: 10px; height: 10px; align-items: center; justify-content: center;">
                 <span style="position: absolute; display: inline-flex; width: 100%; height: 100%; border-radius: 9999px; background-color: #10b981; opacity: 0.75; animation: livePing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
                 <span style="position: relative; display: inline-flex; border-radius: 9999px; width: 8px; height: 8px; background-color: #059669;"></span>
               </span>
-              <i class="fa-solid fa-eye" style="color: #7c3aed; font-size: 0.9rem;"></i>
-              <span><strong id="fakeVisitorsCount" style="color: #111827; font-weight: 800; font-size: 0.95rem;">12</strong> شخص يشاهد هذا المنتج الآن</span>
+              <i class="fa-solid fa-eye" style="color: #09090b; font-size: 0.95rem;"></i>
+              <span><strong id="fakeVisitorsCount" style="color: #09090b; font-weight: 900; font-size: 1rem;">16</strong> شخص يشاهد هذا المنتج الآن</span>
             </div>
             <div class="price-block" style="text-align: right;">
-              <div class="price-now" id="mainPriceNow" style="text-align: right;">${BirdCart.formatEGP(p.price_after || 0)}</div>
+              <div class="price-now" id="mainPriceNow" style="text-align: right; font-size: 1.8rem; font-weight: 900; color: #09090b;">${BirdCart.formatEGP(p.price_after || 0)}</div>
               <div class="price-row" id="mainPriceOld" style="justify-content: flex-start; gap: 8px;">
-                ${p.price_before && p.price_before > p.price_after ? `<span class='old'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount'><span>خصم</span><span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
+                ${p.price_before && p.price_before > p.price_after ? `<span class='old' style='font-size: 1.1rem; color: #71717a; text-decoration: line-through;'>${BirdCart.formatEGP(p.price_before)}</span> <span class='badge-discount' style='background: #09090b; color: #fff; padding: 3px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;'><span>خصم</span> <span>-${Math.round( ( (p.price_before-(p.price_after||0)) / p.price_before) * 100)}%</span></span>` : ''}
               </div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; align-items: center;">
-              ${p.shipping_type === 'free' ? `<div style="padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 6px; font-size: 0.875rem; font-weight: 600; display: inline-block;"><i class="fa fa-truck" style="margin-left: 6px;"></i>الشحن مجاناً</div>` : ''}
+              ${p.shipping_type === 'free' ? `<div style="padding: 6px 14px; background: #09090b; color: #ffffff; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;"><i class="fa fa-truck"></i>الشحن مجاناً</div>` : ''}
               <div id="stockIndicator"></div>
             </div>
             <!-- COUNTDOWN TIMER -->
             ${p.price_before && p.price_before > (p.price_after || 0) ? `
-            <div id="productCountdown">
-              <div class="cd-label">
-                <i class="fa fa-fire"></i>
-                <span>الوقت المتبقي للخصم:</span>
+            <div id="productCountdown" style="background: #ffffff; border: 2px solid #09090b; border-radius: 16px; padding: 12px 18px; margin: 14px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.92rem; color: #09090b;">
+                <span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; display: inline-block; animation: livePing 1.2s infinite;"></span>
+                <i class="fa-solid fa-stopwatch" style="color: #09090b; font-size: 1.1rem;"></i>
+                <span>عرض حصري ينتهي خلال:</span>
               </div>
-              <div class="cd-blocks">
-                <div class="cd-unit">
-                  <div class="cd-num" id="cd-hours">00</div>
-                  <div class="cd-text">ساعات</div>
+              <div style="display: flex; align-items: center; gap: 6px; direction: ltr;">
+                <div style="background: #09090b; color: #ffffff; border-radius: 10px; min-width: 46px; padding: 6px 4px; text-align: center;">
+                  <div id="cd-hours" style="font-size: 1.15rem; font-weight: 900; font-family: monospace; line-height: 1;">00</div>
+                  <div style="font-size: 0.65rem; font-weight: 700; color: #a1a1aa; margin-top: 2px;">ساعة</div>
                 </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-unit">
-                  <div class="cd-num" id="cd-minutes">00</div>
-                  <div class="cd-text">دقائق</div>
+                <span style="font-weight: 900; font-size: 1.1rem; color: #09090b;">:</span>
+                <div style="background: #09090b; color: #ffffff; border-radius: 10px; min-width: 46px; padding: 6px 4px; text-align: center;">
+                  <div id="cd-minutes" style="font-size: 1.15rem; font-weight: 900; font-family: monospace; line-height: 1;">00</div>
+                  <div style="font-size: 0.65rem; font-weight: 700; color: #a1a1aa; margin-top: 2px;">دقيقة</div>
                 </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-unit">
-                  <div class="cd-num seconds" id="cd-seconds">00</div>
-                  <div class="cd-text">ثواني</div>
+                <span style="font-weight: 900; font-size: 1.1rem; color: #09090b;">:</span>
+                <div style="background: #09090b; color: #ffffff; border-radius: 10px; min-width: 46px; padding: 6px 4px; text-align: center;">
+                  <div id="cd-seconds" style="font-size: 1.15rem; font-weight: 900; font-family: monospace; color: #ef4444; line-height: 1;">00</div>
+                  <div style="font-size: 0.65rem; font-weight: 700; color: #a1a1aa; margin-top: 2px;">ثانية</div>
                 </div>
               </div>
             </div>` : ''}
@@ -475,19 +507,19 @@
             <div id="variantsContainer">
               ${renderSizesAndColors(p, 1)}
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; align-items: center;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center;">
               <!-- QUANTITY SELECTOR -->
-              <div class="product-qty-control" style="display: inline-flex; align-items: center; border: 1.5px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #ffffff; height: 46px; user-select: none;">
-                <button type="button" class="qty-btn qty-plus" onclick="changeProductQty(1)" style="width: 42px; height: 100%; border: none; background: #f3f4f6; color: #111827; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">+</button>
-                <input type="number" id="productQtyInput" value="1" min="1" readonly style="width: 44px; height: 100%; border: none; text-align: center !important; text-align-last: center !important; font-size: 1.1rem; font-weight: 800; color: #111827; background: transparent; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0; padding: 0; outline: none; direction: ltr !important;">
-                <button type="button" class="qty-btn qty-minus" onclick="changeProductQty(-1)" style="width: 42px; height: 100%; border: none; background: #f3f4f6; color: #111827; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">-</button>
+              <div class="product-qty-control" style="display: inline-flex; align-items: center; border: 2px solid #09090b; border-radius: 10px; overflow: hidden; background: #ffffff; height: 48px; user-select: none;">
+                <button type="button" class="qty-btn qty-plus" onclick="changeProductQty(1)" style="width: 42px; height: 100%; border: none; background: #f4f4f5; color: #09090b; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e4e4e7'" onmouseout="this.style.background='#f4f4f5'">+</button>
+                <input type="number" id="productQtyInput" value="1" min="1" readonly style="width: 44px; height: 100%; border: none; text-align: center !important; text-align-last: center !important; font-size: 1.1rem; font-weight: 800; color: #09090b; background: transparent; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0; padding: 0; outline: none; direction: ltr !important;">
+                <button type="button" class="qty-btn qty-minus" onclick="changeProductQty(-1)" style="width: 42px; height: 100%; border: none; background: #f4f4f5; color: #09090b; font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#e4e4e7'" onmouseout="this.style.background='#f4f4f5'">-</button>
               </div>
-              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;">أضف إلى السلة</button>
-              <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-bolt"></i> إتمام الشراء</button>
+              <button class="btn btn-primary p-btn-add" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 13px; font-size: 1rem; font-weight: 800; background-color: #ffffff; color: #09090b; border: 2px solid #09090b; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa-solid fa-cart-plus"></i> أضف إلى السلة</button>
+              <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="flex: 1; min-width: 130px; padding: 13px; font-size: 1rem; font-weight: 900; background: #09090b; color: white; border: 2px solid #09090b; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; text-align: center;"><i class="fa fa-bolt"></i> إتمام الشراء الآن</button>
             </div>
           </div>
         </div>
-        ${descList ? `<div class="card" style="padding:16px;margin-top:12px"><h3 style="margin:0 0 10px">المواصفات</h3><ul class="desc-list">${descList}</ul></div>` : ''}
+        ${descList ? `<div class="card" style="padding:16px;margin-top:12px;border:1px solid #e4e4e7;border-radius:14px;"><h3 style="margin:0 0 10px;font-weight:800;color:#09090b;">المواصفات</h3><ul class="desc-list">${descList}</ul></div>` : ''}
         <div class="lightbox" id="pLightbox">
           <button class="close" aria-label="إغلاق">✕</button>
           <button class="p-arrow p-prev" aria-label="السابق">‹</button>
@@ -495,7 +527,7 @@
           <button class="p-arrow p-next" aria-label="التالي">›</button>
         </div>
         <div class="sticky-buy-bar">
-          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fa fa-bolt"></i> إتمام الشراء الآن</button>
+          <button class="btn btn-primary p-btn-buy-now" data-id="${p.id}" data-name="${p.name || ''}" data-price="${p.price_after || 0}" data-image="${p.image_url || ''}" data-shipping="${p.shipping_type || 'free'}" data-price-before="${p.price_before || 0}" data-has-sizes="${p.sizes && p.sizes.length ? 'yes' : 'no'}" data-has-colors="${p.colors && p.colors.length ? 'yes' : 'no'}" style="width: 100%; padding: 14px; font-size: 1.15rem; font-weight: 900; background: #09090b; color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);"><i class="fa fa-bolt"></i> إتمام الشراء الآن</button>
         </div>`;
 
       // Image gallery logic with transition & zoom

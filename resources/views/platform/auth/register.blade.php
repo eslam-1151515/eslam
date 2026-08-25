@@ -490,7 +490,7 @@
                         </div>
 
                         <h3 class="text-xl font-bold text-white mb-2">أنت على بعد خطوة واحدة من إطلاق متجرك!</h3>
-                        <p class="text-sm text-brand-200/80 max-w-md mx-auto mb-6">سيتم تفعيل الفترة التجريبية المجانية لمدة <strong class="text-white font-bold">7 أيام</strong> تلقائياً، دون الحاجة لإدخال أي بطاقة بنكية الآن.</p>
+                        <p class="text-sm text-brand-200/80 max-w-md mx-auto mb-6">سيتم تفعيل الفترة التجريبية المجانية لمدة <strong class="text-white font-bold">7 أيام</strong> وإضافة <strong class="text-emerald-400 font-bold">100 ج.م رصيد هدية</strong> في محفظتك تلقائياً، دون الحاجة لإدخال أي بطاقة بنكية الآن.</p>
 
                         <!-- Summary Table -->
                         <div class="bg-black/50 rounded-xl p-4 text-right space-y-3 border border-white/10 text-xs sm:text-sm max-w-lg mx-auto">

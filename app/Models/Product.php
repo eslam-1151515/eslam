@@ -184,4 +184,46 @@ class Product extends Model
         $this->variants_stock = $variantsStock;
         $this->save();
     }
+
+    /**
+     * زيادة كمية variant محدد في variants_stock + زيادة stock الإجمالي
+     */
+    public function incrementVariantStock(int $qty, ?string $size = null, ?string $color = null, array $options = []): void
+    {
+        // 1) زيادة في الإجمالي
+        $this->increment('stock', $qty);
+
+        // 2) زيادة في variants_stock إن وُجد
+        $variantsStock = $this->variants_stock;
+        if (!is_array($variantsStock) || empty($variantsStock)) {
+            return;
+        }
+
+        $hasSize  = !empty($size);
+        $hasColor = !empty($color);
+        $hasOpts  = !empty($options);
+
+        if (!$hasSize && !$hasColor && !$hasOpts) {
+            return;
+        }
+
+        foreach ($variantsStock as &$row) {
+            $matchSize  = !$hasSize  || (($row['size']  ?? null) === $size);
+            $matchColor = !$hasColor || (($row['color'] ?? null) === $color);
+            $matchOpts  = true;
+            if ($hasOpts) {
+                $rowOpts = $row['options'] ?? [];
+                foreach ($options as $k => $v) {
+                    if (($rowOpts[$k] ?? null) !== $v) { $matchOpts = false; break; }
+                }
+            }
+            if ($matchSize && $matchColor && $matchOpts) {
+                $row['qty'] = (int)($row['qty'] ?? 0) + $qty;
+                break;
+            }
+        }
+        unset($row);
+        $this->variants_stock = $variantsStock;
+        $this->save();
+    }
 }

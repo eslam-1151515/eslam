@@ -4,6 +4,7 @@
 (function() {
   function initFBPixel(pixelIdRaw) {
     if (!pixelIdRaw) return;
+    if (typeof window.fbq === 'function' && window.fbq.loaded) return;
     var ids = String(pixelIdRaw).split(/[\r\n,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
     if (!ids.length) return;
 
@@ -24,6 +25,7 @@
 
   function initTTPixel(pixelIdRaw) {
     if (!pixelIdRaw) return;
+    if (typeof window.ttq === 'object' && (window.ttq._i || window.ttq.instance)) return;
     var ids = String(pixelIdRaw).split(/[\r\n,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
     if (!ids.length) return;
 
@@ -38,6 +40,7 @@
 
   function initSnapPixel(pixelId) {
     if (!pixelId) return;
+    if (typeof window.snaptr === 'function' && window.snaptr.handleRequest) return;
     (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function(){a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
     a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
     r.src=n;var u=t.getElementsByTagName(s)[0];
@@ -340,15 +343,16 @@ function formatPrice(after, before){
   const priceNow = formatEGP(now);
   const beforeVal = (before!=null)? Math.round(Number(before)) : null;
   const hasDiscount = beforeVal && beforeVal>now;
-  const pct = hasDiscount ? Math.round(((beforeVal-now)/beforeVal)*100) : 0;
   
   if (hasDiscount) {
     return `<div class='price-block'>
-      <div class='price-now'>${priceNow} <span class='badge-discount'>-${pct}%</span></div>
-      <div class='price-row'><span class='old'>${formatEGP(beforeVal)}</span></div>
+      <div class='price-row'>
+        <span class='price-now'>${priceNow}</span>
+        <span class='old'>${formatEGP(beforeVal)}</span>
+      </div>
     </div>`;
   } else {
-    return `<div class='price-block'><div class='price-now'>${priceNow}</div></div>`;
+    return `<div class='price-block'><div class='price-row'><span class='price-now'>${priceNow}</span></div></div>`;
   }
 }
 
@@ -356,35 +360,70 @@ function productCard(p){
   const card = createEl('div','card');
   card.style.position = 'relative';
   
-  const link = createEl('a'); link.href = `/shop/product.html?id=${p.id}`; link.style.textDecoration='none'; link.style.color='inherit';
+  const imgContainer = createEl('div', 'product-img-wrapper');
+  imgContainer.style.position = 'relative';
+  imgContainer.style.overflow = 'hidden';
+
+  const link = createEl('a'); link.href = `/shop/product.html?id=${p.id}`; link.style.textDecoration='none'; link.style.color='inherit'; link.style.display = 'block';
   const img = createEl('img'); img.src = p.image_url || 'https://dummyimage.com/600x400/e5e7eb/9ca3af.png&text=No+Image'; img.alt=p.name||''; link.appendChild(img);
+  imgContainer.appendChild(link);
   
-  // إضافة بادج الشحن المجاني
+  // Discount badge overlaid on top of the image
+  const nowPrice = Math.round(Number(p.price_after ?? 0));
+  const beforePrice = (p.price_before != null) ? Math.round(Number(p.price_before)) : null;
+  if (beforePrice && beforePrice > nowPrice) {
+    const pct = Math.round(((beforePrice - nowPrice) / beforePrice) * 100);
+    if (pct > 0) {
+      const discountBadge = createEl('div', 'product-img-discount-badge');
+      discountBadge.textContent = `-${pct}%`;
+      discountBadge.style.cssText = `
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: #09090b;
+        color: #ffffff;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        font-family: monospace, system-ui, sans-serif;
+        z-index: 3;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.2);
+      `;
+      imgContainer.appendChild(discountBadge);
+    }
+  }
+
+  // Free shipping badge overlaid on top of the image
   if (p.shipping_type === 'free') {
     const freeShippingBadge = createEl('div', 'free-shipping-badge');
     const currentLang = getStorefrontLang();
-    freeShippingBadge.textContent = currentLang === 'en' ? 'Free Shipping' : 'شحن مجاناً';
+    freeShippingBadge.innerHTML = currentLang === 'en' ? '<i class="fa fa-truck"></i> Free' : '<i class="fa fa-truck"></i> شحن مجاني';
     freeShippingBadge.style.cssText = `
       position: absolute;
       top: 8px;
       right: 8px;
-      background: #16a34a;
+      background: #15803d;
       color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      z-index: 2;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      z-index: 3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     `;
-    card.appendChild(freeShippingBadge);
+    imgContainer.appendChild(freeShippingBadge);
   }
   
-  card.appendChild(link);
+  card.appendChild(imgContainer);
   const body = createEl('div','body');
-  const titleLink = createEl('a'); titleLink.href = `/shop/product.html?id=${p.id}`; titleLink.style.textDecoration='none'; titleLink.style.color='inherit';
+  const titleLink = createEl('a'); titleLink.href = `/shop/product.html?id=${p.id}`; titleLink.style.textDecoration='none'; titleLink.style.color='inherit'; titleLink.style.width='100%';
   const title = createEl('h3','title'); title.textContent = p.name || ''; titleLink.appendChild(title);
-  const price = createEl('div'); price.innerHTML = formatPrice(p.price_after, p.price_before);
+  const price = createEl('div'); price.style.width='100%'; price.innerHTML = formatPrice(p.price_after, p.price_before);
   
   const addBtn = createEl('button','btn btn-primary btn-add');
   const currentLang = getStorefrontLang();
@@ -396,14 +435,85 @@ function productCard(p){
   return card;
 }
 
-function renderProducts(root, items){
+function makeProductSlider(gridEl) {
+  if (!gridEl) return;
+  gridEl.classList.add('product-slider-track');
+  
+  let wrapper = gridEl.parentElement;
+  if (!wrapper || !wrapper.classList.contains('product-slider-wrapper')) {
+    wrapper = document.createElement('div');
+    wrapper.className = 'product-slider-wrapper';
+    gridEl.parentNode.insertBefore(wrapper, gridEl);
+    wrapper.appendChild(gridEl);
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'slider-arrow-btn prev-arrow';
+    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+    prevBtn.setAttribute('aria-label', 'السابق');
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'slider-arrow-btn next-arrow';
+    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+    nextBtn.setAttribute('aria-label', 'التالي');
+    
+    prevBtn.onclick = (e) => {
+      e.preventDefault();
+      const scrollAmt = gridEl.clientWidth * 0.75;
+      gridEl.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+    };
+    nextBtn.onclick = (e) => {
+      e.preventDefault();
+      const scrollAmt = gridEl.clientWidth * 0.75;
+      gridEl.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+    };
+    
+    wrapper.appendChild(prevBtn);
+    wrapper.appendChild(nextBtn);
+    
+    let autoTimer = null;
+    let isInteracting = false;
+    
+    function startAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        if (!isInteracting && gridEl && gridEl.children.length > 2) {
+          const maxScroll = gridEl.scrollWidth - gridEl.clientWidth;
+          const currentScroll = Math.abs(gridEl.scrollLeft);
+          if (currentScroll >= maxScroll - 20) {
+            gridEl.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            gridEl.scrollBy({ left: -220, behavior: 'smooth' });
+          }
+        }
+      }, 3500);
+    }
+    
+    wrapper.addEventListener('mouseenter', () => { isInteracting = true; });
+    wrapper.addEventListener('mouseleave', () => { isInteracting = false; });
+    wrapper.addEventListener('touchstart', () => { isInteracting = true; }, { passive: true });
+    wrapper.addEventListener('touchend', () => { setTimeout(() => { isInteracting = false; }, 2500); }, { passive: true });
+    
+    startAuto();
+  }
+}
+
+function renderProducts(root, items, asSlider = false){
   root.innerHTML='';
   const currentLang = getStorefrontLang();
   if(!items || !items.length){ 
     root.innerHTML='<p class="muted">' + (currentLang === 'en' ? 'No products to display.' : 'لا توجد منتجات لعرضها.') + '</p>'; 
     return; 
   }
-  const frag = document.createDocumentFragment(); items.forEach(p=> frag.appendChild(productCard(p))); root.appendChild(frag);
+  const frag = document.createDocumentFragment(); 
+  items.forEach(p=> frag.appendChild(productCard(p))); 
+  root.appendChild(frag);
+
+  // Auto-convert specific sections to touch-swipeable sliders (Homepage & Product page only, NOT products catalog page)
+  const isProductsCatalog = window.location.pathname.includes('products.html') || window.location.pathname.includes('category-products.html');
+  const isSliderTarget = !isProductsCatalog && (asSlider || root.dataset.slider === 'true' || root.id === 'offersGrid' || root.id === 'homeProductsGrid' || root.id === 'relatedGrid' || root.id === 'crossSellGrid');
+  if (isSliderTarget && items.length > 1) {
+    makeProductSlider(root);
+  }
 }
 
 function categoryCard(c){

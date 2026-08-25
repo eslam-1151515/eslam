@@ -27,6 +27,7 @@ export default function SuperAdminLayout({ children }) {
                 </svg>
             )
         },
+        /*
         {
             href: '/subscriptions/plans',
             label: 'خطط الاشتراك',
@@ -36,6 +37,7 @@ export default function SuperAdminLayout({ children }) {
                 </svg>
             )
         },
+        */
         {
             href: '/subscriptions/receipts',
             label: 'إيصالات الدفع',
@@ -45,6 +47,7 @@ export default function SuperAdminLayout({ children }) {
                 </svg>
             )
         },
+        /*
         {
             href: '/backups',
             label: 'النسخ الاحتياطي',
@@ -54,12 +57,23 @@ export default function SuperAdminLayout({ children }) {
                 </svg>
             )
         },
+        */
         {
             href: '/support-contacts',
             label: 'أرقام الدعم الفني',
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+            )
+        },
+        {
+            href: '/whatsapp-gateway',
+            label: 'بوابة الواتساب والتأكيد',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
             )
         },
@@ -125,16 +139,21 @@ export default function SuperAdminLayout({ children }) {
                 </nav>
 
                 {/* Mobile User Profile */}
-                <div className="p-4 border-t border-indigo-900/80 bg-indigo-900/40 shrink-0">
-                    <div className="flex items-center gap-3 mb-3">
+                <div className="p-4 border-t border-indigo-900/80 bg-indigo-900/40 shrink-0 space-y-2">
+                    <Link
+                        href="/profile"
+                        onClick={closeMobileMenu}
+                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-indigo-900/60 transition-colors"
+                    >
                         <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 border border-indigo-400">
                             {auth?.user?.name ? auth.user.name.substring(0, 2).toUpperCase() : 'AD'}
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="text-sm font-bold text-white truncate">{auth?.user?.name || 'Super Admin'}</p>
-                            <p className="text-xs text-indigo-300 truncate">{auth?.user?.email}</p>
+                            <p className="text-xs text-indigo-300 truncate font-mono" dir="ltr">{auth?.user?.email}</p>
+                            <span className="text-[11px] text-indigo-400 font-semibold mt-0.5 block">إعدادات الحساب ⚙️</span>
                         </div>
-                    </div>
+                    </Link>
                     <button
                         onClick={(e) => {
                             e.preventDefault();
@@ -144,7 +163,7 @@ export default function SuperAdminLayout({ children }) {
                                 onError: () => { window.location.href = '/login'; }
                             });
                         }}
-                        className="w-full py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-rose-500/30"
+                        className="w-full py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-rose-500/30 cursor-pointer"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -163,7 +182,7 @@ export default function SuperAdminLayout({ children }) {
                     </span>
                     <button 
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-                        className="text-indigo-200 hover:text-white focus:outline-none p-1.5 rounded-lg hover:bg-indigo-900 transition-colors"
+                        className="text-indigo-200 hover:text-white focus:outline-none p-1.5 rounded-lg hover:bg-indigo-900 transition-colors cursor-pointer"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -189,23 +208,41 @@ export default function SuperAdminLayout({ children }) {
 
                 {/* Desktop User Profile */}
                 <div className="p-4 border-t border-indigo-900 flex items-center justify-start mt-auto shrink-0 bg-indigo-900/30">
-                    <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-extrabold text-xs shrink-0 border border-indigo-400">
+                    <Link
+                        href="/profile"
+                        className="w-9 h-9 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center font-extrabold text-xs shrink-0 border border-indigo-400 transition-all cursor-pointer shadow-xs"
+                        title="الملف الشخصي وإدارة المديرين"
+                    >
                         {auth?.user?.name ? auth.user.name.substring(0, 2).toUpperCase() : 'AD'}
-                    </div>
+                    </Link>
                     <div className={`mr-3 min-w-0 ${!isSidebarOpen && 'hidden'}`}>
-                        <p className="text-xs font-bold text-white truncate">{auth?.user?.name || 'Super Admin'}</p>
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.post('/logout', {}, {
-                                    onSuccess: () => { window.location.href = '/login'; },
-                                    onError: () => { window.location.href = '/login'; }
-                                });
-                            }}
-                            className="text-xs text-rose-300 hover:text-rose-100 block text-right font-medium mt-0.5"
+                        <Link
+                            href="/profile"
+                            className="text-xs font-bold text-white hover:text-indigo-200 block truncate transition-colors"
                         >
-                            تسجيل الخروج
-                        </button>
+                            {auth?.user?.name || 'Super Admin'}
+                        </Link>
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <Link
+                                href="/profile"
+                                className="text-[11px] text-indigo-300 hover:text-white font-medium transition-colors"
+                            >
+                                الإعدادات ⚙️
+                            </Link>
+                            <span className="text-indigo-700 text-xs">·</span>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    router.post('/logout', {}, {
+                                        onSuccess: () => { window.location.href = '/login'; },
+                                        onError: () => { window.location.href = '/login'; }
+                                    });
+                                }}
+                                className="text-[11px] text-rose-300 hover:text-rose-100 font-medium transition-colors cursor-pointer"
+                            >
+                                خروج
+                            </button>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -218,7 +255,7 @@ export default function SuperAdminLayout({ children }) {
                         {/* Mobile Menu Toggle Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(true)}
-                            className="md:hidden p-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 focus:outline-none transition-colors border border-indigo-100"
+                            className="md:hidden p-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 focus:outline-none transition-colors border border-indigo-100 cursor-pointer"
                             aria-label="فتح القائمة"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,12 +269,23 @@ export default function SuperAdminLayout({ children }) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <span className="text-xs sm:text-sm text-gray-500 font-medium hidden sm:inline">
-                            {auth?.user?.email}
-                        </span>
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs border border-indigo-200">
-                            {auth?.user?.name ? auth.user.name.substring(0, 1).toUpperCase() : 'A'}
-                        </div>
+                        <Link
+                            href="/profile"
+                            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-indigo-50/80 border border-transparent hover:border-indigo-100 transition-all cursor-pointer group"
+                            title="الملف الشخصي وإعدادات المديرين"
+                        >
+                            <div className="text-right hidden sm:block">
+                                <span className="block text-xs font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">
+                                    {auth?.user?.name || 'المدير العام'}
+                                </span>
+                                <span className="block text-[11px] text-gray-400 font-mono" dir="ltr">
+                                    {auth?.user?.email}
+                                </span>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs border border-indigo-200 group-hover:scale-105 transition-transform">
+                                {auth?.user?.name ? auth.user.name.substring(0, 1).toUpperCase() : 'A'}
+                            </div>
+                        </Link>
                     </div>
                 </header>
 

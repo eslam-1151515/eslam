@@ -5,16 +5,16 @@
 
 :root {
   /* Dynamic Palette Defaults (Can be overridden by server CSS variables) */
-  --primary-color: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --secondary-color: #64748b;
-  --secondary-hover: #475569;
+  --primary-color: #09090b;
+  --primary-hover: #27272a;
+  --primary-light: #f4f4f5;
+  --secondary-color: #71717a;
+  --secondary-hover: #52525b;
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
-  --text-color: #1f2937;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --text-color: #09090b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);

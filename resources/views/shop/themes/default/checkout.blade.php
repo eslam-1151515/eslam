@@ -417,7 +417,7 @@
 
                     <div class="transfer-note" id="transfer-details">
                         <strong>📲 بيانات التحويل:</strong><br>
-                        الرقم: <strong>01092308465</strong><br>
+                        الرقم: <strong>01066571999</strong><br>
                         يرجى تحويل المبلغ وإرسال صورة الإيصال على الواتساب بعد إتمام الطلب.
                     </div>
 

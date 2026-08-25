@@ -22,7 +22,7 @@ if (str_starts_with($configHost, 'app.')) {
     $configHost = substr($configHost, 4);
 }
 
-if ($host && $host !== '127.0.0.1' && $host !== 'localhost' && !str_ends_with($host, '.localhost')) {
+if ($host && $host !== '127.0.0.1' && !filter_var($host, FILTER_VALIDATE_IP)) {
     $cleanHost = str_starts_with($host, 'app.') ? substr($host, 4) : $host;
     $parts = explode('.', $cleanHost);
     if (count($parts) >= 3) {
@@ -109,12 +109,25 @@ Route::domain('app.' . $baseDomain)->group(function () {
         Route::patch('/support-contacts/{supportContact}/toggle', [App\Http\Controllers\SuperAdmin\SupportContactController::class, 'toggle'])->name('superadmin.support-contacts.toggle');
         Route::delete('/support-contacts/{supportContact}', [App\Http\Controllers\SuperAdmin\SupportContactController::class, 'destroy'])->name('superadmin.support-contacts.destroy');
 
+        // WhatsApp Meta Cloud API Gateway & Merchants Billing (Super Admin)
+        Route::get('/whatsapp-gateway', [App\Http\Controllers\SuperAdmin\WhatsAppGatewayController::class, 'index'])->name('superadmin.whatsapp.index');
+        Route::post('/whatsapp-gateway', [App\Http\Controllers\SuperAdmin\WhatsAppGatewayController::class, 'updateSettings'])->name('superadmin.whatsapp.update');
+        Route::post('/whatsapp-gateway/test-message', [App\Http\Controllers\SuperAdmin\WhatsAppGatewayController::class, 'sendTestMessage'])->name('superadmin.whatsapp.test');
+        Route::post('/whatsapp-gateway/merchants/{tenant}/toggle', [App\Http\Controllers\SuperAdmin\WhatsAppGatewayController::class, 'toggleMerchantStatus'])->name('superadmin.whatsapp.merchants.toggle');
+
         // Tutorials & Knowledge Base Management (Super Admin)
         Route::get('/tutorials', [App\Http\Controllers\SuperAdmin\TutorialController::class, 'index'])->name('superadmin.tutorials.index');
         Route::post('/tutorials', [App\Http\Controllers\SuperAdmin\TutorialController::class, 'store'])->name('superadmin.tutorials.store');
         Route::put('/tutorials/{tutorial}', [App\Http\Controllers\SuperAdmin\TutorialController::class, 'update'])->name('superadmin.tutorials.update');
         Route::patch('/tutorials/{tutorial}/toggle', [App\Http\Controllers\SuperAdmin\TutorialController::class, 'toggle'])->name('superadmin.tutorials.toggle');
         Route::delete('/tutorials/{tutorial}', [App\Http\Controllers\SuperAdmin\TutorialController::class, 'destroy'])->name('superadmin.tutorials.destroy');
+
+        // Super Admin Profile & Admin Accounts Management
+        Route::get('/profile', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'index'])->name('superadmin.profile');
+        Route::patch('/profile', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'update'])->name('superadmin.profile.update');
+        Route::put('/profile/password', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'updatePassword'])->name('superadmin.profile.password');
+        Route::post('/profile/admins', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'storeAdmin'])->name('superadmin.profile.admins.store');
+        Route::delete('/profile/admins/{user}', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'destroyAdmin'])->name('superadmin.profile.admins.destroy');
     });
 });
 
@@ -230,6 +243,10 @@ Route::prefix('admin')->group(function () {
             // Wallet routes
             Route::get('/wallet', [App\Http\Controllers\Merchant\WalletController::class, 'index'])->name('merchant.wallet.index');
             Route::post('/wallet/deposit', [App\Http\Controllers\Merchant\WalletController::class, 'deposit'])->name('merchant.wallet.deposit');
+            Route::post('/wallet/instant-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'instantDeposit'])->name('merchant.wallet.instant-deposit');
+            Route::get('/wallet/paymob-callback', [App\Http\Controllers\Merchant\WalletController::class, 'paymobCallback'])->name('merchant.wallet.paymob.callback');
+            Route::get('/wallet/paymob-sandbox', [App\Http\Controllers\Merchant\WalletController::class, 'paymobSandbox'])->name('merchant.wallet.paymob.sandbox');
+            Route::post('/wallet/paymob-sandbox/complete', [App\Http\Controllers\Merchant\WalletController::class, 'completeSandbox'])->name('merchant.wallet.paymob.sandbox.complete');
 
             // Reports routes
             Route::get('/reports', [App\Http\Controllers\Merchant\ReportController::class, 'index'])->name('merchant.reports.index');
@@ -248,10 +265,20 @@ Route::prefix('admin')->group(function () {
             Route::get('/support', [\App\Http\Controllers\Merchant\SupportController::class, 'index'])->name('merchant.support.index');
             Route::get('/tutorials', [\App\Http\Controllers\Merchant\TutorialController::class, 'index'])->name('merchant.tutorials.index');
 
-            // Shipping Gateways management routes (Bosta, J&T Express, Egypt Post)
+            // Auto Confirmation routes (WhatsApp)
+            Route::prefix('auto-confirm')->name('merchant.auto-confirm.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Merchant\AutoConfirmController::class, 'index'])->name('index');
+                Route::post('/', [\App\Http\Controllers\Merchant\AutoConfirmController::class, 'update'])->name('update');
+            });
+
+            // Shipping Gateways management routes (Bosta, J&T Express, Aramex)
             Route::prefix('shipping-gateways')->name('merchant.shipping-gateways.')->group(function () {
                 Route::get('/', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'index'])->name('index');
                 Route::post('/', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'store'])->name('store');
+                Route::post('/auto-dispatch', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'updateAutoDispatch'])->name('auto-dispatch');
+                Route::post('/connect-api-key', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'connectApiKey'])->name('connect-api-key');
+                Route::post('/connect-aramex', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'connectAramex'])->name('connect-aramex');
+                Route::post('/connect-jnt', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'connectJntApi'])->name('connect-jnt');
                 Route::post('/connect-account', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'connectAccount'])->name('connect-account');
                 Route::get('/connect/jnt', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'connectJnt'])->name('connect.jnt');
                 Route::patch('/{provider}/toggle', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'toggle'])->name('toggle');
@@ -261,9 +288,12 @@ Route::prefix('admin')->group(function () {
             Route::post('/orders/{order}/shipment', [\App\Http\Controllers\Merchant\ShipmentController::class, 'store'])->name('merchant.orders.shipment.store');
             Route::get('/shipments/{shipment}/track', [\App\Http\Controllers\Merchant\ShipmentController::class, 'track'])->name('merchant.shipments.track');
 
-            // Coming Soon pages (Phase 67)
-            Route::get('/ai-tools', fn() => \Inertia\Inertia::render('Merchant/ComingSoon/AiTools'))->name('merchant.ai-tools');
-            Route::get('/payment-gateways', fn() => \Inertia\Inertia::render('Merchant/ComingSoon/PaymentGateways'))->name('merchant.payment-gateways');
+            // Payment Gateways management
+            Route::prefix('payment-gateways')->name('merchant.payment-gateways')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Merchant\PaymentGatewaysController::class, 'index']);
+                Route::post('/{provider}', [\App\Http\Controllers\Merchant\PaymentGatewaysController::class, 'update'])->name('.update');
+                Route::patch('/{provider}/toggle', [\App\Http\Controllers\Merchant\PaymentGatewaysController::class, 'toggle'])->name('.toggle');
+            });
 
             // Promotions management routes (Phase 63)
             Route::resource('promotions', \App\Http\Controllers\Merchant\PromotionController::class)->names('merchant.promotions');
@@ -345,20 +375,7 @@ Route::prefix('admin')->group(function () {
     // B. Tenant Storefront Routes (tenant.fastorder.test)
     Route::middleware(['web', 'tenant', 'tenant.active'])->group(function () {
         
-        Route::get('/', function () {
-            $tenantName = app(\App\Models\Tenant::class)->name ?? 'Store';
-            return response('<!DOCTYPE html>
-            <html lang="ar">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="facebook-domain-verification" content="2d59ex7cii10rhhw2o9ny77tfcwft0" />
-                <title>Storefront - ' . e($tenantName) . '</title>
-            </head>
-            <body>
-                <script>window.location.href="/shop/index.html";</script>
-            </body>
-            </html>');
-        })->name('storefront.home');
+        Route::get('/', [\App\Http\Controllers\StorefrontController::class, 'servePage'])->name('storefront.home');
 
         // Dynamic SEO & Metadata routes
         Route::get('/sitemap.xml', [\App\Http\Controllers\StorefrontController::class, 'sitemap'])->name('storefront.sitemap');
@@ -391,6 +408,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/checkout', [CheckoutController::class, 'store'])
             ->name('storefront.checkout.store')
             ->middleware(\App\Http\Middleware\GhostOrderBlockerMiddleware::class);
+        Route::get('/checkout/payment-callback/{provider}', [CheckoutController::class, 'paymentCallback'])->name('storefront.checkout.payment.callback');
         Route::get('/order-success/{referenceNumber}', [CheckoutController::class, 'success'])->name('storefront.order.success');
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // legacy HTML form
 
@@ -687,8 +705,8 @@ Route::prefix('admin')->group(function () {
             $latestProductsLimit = (int) \App\Models\Setting::get('homepage_latest_products_limit', 4);
 
             $data = [
-                'phone'                       => \App\Models\Setting::get('phone', '01012027705'),
-                'whatsapp'                    => \App\Models\Setting::get('whatsapp', '201012027705'),
+                'phone'                       => \App\Models\Setting::get('phone', '01066571999'),
+                'whatsapp'                    => \App\Models\Setting::get('whatsapp', '201066571999'),
                 'store_name'                  => \App\Models\Setting::get('store_name', 'Store'),
                 'logo_url'                    => \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png'),
                 'facebook_pixel_id'           => \App\Models\Setting::get('facebook_pixel_id', ''),

@@ -160,7 +160,7 @@
                                         placeholder="201xxxxxxxxx (بدون +)"
                                         class="flex-1 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">مثال: 201146520922 (بدون + في البداية)</p>
+                                <p class="text-xs text-gray-500 mt-1">مثال: 201066571999 (بدون + في البداية)</p>
                             </div>
 
                             <div class="md:col-span-2">

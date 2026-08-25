@@ -256,7 +256,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
         <SuperAdminLayout>
             <Head title="إدارة المتاجر - لوحة التحكم" />
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 {/* Header Section */}
                 <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
@@ -363,130 +363,133 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                     </form>
                 </div>
 
-                {/* Table Section */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-right border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
-                                <th className="px-6 py-4">المتجر</th>
-                                <th className="px-6 py-4">المالك</th>
-                                <th className="px-6 py-4">المنتجات والطلبات</th>
-                                <th className="px-6 py-4">الاشتراك الحالي</th>
-                                <th className="px-6 py-4">تاريخ الانتهاء</th>
-                                <th className="px-6 py-4">الحالة</th>
-                                <th className="px-6 py-4 text-left">العمليات</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 text-sm">
-                            {tenants.data && tenants.data.length > 0 ? (
-                                tenants.data.map((tenant) => {
-                                    const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
-                                    const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
-                                    const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
-                                    const isCommission = planToShow && (planToShow.slug === 'commission' || planToShow.name?.includes('عمولة') || planToShow.name?.includes('المحفظة'));
+                {/* Tenants List - Card Layout */}
+                <div className="divide-y divide-gray-100">
+                    {/* Header Row */}
+                    <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 bg-gray-50 text-gray-500 text-xs font-semibold border-b border-gray-100">
+                        <div className="col-span-3">المتجر</div>
+                        <div className="col-span-3">المالك</div>
+                        <div className="col-span-2">الطلبات / المنتجات</div>
+                        <div className="col-span-2">الباقة</div>
+                        <div className="col-span-1">الحالة</div>
+                        <div className="col-span-1 text-left">العمليات</div>
+                    </div>
 
-                                    return (
-                                        <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
-                                                        #{tenant.id}
-                                                    </div>
-                                                    <div>
-                                                        <Link
-                                                            href={route('superadmin.tenants.show', tenant.id)}
-                                                            className="font-bold text-gray-800 hover:text-indigo-600 transition-colors"
-                                                        >
-                                                            {tenant.name}
-                                                        </Link>
-                                                        <span className="block text-xs text-gray-400 mt-0.5" dir="ltr">
-                                                            {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'ordersaif.com'}
-                                                        </span>
-                                                    </div>
+                    {tenants.data && tenants.data.length > 0 ? (
+                        tenants.data.map((tenant, idx) => {
+                            const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
+                            const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
+                            const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
+                            const isCommission = planToShow && (planToShow.slug === 'commission' || planToShow.name?.includes('عمولة') || planToShow.name?.includes('المحفظة'));
+
+                            return (
+                                <div key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
+                                    {/* Mobile Layout */}
+                                    <div className="md:hidden p-4 flex flex-col gap-3">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-extrabold text-xs shadow-sm shrink-0">
+                                                    #{tenant.id}
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4">
                                                 <div>
-                                                    <p className="font-medium text-gray-700">{tenant.owner?.name || 'غير معروف'}</p>
-                                                    <p className="text-xs text-gray-400">{tenant.owner?.email || tenant.email}</p>
+                                                    <Link href={route('superadmin.tenants.show', tenant.id)} className="font-bold text-gray-800 hover:text-indigo-600 text-sm">{tenant.name}</Link>
+                                                    <span className="block text-xs text-gray-400" dir="ltr">{tenant.slug}</span>
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col gap-1.5 items-start">
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-2xs">
-                                                        <span>📦</span>
-                                                        <span>{tenant.orders_count !== undefined ? tenant.orders_count : 0} طلب</span>
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-2xs">
-                                                        <span>🛍️</span>
-                                                        <span>{tenant.products_count !== undefined ? tenant.products_count : 0} منتج</span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {renderPlanBadge(planToShow, tenant.subscription_status)}
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-700 font-semibold font-mono text-xs">
+                                            </div>
+                                            {renderStatusBadge(tenant, planToShow)}
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-xs text-gray-500">{tenant.owner?.name} · {tenant.owner?.email || tenant.email}</div>
+                                            <div className="flex gap-1.5">
+                                                <Link href={route('superadmin.tenants.show', tenant.id)} className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold">تفاصيل</Link>
+                                                <button onClick={() => toggleStatus(tenant.id)} className={`px-2 py-1 rounded-md text-xs font-semibold text-white ${tenant.is_active ? 'bg-rose-500' : 'bg-emerald-500'}`}>
+                                                    {tenant.is_active ? 'إيقاف' : 'تفعيل'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Desktop Layout */}
+                                    <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-3 items-center">
+                                        {/* المتجر */}
+                                        <div className="col-span-3 flex items-center gap-2 min-w-0">
+                                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-extrabold text-xs shadow-sm shrink-0">
+                                                #{tenant.id}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <Link href={route('superadmin.tenants.show', tenant.id)} className="font-bold text-gray-800 hover:text-indigo-600 text-sm block truncate">{tenant.name}</Link>
+                                                <span className="text-xs text-gray-400 truncate block" dir="ltr">{tenant.slug}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* المالك */}
+                                        <div className="col-span-3 min-w-0">
+                                            <p className="font-medium text-gray-700 text-sm truncate">{tenant.owner?.name || 'غير معروف'}</p>
+                                            <p className="text-xs text-gray-400 truncate">{tenant.owner?.email || tenant.email}</p>
+                                        </div>
+
+                                        {/* الطلبات والمنتجات */}
+                                        <div className="col-span-2 flex flex-col gap-1">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 w-fit">
+                                                📦 {tenant.orders_count ?? 0} طلب
+                                            </span>
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 w-fit">
+                                                🛍️ {tenant.products_count ?? 0} منتج
+                                            </span>
+                                        </div>
+
+                                        {/* الباقة */}
+                                        <div className="col-span-2">
+                                            {renderPlanBadge(planToShow, tenant.subscription_status)}
+                                            <div className="text-xs text-gray-500 mt-1 font-mono">
                                                 {isCommission ? '-' : formatDate(tenant.subscription_ends_at)}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {renderStatusBadge(tenant, planToShow)}
-                                            </td>
-                                            <td className="px-6 py-4 text-left">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <div className="relative group inline-block text-left">
-                                                        <button type="button" className="p-2 text-gray-500 hover:text-indigo-600 bg-gray-100 hover:bg-indigo-50 rounded-md transition-colors">
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                            </svg>
+                                            </div>
+                                        </div>
+
+                                        {/* الحالة */}
+                                        <div className="col-span-1">
+                                            {renderStatusBadge(tenant, planToShow)}
+                                        </div>
+
+                                        {/* العمليات */}
+                                        <div className="col-span-1 flex items-center justify-end gap-1.5">
+                                            <div className="relative group inline-block">
+                                                <button type="button" className="p-1.5 text-gray-500 hover:text-indigo-600 bg-gray-100 hover:bg-indigo-50 rounded-md transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </button>
+                                                <div className={`absolute left-0 ${idx >= (tenants.data?.length || 0) - 2 ? 'bottom-full mb-2' : 'top-full mt-2'} w-48 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50`}>
+                                                    <div className="py-1">
+                                                        <a href={`${window.location.protocol}//${tenant.slug}.${window.location.host.replace('app.', '')}`} target="_blank" rel="noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-right">
+                                                            فتح واجهة المتجر
+                                                        </a>
+                                                        <button type="button" onClick={() => window.open(route('superadmin.tenants.impersonate', tenant.id), '_blank')} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-right">
+                                                            دخول للوحة تحكم التاجر
                                                         </button>
-                                                        <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50">
-                                                            <div className="py-1">
-                                                                <a href={`${window.location.protocol}//${tenant.slug}.${window.location.host.replace('app.', '')}`} target="_blank" rel="noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-right">
-                                                                    فتح واجهة المتجر
-                                                                </a>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => window.open(route('superadmin.tenants.impersonate', tenant.id), '_blank')}
-                                                                    className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-right"
-                                                                >
-                                                                    دخول للوحة تحكم التاجر
-                                                                </button>
-                                                            </div>
-                                                        </div>
                                                     </div>
-                                                    <Link
-                                                        href={route('superadmin.tenants.show', tenant.id)}
-                                                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold transition-colors"
-                                                    >
-                                                        تفاصيل
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => toggleStatus(tenant.id)}
-                                                        className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors text-white ${
-                                                            tenant.is_active
-                                                                ? 'bg-rose-500 hover:bg-rose-600'
-                                                                : 'bg-emerald-500 hover:bg-emerald-600'
-                                                        }`}
-                                                    >
-                                                        {tenant.is_active ? 'إيقاف' : 'تفعيل'}
-                                                    </button>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="px-6 py-12 text-center text-gray-400">
-                                        لا توجد متاجر تطابق معايير البحث.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                            </div>
+                                            <Link href={route('superadmin.tenants.show', tenant.id)} className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold transition-colors">
+                                                تفاصيل
+                                            </Link>
+                                            <button onClick={() => toggleStatus(tenant.id)} className={`px-2 py-1 rounded-md text-xs font-semibold transition-colors text-white ${tenant.is_active ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}>
+                                                {tenant.is_active ? 'إيقاف' : 'تفعيل'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div className="px-6 py-12 text-center text-gray-400">
+                            لا توجد متاجر تطابق معايير البحث.
+                        </div>
+                    )}
                 </div>
+
+
 
                 {/* Pagination Section */}
                 {tenants.links && tenants.links.length > 3 && (

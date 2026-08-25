@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // الثقة في البروكسي العكسي لترويسات SSL
+        $middleware->trustProxies(at: '*');
+
         // Global middleware - يُطبَّق على جميع الطلبات
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 

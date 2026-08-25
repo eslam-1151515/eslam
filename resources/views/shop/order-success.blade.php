@@ -277,7 +277,7 @@
         <div class="transfer-box">
             <strong>📲 لإتمام الدفع:</strong><br>
             حوّل المبلغ <strong>{{ number_format($order->total, 0) }} ج.م</strong> إلى:<br>
-            <strong>01092308465</strong> (InstaPay / فودافون كاش)<br>
+            <strong>01066571999</strong> (InstaPay / فودافون كاش)<br>
             وأرسل صورة الإيصال مع رقم الطلب على الواتساب.
         </div>
         @endif

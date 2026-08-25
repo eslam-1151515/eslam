@@ -8,16 +8,25 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
     const [dateFilter, setDateFilter] = useState(safeFilters.date || '');
     const [statusFilter, setStatusFilter] = useState(safeFilters.status || '');
     const [typeFilter, setTypeFilter] = useState(safeFilters.type || '');
+    const [tenantFilter, setTenantFilter] = useState(safeFilters.tenant_id || '');
     const [selectedReceipt, setSelectedReceipt] = useState(null);
     const [rejectionReason, setRejectionReason] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [settingsTab, setSettingsTab] = useState('manual'); // 'manual' or 'paymob'
     const [processing, setProcessing] = useState(false);
 
     // Form for editing payment settings
     const { data: settingsData, setData: setSettingsData, post: postSettings, processing: savingSettings } = useForm({
         vodafone_cash_number: paymentSettings?.vodafone_cash_number || '',
         instapay_number: paymentSettings?.instapay_number || '',
+        paymob_api_key: paymentSettings?.paymob_api_key || '',
+        paymob_secret_key: paymentSettings?.paymob_secret_key || '',
+        paymob_public_key: paymentSettings?.paymob_public_key || '',
+        paymob_card_integration_id: paymentSettings?.paymob_card_integration_id || '',
+        paymob_wallet_integration_id: paymentSettings?.paymob_wallet_integration_id || '',
+        paymob_iframe_id: paymentSettings?.paymob_iframe_id || '',
+        paymob_hmac_secret: paymentSettings?.paymob_hmac_secret || '',
     });
 
     // Modal state for attaching receipt
@@ -39,6 +48,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
             date: dateFilter,
             status: statusFilter,
             type: typeFilter,
+            tenant_id: tenantFilter,
             ...newParams,
         };
         router.get(
@@ -159,12 +169,18 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
         );
     };
 
+    const isOnlineMethod = (method) => {
+        return ['paymob', 'paymob_card', 'paymob_wallet', 'kashier', 'fawry'].includes(method);
+    };
+
     const getPaymentMethodLabel = (method) => {
         const methods = {
             instapay: 'إنستاباي (InstaPay)',
             vodafone_cash: 'فودافون كاش (Vodafone Cash)',
             bank_transfer: 'تحويل بنكي',
             cash: 'نقدي',
+            paymob_card: '⚡ فيزا / ماستركارد (Paymob)',
+            paymob_wallet: '⚡ محفظة إلكترونية (Paymob)',
         };
         return methods[method] || method;
     };
@@ -192,7 +208,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                     <div>
                         <h2 className="text-xl font-bold text-gray-800">إيصالات الدفع ومحافظ المتاجر</h2>
                         <p className="text-sm text-gray-500 mt-1">
-                            مراجعة طلبات شحن المحفظة واشتراكات الباقات وتأكيد المبالغ المحولة.
+                            مراجعة طلبات شحن المحفظة واشتراكات الباقات وتأكيد المبالغ المحولة وربط بوابة Paymob.
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -201,7 +217,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                             className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                         >
                             <span>⚙️</span>
-                            <span>أرقام استقبال التحويلات</span>
+                            <span>إعدادات الدفع و Paymob</span>
                         </button>
                         <button
                             onClick={() => setShowAttachModal(true)}
@@ -217,9 +233,9 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
 
                 {/* Comprehensive Search & Filter Section */}
                 <div className="p-6 bg-gray-50/50 border-b border-gray-100 space-y-4">
-                    <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                        <div className="sm:col-span-2">
-                            <label className="block text-xs font-bold text-gray-500 mb-1">البحث (الرقم المرجعي / الرقم المحول منه / اسم المتجر / المبلغ):</label>
+                    <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <div className="sm:col-span-4">
+                            <label className="block text-xs font-bold text-gray-500 mb-1">البحث (المرجع / الرقم / اسم المتجر):</label>
                             <div className="relative">
                                 <input
                                     type="text"
@@ -234,7 +250,24 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                             </div>
                         </div>
 
-                        <div>
+                        <div className="sm:col-span-3">
+                            <label className="block text-xs font-bold text-gray-500 mb-1">فلترة بالمتجر / التاجر:</label>
+                            <select
+                                value={tenantFilter}
+                                onChange={(e) => {
+                                    setTenantFilter(e.target.value);
+                                    handleApplyFilters({ tenant_id: e.target.value });
+                                }}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
+                            >
+                                <option value="">جميع المتاجر ({tenants?.length || 0})</option>
+                                {(tenants || []).map((t) => (
+                                    <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="sm:col-span-3">
                             <label className="block text-xs font-bold text-gray-500 mb-1">الفلترة باليوم/التاريخ:</label>
                             <input
                                 type="date"
@@ -247,14 +280,14 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                             />
                         </div>
 
-                        <div className="flex items-end gap-2">
+                        <div className="sm:col-span-2 flex items-end gap-1.5">
                             <button
                                 type="submit"
                                 className="flex-1 py-2 px-3 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 transition-colors shadow-sm"
                             >
-                                تصفية نتائج البحث
+                                تصفية
                             </button>
-                            {(searchQuery || dateFilter || statusFilter || typeFilter) && (
+                            {(searchQuery || dateFilter || statusFilter || typeFilter || tenantFilter) && (
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -262,6 +295,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                         setDateFilter('');
                                         setStatusFilter('');
                                         setTypeFilter('');
+                                        setTenantFilter('');
                                         router.get(route('superadmin.subscriptions.receipts'), {}, { preserveState: true, replace: true });
                                     }}
                                     className="py-2 px-3 bg-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-300 transition-colors"
@@ -430,71 +464,121 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                 )}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {receipt.status === 'pending' && (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
-                                                        قيد المراجعة
-                                                    </span>
-                                                )}
-                                                {receipt.status === 'approved' && (
+                                                {isOnlineMethod(receipt.payment_method) ? (
                                                     <div>
-                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                                            مقبول ومؤكد
-                                                        </span>
-                                                        {receipt.approved_by && (
-                                                            <span className="block text-[10px] text-gray-400 mt-1">
-                                                                بواسطة: {receipt.approved_by?.name || 'المدير'}
-                                                            </span>
+                                                        {receipt.status === 'approved' && (
+                                                            <div>
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                                    <span>✓</span>
+                                                                    <span>تمت المعاملة إلكترونياً</span>
+                                                                </span>
+                                                                <span className="block text-[10px] text-gray-400 mt-1 font-semibold">تأكيد تلقائي (Paymob)</span>
+                                                            </div>
+                                                        )}
+                                                        {receipt.status === 'pending' && (
+                                                            <div>
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                                    <span>⏳</span>
+                                                                    <span>بانتظار السداد الإلكتروني</span>
+                                                                </span>
+                                                                <span className="block text-[10px] text-amber-600 mt-1 font-semibold">لم يستكمل الدفع في باي موب</span>
+                                                            </div>
+                                                        )}
+                                                        {receipt.status === 'rejected' && (
+                                                            <div>
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                                    <span>✕</span>
+                                                                    <span>فشلت / مرفوضة</span>
+                                                                </span>
+                                                                <span className="block text-[10px] text-rose-500 mt-1 font-semibold">فشلت عملية الدفع في باي موب</span>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                )}
-                                                {receipt.status === 'rejected' && (
+                                                ) : (
                                                     <div>
-                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
-                                                            مرفوض
-                                                        </span>
-                                                        {receipt.rejection_reason && (
-                                                            <span className="block text-[10px] text-rose-500 font-medium max-w-[150px] truncate mt-1" title={receipt.rejection_reason}>
-                                                                السبب: {receipt.rejection_reason}
+                                                        {receipt.status === 'pending' && (
+                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                                                                قيد المراجعة اليدوية
                                                             </span>
+                                                        )}
+                                                        {receipt.status === 'approved' && (
+                                                            <div>
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                                    مقبول ومؤكد
+                                                                </span>
+                                                                {receipt.approved_by && (
+                                                                    <span className="block text-[10px] text-gray-400 mt-1">
+                                                                        بواسطة: {receipt.approved_by?.name || 'المدير'}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                        {receipt.status === 'rejected' && (
+                                                            <div>
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
+                                                                    مرفوض
+                                                                </span>
+                                                                {receipt.rejection_reason && (
+                                                                    <span className="block text-[10px] text-rose-500 font-medium max-w-[150px] truncate mt-1" title={receipt.rejection_reason}>
+                                                                        السبب: {receipt.rejection_reason}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         )}
                                                     </div>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-left">
-                                                {receipt.status === 'pending' ? (
+                                                {isOnlineMethod(receipt.payment_method) ? (
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <button
-                                                            onClick={() => handleApprove(receipt)}
-                                                            disabled={processing}
-                                                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
-                                                        >
-                                                            موافقة وتأكيد
-                                                        </button>
-                                                        <button
-                                                            onClick={() => openRejectModal(receipt)}
-                                                            disabled={processing}
-                                                            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
-                                                        >
-                                                            رفض
-                                                        </button>
+                                                        <span className="text-[11px] font-semibold text-gray-400">
+                                                            {receipt.status === 'approved' ? 'معاملة آلية مكتملة ✓' : 'معاملة دفع إلكتروني'}
+                                                        </span>
                                                         <button
                                                             onClick={() => handleDeleteReceipt(receipt)}
                                                             disabled={processing}
                                                             className="px-2.5 py-1.5 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 rounded-md text-xs font-bold transition-colors"
-                                                            title="حذف الإيصال"
+                                                            title="حذف المعاملة"
                                                         >
                                                             🗑️
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <button
-                                                        onClick={() => handleDeleteReceipt(receipt)}
-                                                        disabled={processing}
-                                                        className="px-2.5 py-1 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-md text-xs font-bold transition-colors"
-                                                        title="حذف الإيصال"
-                                                    >
-                                                        🗑️ حذف
-                                                    </button>
+                                                    receipt.status === 'pending' ? (
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <button
+                                                                onClick={() => handleApprove(receipt)}
+                                                                disabled={processing}
+                                                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
+                                                            >
+                                                                موافقة وتأكيد
+                                                            </button>
+                                                            <button
+                                                                onClick={() => openRejectModal(receipt)}
+                                                                disabled={processing}
+                                                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
+                                                            >
+                                                                رفض
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteReceipt(receipt)}
+                                                                disabled={processing}
+                                                                className="px-2.5 py-1.5 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 rounded-md text-xs font-bold transition-colors"
+                                                                title="حذف الإيصال"
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => handleDeleteReceipt(receipt)}
+                                                            disabled={processing}
+                                                            className="px-2.5 py-1 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-md text-xs font-bold transition-colors"
+                                                            title="حذف الإيصال"
+                                                        >
+                                                            🗑️ حذف
+                                                        </button>
+                                                    )
                                                 )}
                                             </td>
                                         </tr>
@@ -540,43 +624,173 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                 )}
             </div>
 
-            {/* Payment Settings Modal */}
+            {/* Payment & Paymob Gateway Settings Modal */}
             {showSettingsModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in" dir="rtl">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-gray-100">
                         <form onSubmit={handleSaveSettings}>
-                            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-gray-800">أرقام استقبال التحويلات</h3>
-                                <button type="button" onClick={() => setShowSettingsModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
-                            </div>
-                            <div className="p-6 space-y-4">
+                            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 mb-1">رقم فودافون كاش (Vodafone Cash)</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={settingsData.vodafone_cash_number}
-                                        onChange={(e) => setSettingsData('vodafone_cash_number', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold"
-                                        dir="ltr"
-                                    />
+                                    <h3 className="text-base font-bold text-gray-900">إعدادات وسائل الدفع وبوابة Paymob</h3>
+                                    <p className="text-xs text-gray-500 mt-0.5">التحكم في أرقام التحويل اليدوي والربط مع Paymob للشحن الفوري</p>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-700 mb-1">رقم إنستا باي (InstaPay)</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={settingsData.instapay_number}
-                                        onChange={(e) => setSettingsData('instapay_number', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold"
-                                        dir="ltr"
-                                    />
-                                </div>
+                                <button type="button" onClick={() => setShowSettingsModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">✕</button>
                             </div>
-                            <div className="p-6 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
-                                <button type="button" onClick={() => setShowSettingsModal(false)} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-bold">إلغاء</button>
-                                <button type="submit" disabled={savingSettings} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-indigo-700">
-                                    {savingSettings ? 'جاري الحفظ...' : 'حفظ التعديلات'}
+
+                            {/* Tabs */}
+                            <div className="flex border-b border-gray-100 px-6 bg-gray-50/30 gap-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setSettingsTab('manual')}
+                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+                                        settingsTab === 'manual'
+                                            ? 'border-indigo-600 text-indigo-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                                >
+                                    📝 التحويل اليدوي (كاش وإنستاباي)
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setSettingsTab('paymob')}
+                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                        settingsTab === 'paymob'
+                                            ? 'border-emerald-600 text-emerald-700'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                                >
+                                    <span>⚡</span>
+                                    <span>بوابة Paymob (شحن لحظي)</span>
+                                </button>
+                            </div>
+
+                            <div className="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
+                                {settingsTab === 'manual' ? (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">رقم فودافون كاش (Vodafone Cash):</label>
+                                            <input
+                                                type="text"
+                                                value={settingsData.vodafone_cash_number}
+                                                onChange={(e) => setSettingsData('vodafone_cash_number', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-indigo-500"
+                                                dir="ltr"
+                                                placeholder="010xxxxxxxx"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">عنوان / رقم إنستا باي (InstaPay Username/Phone):</label>
+                                            <input
+                                                type="text"
+                                                value={settingsData.instapay_number}
+                                                onChange={(e) => setSettingsData('instapay_number', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-indigo-500"
+                                                dir="ltr"
+                                                placeholder="username@instapay or 01xxxxxxxxx"
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3.5">
+                                        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 leading-relaxed">
+                                            💡 <strong>Paymob Webhook Callback URL:</strong> انسخ هذا الرابط وضعه في لوحة تحكم Paymob لاستقبال التأكيدات اللحظية:
+                                            <div className="font-mono font-bold text-indigo-700 mt-1 select-all bg-white p-1.5 rounded border border-emerald-200 dir-ltr text-left text-[10px]">
+                                                {paymentSettings?.paymob_webhook_url || `${window.location.origin}/api/webhooks/paymob`}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">API Key (الرئيسي):</label>
+                                                <input
+                                                    type="password"
+                                                    value={settingsData.paymob_api_key}
+                                                    onChange={(e) => setSettingsData('paymob_api_key', e.target.value)}
+                                                    placeholder="ZXlKaGJHY2l..."
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-right"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">Secret Key (الحديث):</label>
+                                                <input
+                                                    type="password"
+                                                    value={settingsData.paymob_secret_key}
+                                                    onChange={(e) => setSettingsData('paymob_secret_key', e.target.value)}
+                                                    placeholder="sec_..."
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-right"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">Public Key (للدفع الموحد):</label>
+                                            <input
+                                                type="text"
+                                                value={settingsData.paymob_public_key}
+                                                onChange={(e) => setSettingsData('paymob_public_key', e.target.value)}
+                                                placeholder="egy_pk_..."
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-left"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">Card Integration ID (فيزا/ماستركارد):</label>
+                                                <input
+                                                    type="text"
+                                                    value={settingsData.paymob_card_integration_id}
+                                                    onChange={(e) => setSettingsData('paymob_card_integration_id', e.target.value)}
+                                                    placeholder="مثال: 456789"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-left"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">Wallet Integration ID (المحافظ):</label>
+                                                <input
+                                                    type="text"
+                                                    value={settingsData.paymob_wallet_integration_id}
+                                                    onChange={(e) => setSettingsData('paymob_wallet_integration_id', e.target.value)}
+                                                    placeholder="مثال: 987654"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-left"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">Iframe ID (اختياري):</label>
+                                                <input
+                                                    type="text"
+                                                    value={settingsData.paymob_iframe_id}
+                                                    onChange={(e) => setSettingsData('paymob_iframe_id', e.target.value)}
+                                                    placeholder="778000"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-left"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">HMAC Secret (للتحقق من الويب هوك):</label>
+                                                <input
+                                                    type="password"
+                                                    value={settingsData.paymob_hmac_secret}
+                                                    onChange={(e) => setSettingsData('paymob_hmac_secret', e.target.value)}
+                                                    placeholder="639A..."
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 dir-ltr text-right"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
+                                <button type="button" onClick={() => setShowSettingsModal(false)} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl text-xs font-bold transition-colors">
+                                    إلغاء
+                                </button>
+                                <button type="submit" disabled={savingSettings} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md transition-colors disabled:opacity-60">
+                                    {savingSettings ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
                                 </button>
                             </div>
                         </form>

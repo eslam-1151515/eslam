@@ -160,7 +160,7 @@ export default function ProfileEdit({ user: propUser }) {
                             <p className="text-xs text-gray-500 mt-0.5">احرص على استخدام كلمة مرور قوية وعشوائية لحماية حسابك.</p>
                         </div>
                         <a 
-                            href="http://app.ordersaif.localhost:8000/forgot-password" 
+                            href="/forgot-password" 
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs font-bold text-orange-600 hover:text-orange-800 hover:underline flex items-center gap-1 transition-colors bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200"
@@ -175,7 +175,7 @@ export default function ProfileEdit({ user: propUser }) {
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="block text-sm font-semibold text-gray-700">كلمة المرور الحالية</label>
                                 <a 
-                                    href="http://app.ordersaif.localhost:8000/forgot-password" 
+                                    href="/forgot-password" 
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-orange-600 font-semibold hover:underline"

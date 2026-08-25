@@ -1,143 +1,97 @@
 @extends('layouts.platform')
 
-@section('title', 'اتصل بنا | أوردر سيف (Order Saif) - دعم فني متواصل 24/7')
+@section('title', 'اتصل بنا | Order Saif - دعم فني متواصل 24/7')
 
-@section('meta_description', 'تواصل مع فريق الدعم الفني أو المبيعات في أوردر سيف. نحن هنا لمساعدتك في الإجابة على استفساراتك وتوسيع نطاق مبيعات متجرك.')
+@section('meta_description', 'تواصل مع فريق الدعم الفني أو المبيعات في Order Saif. نحن هنا لمساعدتك في الإجابة على استفساراتك وتوسيع نطاق مبيعات متجرك.')
 
 @section('content')
-<section class="py-16 md:py-24 relative overflow-hidden bg-grid-pattern">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<section class="py-16 md:py-24 relative overflow-hidden bg-slate-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <span class="px-4 py-1.5 rounded-full bg-pink-500/10 text-pink-400 text-xs font-bold border border-pink-500/20 inline-block uppercase tracking-wider mb-4">
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span class="px-4 py-1.5 rounded-full bg-brand-100 text-brand-700 text-xs font-bold inline-block uppercase tracking-wider">
                 📞 تواصل معنا
             </span>
-            <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight">
-                يسعدنا دائماً سماع <span class="text-gradient-primary">استفساراتك ورأيك</span>
+            <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+                يسعدنا دائماً سماع <span class="text-brand-600">استفساراتك وتواصلك</span>
             </h1>
-            <p class="text-gray-400 mt-4 leading-relaxed">
-                هل لديك استفسار عن الباقات؟ أو بحاجة لمساعدة تقنية؟ املأ النموذج أدناه وسيقوم فريق الدعم بالرد عليك في أسرع وقت ممكن.
+            <p class="text-slate-600 leading-relaxed font-medium text-base sm:text-lg">
+                هل لديك استفسار عن الباقات؟ أو بحاجة لمساعدة تقنية أو استشارة لمتجرك؟ فريقنا متاح على مدار الساعة لخدمتك عبر القنوات المباشرة التالية:
             </p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <!-- 3 Direct Contact Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             
-            <!-- Contact Info Sidebar (5 cols) -->
-            <div class="lg:col-span-5 space-y-8">
-                
-                <div class="glass-card p-8 rounded-2xl border-white/5 space-y-6">
-                    <h3 class="text-xl font-bold text-white">معلومات الاتصال المباشر</h3>
-                    
-                    <div class="space-y-4">
-                        <a href="{{ ($phoneContact ?? null)?->action_url ?? (($whatsappContact ?? null) ? 'tel:'.($whatsappContact->phone_number ?? '') : '#') }}" class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-brand-500/30 transition-all">
-                            <div class="w-11 h-11 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-phone"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-400">رقم الهاتف والدعم</div>
-                                <div class="font-bold text-white font-mono mt-0.5">{{ ($phoneContact ?? null)?->phone_number ?? (($whatsappContact ?? null)?->phone_number ?? '01146520922') }}</div>
-                            </div>
-                        </a>
-
-                        <a href="{{ ($whatsappContact ?? null)?->action_url ?? '#' }}" target="_blank" class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-all">
-                            <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                                <i class="fa-brands fa-whatsapp text-xl"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-400">واتساب الدعم الفني</div>
-                                <div class="font-bold text-white font-mono mt-0.5 text-sm">{{ ($whatsappContact ?? null)?->phone_number ?? 'تواصل عبر واتساب' }}</div>
-                            </div>
-                        </a>
+            <!-- WhatsApp Card -->
+            <div class="bg-white p-8 rounded-3xl border border-emerald-200 shadow-sm text-center flex flex-col justify-between hover:shadow-md hover:border-emerald-400 transition-all">
+                <div>
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-3xl mb-5">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">واتساب مباشر</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        أسرع طريقة للتواصل مع خدمة العملاء والدعم الفني الفوري.
+                    </p>
+                    <div class="text-lg font-black text-slate-900 font-mono mb-6">
+                        01066571999
                     </div>
                 </div>
+                <a href="https://wa.me/201066571999" target="_blank" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>محادثة واتساب الآن</span>
+                </a>
+            </div>
 
-                <!-- Live Chat Card -->
-                <div class="glass-card p-8 rounded-2xl border-emerald-500/20 bg-emerald-950/10 text-center space-y-4">
-                    <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-                        <i class="fa-brands fa-whatsapp text-3xl"></i>
+            <!-- Phone Call Card -->
+            <div class="bg-white p-8 rounded-3xl border border-brand-200 shadow-sm text-center flex flex-col justify-between hover:shadow-md hover:border-brand-400 transition-all">
+                <div>
+                    <div class="w-16 h-16 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mx-auto text-3xl mb-5">
+                        <i class="fa-solid fa-phone"></i>
                     </div>
-                    <h4 class="text-lg font-bold text-white">دردشة فورية عبر واتساب</h4>
-                    <p class="text-gray-400 text-sm">تواصل مع خدمة العملاء مباشرة لحل استفسارك في ثوانٍ معدودة.</p>
-                    <a href="{{ ($whatsappContact ?? null)?->action_url ?? '#' }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/25">
-                        <span>ابدأ المحادثة الآن</span>
-                        <i class="fa-solid fa-arrow-left text-xs"></i>
-                    </a>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">اتصال هاتفي</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        متاح للرد على المكالمات الهاتفية والاستفسارات السريعة.
+                    </p>
+                    <div class="text-lg font-black text-slate-900 font-mono mb-6">
+                        01066571999
+                    </div>
                 </div>
-
+                <a href="tel:01066571999" class="w-full py-3.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-phone text-sm"></i>
+                    <span>اتصل الآن مباشرة</span>
+                </a>
             </div>
 
-            <!-- Contact Form Card (7 cols) -->
-            <div class="lg:col-span-7">
-                <div class="glass-card p-8 sm:p-10 rounded-2xl border-white/5 relative overflow-hidden">
-                    <div class="absolute -top-12 -left-12 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                    @if(session('success'))
-                        <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold flex items-center gap-3">
-                            <i class="fa-solid fa-circle-check text-lg"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('main.contact.submit') }}" method="POST" class="space-y-6">
-                        @csrf
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="name" class="block text-sm font-bold text-gray-300 mb-2">الاسم الكامل</label>
-                                <input type="text" name="name" id="name" required class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all" placeholder="أحمد محمد">
-                                @error('name')
-                                    <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="email" class="block text-sm font-bold text-gray-300 mb-2">البريد الإلكتروني</label>
-                                <input type="email" name="email" id="email" required class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all font-mono text-left" placeholder="example@mail.com">
-                                @error('email')
-                                    <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="phone" class="block text-sm font-bold text-gray-300 mb-2">رقم الهاتف (اختياري)</label>
-                                <input type="tel" name="phone" id="phone" class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all font-mono text-left" placeholder="01012345678">
-                                @error('phone')
-                                    <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="subject" class="block text-sm font-bold text-gray-300 mb-2">الموضوع</label>
-                                <select name="subject" id="subject" required class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white focus:outline-none focus:border-brand-500/60 transition-all">
-                                    <option value="support" class="bg-dark-card text-white">دعم فني واستفسار تقني</option>
-                                    <option value="sales" class="bg-dark-card text-white">استفسار عن المبيعات والباقات</option>
-                                    <option value="custom" class="bg-dark-card text-white">طلب حل مخصص / شركات كبرى</option>
-                                    <option value="other" class="bg-dark-card text-white">أخرى</option>
-                                </select>
-                                @error('subject')
-                                    <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="message" class="block text-sm font-bold text-gray-300 mb-2">نص الرسالة</label>
-                            <textarea name="message" id="message" rows="5" required class="w-full px-4 py-3 rounded-xl bg-dark-bg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500/60 transition-all" placeholder="اكتب تفاصيل استفسارك هنا..."></textarea>
-                            @error('message')
-                                <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>إرسال الرسالة الآن</span>
-                        </button>
-                    </form>
+            <!-- Email Card -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition-all">
+                <div>
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto text-3xl mb-5">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">البريد الإلكتروني</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        للمراسلات الرسمية والشراكات واستفسارات المنظومة.
+                    </p>
+                    <div class="text-sm font-black text-slate-900 font-mono mb-6 truncate px-1">
+                        support@ordersaif.com
+                    </div>
                 </div>
+                <a href="mailto:support@ordersaif.com" class="w-full py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-envelope text-sm"></i>
+                    <span>إرسال بريد إلكتروني</span>
+                </a>
             </div>
 
+        </div>
+
+        <!-- 24/7 Availability Note -->
+        <div class="mt-12 text-center">
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs font-bold text-slate-600">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>فريق الدعم الفني متواجد على مدار الساعة 24/7 للرد الفوري على طلباتكم</span>
+            </div>
         </div>
 
     </div>

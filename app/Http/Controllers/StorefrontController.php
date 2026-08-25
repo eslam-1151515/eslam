@@ -76,6 +76,7 @@ class StorefrontController extends Controller
         $storeName = Setting::get('store_name', 'Store');
         $facebookPixelId = Setting::get('facebook_pixel_id', '');
         $tiktokPixelId = Setting::get('tiktok_pixel_id', '');
+        $snapchatPixelId = Setting::get('snapchat_pixel_id', '');
         $googleAnalyticsId = Setting::get('google_analytics_id', '');
 
         // Fetch settings for homepage sections and builder
@@ -91,7 +92,6 @@ class StorefrontController extends Controller
         if (!$homepageSections || !is_array($homepageSections)) {
             $homepageSections = [
                 ['id' => 'hero_slider', 'enabled' => true, 'title' => 'البانر الإعلاني', 'title_en' => 'Hero Slider'],
-                ['id' => 'featured_categories', 'enabled' => true, 'title' => 'الأقسام المميزة', 'title_en' => 'Featured Categories'],
                 ['id' => 'best_offers', 'enabled' => true, 'title' => 'أفضل العروض والخصومات', 'title_en' => 'Best Offers & Discounts'],
                 ['id' => 'latest_products', 'enabled' => true, 'title' => 'أحدث المنتجات', 'title_en' => 'Latest Products']
             ];
@@ -115,6 +115,7 @@ class StorefrontController extends Controller
             'logo_url' => Setting::get('logo') ? asset('storage/' . Setting::get('logo')) : asset('images/logo.png'),
             'facebook_pixel_id' => $facebookPixelId,
             'tiktok_pixel_id' => $tiktokPixelId,
+            'snapchat_pixel_id' => $snapchatPixelId,
             'google_analytics_id' => $googleAnalyticsId,
             'main_categories' => $mainCategories,
             'homepage_sections' => $homepageSections,
@@ -231,8 +232,8 @@ s0.parentNode.insertBefore(s1,s0);
         $themeCustomizationJson = Setting::get('theme_customization');
         $themeCustomization = $themeCustomizationJson ? json_decode($themeCustomizationJson, true) : [];
 
-        $primaryColor = $themeCustomization['primary_color'] ?? Setting::get('primary_color', '#F97316');
-        $secondaryColor = $themeCustomization['secondary_color'] ?? Setting::get('secondary_color', '#1F2937');
+        $primaryColor = $themeCustomization['primary_color'] ?? Setting::get('primary_color', '#09090b');
+        $secondaryColor = $themeCustomization['secondary_color'] ?? Setting::get('secondary_color', '#18181b');
         $backgroundColor = $themeCustomization['background_color'] ?? Setting::get('background_color', '#FFFFFF');
         $fontFamily = $themeCustomization['font_family'] ?? Setting::get('font_family', 'Cairo');
         $favicon = Setting::get('favicon');
@@ -651,6 +652,27 @@ s0.parentNode.insertBefore(s1,s0);
   }(window, document, \'ttq\');
 </script>
 <!-- End TikTok Pixel Code -->';
+            }
+        }
+
+        // Snapchat Pixel
+        if ($snapchatPixelId) {
+            $pixelIds = array_filter(array_map('trim', preg_split('/[\r\n,]+/', $snapchatPixelId)));
+            if (!empty($pixelIds)) {
+                $inits = '';
+                foreach ($pixelIds as $pid) {
+                    $escapedPid = e($pid);
+                    $inits .= "  snaptr('init', '{$escapedPid}');\n";
+                }
+                $headInjections[] = '<!-- Snapchat Pixel Code -->
+<script type="text/javascript">
+  (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function(){a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+  a.queue=[];var s=\'script\';r=t.createElement(s);r.async=!0;
+  r.src=n;var u=t.getElementsByTagName(s)[0];
+  u.parentNode.insertBefore(r,u);})(window,document,\'https://sc-static.net/scevent.min.js\');
+' . $inits . '  snaptr(\'track\', \'PAGE_VIEW\');
+</script>
+<!-- End Snapchat Pixel Code -->';
             }
         }
 

@@ -7,149 +7,163 @@
   <title>اتمام الشراء - Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shop/styles.css?v=202604021">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
-  <header class="container header">
-    <a href="/shop/index.html" class="brand" style="text-decoration:none;color:inherit">
-      <img src="/images/logo.png?v=202604031" alt="Store"
-        onerror="this.src='https://dummyimage.com/48x48/111827/ffffff&text=K'" />
-      <span>Store</span>
-    </a>
-    <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
-    <div class="icons">
-      <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
-      <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة"><i
-          class="fa fa-shopping-cart"></i><span id="cartCount"></span></a>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/shop/index.html" class="brand">
+        <img src="/images/logo.png?v=202604031" alt="Store"
+          onerror="this.src='https://dummyimage.com/48x48/09090b/ffffff&text=S'" />
+        <span>Store</span>
+      </a>
+
+      <nav class="nav">
+        <a href="/shop/index.html">الرئيسية</a>
+        <a href="/shop/products.html">جميع المنتجات</a>
+        <a href="/shop/categories.html">الأقسام</a>
+        <a href="/shop/products.html?sort=discount">عروض حصرية</a>
+        <a style="display:none !important;" href="/shop/contact.html">اتصل بنا</a>
+      </nav>
+
+      <div class="icons">
+        <a href="#" class="icon-round search-trigger" title="بحث" aria-label="بحث"><i class="fa fa-search"></i></a>
+        <a id="cartIcon" class="icon-round" href="/shop/cart.html" title="السلة" aria-label="السلة">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cartCount"></span>
+        </a>
+        <button class="menu-toggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="/shop/index.html">الرئيسية</a>
-      <a href="/shop/categories.html">الأقسام</a>
-      <a href="/shop/products.html">المنتجات</a>
-      <a href="/shop/contact.html">اتصل بنا</a>
-    </nav>
   </header>
 
   <main class="container">
-    <h1 class="page-title">إتمام الشراء</h1>
+    <h1 class="page-title" style="margin: 1.5rem 0 1rem 0; font-size: 1.6rem; font-weight: 900; color: #09090b;">إتمام الشراء</h1>
 
     <div id="checkoutWrap" style="display:grid;grid-template-columns:1fr 350px;gap:24px;margin-bottom:24px;">
       <!-- Left: Form -->
-      <div class="card" style="padding:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #f3f4f6;">
-          بيانات الطلب</h2>
+      <div class="card" style="padding:24px;border:1px solid #e4e4e7;border-radius:16px;">
+        <h2 style="font-size:18px;font-weight:800;color:#09090b;margin-bottom:20px;padding-bottom:12px;border-bottom:1.5px solid #f4f4f5;">
+          بيانات الشحن والاستلام</h2>
 
         <form id="checkoutForm" style="display:grid;gap:20px;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div>
-              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">الاسم الكامل <span style="color:#ef4444">*</span></label>
+              <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">الاسم الكامل <span style="color:#ef4444">*</span></label>
               <input required name="name" type="text"
-                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:border-color .2s;"
-                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'">
+                style="width:100%;padding:12px 16px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;transition:border-color .2s;"
+                onfocus="this.style.borderColor='#09090b'" onblur="this.style.borderColor='#e4e4e7'">
             </div>
             <div>
-              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">رقم الهاتف <span style="color:#ef4444">*</span></label>
+              <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">رقم الهاتف <span style="color:#ef4444">*</span></label>
               <input required name="phone" id="phoneInput" type="tel" inputmode="text" maxlength="11"
                 placeholder="رقم الهاتف (مثل: 01012345678)"
-                style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;transition:all .2s;"
-                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'" dir="rtl">
+                style="width:100%;padding:12px 16px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;transition:all .2s;"
+                onfocus="this.style.borderColor='#09090b'" onblur="this.style.borderColor='#e4e4e7'" dir="rtl">
               <div id="phoneErrorMsg" style="color: #ef4444; font-size: 0.85rem; margin-top: 6px; display: none; font-weight: 600;">يجب أن يكون رقم الهاتف 11 رقماً ويبدأ بـ 01 (مثل: 01012345678)</div>
             </div>
           </div>
 
           <div>
-            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">المحافظة <span style="color:#ef4444">*</span></label>
-            <div style="position:relative;">
-              <select required name="governorate" id="governorateSelect"
-                style="width:100%;padding:12px 40px 12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;background:#fff;cursor:pointer;appearance:none;-webkit-appearance:none;transition:border-color .2s;"
-                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
-                onchange="updateShipping()">
-                <option value="">جاري تحميل المحافظات...</option>
-              </select>
-              <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#64748b;">
-                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
+            <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">المحافظة <span style="color:#ef4444">*</span></label>
+            <select required name="governorate_id" id="governorateSelect"
+              style="width:100%;padding:12px 16px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;background:#fff;cursor:pointer;"
+              onfocus="this.style.borderColor='#09090b'" onblur="this.style.borderColor='#e4e4e7'"
+              onchange="updateShipping()">
+              <option value="">جاري التحميل...</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">العنوان بالتفصيل <span style="color:#ef4444">*</span></label>
+            <textarea required name="address" rows="3" placeholder="اسم الشارع، رقم العمارة، الشقة، علامة مميزة"
+              style="width:100%;padding:12px 16px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;resize:vertical;"
+              onfocus="this.style.borderColor='#09090b'" onblur="this.style.borderColor='#e4e4e7'"></textarea>
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">ملاحظات إضافية</label>
+            <textarea name="notes" rows="2" placeholder="أي ملاحظات بخصوص موعد التوصيل أو الاستلام"
+              style="width:100%;padding:12px 16px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:15px;font-family:Cairo,sans-serif;resize:vertical;"
+              onfocus="this.style.borderColor='#09090b'" onblur="this.style.borderColor='#e4e4e7'"></textarea>
+          </div>
+
+          <!-- طريقة الدفع -->
+          <div>
+            <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">طريقة الدفع</label>
+            <div style="border:2px solid #09090b;background:#f4f4f5;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
+              <input type="radio" name="payment_method" value="cod" checked id="payCod" style="accent-color:#09090b;width:18px;height:18px;">
+              <label for="payCod" style="margin:0;font-weight:800;color:#09090b;cursor:pointer;display:flex;align-items:center;gap:8px;">
+                <i class="fa fa-money-bill-wave" style="color:#09090b;"></i>
+                الدفع عند الاستلام
+              </label>
             </div>
           </div>
-
-          <div>
-            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">العنوان بالتفاصيل <span style="color:#ef4444">*</span></label>
-            <textarea required name="address" rows="3"
-              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;resize:vertical;transition:border-color .2s;"
-              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
-              placeholder="أدخل العنوان الكامل مع رقم الشارع والمنطقة"></textarea>
-          </div>
-
-          <div>
-            <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151;">ملاحظات إضافية (اختياري)</label>
-            <textarea name="notes" rows="2"
-              style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px;font-family:Cairo,sans-serif;resize:vertical;transition:border-color .2s;"
-              onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e5e7eb'"
-              placeholder="أي ملاحظات خاصة بالطلب"></textarea>
-          </div>
-
-          <input type="hidden" name="pay" value="cod">
         </form>
       </div>
 
       <!-- Right: Summary -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <!-- Order items -->
-        <div class="card" style="padding:20px;">
-          <h3 style="font-size:18px;font-weight:700;margin:0 0 16px;padding-bottom:12px;border-bottom:2px solid #f3f4f6;">ملخص الطلب</h3>
-          <div id="orderItems"></div>
-          <div style="border-top:2px solid #f3f4f6;padding-top:16px;margin-top:8px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-              <span style="color:#6b7280;">المجموع الفرعي:</span>
-              <span id="sumSubtotal" style="font-weight:600;">0 EGP</span>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card" style="height: auto !important; padding:24px; border:1px solid #e4e4e7; border-radius:16px;">
+          <h2 style="font-size:18px; font-weight:800; color:#09090b; margin-bottom:20px; padding-bottom:12px; border-bottom:1.5px solid #f4f4f5;">
+            ملخص الطلب</h2>
+
+          <div id="orderItems" style="display:grid; gap:12px; margin-bottom:20px; max-height:280px; overflow-y:auto;">
+            <!-- Items rendered here -->
+          </div>
+
+          <div style="border-top:1.5px solid #f4f4f5; padding-top:16px; display:grid; gap:10px;">
+            <div style="display:flex; justify-content:space-between; color:#71717a; font-size:15px; font-weight:600;">
+              <span>المجموع الفرعي:</span>
+              <span id="sumSubtotal" style="font-weight:700; color:#09090b;">0 EGP</span>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-              <span style="color:#6b7280;">رسوم الشحن:</span>
-              <span id="sumShipping" style="font-weight:600;color:#4f46e5;">—</span>
+            <div style="display:flex; justify-content:space-between; color:#71717a; font-size:15px; font-weight:600;">
+              <span>الشحن:</span>
+              <span id="sumShipping" style="font-weight:700; color:#09090b;">—</span>
             </div>
-            <div id="couponRow" style="display:none;justify-content:space-between;margin-bottom:8px;">
-              <span style="color:#16a34a;">كوبون خصم:</span>
-              <span id="sumDiscount" style="font-weight:600;color:#16a34a;"></span>
+            <div id="couponRow" style="display:none; justify-content:space-between; color:#16a34a; font-size:15px; font-weight:600;">
+              <span>كوبون خصم:</span>
+              <span id="sumDiscount" style="font-weight:700;"></span>
             </div>
-            <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid #e5e7eb;">
-              <span style="font-size:18px;font-weight:700;">الإجمالي:</span>
-              <span id="sumTotal" style="font-size:18px;font-weight:700;color:#4f46e5;">0 EGP</span>
+            <div style="display:flex; justify-content:space-between; border-top:2px dashed #e4e4e7; padding-top:12px; margin-top:4px;">
+              <span style="font-size:18px; font-weight:900; color:#09090b;">الإجمالي:</span>
+              <span id="sumTotal" style="font-size:1.3rem; font-weight:900; color:#09090b;">0 EGP</span>
             </div>
           </div>
         </div>
 
-        <!-- Buttons -->
-        <button form="checkoutForm" type="submit" id="submitBtn"
-          style="width:100%;padding:16px 24px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;transition:all .3s;box-shadow:0 4px 12px rgba(79,70,229,.3);">
-          <i class="fa fa-check-circle" style="margin-left:8px;"></i>تأكيد الطلب
-        </button>
-        <a href="/shop/cart.html"
-          style="width:100%;padding:14px 24px;background:#f8fafc;color:#475569;border:2px solid #cbd5e1;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;text-align:center;display:block;font-family:Cairo,sans-serif;transition:all .2s;">
-          العودة للسلة
-        </a>
+        <!-- Action Buttons Box -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0;">
+          <button form="checkoutForm" type="submit" id="submitBtn"
+            style="width:100%; padding:14px 20px; background:#09090b; color:#fff; border:none; border-radius:12px; font-size:1.05rem; font-weight:900; cursor:pointer; font-family:Cairo,sans-serif; transition:all .2s; box-shadow:0 4px 14px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fa fa-check-circle"></i>تأكيد وإرسال الطلب
+          </button>
+          <a href="/shop/cart.html"
+            style="width:100%; padding:12px 20px; background:#ffffff; color:#09090b; border:1.5px solid #09090b; border-radius:12px; font-size:14px; font-weight:700; text-decoration:none; text-align:center; display:block; font-family:Cairo,sans-serif; transition:all .2s; box-sizing:border-box;">
+            العودة لسلة المشتريات
+          </a>
+        </div>
       </div>
     </div>
 
     <style>
       @media(max-width:768px){
-        #checkoutWrap{grid-template-columns:1fr !important;}
+        #checkoutWrap{grid-template-columns:1fr !important; margin-bottom: 20px !important;}
         form>div:first-child{grid-template-columns:1fr !important;}
       }
     </style>
   </main>
 
-  <footer class="container footer">
-    <div style="text-align:center;padding:20px;color:#6b7280;">
+  <footer class="container footer" style="margin: 16px auto 16px; padding: 12px 16px; text-align: center; color: #71717a; font-size: 0.85rem; clear: both; display: block; width: 100%;">
+    <div>
       © <span id="footYear"></span> Store. جميع الحقوق محفوظة.
     </div>
   </footer>
 
-  <!-- <a class="wapp-float" href="https://wa.me/201146520922" target="_blank" aria-label="WhatsApp">
+  <!-- <a class="wapp-float" href="https://wa.me/201066571999" target="_blank" aria-label="WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a> -->
 
