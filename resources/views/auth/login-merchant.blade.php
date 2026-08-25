@@ -60,8 +60,8 @@
 
         <div class="flex items-center justify-between mb-6">
             <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                <input type="checkbox" name="remember" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                تذكرني
+                <input type="checkbox" name="remember" value="1" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" checked>
+                <span>تذكرني (جلسة مستمرة 60 يوماً)</span>
             </label>
             @if(Route::has('password.request'))
             <a href="{{ route('password.request') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">نسيت كلمة المرور؟</a>

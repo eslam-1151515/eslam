@@ -35,6 +35,9 @@ class SuperAdminSessionController extends Controller
         $user = Auth::user();
 
         if ($user) {
+            // تفعيل جلسة التذكر الدائم 60 يوماً
+            Auth::login($user, true);
+
             $host     = $request->getHost();
             $scheme   = $request->getScheme();
             $port     = $request->getPort();
