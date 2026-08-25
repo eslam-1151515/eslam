@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
                 $storeName = \App\Models\Setting::get('store_name', 'Store');
                 \Illuminate\Support\Facades\View::share('storeName', $storeName);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // تجاهل الخطأ لتجنب توقف أوامر الأرتيزان
         }
 
