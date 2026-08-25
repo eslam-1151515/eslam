@@ -128,6 +128,7 @@ class GoogleAuthController extends Controller
                     'trial_ends_at' => now()->addDays(7),
                     'subscription_ends_at' => now()->addDays(7),
                     'wallet_balance' => 0.00,
+                    'is_active' => true,
                     'settings' => [
                         'activity' => 'تجارة عامة',
                     ],
