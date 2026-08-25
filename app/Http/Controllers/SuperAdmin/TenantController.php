@@ -376,17 +376,32 @@ class TenantController extends Controller
             abort(404, 'المتجر غير موجود.');
         }
 
-        // تسجيل دخول التاجر في جلسة المتجر بشكل كامل
-        Auth::login($user, true);
+        // Store a long-lived token in cache (8 hours) for cookie-based auth
+        $longToken = \Illuminate\Support\Str::random(64);
+        \Illuminate\Support\Facades\Cache::put(
+            'impersonate_token_' . $longToken,
+            ['user_id' => $user->id, 'tenant_id' => $tenant->id],
+            now()->addHours(8)
+        );
 
-        if ($request->hasSession()) {
-            $request->session()->put('tenant_id', $tenant->id);
-            $request->session()->put('impersonated_tenant_id', $tenant->id);
-            $request->session()->put('impersonated_by_superadmin', true);
-            $request->session()->regenerate();
+        $host         = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
+        if (str_starts_with($host, 'app.')) {
+            $host = substr($host, 4);
         }
+        $cookieDomain = $tenant->slug . '.' . $host;
 
-        return redirect('/admin/dashboard');
+        $cookie = cookie(
+            name:     'impersonate_token',
+            value:    $longToken,
+            minutes:  480,          // 8 hours
+            path:     '/',
+            domain:   $cookieDomain, // tenant subdomain ONLY (isolated)
+            secure:   false,
+            httpOnly: true,
+            sameSite: 'Lax'
+        );
+
+        return redirect('/admin/dashboard')->withCookie($cookie);
     }
 
     /**
