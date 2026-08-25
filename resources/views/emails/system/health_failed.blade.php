@@ -27,5 +27,5 @@
 </div>
 
 <p>تاريخ ووقت الفحص: <strong>{{ now()->toDateTimeString() }}</strong></p>
-<p>تم تسجيل تفاصيل الأخطاء في ملف السجل المخصص: <code>storage/logs/fastorder-errors.log</code></p>
+<p>تم تسجيل تفاصيل الأخطاء في ملف السجل المخصص: <code>storage/logs/ordersaif-errors.log</code></p>
 @endsection

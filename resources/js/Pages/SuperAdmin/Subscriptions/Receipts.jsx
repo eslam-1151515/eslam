@@ -684,7 +684,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                         <option value="">اختر المتجر...</option>
                                         {(tenants || []).map((tenant) => (
                                             <option key={tenant.id} value={tenant.id}>
-                                                {tenant.name} ({tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fastorder.localhost'})
+                                                {tenant.name} ({tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'ordersaif.localhost'})
                                             </option>
                                         ))}
                                     </select>

@@ -555,7 +555,7 @@
             queryParts.push('sync_items=' + encodeURIComponent(JSON.stringify(lsItems)));
           }
         }
-        var savedLs = localStorage.getItem('fastorder_saved_items');
+        var savedLs = localStorage.getItem('ordersaif_saved_items');
         if (savedLs) {
           try {
             var sArr = JSON.parse(savedLs);
@@ -578,7 +578,7 @@
         // Clear local storage after successful sync with DB/Session
         if (queryParts.length > 0) {
           if (typeof BirdCart !== 'undefined') BirdCart.saveCart([]);
-          localStorage.removeItem('fastorder_saved_items');
+          localStorage.removeItem('ordersaif_saved_items');
         }
 
         renderCart();
@@ -594,7 +594,7 @@
       if (typeof BirdCart !== 'undefined') {
         items = BirdCart.getCart() || [];
       }
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       
       if (items.length > 0 || saved.length > 0) {
@@ -690,10 +690,10 @@
     function lsRemove(idx, isSaved) {
       if (!confirm('?? ???? ??? ??? ???????')) return;
       if (isSaved) {
-        var savedLs = localStorage.getItem('fastorder_saved_items');
+        var savedLs = localStorage.getItem('ordersaif_saved_items');
         var saved = savedLs ? JSON.parse(savedLs) : [];
         saved.splice(idx, 1);
-        localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+        localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
       } else {
         var items = BirdCart.getCart();
         items.splice(idx, 1);
@@ -708,19 +708,19 @@
       var item = items.splice(idx, 1)[0];
       BirdCart.saveCart(items);
 
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       saved.push(item);
-      localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+      localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
       fallbackLocalStorage();
       showToast('?? ????? ???? ????');
     }
 
     function lsMoveToCart(idx) {
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       var item = saved.splice(idx, 1)[0];
-      localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+      localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
 
       var items = BirdCart.getCart() || [];
       items.push(item);

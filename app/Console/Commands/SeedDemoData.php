@@ -35,7 +35,7 @@ class SeedDemoData extends Command
      *
      * @var string
      */
-    protected $signature = 'fastorder:seed-demo {--tenant=demo : The subdomain slug for the demo store} {--force : Force delete existing demo data for this tenant}';
+    protected $signature = 'ordersaif:seed-demo {--tenant=demo : The subdomain slug for the demo store} {--force : Force delete existing demo data for this tenant}';
 
     /**
      * The description of the console command.

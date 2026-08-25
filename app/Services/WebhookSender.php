@@ -41,7 +41,7 @@ class WebhookSender
 
             try {
                 $response = Http::withHeaders([
-                    'X-FastOrder-Signature' => $signature,
+                    'X-OrderSaif-Signature' => $signature,
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ])

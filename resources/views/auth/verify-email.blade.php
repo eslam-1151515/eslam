@@ -21,7 +21,7 @@
         </form>
 
         @php
-            $appHost = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+            $appHost = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
             if (str_starts_with($appHost, 'app.')) {
                 $appHost = substr($appHost, 4);
             }

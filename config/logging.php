@@ -123,9 +123,9 @@ return [
             'handler' => NullHandler::class,
         ],
 
-        'fastorder-errors' => [
+        'ordersaif-errors' => [
             'driver' => 'single',
-            'path' => storage_path('logs/fastorder-errors.log'),
+            'path' => storage_path('logs/ordersaif-errors.log'),
             'level' => 'debug',
             'replace_placeholders' => true,
         ],

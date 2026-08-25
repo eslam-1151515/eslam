@@ -133,7 +133,7 @@ class ImportExportController extends Controller
 
         return response($csvContent, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="fastorder_products_template.csv"',
+            'Content-Disposition' => 'attachment; filename="ordersaif_products_template.csv"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0'

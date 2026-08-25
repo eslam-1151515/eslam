@@ -57,7 +57,7 @@ class BackupDatabase extends Command
 
     private function createSimpleBackup(string $path, string $timestamp): void
     {
-        $content  = "-- FastOrder Database Backup\n";
+        $content  = "-- OrderSaif Database Backup\n";
         $content .= "-- Generated at: {$timestamp}\n";
         $content .= "-- Database: " . config('database.connections.mysql.database') . "\n\n";
         $content .= "-- Note: Full mysqldump not available. This is a metadata backup.\n\n";

@@ -18,7 +18,7 @@ class DomainController extends Controller
         'admin',
         'superadmin',
         'www',
-        'fastorder',
+        'ordersaif',
         'api',
         'system',
         'demo',
@@ -89,7 +89,7 @@ class DomainController extends Controller
         }
 
         if (empty($baseDomain) || $baseDomain === 'localhost' || $baseDomain === '127.0.0.1') {
-            $baseDomain = 'fastorder.localhost';
+            $baseDomain = 'ordersaif.localhost';
         }
 
         $currentUrl = "{$scheme}://{$tenant->slug}.{$baseDomain}{$portSuffix}";

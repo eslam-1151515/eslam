@@ -325,7 +325,7 @@ class TenantController extends Controller
             return back()->with('error', 'لا يوجد مالك لهذا المتجر');
         }
 
-        $host    = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+        $host    = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
         if (str_starts_with($host, 'app.')) {
             $host = substr($host, 4);
         }
@@ -378,7 +378,7 @@ class TenantController extends Controller
             now()->addHours(8)
         );
 
-        $host         = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+        $host         = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
         if (str_starts_with($host, 'app.')) {
             $host = substr($host, 4);
         }

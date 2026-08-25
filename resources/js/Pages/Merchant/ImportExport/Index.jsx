@@ -5,7 +5,7 @@ import MerchantLayout from '@/Layouts/MerchantLayout';
 export default function ImportExportIndex() {
     const { flash } = usePage().props;
     const [activeTab, setActiveTab] = useState('export'); // 'export' | 'import'
-    const [importSource, setImportSource] = useState('fastorder'); // 'fastorder' | 'shopify' | 'woocommerce'
+    const [importSource, setImportSource] = useState('ordersaif'); // 'ordersaif' | 'shopify' | 'woocommerce'
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -14,7 +14,7 @@ export default function ImportExportIndex() {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         file: null,
-        source: 'fastorder'
+        source: 'ordersaif'
     });
 
     // Handle Drag & Drop
@@ -255,11 +255,11 @@ export default function ImportExportIndex() {
                                     1. اختر مصدر البيانات (المنصة المصدّرة للملف):
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {/* FastOrder */}
+                                    {/* OrderSaif */}
                                     <div
-                                        onClick={() => setImportSource('fastorder')}
+                                        onClick={() => setImportSource('ordersaif')}
                                         className={`border-2 rounded-2xl p-4 cursor-pointer flex items-center gap-4 transition-all ${
-                                            importSource === 'fastorder'
+                                            importSource === 'ordersaif'
                                                 ? 'border-indigo-600 bg-indigo-50/50'
                                                 : 'border-gray-200 hover:border-gray-300'
                                         }`}
@@ -312,7 +312,7 @@ export default function ImportExportIndex() {
                             </div>
 
                             {/* Help & Template Download */}
-                            {importSource === 'fastorder' && (
+                            {importSource === 'ordersaif' && (
                                 <div className="bg-indigo-50/80 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 text-sm text-indigo-900">
                                     <div className="flex items-center gap-2">
                                         <span>ℹ️</span>

@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) {
             $threshold = env('SLOW_QUERY_THRESHOLD_MS', 500); // 500ms
             if ($query->time > $threshold) {
-                \Illuminate\Support\Facades\Log::channel('fastorder-errors')->warning("Slow Query Detected: {$query->time}ms", [
+                \Illuminate\Support\Facades\Log::channel('ordersaif-errors')->warning("Slow Query Detected: {$query->time}ms", [
                     'sql' => $query->sql,
                     'bindings' => $query->bindings,
                     'time' => $query->time,

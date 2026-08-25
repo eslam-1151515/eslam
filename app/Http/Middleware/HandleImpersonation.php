@@ -13,7 +13,7 @@ class HandleImpersonation
     /**
      * Authenticate via a subdomain-specific impersonation cookie
      * WITHOUT touching the shared session — so the super admin
-     * tab stays fully logged in on app.fastorder.localhost.
+     * tab stays fully logged in on app.ordersaif.localhost.
      */
     public function handle(Request $request, Closure $next): Response
     {

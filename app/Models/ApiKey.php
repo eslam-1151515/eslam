@@ -25,7 +25,7 @@ class ApiKey extends Model
         return static::create([
             'tenant_id' => $tenantId,
             'name' => $name,
-            'key' => 'fsk_' . Str::random(60), // FastOrder API Key
+            'key' => 'fsk_' . Str::random(60), // OrderSaif API Key
         ]);
     }
 

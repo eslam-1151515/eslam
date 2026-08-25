@@ -115,7 +115,7 @@ class RegisteredUserController extends Controller
         }
         
         // System reserved subdomains
-        $reserved = ['admin', 'app', 'www', 'mail', 'api', 'platform', 'fastorder', 'demo', 'test'];
+        $reserved = ['admin', 'app', 'www', 'mail', 'api', 'platform', 'ordersaif', 'demo', 'test'];
         if (in_array($slug, $reserved)) {
             return response()->json(['available' => false, 'message' => 'هذا الاسم محجوز للنظام']);
         }

@@ -428,7 +428,7 @@ export default function WebhooksIndex({ webhooks, stats, filters }) {
                                     </button>
                                 </div>
                                 {errors.secret && <p className="text-xs text-red-600 mt-1">{errors.secret}</p>}
-                                <p className="text-xs text-gray-400 mt-1">يُستخدم هذا المفتاح في ترويسة X-FastOrder-Signature لتوقيع البيانات والتأكد من موثوقية الطلب.</p>
+                                <p className="text-xs text-gray-400 mt-1">يُستخدم هذا المفتاح في ترويسة X-OrderSaif-Signature لتوقيع البيانات والتأكد من موثوقية الطلب.</p>
                             </div>
 
                             {/* Events checkboxes */}

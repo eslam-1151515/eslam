@@ -72,7 +72,7 @@ class HandleInertiaRequests extends Middleware
             $baseDomain = $cleanHost;
         }
         if (empty($baseDomain) || $baseDomain === 'localhost' || $baseDomain === '127.0.0.1') {
-            $baseDomain = 'fastorder.localhost';
+            $baseDomain = 'ordersaif.localhost';
         }
 
         $storefrontUrl = $tenantSlug ? "{$scheme}://{$tenantSlug}.{$baseDomain}{$portSuffix}/shop/index.html" : '#';

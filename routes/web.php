@@ -14,10 +14,15 @@ use App\Models\Product;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 
-$request = request();
-$host = $request?->getHost();
+$host = app()->bound('request') ? request()?->getHost() : null;
 
-if ($host && $host !== '127.0.0.1' && $host !== 'localhost') {
+$appUrl = config('app.url', 'http://localhost:8000');
+$configHost = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
+if (str_starts_with($configHost, 'app.')) {
+    $configHost = substr($configHost, 4);
+}
+
+if ($host && $host !== '127.0.0.1' && $host !== 'localhost' && !str_ends_with($host, '.localhost')) {
     $cleanHost = str_starts_with($host, 'app.') ? substr($host, 4) : $host;
     $parts = explode('.', $cleanHost);
     if (count($parts) >= 3) {
@@ -27,11 +32,7 @@ if ($host && $host !== '127.0.0.1' && $host !== 'localhost') {
         $baseDomain = $cleanHost;
     }
 } else {
-    $appUrl = config('app.url');
-    $baseDomain = parse_url($appUrl, PHP_URL_HOST) ?: 'fastorder.localhost';
-    if (str_starts_with($baseDomain, 'app.')) {
-        $baseDomain = substr($baseDomain, 4);
-    }
+    $baseDomain = $configHost;
 }
 
 // Google OAuth Routes are handled per-domain:

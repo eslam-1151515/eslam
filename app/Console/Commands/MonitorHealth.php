@@ -134,15 +134,15 @@ class MonitorHealth extends Command
 
         // إذا وجد أي فشل، أرسل بريداً إلكترونياً وسجل الخطأ في سجل فاست أوردر المخصص
         if ($hasFailure) {
-            Log::channel('fastorder-errors')->error('فشل فحص صحة النظام للمنصة!', $checks);
+            Log::channel('ordersaif-errors')->error('فشل فحص صحة النظام للمنصة!', $checks);
             
             try {
-                $adminEmail = env('ADMIN_EMAIL', config('mail.from.address') ?? 'admin@fastorder.com');
+                $adminEmail = env('ADMIN_EMAIL', config('mail.from.address') ?? 'admin@ordersaif.com');
                 Mail::to($adminEmail)->send(new SystemHealthFailedMail($checks));
                 $this->info("تم إرسال بريد تنبيه إداري إلى: {$adminEmail}");
             } catch (\Exception $e) {
                 $this->error("فشل إرسال البريد الإلكتروني للتنبيه: " . $e->getMessage());
-                Log::channel('fastorder-errors')->error("فشل إرسال بريد تنبيه إداري لصحة النظام: " . $e->getMessage());
+                Log::channel('ordersaif-errors')->error("فشل إرسال بريد تنبيه إداري لصحة النظام: " . $e->getMessage());
             }
         } else {
             $this->info('فحص صحة النظام اكتمل بنجاح دون مشاكل.');

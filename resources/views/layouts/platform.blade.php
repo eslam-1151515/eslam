@@ -26,8 +26,8 @@
     <!-- JSON-LD Structured Data Schema for Google -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@@context": "https://schema.org",
+      "@@type": "SoftwareApplication",
       "name": "Order Saif",
       "alternateName": "أوردر سيف",
       "operatingSystem": "All",
@@ -35,13 +35,13 @@
       "description": "منصة متكاملة لبناء وتطوير المتاجر الإلكترونية في الوطن العربي بدون عمولات وبتقنيات سرعة فائقة.",
       "url": "https://ordersaif.com",
       "offers": {
-        "@type": "Offer",
+        "@@type": "Offer",
         "price": "500",
         "priceCurrency": "EGP",
         "availability": "https://schema.org/InStock"
       },
       "aggregateRating": {
-        "@type": "AggregateRating",
+        "@@type": "AggregateRating",
         "ratingValue": "4.9",
         "ratingCount": "1450"
       }
@@ -231,7 +231,7 @@
 
             <!-- Action Buttons -->
             <div class="hidden md:flex items-center gap-4">
-                @auth
+                @if(auth()->check())
                     <a href="{{ url('/dashboard') }}" class="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-dark-card border border-white/10 hover:border-brand-500/50 hover:bg-white/5 transition-all">
                         <i class="fa-solid fa-gauge-high ml-1.5 text-brand-400"></i> لوحة التحكم
                     </a>
@@ -242,7 +242,7 @@
                     <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 hover:from-brand-500 hover:to-pink-500 shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300">
                         <i class="fa-solid fa-rocket ml-1.5"></i> ابدأ متجرك الآن
                     </a>
-                @endauth
+                @endif
             </div>
 
             <!-- Mobile Header Control Center -->
@@ -263,7 +263,7 @@
              x-transition:enter-end="opacity-100 translate-y-0" 
              x-transition:leave="transition ease-in duration-150" 
              x-transition:leave-start="opacity-100 translate-y-0" 
-             x-transition:leave-end="opacity-0 -translate-y-4"
+             x-transition:leave-end="opacity-0 -translate-y-4" 
              class="md:hidden glass-header border-t border-white/5 px-4 pt-4 pb-6 space-y-3 absolute w-full left-0 bg-dark-bg/95 backdrop-blur-lg">
             <a href="{{ route('main.home') }}#features" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl hover:bg-white/5 hover:text-brand-400 font-semibold text-gray-300 transition-all">
                 المميزات
@@ -284,7 +284,7 @@
                 اتصل بنا
             </a>
             <div class="pt-4 border-t border-white/5 flex flex-col gap-3">
-                @auth
+                @if(auth()->check())
                     <a href="{{ url('/dashboard') }}" class="w-full text-center py-3 rounded-xl font-bold text-white bg-dark-card border border-white/10 hover:border-brand-500/50 hover:bg-white/5 transition-all">
                         لوحة التحكم
                     </a>
@@ -295,7 +295,7 @@
                     <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-brand-600 via-indigo-600 to-pink-600 shadow-lg shadow-brand-500/25 transition-all">
                         ابدأ متجرك الآن
                     </a>
-                @endauth
+                @endif
             </div>
         </div>
     </header>
@@ -418,7 +418,7 @@
     </footer>
 
     <!-- Floating Sticky WhatsApp Button -->
-    <a href="{{ $whatsappContact?->action_url ?? '#' }}" 
+    <a href="{{ ($whatsappContact ?? null)?->action_url ?? '#' }}" 
        target="_blank" 
        rel="noopener noreferrer" 
        class="fixed bottom-6 left-6 z-50 group flex items-center p-3.5 rounded-full text-white shadow-2xl hover:scale-105 transition-all duration-300 shadow-emerald-500/40"

@@ -21,7 +21,7 @@ class ImportRequest extends FormRequest
     {
         return [
             'file' => ['required', 'file', 'mimes:csv,txt', 'max:8192'],
-            'source' => ['required', 'in:fastorder,shopify,woocommerce'],
+            'source' => ['required', 'in:ordersaif,shopify,woocommerce'],
         ];
     }
 

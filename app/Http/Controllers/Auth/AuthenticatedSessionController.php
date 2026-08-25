@@ -16,16 +16,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request): View
     {
-        $requestHost = $request->getHost(); // e.g. app.fastorder.test
+        $requestHost = $request->getHost(); // e.g. app.ordersaif.test
 
-        // Super admin يكون دايماً على app.fastorder.test
+        // Super admin يكون دايماً على app.ordersaif.test
         // نشوف من config لو صح، ولو لأ نعتمد على المقارنة المباشرة
         $appUrl = config('app.url');
-        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'app.fastorder.test';
+        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'app.ordersaif.test';
 
         // double check: إما config يطابق أو الـ host يبدأ بـ app.
         $isSuperAdmin = ($requestHost === $appHost)
-                     || ($requestHost === 'app.fastorder.test')
+                     || ($requestHost === 'app.ordersaif.test')
                      || (preg_match('/^app\./i', $requestHost) && !str_contains($requestHost, 'admin'));
 
         if ($isSuperAdmin) {
@@ -47,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         if ($user) {
             $appUrl = config('app.url');
-            $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'fastorder.test';
+            $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'ordersaif.test';
             $scheme = $request->getScheme();
             $port = $request->getPort();
             $portStr = ($port && $port != 80 && $port != 443) ? ':' . $port : '';
@@ -103,7 +103,7 @@ class AuthenticatedSessionController extends Controller
 
         // حدد الـ login الصح بناءً على الـ domain الحالي
         $host = $request->getHost();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST) ?: 'fastorder.localhost';
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST) ?: 'ordersaif.localhost';
 
         $scheme = $request->getScheme();
         $port   = $request->getPort();

@@ -571,9 +571,9 @@
     }
 
     function updateTotal(subtotal) {
-      var couponCode = localStorage.getItem('fastorder_coupon_code');
-      var couponType = localStorage.getItem('fastorder_coupon_type');
-      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var couponCode = localStorage.getItem('ordersaif_coupon_code');
+      var couponType = localStorage.getItem('ordersaif_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('ordersaif_coupon_value') || 0);
       var discount = 0;
 
       if (couponCode && couponValue > 0) {
@@ -701,9 +701,9 @@
 
       var subtotal = cart.reduce(function(s,it){ return s+(it.price||0)*(it.qty||1); },0);
       
-      var couponCode = localStorage.getItem('fastorder_coupon_code');
-      var couponType = localStorage.getItem('fastorder_coupon_type');
-      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var couponCode = localStorage.getItem('ordersaif_coupon_code');
+      var couponType = localStorage.getItem('ordersaif_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('ordersaif_coupon_value') || 0);
       var discount = 0;
 
       if (couponCode && couponValue > 0) {
@@ -753,10 +753,10 @@
             items:          cart
           }));
           localStorage.removeItem('bird_cart');
-          localStorage.removeItem('fastorder_coupon_code');
-          localStorage.removeItem('fastorder_coupon_type');
-          localStorage.removeItem('fastorder_coupon_value');
-          localStorage.removeItem('fastorder_coupon_discount');
+          localStorage.removeItem('ordersaif_coupon_code');
+          localStorage.removeItem('ordersaif_coupon_type');
+          localStorage.removeItem('ordersaif_coupon_value');
+          localStorage.removeItem('ordersaif_coupon_discount');
           window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
         } else {
           var errorDetails = '';

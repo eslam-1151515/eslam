@@ -122,7 +122,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->report(function (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::channel('fastorder-errors')->error($e->getMessage(), [
+            \Illuminate\Support\Facades\Log::channel('ordersaif-errors')->error($e->getMessage(), [
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

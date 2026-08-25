@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 /**
  * Handles authentication for MERCHANTS and STAFF only.
- * URL: http://{tenant}.fastorder.test:8000/admin/login
+ * URL: http://{tenant}.ordersaif.test:8000/admin/login
  */
 class MerchantSessionController extends Controller
 {
@@ -21,7 +21,7 @@ class MerchantSessionController extends Controller
     public function create(Request $request): RedirectResponse
     {
         $appUrl  = config('app.url');
-        $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'fastorder.localhost';
+        $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'ordersaif.localhost';
         $scheme   = parse_url($appUrl, PHP_URL_SCHEME) ?: $request->getScheme();
         $port     = parse_url($appUrl, PHP_URL_PORT);
         $portStr  = $port ? ':' . $port : '';
@@ -42,7 +42,7 @@ class MerchantSessionController extends Controller
 
         if ($user) {
             $appUrl  = config('app.url');
-            $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'fastorder.localhost';
+            $baseHost = parse_url($appUrl, PHP_URL_HOST) ?: 'ordersaif.localhost';
             $scheme   = $request->getScheme();
             $port     = $request->getPort();
             $portStr  = ($port && $port != 80 && $port != 443) ? ':' . $port : '';

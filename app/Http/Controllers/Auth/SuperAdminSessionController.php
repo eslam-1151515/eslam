@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 /**
  * Handles authentication for SUPER ADMIN only.
- * URL: http://app.fastorder.test:8000/login
+ * URL: http://app.ordersaif.test:8000/login
  */
 class SuperAdminSessionController extends Controller
 {

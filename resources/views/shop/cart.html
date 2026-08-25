@@ -635,7 +635,7 @@
 
     async function loadCart() {
       var items = (typeof BirdCart !== 'undefined') ? (BirdCart.getCart() || []) : [];
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       renderLocalStorageCart(items, saved);
       await syncCartWithServer(items, saved);
@@ -709,9 +709,9 @@
       }).join('');
       document.getElementById('cart-items-list').innerHTML = html;
       document.getElementById('sum-subtotal').textContent = fmt(subtotal);
-      var couponCode = localStorage.getItem('fastorder_coupon_code');
-      var couponType = localStorage.getItem('fastorder_coupon_type');
-      var couponValue = parseFloat(localStorage.getItem('fastorder_coupon_value') || 0);
+      var couponCode = localStorage.getItem('ordersaif_coupon_code');
+      var couponType = localStorage.getItem('ordersaif_coupon_type');
+      var couponValue = parseFloat(localStorage.getItem('ordersaif_coupon_value') || 0);
       var discount = 0;
 
       if (couponCode && couponValue > 0) {
@@ -790,10 +790,10 @@
     function lsRemove(idx, isSaved) {
       if (!confirm('هل تريد حذف هذا المنتج؟')) return;
       if (isSaved) {
-        var savedLs = localStorage.getItem('fastorder_saved_items');
+        var savedLs = localStorage.getItem('ordersaif_saved_items');
         var saved = savedLs ? JSON.parse(savedLs) : [];
         saved.splice(idx, 1);
-        localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+        localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
       } else {
         var items = BirdCart.getCart();
         items.splice(idx, 1);
@@ -807,19 +807,19 @@
       var items = BirdCart.getCart();
       var item = items.splice(idx, 1)[0];
       BirdCart.saveCart(items);
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       saved.push(item);
-      localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+      localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
       loadCart();
       showToast('تم الحفظ لوقت لاحق');
     }
 
     function lsMoveToCart(idx) {
-      var savedLs = localStorage.getItem('fastorder_saved_items');
+      var savedLs = localStorage.getItem('ordersaif_saved_items');
       var saved = savedLs ? JSON.parse(savedLs) : [];
       var item = saved.splice(idx, 1)[0];
-      localStorage.setItem('fastorder_saved_items', JSON.stringify(saved));
+      localStorage.setItem('ordersaif_saved_items', JSON.stringify(saved));
       var items = BirdCart.getCart() || [];
       items.push(item);
       BirdCart.saveCart(items);
@@ -859,9 +859,9 @@
         msgEl.textContent = data.message;
         msgEl.style.color = data.success ? '#16a34a' : '#ef4444';
         if (data.success && data.summary && data.summary.coupon) {
-          localStorage.setItem('fastorder_coupon_code', code);
-          localStorage.setItem('fastorder_coupon_type', data.summary.coupon.type);
-          localStorage.setItem('fastorder_coupon_value', data.summary.coupon.value);
+          localStorage.setItem('ordersaif_coupon_code', code);
+          localStorage.setItem('ordersaif_coupon_type', data.summary.coupon.type);
+          localStorage.setItem('ordersaif_coupon_value', data.summary.coupon.value);
           loadCart();
           showToast('تم تطبيق كود الخصم');
         }
@@ -883,10 +883,10 @@
         if (data.success || res.ok) {
           msgEl.textContent = 'تمت إزالة الكوبون';
           msgEl.style.color = '#16a34a';
-          localStorage.removeItem('fastorder_coupon_code');
-          localStorage.removeItem('fastorder_coupon_type');
-          localStorage.removeItem('fastorder_coupon_value');
-          localStorage.removeItem('fastorder_coupon_discount');
+          localStorage.removeItem('ordersaif_coupon_code');
+          localStorage.removeItem('ordersaif_coupon_type');
+          localStorage.removeItem('ordersaif_coupon_value');
+          localStorage.removeItem('ordersaif_coupon_discount');
           loadCart();
           showToast('تمت إزالة كود الخصم');
         }

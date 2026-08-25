@@ -180,7 +180,7 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
                                 )}
                             </div>
                             <p className="text-sm text-gray-400 mt-1">
-                                {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fastorder.localhost'}
+                                {tenant.slug}.{typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'ordersaif.localhost'}
                                 {tenant.custom_domain && <span className="mr-3 font-semibold text-indigo-600">({tenant.custom_domain})</span>}
                             </p>
                         </div>
@@ -188,7 +188,7 @@ export default function Show({ tenant, settings, plans, productsCount = 0, order
 
                     <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 w-full md:w-auto">
                         <a
-                            href={`${typeof window !== 'undefined' ? window.location.protocol : 'http:'}//${tenant.slug}.${typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'fastorder.localhost'}/shop/index.html`}
+                            href={`${typeof window !== 'undefined' ? window.location.protocol : 'http:'}//${tenant.slug}.${typeof window !== 'undefined' ? window.location.host.replace('app.', '') : 'ordersaif.localhost'}/shop/index.html`}
                             target="_blank"
                             rel="noreferrer"
                             className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
