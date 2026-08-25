@@ -54,6 +54,17 @@ Route::domain($baseDomain)->group(function () {
     Route::get('/terms', [\App\Http\Controllers\PlatformController::class, 'terms'])->name('main.terms');
     Route::get('/sla', [\App\Http\Controllers\PlatformController::class, 'sla'])->name('main.sla');
     Route::get('/help', [\App\Http\Controllers\PlatformController::class, 'help'])->name('main.help');
+
+    // Merchant Registration on Platform
+    Route::get('/register', [\App\Http\Controllers\Auth\MerchantRegisterController::class, 'showRegistrationForm'])->name('platform.register');
+    Route::post('/register', [\App\Http\Controllers\Auth\MerchantRegisterController::class, 'register'])->name('platform.register.submit');
+    Route::get('/register/check-slug', [\App\Http\Controllers\Auth\MerchantRegisterController::class, 'checkSlug'])->name('platform.register.check-slug');
+
+    // Google OAuth Routes on Platform
+    Route::get('/auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+    Route::get('/auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'showCompleteRegistration'])->name('auth.google.complete');
+    Route::post('/auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'completeRegistration']);
 });
 
 Route::domain('app.' . $baseDomain)->group(function () {
@@ -781,4 +792,13 @@ Route::prefix('admin')->group(function () {
             Route::post('/settings', [\App\Http\Controllers\NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
         });
     });
+
+// Universal Google OAuth Routes (Handles callbacks from ordersaif.com/auth/google/callback, app.ordersaif.com, etc.)
+Route::middleware(['web'])->group(function () {
+    Route::get('/auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle']);
+    Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback']);
+    Route::get('/auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'showCompleteRegistration']);
+    Route::post('/auth/google/complete-registration', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'completeRegistration']);
+});
+
 

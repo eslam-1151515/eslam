@@ -184,8 +184,11 @@ class GoogleAuthController extends Controller
         // Redirect directly to the merchant's dashboard on their subdomain using a short-lived token
         if ($user->isMerchant() && $user->currentTenant) {
             $tenant = $user->currentTenant;
-            $host = parse_url(config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost';
-            $scheme = $request->getScheme();
+            $host = parse_url(config('app.url', 'https://ordersaif.com'), PHP_URL_HOST) ?: 'ordersaif.com';
+            if (str_starts_with($host, 'app.')) {
+                $host = substr($host, 4);
+            }
+            $scheme = (app()->environment('production') || env('FORCE_HTTPS', false) || $request->isSecure()) ? 'https' : $request->getScheme();
             $port = $request->getPort();
             $portStr = ($port && $port != 80 && $port != 443) ? ':' . $port : '';
 
