@@ -5,7 +5,7 @@ echo "🚀 Starting Zero-Downtime Deployment..."
 
 # Configuration
 REPO_TOKEN=$1
-REPO_URL="https://x-access-token:${REPO_TOKEN}@github.com/fast-order-eg/fast-order.git"
+REPO_URL="https://x-access-token:${REPO_TOKEN}@github.com/eslam-1151515/eslam.git"
 BASE_DIR="/home/ordersaif.com/deploy"
 RELEASES_DIR="$BASE_DIR/releases"
 SHARED_DIR="$BASE_DIR/shared"
