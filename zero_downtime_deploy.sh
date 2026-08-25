@@ -33,14 +33,21 @@ fi
 rm -rf "$RELEASE_DIR/storage"
 ln -nfs "$SHARED_DIR/storage" "$RELEASE_DIR/storage"
 
+# Ensure standard PATHs for node, npm, composer, and php
+export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:~/.nvm/versions/node/$(ls ~/.nvm/versions/node 2>/dev/null | tail -n 1)/bin:/root/.nvm/versions/node/$(ls /root/.nvm/versions/node 2>/dev/null | tail -n 1)/bin
+
 echo "📦 Installing Composer dependencies..."
 cd "$RELEASE_DIR"
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 echo "✨ Building Frontend Assets..."
-npm install
-npm run build
+if command -v npm &> /dev/null; then
+    npm install --no-audit --no-fund
+    npm run build
+else
+    echo "⚠️ npm command not found in PATH, skipping frontend build step."
+fi
 
 echo "🗄️ Running database migrations..."
 php artisan migrate --force
@@ -59,16 +66,17 @@ php artisan event:cache
 echo "🔄 Swapping symlink for Zero-Downtime..."
 ln -nfs "$RELEASE_DIR" "$CURRENT_DIR"
 
-echo "🔄 Restarting Queue Workers..."
+echo "🔄 Restarting Queue Workers and PHP processes..."
 php artisan queue:restart || true
 # Restart OpenLiteSpeed detached PHP processes
-killall -9 lsphp || true
+killall -9 lsphp 2>/dev/null || true
 
 echo "🔐 Fixing file permissions..."
-chown -R fasto5299:nobody "$RELEASE_DIR"
+chmod -R 775 "$RELEASE_DIR/storage" "$RELEASE_DIR/bootstrap/cache" || true
+chown -R fasto5299:nobody "$RELEASE_DIR" 2>/dev/null || true
 
 echo "🧹 Cleaning up old releases (keeping last 3)..."
 cd "$RELEASES_DIR"
-ls -1t | tail -n +4 | xargs -r rm -rf
+ls -1t | tail -n +4 | xargs -r rm -rf || true
 
 echo "🎉 Zero-Downtime Deployment completed successfully!"

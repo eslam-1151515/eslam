@@ -45,12 +45,13 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:password-reset')
         ->name('password.store');
 
-    // Google OAuth Routes for Merchant signup on main domain
+    // Google OAuth Routes for Superadmin
     Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])
-        ->name('auth.google');
-    Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+        ->name('superadmin.auth.google');
+    Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
+        ->name('superadmin.auth.google.callback');
     Route::get('auth/google/complete-registration', [GoogleAuthController::class, 'showCompleteRegistration'])
-        ->name('auth.google.complete');
+        ->name('superadmin.auth.google.complete');
     Route::post('auth/google/complete-registration', [GoogleAuthController::class, 'completeRegistration']);
 });
 
