@@ -88,7 +88,7 @@ class TenantMiddlewareTest extends TestCase
         $response = $this->get('http://merchant2.fastorder.test/_test/tenant-check');
 
         $response->assertStatus(403);
-        $response->assertSee('This store is inactive');
+        $response->assertSee('المتجر معطل حالياً');
     }
 
     public function test_expired_subscription_tenant_returns_403()
@@ -105,7 +105,7 @@ class TenantMiddlewareTest extends TestCase
         $response = $this->get('http://merchant3.fastorder.test/_test/tenant-check');
 
         $response->assertStatus(403);
-        $response->assertSee('expired');
+        $response->assertSee('المتجر غير متاح حالياً');
     }
 
     public function test_active_trial_tenant_is_allowed()
