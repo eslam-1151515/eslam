@@ -1857,17 +1857,21 @@
               }));
             } catch(e) {}
             try {
+              var ordId = data.data.order_id || data.data.id;
+              var ordRef = data.data.reference_number;
               if (typeof window.trackPurchaseEvent === 'function') {
-                window.trackPurchaseEvent(payload.total, payload.items, data.data.reference_number);
+                window.trackPurchaseEvent(payload.total, payload.items, ordId, ordRef);
               } else {
+                var dedupId = 'ORDER_' + ordId + '_' + ordRef;
                 if (typeof fbq !== 'undefined') {
-                  fbq('track', 'Purchase', { value: Number(payload.total), currency: 'EGP' }, { eventID: String(data.data.reference_number || '') });
+                  fbq('track', 'Purchase', { value: Number(payload.total), currency: 'EGP' }, { eventID: dedupId });
                 }
                 if (typeof ttq !== 'undefined') {
-                  ttq.track('PlaceAnOrder', { value: Number(payload.total), currency: 'EGP' });
+                  ttq.track('PlaceAnOrder', { value: Number(payload.total), currency: 'EGP', event_id: dedupId });
+                  ttq.track('CompletePayment', { value: Number(payload.total), currency: 'EGP', event_id: dedupId });
                 }
                 if (typeof snaptr !== 'undefined') {
-                  snaptr('track', 'PURCHASE', { price: Number(payload.total), currency: 'EGP' });
+                  snaptr('track', 'PURCHASE', { price: Number(payload.total), currency: 'EGP', event_tag: dedupId, transaction_id: dedupId });
                 }
               }
             } catch(e) {}

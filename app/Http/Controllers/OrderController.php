@@ -115,6 +115,13 @@ class OrderController extends Controller
             \Illuminate\Support\Facades\Log::warning('WhatsApp auto confirm in OrderController@store failed: ' . $e->getMessage());
         }
 
+        // إرسال حدث الشراء عبر Conversion API (CAPI Server-Side Tracking)
+        try {
+            \App\Services\ConversionApiService::sendPurchaseEvent($order, $request->ip(), $request->userAgent());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('CAPI sendPurchaseEvent failed on store: ' . $e->getMessage());
+        }
+
         $redirectUrl = route('orders.success', $order->reference_number) . '?clear_cart=1';
         return redirect($redirectUrl);
     }
@@ -287,6 +294,13 @@ class OrderController extends Controller
             try {
                 \App\Services\WebhookSender::trigger('order.created', $order->toArray(), $order->tenant_id);
             } catch (\Throwable $e) {}
+
+            // إرسال حدث الشراء عبر Conversion API (CAPI Server-Side Tracking)
+            try {
+                \App\Services\ConversionApiService::sendPurchaseEvent($order, $request->ip(), $request->userAgent());
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('CAPI sendPurchaseEvent failed on storeApi: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,

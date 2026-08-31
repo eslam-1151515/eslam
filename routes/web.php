@@ -295,6 +295,16 @@ Route::prefix('admin')->group(function () {
                 Route::patch('/{provider}/toggle', [\App\Http\Controllers\Merchant\ShippingGatewaysController::class, 'toggle'])->name('toggle');
             });
 
+            // Conversion API (CAPI) routes
+            Route::prefix('conversion-api')->name('merchant.conversion-api.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'index'])->name('index');
+                Route::post('/', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'store'])->name('store');
+                Route::put('/{conversionApi}', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'update'])->name('update');
+                Route::delete('/{conversionApi}', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'destroy'])->name('destroy');
+                Route::patch('/{conversionApi}/toggle', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'toggle'])->name('toggle');
+                Route::post('/{conversionApi}/test', [\App\Http\Controllers\Merchant\ConversionApiController::class, 'testEvent'])->name('test');
+            });
+
             // Shipment actions for orders
             Route::post('/orders/{order}/shipment', [\App\Http\Controllers\Merchant\ShipmentController::class, 'store'])->name('merchant.orders.shipment.store');
             Route::get('/shipments/{shipment}/track', [\App\Http\Controllers\Merchant\ShipmentController::class, 'track'])->name('merchant.shipments.track');
