@@ -80,7 +80,7 @@ class MetaWhatsAppService
             ];
         }
 
-        // Format Items list (with color & size variants)
+        // Format Items list (with all generic variants, colors, sizes, and custom options)
         $itemsText = '';
         if (is_array($order->items)) {
             foreach ($order->items as $item) {
@@ -95,7 +95,24 @@ class MetaWhatsAppService
                 if (!empty($item['selectedSize'])) {
                     $variantDetails[] = 'المقاس: ' . $item['selectedSize'];
                 }
-                $variantStr = !empty($variantDetails) ? ' [' . implode(' - ', $variantDetails) . ']' : '';
+                if (!empty($item['options'])) {
+                    if (is_array($item['options'])) {
+                        foreach ($item['options'] as $optKey => $optVal) {
+                            if (is_string($optKey) && !is_numeric($optKey)) {
+                                $variantDetails[] = "{$optKey}: {$optVal}";
+                            } elseif (is_string($optVal)) {
+                                $variantDetails[] = $optVal;
+                            }
+                        }
+                    } elseif (is_string($item['options'])) {
+                        $variantDetails[] = $item['options'];
+                    }
+                }
+                if (!empty($item['variant_name']) && !in_array($item['variant_name'], $variantDetails)) {
+                    $variantDetails[] = $item['variant_name'];
+                }
+
+                $variantStr = !empty($variantDetails) ? ' [' . implode(' - ', array_unique($variantDetails)) . ']' : '';
 
                 $itemsText .= "• {$name}{$variantStr} (العدد: {$qty}) - " . number_format($price * $qty) . " ج.م\n";
             }
