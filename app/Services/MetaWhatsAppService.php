@@ -80,14 +80,24 @@ class MetaWhatsAppService
             ];
         }
 
-        // Format Items list
+        // Format Items list (with color & size variants)
         $itemsText = '';
         if (is_array($order->items)) {
             foreach ($order->items as $item) {
                 $name = $item['name'] ?? $item['product_name'] ?? 'منتج';
                 $qty = $item['quantity'] ?? $item['qty'] ?? 1;
                 $price = $item['price'] ?? 0;
-                $itemsText .= "• {$name} (العدد: {$qty}) - " . number_format($price * $qty) . " ج.م\n";
+
+                $variantDetails = [];
+                if (!empty($item['selectedColor'])) {
+                    $variantDetails[] = 'اللون: ' . $item['selectedColor'];
+                }
+                if (!empty($item['selectedSize'])) {
+                    $variantDetails[] = 'المقاس: ' . $item['selectedSize'];
+                }
+                $variantStr = !empty($variantDetails) ? ' [' . implode(' - ', $variantDetails) . ']' : '';
+
+                $itemsText .= "• {$name}{$variantStr} (العدد: {$qty}) - " . number_format($price * $qty) . " ج.م\n";
             }
         }
         $itemsText = trim($itemsText) ?: 'تفاصيل الطلب';
