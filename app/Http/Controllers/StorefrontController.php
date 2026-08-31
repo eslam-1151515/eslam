@@ -312,16 +312,37 @@ s0.parentNode.insertBefore(s1,s0);
     border-color: var(--primary-hover) !important;
   }
 
-  /* Active Category Chips & Filter Options */
-  .category-chip.active, .filter-option.active, .pill.active, .cat-chip.active {
+  /* Inactive Category Chips & Filter Options Hover */
+  .category-chip:not(.active):hover,
+  .category-chip:not(.active):focus,
+  .filter-option:not(.active):hover,
+  .filter-option:not(.active):focus {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    background-color: #f8fafc !important;
+  }
+
+  /* Active Category Chips & Filter Options (Always white text on active/hover/focus/touch) */
+  .category-chip.active,
+  .category-chip.active:hover,
+  .category-chip.active:focus,
+  .category-chip.active:active,
+  .filter-option.active,
+  .filter-option.active:hover,
+  .filter-option.active:focus,
+  .filter-option.active:active,
+  .pill.active,
+  .pill.active:hover,
+  .pill.active:focus,
+  .pill.active:active,
+  .cat-chip.active,
+  .cat-chip.active:hover,
+  .cat-chip.active:focus,
+  .cat-chip.active:active {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
     color: #ffffff !important;
     box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-color) 25%, transparent) !important;
-  }
-  .category-chip:hover, .filter-option:hover {
-    border-color: var(--primary-color) !important;
-    color: var(--primary-color) !important;
   }
 
   /* Price Range Sliders */
