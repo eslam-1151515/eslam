@@ -831,27 +831,60 @@
         }
 
                 if (isBuyNow) {
-          document.getElementById('inlineCheckoutSection').style.display = 'block';
-          document.getElementById('inlineCheckoutSection').scrollIntoView({ behavior: 'smooth' });
-          setTimeout(function() {
-            var qForm = document.getElementById('quickCheckoutForm');
-            if (qForm && typeof window.validateQuickForm === 'function') {
-              window.validateQuickForm(qForm);
+          var checkoutSec = document.getElementById('inlineCheckoutSection');
+          if (checkoutSec) checkoutSec.style.display = 'block';
+
+          var qForm = document.getElementById('quickCheckoutForm');
+          var nameInp = qForm ? qForm.querySelector('[name="name"]') : null;
+          var phoneInp = qForm ? qForm.querySelector('[name="phone"]') : null;
+          var govSel = qForm ? qForm.querySelector('#quickGovernorateSelect') : null;
+          var addrInp = qForm ? qForm.querySelector('[name="address"]') : null;
+
+          var phoneRegex = /^01[0125][0-9]{8}$/;
+          var phoneVal = phoneInp && phoneInp.value ? phoneInp.value.replace(/[\s\+\-]/g, '') : '';
+          if (phoneVal.startsWith('201')) phoneVal = '0' + phoneVal.substring(2);
+          else if (phoneVal.startsWith('00201')) phoneVal = '0' + phoneVal.substring(4);
+
+          var isFormFilled = nameInp && nameInp.value.trim().length >= 2
+                          && phoneVal && phoneRegex.test(phoneVal)
+                          && govSel && govSel.value
+                          && addrInp && addrInp.value.trim().length >= 3;
+
+          if (isFormFilled) {
+            // Form is already filled! Directly submit the order!
+            var quickSubmitBtn = document.getElementById('quickSubmitBtn');
+            if (quickSubmitBtn) {
+              quickSubmitBtn.click();
+            } else if (qForm) {
+              qForm.dispatchEvent(new Event('submit', { cancelable: true }));
             }
-          }, 300);
+          } else {
+            // Smoothly scroll to checkout section
+            if (checkoutSec) {
+              checkoutSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setTimeout(function() {
+              if (qForm && typeof window.validateQuickForm === 'function') {
+                window.validateQuickForm(qForm);
+              }
+            }, 300);
+          }
+
           if (!window.governoratesLoaded) {
             window.governoratesLoaded = true;
             fetch('/public-api/shipping-governorates')
               .then(function(r) { return r.json(); })
               .then(function(res) {
                 var select = document.getElementById('quickGovernorateSelect');
-                select.innerHTML = '<option value="">اختر المحافظة...</option>';
-                (res.data || []).filter(function(gov){ return gov.is_active; }).forEach(function (gov) {
-                  var opt = document.createElement('option');
-                  opt.value = gov.id;
-                  opt.textContent = gov.name;
-                  select.appendChild(opt);
-                });
+                if (select) {
+                  select.innerHTML = '<option value="">اختر المحافظة...</option>';
+                  (res.data || []).filter(function(gov){ return gov.is_active; }).forEach(function (gov) {
+                    var opt = document.createElement('option');
+                    opt.value = gov.id;
+                    opt.textContent = gov.name;
+                    select.appendChild(opt);
+                  });
+                }
               });
           }
         } else {
@@ -1902,6 +1935,23 @@
           btn.disabled = false;
         }
       });
+    }
+    // Hide sticky buy bar when checkout section is visible to avoid overlapping
+    var checkoutSectionEl = document.getElementById('inlineCheckoutSection');
+    if (checkoutSectionEl && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var stickyBars = document.querySelectorAll('.sticky-buy-bar');
+          stickyBars.forEach(function(bar) {
+            if (entry.isIntersecting) {
+              bar.classList.add('hidden-sticky');
+            } else {
+              bar.classList.remove('hidden-sticky');
+            }
+          });
+        });
+      }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+      observer.observe(checkoutSectionEl);
     }
   });
   </script>
