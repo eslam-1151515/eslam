@@ -216,11 +216,12 @@ class ShippingGatewaysController extends Controller
     {
         $request->validate([
             'customer_code' => ['required', 'string', 'max:50'],
-            'api_password'  => ['required', 'string', 'max:100'],
+            'api_account'   => ['required', 'string', 'max:100'],
             'private_key'   => ['required', 'string', 'max:255'],
+            'is_sandbox'    => ['nullable', 'boolean'],
         ], [
             'customer_code.required' => 'يرجى إدخال كود العميل لـ J&T (Customer Code).',
-            'api_password.required'  => 'يرجى إدخال كلمة سر الربط (API Password).',
+            'api_account.required'   => 'يرجى إدخال رقم حساب الـ API (apiAccount).',
             'private_key.required'   => 'يرجى إدخال المفتاح السري (Private Key).',
         ]);
 
@@ -233,8 +234,9 @@ class ShippingGatewaysController extends Controller
                 'is_active' => true,
                 'credentials' => [
                     'customer_code' => trim($request->customer_code),
-                    'api_password'  => trim($request->api_password),
+                    'api_account'   => trim($request->api_account),
                     'private_key'   => trim($request->private_key),
+                    'is_sandbox'    => (bool) $request->boolean('is_sandbox'),
                     'connected_at'  => now()->toDateTimeString(),
                 ],
             ]

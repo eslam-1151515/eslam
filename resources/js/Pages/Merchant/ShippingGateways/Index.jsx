@@ -31,8 +31,9 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
     // J&T specific state
     const [jntForm, setJntForm] = useState({
         customer_code: '',
-        api_password: '',
+        api_account: '',
         private_key: '',
+        is_sandbox: false,
     });
 
     const handleOpenModal = (provider) => {
@@ -47,8 +48,9 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
         });
         setJntForm({
             customer_code: '',
-            api_password: '',
+            api_account: '',
             private_key: '',
+            is_sandbox: false,
         });
     };
 
@@ -499,7 +501,7 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
                             {selectedProvider.id === 'jnt' && (
                                 <div className="space-y-3">
                                     <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 leading-relaxed font-medium">
-                                        ℹ️ يتم تسليم مفاتيح الربط البرمجي من خدمة عملاء J&T Express مصر (15885 / sales@jtexpress-eg.com) بعد توقيع العقد التجاري.
+                                        ℹ️ يتم استخراج بيانات الربط من منصة J&T Open Platform (<strong>open.jtjms-eg.com</strong>) أو من خدمة عملاء J&T Express مصر.
                                     </div>
 
                                     <div>
@@ -511,7 +513,7 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
                                             required
                                             value={jntForm.customer_code}
                                             onChange={(e) => setJntForm({ ...jntForm, customer_code: e.target.value })}
-                                            placeholder="أدخل كود العميل لدى J&T..."
+                                            placeholder="مثال: J0086009084"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
                                         />
                                         {errors?.customer_code && <p className="text-xs text-red-600 mt-1">{errors.customer_code}</p>}
@@ -519,17 +521,17 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
 
                                     <div>
                                         <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                            كلمة سر الربط (API Password) <span className="text-red-500">*</span>
+                                            رقم حساب الـ API (apiAccount) <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            type="password"
+                                            type="text"
                                             required
-                                            value={jntForm.api_password}
-                                            onChange={(e) => setJntForm({ ...jntForm, api_password: e.target.value })}
-                                            placeholder="أدخل كلمة سر الـ API..."
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                            value={jntForm.api_account}
+                                            onChange={(e) => setJntForm({ ...jntForm, api_account: e.target.value })}
+                                            placeholder="أدخل رقم الـ apiAccount من صفحة الـ API..."
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
                                         />
-                                        {errors?.api_password && <p className="text-xs text-red-600 mt-1">{errors.api_password}</p>}
+                                        {errors?.api_account && <p className="text-xs text-red-600 mt-1">{errors.api_account}</p>}
                                     </div>
 
                                     <div>
@@ -545,6 +547,19 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
                                             className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
                                         />
                                         {errors?.private_key && <p className="text-xs text-red-600 mt-1">{errors.private_key}</p>}
+                                    </div>
+
+                                    <div className="pt-1 flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            id="jnt_is_sandbox"
+                                            checked={jntForm.is_sandbox}
+                                            onChange={(e) => setJntForm({ ...jntForm, is_sandbox: e.target.checked })}
+                                            className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                        />
+                                        <label htmlFor="jnt_is_sandbox" className="text-xs font-medium text-gray-700 cursor-pointer">
+                                            وضع الاختبار التجريبي (Sandbox / Demo Mode)
+                                        </label>
                                     </div>
                                 </div>
                             )}

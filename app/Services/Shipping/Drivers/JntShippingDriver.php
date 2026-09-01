@@ -6,83 +6,294 @@ use App\Contracts\ShippingProviderInterface;
 use App\Models\Order;
 use App\Models\ShippingGateway;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class JntShippingDriver implements ShippingProviderInterface
 {
-    protected string $baseUrl = 'https://api.jtexpress.com/v1';
-
+    /**
+     * Create shipment order with J&T Express Egypt Open Platform (open.jtjms-eg.com)
+     */
     public function createShipment(Order $order, ShippingGateway $gateway, array $options = []): array
     {
-        $accessToken = $gateway->credentials['access_token'] ?? $gateway->credentials['api_key'] ?? null;
+        $creds = $gateway->credentials ?? [];
+        $apiAccount = $creds['api_account'] ?? $creds['api_key'] ?? $creds['api_password'] ?? null;
+        $privateKey = $creds['private_key'] ?? null;
+        $customerCode = $creds['customer_code'] ?? 'TEST';
+        $isSandbox = (bool) ($creds['is_sandbox'] ?? false);
 
-        if (empty($accessToken)) {
+        if (empty($apiAccount) || empty($privateKey)) {
             return [
                 'success' => false,
-                'error'   => 'مفتاح الـ API لشركة J&T Express غير متوفر أو فارغ.',
+                'error'   => 'بيانات الربط لشركة J&T Express غير مكتملة (apiAccount / privateKey مطلوبين).',
             ];
         }
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => "Bearer {$accessToken}",
-                'Content-Type' => 'application/json',
-            ])->post("{$this->baseUrl}/orders/create", [
-                'eccompanyid' => 'FASTORDER',
-                'customerid' => $order->customer_name,
-                'txlogisticid' => "ORD-{$order->id}",
-                'receiver' => [
-                    'name' => $order->customer_name,
-                    'mobile' => $order->customer_phone,
-                    'address' => $order->shipping_address ?: 'Cairo, Egypt',
-                ],
-                'items' => [
-                    [
-                        'itemname' => "Order #{$order->order_number}",
-                        'number' => 1,
-                        'itemvalue' => (float) $order->total_amount,
-                    ]
-                ],
-            ]);
+        $baseUrl = $isSandbox 
+            ? 'https://demoopenapi.jtjms-eg.com/webopenplatformapi/api' 
+            : 'https://openapi.jtjms-eg.com/webopenplatformapi/api';
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $trackingNumber = $data['billcode'] ?? ('JNT-' . rand(100000, 999999));
+        $url = "{$baseUrl}/order/addOrder";
+
+        // Determine Store/Sender information
+        $senderName = \App\Models\Setting::get('site_name', 'Order Saif Store');
+        $senderPhone = \App\Models\Setting::get('contact_phone', '01015660731');
+        $senderAddress = \App\Models\Setting::get('store_address', 'القاهرة - مصر');
+        $senderCity = 'القاهرة';
+        $senderProv = 'القاهرة';
+
+        // Clean and format recipient details
+        $receiverPhone = preg_replace('/[\s\+\-]/', '', $order->customer_phone);
+        if (str_starts_with($receiverPhone, '201')) {
+            $receiverPhone = '0' . substr($receiverPhone, 2);
+        }
+
+        $receiverProv = $order->governorate ? $order->governorate->name : 'القاهرة';
+        $receiverAddress = $order->customer_address ?: ($order->shipping_address ?: $receiverProv);
+        $receiverCity = $receiverProv;
+
+        // Build items array
+        $items = [];
+        if ($order->items && $order->items->count() > 0) {
+            foreach ($order->items as $item) {
+                $items[] = [
+                    'itemName'  => $item->product_name ?? ($item->product->name ?? 'منتج'),
+                    'number'    => (int) ($item->quantity ?? 1),
+                    'itemValue' => (float) ($item->price ?? $order->total),
+                    'itemType'  => 'ITN1',
+                ];
+            }
+        } else {
+            $items[] = [
+                'itemName'  => "طلب رقم #{$order->reference_number}",
+                'number'    => 1,
+                'itemValue' => (float) $order->total,
+                'itemType'  => 'ITN1',
+            ];
+        }
+
+        $txlogisticId = "ORD_{$order->id}_{$order->reference_number}";
+
+        $payload = [
+            'customerCode'  => $customerCode,
+            'digest'        => '',
+            'serviceType'   => '01',
+            'orderType'     => '1',
+            'deliveryType'  => '04',
+            'operateType'   => '1',
+            'txlogisticId'  => $txlogisticId,
+            'goodsType'     => 'ITN1',
+            'expressType'   => 'EZ',
+            'payType'       => $order->payment_method === 'online' ? 'FREIGHT_PREPAID' : 'PP_PM',
+            'priceCurrency' => 'EGP',
+            'totalQuantity' => max(1, (int) $order->items->sum('quantity')),
+            'weight'        => 1.0,
+            'itemsValue'    => (float) $order->total,
+            'remark'        => $order->notes ?: '',
+            'sender'        => [
+                'name'        => $senderName,
+                'mobile'      => $senderPhone,
+                'phone'       => $senderPhone,
+                'countryCode' => 'EGY',
+                'prov'        => $senderProv,
+                'city'        => $senderCity,
+                'area'        => $senderCity,
+                'street'      => $senderAddress,
+                'address'     => $senderAddress,
+            ],
+            'receiver'      => [
+                'name'        => $order->customer_name,
+                'mobile'      => $receiverPhone,
+                'phone'       => $receiverPhone,
+                'countryCode' => 'EGY',
+                'prov'        => $receiverProv,
+                'city'        => $receiverCity,
+                'area'        => $receiverCity,
+                'street'      => $receiverAddress,
+                'address'     => $receiverAddress,
+            ],
+            'items'         => $items,
+        ];
+
+        $bizContent = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $timestamp = (string) round(microtime(true) * 1000);
+        $digest = base64_encode(pack("H*", md5($bizContent . $privateKey)));
+
+        try {
+            $response = Http::asForm()
+                ->withHeaders([
+                    'apiAccount'   => $apiAccount,
+                    'digest'       => $digest,
+                    'timestamp'    => $timestamp,
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ])
+                ->timeout(20)
+                ->post($url, [
+                    'bizContent' => $bizContent,
+                ]);
+
+            $resData = $response->json();
+
+            if ($response->successful() && (
+                ($resData['code'] ?? '') === '1' ||
+                ($resData['succ'] ?? false) === true ||
+                !empty($resData['data']['billCode'])
+            )) {
+                $dataNode = $resData['data'] ?? [];
+                $trackingNumber = $dataNode['billCode'] ?? ($dataNode['txlogisticId'] ?? $txlogisticId);
+                $sortingCode = $dataNode['sortingCode'] ?? ($dataNode['filterResult'] ?? '');
+
                 return [
-                    'success' => true,
+                    'success'         => true,
                     'tracking_number' => $trackingNumber,
-                    'airway_bill_url' => "https://jtexpress.com/awb/{$trackingNumber}.pdf",
-                    'status' => 'created',
-                    'cost' => 40.00,
-                    'raw_response' => $data,
+                    'airway_bill_url' => route('merchant.shipments.awb', ['tracking_number' => $trackingNumber]),
+                    'status'          => 'created',
+                    'cost'            => (float) ($order->shipping_cost ?? 60.0),
+                    'sorting_code'    => $sortingCode,
+                    'raw_response'    => $resData,
                 ];
             }
 
+            $errorMsg = $resData['msg'] ?? ($resData['message'] ?? 'فشل إنشاء الشحنة مع J&T Express');
+            Log::warning("J&T Express Shipment Creation Error for Order #{$order->id}: " . json_encode($resData, JSON_UNESCAPED_UNICODE));
+
             return [
                 'success' => false,
-                'error' => $response->json()['message'] ?? 'Failed to create J&T Express shipment',
+                'error'   => "خطأ من J&T Express: {$errorMsg}",
+                'raw'     => $resData,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            Log::error("J&T Express Shipment Exception for Order #{$order->id}: " . $e->getMessage());
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error'   => "حدث خطأ أثناء الاتصال بسيرفر J&T Express: " . $e->getMessage(),
             ];
         }
     }
 
+    /**
+     * Track shipment status from J&T Express Open Platform
+     */
     public function trackShipment(string $trackingNumber, ShippingGateway $gateway): array
     {
-        return [
-            'tracking_number' => $trackingNumber,
-            'status' => 'in_transit',
-            'events' => [
-                ['status' => 'created', 'time' => now()->subHours(4)->toIso8601String(), 'description' => 'Order created in J&T System'],
-                ['status' => 'in_transit', 'time' => now()->subHours(1)->toIso8601String(), 'description' => 'In transit to destination hub'],
-            ],
+        $creds = $gateway->credentials ?? [];
+        $apiAccount = $creds['api_account'] ?? $creds['api_key'] ?? null;
+        $privateKey = $creds['private_key'] ?? null;
+        $customerCode = $creds['customer_code'] ?? 'TEST';
+        $isSandbox = (bool) ($creds['is_sandbox'] ?? false);
+
+        if (empty($apiAccount) || empty($privateKey)) {
+            return [
+                'tracking_number' => $trackingNumber,
+                'status'          => 'in_transit',
+                'events'          => [],
+            ];
+        }
+
+        $baseUrl = $isSandbox 
+            ? 'https://demoopenapi.jtjms-eg.com/webopenplatformapi/api' 
+            : 'https://openapi.jtjms-eg.com/webopenplatformapi/api';
+
+        $url = "{$baseUrl}/logistics/trace";
+
+        $payload = [
+            'customerCode' => $customerCode,
+            'billCodes'    => $trackingNumber,
         ];
+
+        $bizContent = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $timestamp = (string) round(microtime(true) * 1000);
+        $digest = base64_encode(pack("H*", md5($bizContent . $privateKey)));
+
+        try {
+            $response = Http::asForm()
+                ->withHeaders([
+                    'apiAccount'   => $apiAccount,
+                    'digest'       => $digest,
+                    'timestamp'    => $timestamp,
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ])
+                ->timeout(15)
+                ->post($url, [
+                    'bizContent' => $bizContent,
+                ]);
+
+            $resData = $response->json();
+            $events = [];
+            $latestStatus = 'in_transit';
+
+            if (!empty($resData['data'][0]['details'])) {
+                foreach ($resData['data'][0]['details'] as $item) {
+                    $events[] = [
+                        'status'      => $item['scanType'] ?? 'UPDATE',
+                        'time'        => $item['scanTime'] ?? now()->toIso8601String(),
+                        'description' => $item['desc'] ?? '',
+                        'location'    => $item['scandata'] ?? '',
+                    ];
+                }
+            }
+
+            return [
+                'tracking_number' => $trackingNumber,
+                'status'          => $latestStatus,
+                'events'          => $events,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'tracking_number' => $trackingNumber,
+                'status'          => 'in_transit',
+                'events'          => [],
+            ];
+        }
     }
 
+    /**
+     * Cancel shipment on J&T Express
+     */
     public function cancelShipment(string $trackingNumber, ShippingGateway $gateway): bool
     {
-        return true;
+        $creds = $gateway->credentials ?? [];
+        $apiAccount = $creds['api_account'] ?? null;
+        $privateKey = $creds['private_key'] ?? null;
+        $customerCode = $creds['customer_code'] ?? 'TEST';
+        $isSandbox = (bool) ($creds['is_sandbox'] ?? false);
+
+        if (empty($apiAccount) || empty($privateKey)) {
+            return false;
+        }
+
+        $baseUrl = $isSandbox 
+            ? 'https://demoopenapi.jtjms-eg.com/webopenplatformapi/api' 
+            : 'https://openapi.jtjms-eg.com/webopenplatformapi/api';
+
+        $url = "{$baseUrl}/order/cancelOrder";
+
+        $payload = [
+            'customerCode' => $customerCode,
+            'billCode'     => $trackingNumber,
+            'reason'       => 'Cancelled by merchant in OrderSaif',
+        ];
+
+        $bizContent = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $timestamp = (string) round(microtime(true) * 1000);
+        $digest = base64_encode(pack("H*", md5($bizContent . $privateKey)));
+
+        try {
+            $response = Http::asForm()
+                ->withHeaders([
+                    'apiAccount'   => $apiAccount,
+                    'digest'       => $digest,
+                    'timestamp'    => $timestamp,
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ])
+                ->timeout(15)
+                ->post($url, [
+                    'bizContent' => $bizContent,
+                ]);
+
+            $resData = $response->json();
+            return (($resData['code'] ?? '') === '1' || ($resData['succ'] ?? false) === true);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }
