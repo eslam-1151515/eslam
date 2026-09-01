@@ -791,7 +791,7 @@
 
           const cartItemName = finalQty > 1 ? `${btn.dataset.name} (${finalQty} قطع)` : btn.dataset.name;
 
-          window.BirdCart.addToCart({
+          const cartItem = {
             id: +btn.dataset.id,
             name: cartItemName,
             price: totalBundlePrice,
@@ -803,7 +803,13 @@
             selectedColor: combinedColor,
             options: combinedOptions,
             piecesSelections: piecesSelections,
-          });
+          };
+
+          if (isBuyNow) {
+            window.BirdCart.saveCart([cartItem]);
+          } else {
+            window.BirdCart.addToCart(cartItem);
+          }
           window.BirdCart.updateCartCount();
         }
 
