@@ -112,6 +112,41 @@ ${totalsBlock}${shippingBlock}`;
         return `https://api.whatsapp.com/send/?phone=%2B${cleanPhone}&text=${encodedText}`;
     };
 
+    const parseOrderNotes = (rawNotes) => {
+        if (!rawNotes) return { customerNote: '', systemLogs: [] };
+        const lines = String(rawNotes).split('\n');
+        const customerLines = [];
+        const systemLogs = [];
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            if (
+                trimmed.includes('[واتساب]') || 
+                trimmed.includes('[الشحن]') || 
+                trimmed.includes('[النظام]') ||
+                trimmed.startsWith('💬') ||
+                trimmed.startsWith('✅') ||
+                trimmed.startsWith('❌') ||
+                trimmed.startsWith('⚠️') ||
+                trimmed.startsWith('📦') ||
+                trimmed.startsWith('🔄') ||
+                trimmed.startsWith('🔔')
+            ) {
+                systemLogs.push(trimmed);
+            } else {
+                customerLines.push(trimmed);
+            }
+        });
+
+        return {
+            customerNote: customerLines.join('\n').trim(),
+            systemLogs: systemLogs
+        };
+    };
+
+    const { customerNote, systemLogs } = parseOrderNotes(order.notes);
+
     return (
         <MerchantLayout title={`تفاصيل الطلب ${order.reference_number}`}>
             <Head title={`طلب ${order.reference_number}`} />
@@ -275,19 +310,30 @@ ${totalsBlock}${shippingBlock}`;
                             </div>
                         </div>
 
-                        {/* 5. ملاحظات وسجل الطلب */}
+                        {/* 5. سجل نشاط وتتبع الطلب */}
                         <div className="order-5 w-full bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-3">
-                            <h4 className="font-bold text-gray-900 text-sm flex items-center gap-2">
-                                <span>📝</span>
-                                <span>ملاحظات وسجل الطلب</span>
+                            <h4 className="font-bold text-gray-900 text-sm flex items-center justify-between">
+                                <span className="flex items-center gap-2">
+                                    <span>📋</span>
+                                    <span>سجل وتتبع الطلب</span>
+                                </span>
+                                {systemLogs.length > 0 && (
+                                    <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full">
+                                        {systemLogs.length} حركة مسجلة
+                                    </span>
+                                )}
                             </h4>
-                            {order.notes ? (
-                                <p className="text-sm text-gray-700 bg-gray-50 rounded-xl p-3.5 border border-gray-100 leading-relaxed whitespace-pre-line">
-                                    {order.notes}
-                                </p>
+                            {systemLogs.length > 0 ? (
+                                <div className="space-y-2 bg-gray-50 rounded-xl p-3.5 border border-gray-100 divide-y divide-gray-200/60">
+                                    {systemLogs.map((log, lIdx) => (
+                                        <p key={lIdx} className="text-xs text-gray-700 leading-relaxed pt-2 first:pt-0">
+                                            {log}
+                                        </p>
+                                    ))}
+                                </div>
                             ) : (
                                 <p className="text-xs text-gray-400 bg-gray-50 rounded-xl p-3 border border-gray-100">
-                                    لا توجد ملاحظات مسجلة على هذا الطلب حتى الآن.
+                                    لا توجد حركات نظام مسجلة على هذا الطلب حتى الآن.
                                 </p>
                             )}
                         </div>
@@ -494,6 +540,19 @@ ${totalsBlock}${shippingBlock}`;
                                     <span className="text-xs text-gray-400 block mb-0.5">العنوان:</span>
                                     <span className="text-gray-700 leading-relaxed block">{order.customer_address}</span>
                                 </div>
+                                {customerNote && (
+                                    <div className="pt-3 border-t border-gray-100">
+                                        <div className="bg-amber-50/90 border border-amber-200 rounded-xl p-3 space-y-1 shadow-sm">
+                                            <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                                                <span>📝</span>
+                                                <span>ملاحظات العميل:</span>
+                                            </span>
+                                            <p className="text-xs text-amber-950 font-medium leading-relaxed whitespace-pre-line">
+                                                {customerNote}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

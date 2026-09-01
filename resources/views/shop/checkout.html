@@ -92,10 +92,11 @@
           </div>
 
           <!-- طريقة الدفع -->
-          <div>
+          <input type="hidden" name="payment_method" value="cod">
+          <div id="paymentMethodsSection" style="display:none;">
             <label style="display:block;margin-bottom:8px;font-weight:700;color:#09090b;">طريقة الدفع</label>
             <div style="border:2px solid #09090b;background:#f4f4f5;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
-              <input type="radio" name="payment_method" value="cod" checked id="payCod" style="accent-color:#09090b;width:18px;height:18px;">
+              <input type="radio" name="payment_method_choice" value="cod" checked id="payCod" style="accent-color:#09090b;width:18px;height:18px;">
               <label for="payCod" style="margin:0;font-weight:800;color:#09090b;cursor:pointer;display:flex;align-items:center;gap:8px;">
                 <i class="fa fa-money-bill-wave" style="color:#09090b;"></i>
                 الدفع عند الاستلام
