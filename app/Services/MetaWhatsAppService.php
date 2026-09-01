@@ -132,6 +132,9 @@ class MetaWhatsAppService
                 'notes'                  => trim(($order->notes ? $order->notes . "\n" : '') . "💬 [واتساب] تم إرسال رسالة التأكيد عبر الواتساب في {$sentTime->format('Y-m-d H:i:s')} (معرف الرسالة: {$simulatedMsgId})"),
             ]);
 
+            // Deduct cost from tenant's wallet balance
+            $this->chargeTenantForWhatsApp($order);
+
             Log::info("WhatsApp Confirmation simulated for Order #{$order->reference_number} to {$recipientPhone}");
 
             return [
@@ -204,6 +207,9 @@ class MetaWhatsAppService
                     'whatsapp_charge_amount' => $this->costPerOrder,
                     'notes'                  => trim(($order->notes ? $order->notes . "\n" : '') . "💬 [واتساب] تم إرسال رسالة التأكيد عبر الواتساب في {$sentTime->format('Y-m-d H:i:s')} (معرف الرسالة: {$messageId})"),
                 ]);
+
+                // Deduct cost from tenant's wallet balance
+                $this->chargeTenantForWhatsApp($order);
 
                 return [
                     'success'    => true,
@@ -313,4 +319,32 @@ class MetaWhatsAppService
             ];
         }
     }
+
+    /**
+     * Deduct WhatsApp cost from tenant wallet and record transaction.
+     */
+    protected function chargeTenantForWhatsApp(Order $order): void
+    {
+        try {
+            if (!$order->tenant_id || $this->costPerOrder <= 0) {
+                return;
+            }
+
+            $tenant = \App\Models\Tenant::find($order->tenant_id);
+            if ($tenant) {
+                $tenant->decrement('wallet_balance', (int) $this->costPerOrder);
+
+                \App\Models\WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => $this->costPerOrder,
+                    'type'        => 'debit',
+                    'description' => "رسوم إرسال رسالة تأكيد واتساب للطلب #{$order->reference_number}",
+                    'created_by'  => null,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::error("Failed to deduct wallet balance for Order #{$order->reference_number}: " . $e->getMessage());
+        }
+    }
 }
+
