@@ -80,8 +80,8 @@ class MetaWhatsAppService
             ];
         }
 
-        // Format Items list (with all generic variants, colors, sizes, and custom options)
-        $itemsText = '';
+        // Format Items list (Single line separated by | because Meta Cloud API rejects newlines in parameters with code #132018)
+        $itemsList = [];
         if (is_array($order->items)) {
             foreach ($order->items as $item) {
                 $name = $item['name'] ?? $item['product_name'] ?? 'منتج';
@@ -113,11 +113,19 @@ class MetaWhatsAppService
                 }
 
                 $variantStr = !empty($variantDetails) ? ' [' . implode(' - ', array_unique($variantDetails)) . ']' : '';
-
-                $itemsText .= "• {$name}{$variantStr} (العدد: {$qty}) - " . number_format($price * $qty) . " ج.م\n";
+                $itemsList[] = "{$name}{$variantStr} (عدد: {$qty}) - " . number_format($price * $qty) . " ج.م";
             }
         }
-        $itemsText = trim($itemsText) ?: 'تفاصيل الطلب';
+        $itemsText = !empty($itemsList) ? implode(' | ', $itemsList) : 'تفاصيل الطلب';
+
+        // Sanitize all parameters against newlines, tabs, or multiple spaces
+        $cleanName = preg_replace('/\s+/', ' ', trim(preg_replace('/[\r\n\t]+/', ' ', (string) ($order->customer_name ?: 'عميلنا العزيز'))));
+        $cleanRef = preg_replace('/\s+/', ' ', trim(preg_replace('/[\r\n\t]+/', ' ', (string) ($order->reference_number ?: $order->id))));
+        $cleanItems = preg_replace('/\s+/', ' ', trim(preg_replace('/[\r\n\t]+/', ' ', $itemsText)));
+        $cleanGov = preg_replace('/\s+/', ' ', trim(preg_replace('/[\r\n\t]+/', ' ', (string) ($order->governorate ?: 'غير محدد'))));
+        $cleanAddress = preg_replace('/\s+/', ' ', trim(preg_replace('/[\r\n\t]+/', ' ', (string) ($order->customer_address ?: 'العنوان مسجل لدى المتجر'))));
+        $cleanShipping = (string) number_format((float) ($order->shipping_cost ?: 0)) . ' ج.م (' . $cleanGov . ')';
+        $cleanTotal = (string) number_format((float) ($order->total ?: 0)) . ' ج.م';
 
         // Check if in Test/Simulated Mode
         if (!$this->isConfigured()) {
@@ -162,12 +170,12 @@ class MetaWhatsAppService
                         [
                             'type'       => 'body',
                             'parameters' => [
-                                ['type' => 'text', 'text' => $order->customer_name ?: 'عميلنا العزيز'],
-                                ['type' => 'text', 'text' => $order->reference_number],
-                                ['type' => 'text', 'text' => $itemsText],
-                                ['type' => 'text', 'text' => (string) number_format($order->shipping_cost) . ' ج.م (' . $order->governorate . ')'],
-                                ['type' => 'text', 'text' => (string) number_format($order->total) . ' ج.م'],
-                                ['type' => 'text', 'text' => $order->customer_address],
+                                ['type' => 'text', 'text' => $cleanName],
+                                ['type' => 'text', 'text' => $cleanRef],
+                                ['type' => 'text', 'text' => $cleanItems],
+                                ['type' => 'text', 'text' => $cleanShipping],
+                                ['type' => 'text', 'text' => $cleanTotal],
+                                ['type' => 'text', 'text' => $cleanAddress],
                             ]
                         ],
                         [

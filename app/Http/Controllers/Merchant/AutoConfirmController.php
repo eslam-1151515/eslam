@@ -36,7 +36,10 @@ class AutoConfirmController extends Controller
         // Order WhatsApp stats
         $ordersQuery = Order::where('tenant_id', $tenantId);
         $totalOrders = (clone $ordersQuery)->count();
-        $totalMessagesSent = (clone $ordersQuery)->where('whatsapp_status', '!=', 'none')->count();
+        $totalMessagesSent = (clone $ordersQuery)->where('whatsapp_status', '!=', 'none')
+            ->whereNotIn('whatsapp_status', ['failed', 'no_whatsapp'])
+            ->count();
+
         $confirmedViaWa = (clone $ordersQuery)->where(function($q) {
             $q->where('whatsapp_status', 'confirmed')
               ->orWhere('notes', 'like', '%تأكيد بواسطة الواتس%');
