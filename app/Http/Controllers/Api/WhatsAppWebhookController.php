@@ -112,20 +112,32 @@ class WhatsAppWebhookController extends Controller
             return;
         }
 
-        // Try extracting order ID from payload (e.g. CONFIRM_ORDER_48)
-        if (preg_match('/^(CONFIRM|CANCEL)_ORDER_(\d+)$/i', $payloadAction, $matches)) {
+        // 1. Try matching Order directly by Meta context message ID (wamid of sent template)
+        $contextMsgId = $message['context']['id'] ?? null;
+        if ($contextMsgId) {
+            $order = Order::where('whatsapp_message_id', $contextMsgId)->first();
+        }
+
+        // 2. Try extracting order ID from payload (e.g. CONFIRM_ORDER_48)
+        if (preg_match('/^(CONFIRM|CANCEL)_ORDER_(\d+)$/i', (string) $payloadAction, $matches)) {
             $actionType = strtoupper($matches[1]);
-            $orderId = (int) $matches[2];
-            $order = Order::find($orderId);
+            if (!$order) {
+                $orderId = (int) $matches[2];
+                $order = Order::find($orderId);
+            }
         } else {
-            // Find latest pending order matching customer phone
-            $formattedPhoneSuffix = substr($fromPhone, -9); // last 9 digits
+            $actionType = str_contains((string)$payloadAction, 'CONFIRM') 
+                ? 'CONFIRM' 
+                : (str_contains((string)$payloadAction, 'CANCEL') ? 'CANCEL' : $this->parseTextToIntent((string)$payloadAction));
+        }
+
+        // 3. Fallback: Match by customer phone number
+        if (!$order) {
+            $formattedPhoneSuffix = substr($fromPhone, -9);
             $order = Order::where('customer_phone', 'like', "%{$formattedPhoneSuffix}")
                 ->where('whatsapp_status', 'pending')
                 ->latest()
                 ->first();
-
-            $actionType = str_contains($payloadAction, 'CONFIRM') ? 'CONFIRM' : (str_contains($payloadAction, 'CANCEL') ? 'CANCEL' : null);
         }
 
         if (!$order) {
