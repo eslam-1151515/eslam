@@ -292,6 +292,8 @@
                 const orderData = JSON.parse(sessionStorage.getItem('orderSuccess') || '{}');
                 const totalValue = orderData.total || 0;
                 const items = orderData.items || [];
+                const ordId = orderData.order_id || orderData.id || urlParams.get('id') || urlParams.get('order_id') || '';
+                const ordRef = orderData.reference_number || urlParams.get('ref') || referenceNumber;
 
                 const fbPixelId = (window.__SITE_SETTINGS__ && window.__SITE_SETTINGS__.facebook_pixel_id) || '';
                 if (fbPixelId && typeof fbq !== 'undefined') {
@@ -299,16 +301,18 @@
                 }
                 
                 if (typeof window.trackPurchaseEvent === 'function') {
-                    window.trackPurchaseEvent(totalValue, items, referenceNumber);
+                    window.trackPurchaseEvent(totalValue, items, ordId, ordRef);
                 } else {
+                    const dedupId = (ordId && ordRef) ? ('ORDER_' + ordId + '_' + ordRef) : ('ORDER_' + ordRef);
                     if (typeof fbq !== 'undefined') {
-                        fbq('track', 'Purchase', { value: Number(totalValue), currency: 'EGP' });
+                        fbq('track', 'Purchase', { value: Number(totalValue), currency: 'EGP' }, { eventID: dedupId });
                     }
                     if (typeof ttq !== 'undefined') {
-                        ttq.track('PlaceAnOrder', { value: Number(totalValue), currency: 'EGP' });
+                        ttq.track('PlaceAnOrder', { value: Number(totalValue), currency: 'EGP', event_id: dedupId });
+                        ttq.track('CompletePayment', { value: Number(totalValue), currency: 'EGP', event_id: dedupId });
                     }
                     if (typeof snaptr !== 'undefined') {
-                        snaptr('track', 'PURCHASE', { price: Number(totalValue), currency: 'EGP' });
+                        snaptr('track', 'PURCHASE', { price: Number(totalValue), currency: 'EGP', event_tag: dedupId, transaction_id: dedupId });
                     }
                 }
                 sessionStorage.removeItem('orderSuccess');

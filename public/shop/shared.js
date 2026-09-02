@@ -54,12 +54,23 @@
     var val = Number(totalValue) || 0;
     var contentIds = (items || []).map(function(i) { return String(i.id || i.product_id || ''); });
 
-    var eventId = String(orderId || '');
-    if (orderRef && orderId && !eventId.startsWith('ORDER_')) {
+    var eventId = '';
+    if (orderId && orderRef) {
       eventId = 'ORDER_' + orderId + '_' + orderRef;
-    } else if (orderRef && !orderId) {
+    } else if (orderId && String(orderId).startsWith('ORDER_')) {
+      eventId = String(orderId);
+    } else if (orderRef) {
       eventId = 'ORDER_' + orderRef;
+    } else if (orderId) {
+      eventId = 'ORDER_' + orderId;
     }
+
+    // Prevention of duplicate firing on the same browser page session
+    var trackedKey = '__ordersaif_tracked_' + (eventId || ('val_' + val));
+    if (window[trackedKey]) {
+      return;
+    }
+    window[trackedKey] = true;
 
     // 1. Facebook Pixel (Meta)
     if (typeof fbq !== 'undefined') {

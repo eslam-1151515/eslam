@@ -424,6 +424,7 @@
 
         if (result.success) {
           sessionStorage.setItem('orderSuccess', JSON.stringify({
+            order_id:         result.data.id || result.data.order_id || '',
             reference_number: result.data.reference_number,
             customer_name:  name,
             customer_phone: phone,
@@ -440,7 +441,8 @@
           localStorage.removeItem('ordersaif_coupon_type');
           localStorage.removeItem('ordersaif_coupon_value');
           localStorage.removeItem('ordersaif_coupon_discount');
-          window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number;
+          var ordId = result.data.id || result.data.order_id || '';
+          window.location.href = '/shop/order-success.html?ref=' + result.data.reference_number + (ordId ? '&id=' + ordId : '');
         } else {
           var errorDetails = '';
           if (result.errors) {

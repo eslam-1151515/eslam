@@ -1851,34 +1851,17 @@
           });
           var data = await res.json();
           if (data.success) {
+            var ordId = data.data.order_id || data.data.id || '';
+            var ordRef = data.data.reference_number;
             try {
               sessionStorage.setItem('orderSuccess', JSON.stringify({
-                order_id: data.data.id,
-                reference_number: data.data.reference_number,
+                order_id: ordId,
+                reference_number: ordRef,
                 subtotal: payload.subtotal,
                 shipping_cost: payload.shipping_cost,
                 total: data.data.total || payload.total,
                 items: payload.items
               }));
-            } catch(e) {}
-            try {
-              var ordId = data.data.order_id || data.data.id;
-              var ordRef = data.data.reference_number;
-              if (typeof window.trackPurchaseEvent === 'function') {
-                window.trackPurchaseEvent(payload.total, payload.items, ordId, ordRef);
-              } else {
-                var dedupId = 'ORDER_' + ordId + '_' + ordRef;
-                if (typeof fbq !== 'undefined') {
-                  fbq('track', 'Purchase', { value: Number(payload.total), currency: 'EGP' }, { eventID: dedupId });
-                }
-                if (typeof ttq !== 'undefined') {
-                  ttq.track('PlaceAnOrder', { value: Number(payload.total), currency: 'EGP', event_id: dedupId });
-                  ttq.track('CompletePayment', { value: Number(payload.total), currency: 'EGP', event_id: dedupId });
-                }
-                if (typeof snaptr !== 'undefined') {
-                  snaptr('track', 'PURCHASE', { price: Number(payload.total), currency: 'EGP', event_tag: dedupId, transaction_id: dedupId });
-                }
-              }
             } catch(e) {}
             if(window.BirdCart) {
                 if(typeof window.BirdCart.clearCart === 'function') {
@@ -1888,8 +1871,8 @@
                     window.BirdCart.updateCartCount();
                 }
             }
-            await new Promise(function(r) { setTimeout(r, 250); });
-            window.location.href = '/shop/order-success.html?ref=' + data.data.reference_number;
+            await new Promise(function(r) { setTimeout(r, 200); });
+            window.location.href = '/shop/order-success.html?ref=' + ordRef + (ordId ? '&id=' + ordId : '');
           } else {
             var errorDetails = '';
             if (data.errors) {
