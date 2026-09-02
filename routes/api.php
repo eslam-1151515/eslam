@@ -19,9 +19,9 @@ use App\Http\Controllers\Api\v1\CustomerController;
 |
 */
 
-// Orders API endpoint (no authentication required) - للواجهة الأمامية
+// Orders API endpoint (no authentication required) - للواجهة الأمامية مع حماية البوتات والـ Rate Limit
 Route::post('/orders', [OrderController::class, 'storeApi'])
-    ->middleware([\App\Http\Middleware\IdentifyTenant::class])
+    ->middleware([\App\Http\Middleware\IdentifyTenant::class, \App\Http\Middleware\GhostOrderBlockerMiddleware::class, 'throttle:60,1'])
     ->name('api.orders.store');
 
 // Meta WhatsApp Webhook endpoints (Verification challenge + Event callbacks)
