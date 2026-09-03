@@ -1136,61 +1136,87 @@ export default function OrdersIndex({
                             </button>
                         </div>
 
-                        <div className="text-sm text-gray-600 space-y-3">
-                            <p>
-                                أنت على وشك إرسال <strong className="text-indigo-600 font-extrabold text-base">{selectedIds.length}</strong> طلب إلى شركة الشحن وتوليد بوليصات الشحن تلقائياً.
-                            </p>
-                            <div>
-                                <label className="block text-xs font-bold text-gray-700 mb-1.5">شركة الشحن:</label>
-                                <select
-                                    value={selectedProvider}
-                                    onChange={(e) => setSelectedProvider(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
-                                >
-                                    {shippingGateways && shippingGateways.length > 0 ? (
-                                        shippingGateways.map(g => (
-                                            <option key={g.id} value={g.provider}>
-                                                {g.name || g.provider.toUpperCase()}
-                                            </option>
-                                        ))
-                                    ) : (
-                                        <>
-                                            <option value="jnt">J&T Express</option>
-                                            <option value="bosta">بوسطة (Bosta)</option>
-                                            <option value="aramex">أرامكس (Aramex)</option>
-                                        </>
-                                    )}
-                                </select>
+                        {(!shippingGateways || shippingGateways.length === 0) ? (
+                            /* حالة: لا توجد شركات شحن مربوطة */
+                            <div className="text-center space-y-4 py-2">
+                                <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-amber-100">
+                                    🔗
+                                </div>
+                                <div>
+                                    <p className="font-bold text-gray-900 text-base mb-1">لم تقم بربط أي شركة شحن بعد</p>
+                                    <p className="text-sm text-gray-500 leading-relaxed">
+                                        لإرسال الطلبات لشركة الشحن تلقائياً، يجب عليك أولاً ربط شركة شحن من إعدادات المتجر.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-2 pt-1">
+                                    <Link
+                                        href="/admin/shipping-gateways"
+                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-extrabold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+                                    >
+                                        <span>🚚</span>
+                                        <span>ربط شركة شحن الآن</span>
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowShipModal(false)}
+                                        className="w-full py-2.5 text-xs font-bold text-gray-500 hover:text-gray-700 cursor-pointer"
+                                    >
+                                        إغلاق
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            /* حالة: يوجد شركات شحن مربوطة */
+                            <>
+                                <div className="text-sm text-gray-600 space-y-3">
+                                    <p>
+                                        أنت على وشك إرسال <strong className="text-indigo-600 font-extrabold text-base">{selectedIds.length}</strong> طلب إلى شركة الشحن وتوليد بوليصات الشحن تلقائياً.
+                                    </p>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1.5">شركة الشحن:</label>
+                                        <select
+                                            value={selectedProvider}
+                                            onChange={(e) => setSelectedProvider(e.target.value)}
+                                            className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
+                                        >
+                                            {shippingGateways.map(g => (
+                                                <option key={g.id} value={g.provider}>
+                                                    {g.name || g.provider.toUpperCase()}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
 
-                        <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
-                            <button
-                                type="button"
-                                onClick={() => setShowShipModal(false)}
-                                className="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100 cursor-pointer"
-                            >
-                                إلغاء
-                            </button>
-                            <button
-                                type="button"
-                                disabled={isShipping}
-                                onClick={handleConfirmBulkShip}
-                                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-2 disabled:opacity-50 cursor-pointer"
-                            >
-                                {isShipping ? (
-                                    <>
-                                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                                        </svg>
-                                        <span>جاري إرسال الشحنات...</span>
-                                    </>
-                                ) : (
-                                    <span>تأكيد الإرسال الآن 🚀</span>
-                                )}
-                            </button>
-                        </div>
+                                <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowShipModal(false)}
+                                        className="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100 cursor-pointer"
+                                    >
+                                        إلغاء
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={isShipping}
+                                        onClick={handleConfirmBulkShip}
+                                        className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                                    >
+                                        {isShipping ? (
+                                            <>
+                                                <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                                </svg>
+                                                <span>جاري إرسال الشحنات...</span>
+                                            </>
+                                        ) : (
+                                            <span>تأكيد الإرسال الآن 🚀</span>
+                                        )}
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
