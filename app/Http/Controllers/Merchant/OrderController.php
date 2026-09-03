@@ -214,7 +214,7 @@ class OrderController extends Controller
             ->toArray();
 
         $productsList = Product::orderBy('name')
-            ->get(['id', 'name', 'price', 'main_image_path', 'colors', 'sizes', 'options', 'stock_quantity'])
+            ->get(['id', 'name', 'price', 'main_image_path', 'colors', 'sizes', 'stock'])
             ->map(function ($p) {
                 return [
                     'id'               => $p->id,
@@ -223,8 +223,8 @@ class OrderController extends Controller
                     'image_url'        => Product::resolveImageUrl($p->main_image_path) ?: 'https://dummyimage.com/150x150/f3f4f6/9ca3af&text=منتج',
                     'colors'           => is_array($p->colors) ? $p->colors : (json_decode($p->colors ?? '[]', true) ?: []),
                     'sizes'            => is_array($p->sizes) ? $p->sizes : (json_decode($p->sizes ?? '[]', true) ?: []),
-                    'options'          => is_array($p->options) ? $p->options : (json_decode($p->options ?? '[]', true) ?: []),
-                    'stock_quantity'   => $p->stock_quantity,
+                    'options'          => [],
+                    'stock'            => $p->stock,
                 ];
             });
 
