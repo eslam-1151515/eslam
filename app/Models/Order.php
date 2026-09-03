@@ -110,15 +110,21 @@ class Order extends Model
                 try {
                     $tenant = \App\Models\Tenant::find($order->tenant_id);
                     if ($tenant) {
-                        if ($tenant->isCommissionPlan()) {
-                            // Commission Plan: Deduct 2 EGP per new order if wallet balance is available
+                        if ($tenant->isMonthlyPlan()) {
+                            // Monthly Unlimited Plan: 100% UNLOCKED & FREE
+                            static::where('id', $order->id)->update([
+                                'is_unlocked' => true,
+                                'unlocked_at' => now(),
+                            ]);
+                        } else {
+                            // Free Trial Plan & Commission Plan: Deduct 2 EGP per new order if wallet balance is available
                             if (($tenant->wallet_balance ?? 0) >= 2) {
                                 $tenant->decrement('wallet_balance', 2);
                                 \App\Models\WalletTransaction::create([
                                     'tenant_id'   => $tenant->id,
                                     'amount'      => 2,
                                     'type'        => 'debit',
-                                    'description' => 'رسوم الطلب رقم (' . $order->reference_number . ')',
+                                    'description' => 'رسوم فتح الطلب رقم (' . $order->reference_number . ')',
                                 ]);
                                 static::where('id', $order->id)->update([
                                     'is_unlocked' => true,
@@ -130,12 +136,6 @@ class Order extends Model
                                     'is_unlocked' => false,
                                 ]);
                             }
-                        } else {
-                            // Non-commission Plan (Free / Monthly / Yearly): All new orders are 100% UNLOCKED & FREE
-                            static::where('id', $order->id)->update([
-                                'is_unlocked' => true,
-                                'unlocked_at' => now(),
-                            ]);
                         }
                     }
                 } catch (\Exception $e) {

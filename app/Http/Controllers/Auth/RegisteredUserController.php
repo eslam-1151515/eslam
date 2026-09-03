@@ -82,6 +82,9 @@ class RegisteredUserController extends Controller
                 'permissions' => json_encode(['*']),
             ]);
 
+            // 5. Activate Free Trial Subscription with 100 EGP Gift & Open Duration
+            Tenant::setupNewTenantFreeTrial($tenant);
+
             return $user;
         });
 

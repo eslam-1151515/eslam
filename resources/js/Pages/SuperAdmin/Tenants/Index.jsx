@@ -46,11 +46,10 @@ export default function Index({ tenants, filters, plans, planCounts }) {
 
     // Helper to render status badge
     const renderStatusBadge = (tenant, planObj) => {
-        const isCommission = planObj && (planObj.slug === 'commission' || planObj.name?.includes('عمولة'));
-        const isExpired = !isCommission && (
+        const isMonthly = planObj && (planObj.slug === 'monthly' || planObj.name?.includes('شهرية'));
+        const isExpired = isMonthly && (
             tenant.subscription_status === 'expired' ||
-            (tenant.subscription_ends_at && new Date(tenant.subscription_ends_at) < new Date()) ||
-            (tenant.trial_ends_at && new Date(tenant.trial_ends_at) < new Date() && !tenant.subscription_ends_at)
+            (tenant.subscription_ends_at && new Date(tenant.subscription_ends_at) < new Date())
         );
 
         if (!tenant.is_active) {
@@ -380,7 +379,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                             const activeSub = tenant.subscriptions?.find(s => s.status === 'active') || tenant.subscriptions?.[tenant.subscriptions?.length - 1];
                             const freePlan = plans?.find(p => p.slug === 'free' || p.name?.includes('مجانية')) || plans?.[0];
                             const planToShow = activeSub?.plan || (tenant.subscription_status === 'trial' ? freePlan : null);
-                            const isCommission = planToShow && (planToShow.slug === 'commission' || planToShow.name?.includes('عمولة') || planToShow.name?.includes('المحفظة'));
+                            const isMonthly = planToShow && (planToShow.slug === 'monthly' || planToShow.name?.includes('شهرية'));
 
                             return (
                                 <div key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
@@ -442,7 +441,7 @@ export default function Index({ tenants, filters, plans, planCounts }) {
                                         <div className="col-span-2">
                                             {renderPlanBadge(planToShow, tenant.subscription_status)}
                                             <div className="text-xs text-gray-500 mt-1 font-mono">
-                                                {isCommission ? '-' : formatDate(tenant.subscription_ends_at)}
+                                                {isMonthly ? formatDate(tenant.subscription_ends_at) : '-'}
                                             </div>
                                         </div>
 

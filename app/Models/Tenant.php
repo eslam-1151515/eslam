@@ -192,4 +192,57 @@ class Tenant extends Model
         }
         return false;
     }
+
+    /**
+     * Check if tenant is currently on Monthly Unlimited Plan
+     */
+    public function isMonthlyPlan(): bool
+    {
+        $activeSub = $this->subscriptions()->where('status', 'active')->latest()->first();
+        if ($activeSub && $activeSub->plan) {
+            return $activeSub->plan->slug === 'monthly' || str_contains(mb_strtolower($activeSub->plan->name ?? ''), 'شهرية');
+        }
+        return false;
+    }
+
+    /**
+     * Setup initial free trial, 100 EGP opening gift, and open period for new tenant
+     */
+    public static function setupNewTenantFreeTrial(self $tenant): void
+    {
+        $tenant->update([
+            'wallet_balance'       => 100.00,
+            'subscription_status'  => 'trial',
+            'trial_ends_at'        => null,
+            'subscription_ends_at' => null,
+            'is_active'            => true,
+        ]);
+
+        $freePlan = SubscriptionPlan::where('slug', 'free')->first()
+            ?? SubscriptionPlan::where('is_active', true)->first()
+            ?? SubscriptionPlan::first();
+
+        if ($freePlan) {
+            Subscription::updateOrCreate(
+                ['tenant_id' => $tenant->id, 'status' => 'active'],
+                [
+                    'plan_id'       => $freePlan->id,
+                    'billing_cycle' => 'monthly',
+                    'price'         => 0,
+                    'starts_at'     => now(),
+                    'ends_at'       => null,
+                    'trial_ends_at' => null,
+                ]
+            );
+        }
+
+        if (!\App\Models\WalletTransaction::where('tenant_id', $tenant->id)->where('type', 'credit')->exists()) {
+            \App\Models\WalletTransaction::create([
+                'tenant_id'   => $tenant->id,
+                'amount'      => 100.00,
+                'type'        => 'credit',
+                'description' => 'رصيد هدية افتتاحي عند التسجيل 🎁',
+            ]);
+        }
+    }
 }

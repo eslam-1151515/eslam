@@ -216,22 +216,37 @@ class TenantController extends Controller
             $planId = $request->input('plan_id') 
                 ?? (SubscriptionPlan::where('slug', 'free')->value('id') ?? SubscriptionPlan::value('id'));
             
+            $plan = SubscriptionPlan::find($planId);
+            $isMonthly = $plan && ($plan->slug === 'monthly' || str_contains(mb_strtolower($plan->name ?? ''), 'شهرية'));
+
+            $endsAt = null;
+            if ($isMonthly) {
+                $endsAt = $request->ends_at ? \Carbon\Carbon::parse($request->ends_at) : now()->addMonth();
+            }
+
             if ($planId) {
-                $endsAt = $request->ends_at ? \Carbon\Carbon::parse($request->ends_at) : now()->addDays(7);
                 Subscription::create([
                     'tenant_id' => $tenant->id,
                     'plan_id' => $planId,
                     'status' => 'active',
                     'billing_cycle' => 'monthly',
-                    'price' => 0,
+                    'price' => $isMonthly ? ($plan->price_monthly ?? 4000) : 0,
                     'starts_at' => now(),
                     'ends_at' => $endsAt,
-                    'trial_ends_at' => $endsAt,
+                    'trial_ends_at' => null,
                 ]);
                 $tenant->update([
-                    'subscription_status' => 'trial',
+                    'subscription_status' => $isMonthly ? 'active' : 'trial',
                     'subscription_ends_at' => $endsAt,
-                    'trial_ends_at' => $endsAt,
+                    'trial_ends_at' => null,
+                    'wallet_balance' => 100.00,
+                ]);
+
+                \App\Models\WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => 100.00,
+                    'type'        => 'credit',
+                    'description' => 'رصيد هدية افتتاحي عند إنشاء المتجر 🎁',
                 ]);
             }
         });

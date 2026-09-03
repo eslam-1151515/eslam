@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,6 @@ return new class extends Migration
                 'features'     => [
                     '100 ج.م رصيد هدية افتتاحي في المحفظة',
                     'متجر إلكتروني فائق السرعة ومتكامل',
-                    'مدة مفتوحة بدون انتهاء تجربة 7 أيام',
                     'تجربة فتح ومعاينة الطلبات مجاناً',
                     '0% عمولة على المبيعات',
                     'ميزة الأوتوكونفرم تتفعل بعد أول شحن فعلي للمحفظة',
