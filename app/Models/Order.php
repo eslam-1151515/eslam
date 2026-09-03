@@ -34,6 +34,8 @@ class Order extends Model
         'status',
         'is_unlocked',
         'unlocked_at',
+        'is_printed',
+        'printed_at',
         'notes',
         'whatsapp_status',
         'whatsapp_message_id',
@@ -52,12 +54,22 @@ class Order extends Model
         'total' => 'integer',
         'is_unlocked' => 'boolean',
         'unlocked_at' => 'datetime',
+        'is_printed' => 'boolean',
+        'printed_at' => 'datetime',
         'whatsapp_sent_at' => 'datetime',
         'whatsapp_response_at' => 'datetime',
         'whatsapp_charge_amount' => 'float',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    /**
+     * العلاقة مع الشحنة وشركة الشحن
+     */
+    public function shipment()
+    {
+        return $this->hasOne(\App\Models\Shipment::class);
+    }
 
     /**
      * تحديد التوقيت للنموذج
@@ -77,6 +89,8 @@ class Order extends Model
             'total' => 'integer',
             'is_unlocked' => 'boolean',
             'unlocked_at' => 'datetime',
+            'is_printed' => 'boolean',
+            'printed_at' => 'datetime',
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];

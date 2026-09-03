@@ -201,6 +201,10 @@ Route::prefix('admin')->group(function () {
             // Orders management (Inertia-powered)
             Route::get('/orders', [App\Http\Controllers\Merchant\OrderController::class, 'index'])->name('orders.index');
             Route::get('/orders/export', [App\Http\Controllers\Merchant\OrderController::class, 'export'])->name('orders.export');
+            Route::post('/orders/bulk-print', [App\Http\Controllers\Merchant\OrderController::class, 'bulkPrint'])->name('orders.bulkPrint');
+            Route::post('/orders/bulk-ship', [App\Http\Controllers\Merchant\OrderController::class, 'bulkShip'])->name('orders.bulkShip');
+            Route::post('/orders/bulk-status', [App\Http\Controllers\Merchant\OrderController::class, 'bulkStatus'])->name('orders.bulkStatus');
+            Route::post('/orders/bulk-export', [App\Http\Controllers\Merchant\OrderController::class, 'bulkExport'])->name('orders.bulkExport');
             Route::get('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'show'])->name('orders.show');
             Route::put('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'update'])->name('orders.update');
             Route::post('/orders/{order}/unlock', [App\Http\Controllers\Merchant\OrderController::class, 'unlock'])->name('orders.unlock');

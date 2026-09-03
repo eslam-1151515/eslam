@@ -54,6 +54,33 @@ class OrderController extends Controller
             });
         }
 
+        // فلتر حالة الطباعة
+        if ($request->filled('print_status')) {
+            if ($request->print_status === 'printed') {
+                $query->where('is_printed', true);
+            } elseif ($request->print_status === 'unprinted') {
+                $query->where('is_printed', false);
+            }
+        }
+
+        // فلتر حالة الشحن
+        if ($request->filled('shipping_status')) {
+            if ($request->shipping_status === 'shipped') {
+                $query->whereHas('shipment');
+            } elseif ($request->shipping_status === 'unshipped') {
+                $query->whereDoesntHave('shipment');
+            }
+        }
+
+        // الفلاتر السريعة
+        if ($request->filled('quick_filter')) {
+            if ($request->quick_filter === 'ready_to_ship') {
+                $query->where('status', 'confirmed')->whereDoesntHave('shipment');
+            } elseif ($request->quick_filter === 'unprinted_confirmed') {
+                $query->where('status', 'confirmed')->where('is_printed', false);
+            }
+        }
+
         // إحصائيات الحالة (من نفس الفلتر بدون status filter)
         $statsQuery = Order::query();
         if ($request->filled('search')) {
@@ -90,18 +117,29 @@ class OrderController extends Controller
             'fake'      => (clone $statsQuery)->where('status', 'fake')->count(),
         ];
 
+        $fulfillmentCounts = [
+            'ready_to_ship'       => (clone $statsQuery)->where('status', 'confirmed')->whereDoesntHave('shipment')->count(),
+            'unprinted_confirmed' => (clone $statsQuery)->where('status', 'confirmed')->where('is_printed', false)->count(),
+            'printed'             => (clone $statsQuery)->where('is_printed', true)->count(),
+            'shipped'             => (clone $statsQuery)->whereHas('shipment')->count(),
+        ];
+
         // حساب المجموع الإجمالي للطلبات المفلترة (باستثناء الملغية والوهمية)
         $totalAmount = (clone $query)->whereNotIn('status', ['cancelled', 'fake'])->sum('total');
 
         $perPage = min(100, max(10, (int) $request->input('per_page', 10)));
 
-        $orders = $query->orderBy('created_at', 'desc')
+        $orders = $query->with(['shipment'])
+            ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
             ->paginate($perPage)
             ->withQueryString();
 
         // قائمة المنتجات للفلتر
         $productsList = Product::orderBy('name')->get(['id', 'name']);
+
+        // بوابات الشحن المفعلة
+        $activeShippingGateways = \App\Models\ShippingGateway::where('is_active', true)->get(['id', 'provider', 'name']);
 
         $tenant = app(\App\Models\Tenant::class);
 
@@ -116,7 +154,7 @@ class OrderController extends Controller
         }
 
         $filters = array_merge(
-            $request->only(['search', 'status', 'date_from', 'date_to', 'product_id']),
+            $request->only(['search', 'status', 'date_from', 'date_to', 'product_id', 'print_status', 'shipping_status', 'quick_filter']),
             ['per_page' => $perPage]
         );
 
@@ -124,7 +162,9 @@ class OrderController extends Controller
             'orders'                 => $orders,
             'totalAmount'            => round((float) $totalAmount, 2),
             'statusCounts'           => $statusCounts,
+            'fulfillmentCounts'      => $fulfillmentCounts,
             'productsList'           => $productsList,
+            'shippingGateways'       => $activeShippingGateways,
             'wallet_balance'         => (float) ($tenant->wallet_balance ?? 0),
             'isSubscriptionExpired'  => $isSubscriptionExpired,
             'filters'                => $filters,
@@ -542,6 +582,11 @@ class OrderController extends Controller
             $order->update(['is_unlocked' => true, 'unlocked_at' => now()]);
         }
 
+        // تعليم الطلب كـ مطبوع
+        if (!$order->is_printed) {
+            $order->update(['is_printed' => true, 'printed_at' => now()]);
+        }
+
         $order->items = is_string($order->items) ? json_decode($order->items, true) : $order->items;
         $storeName = \App\Models\Setting::where('key', 'store_name')->value('value') ?: 'Store';
         $storePhone = \App\Models\Setting::where('key', 'phone')->value('value')
@@ -549,6 +594,231 @@ class OrderController extends Controller
             ?: (auth()->user()?->phone ?: ''));
 
         return view('orders.invoice', compact('order', 'storeName', 'storePhone'));
+    }
+
+    /**
+     * طباعة فواتير مجمعة للطلبات المحددة
+     */
+    public function bulkPrint(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'integer',
+        ]);
+
+        $orders = Order::whereIn('id', $request->order_ids)
+            ->with(['shipment'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return redirect()->back()->with('error', 'لم يتم العثور على أي طلبات محددة للطباعة.');
+        }
+
+        // تحديث حالة الطباعة للطلبات المحددة
+        Order::whereIn('id', $orders->pluck('id'))->update([
+            'is_printed' => true,
+            'printed_at' => now(),
+        ]);
+
+        $storeName = \App\Models\Setting::where('key', 'store_name')->value('value') 
+            ?: (app(\App\Models\Tenant::class)->name ?: 'Store');
+        $storePhone = \App\Models\Setting::where('key', 'phone')->value('value')
+            ?: (\App\Models\Setting::where('key', 'whatsapp')->value('value')
+            ?: (auth()->user()?->phone ?: ''));
+
+        return view('orders.bulk-invoice', compact('orders', 'storeName', 'storePhone'));
+    }
+
+    /**
+     * إرسال الطلبات المحددة لشركة الشحن
+     */
+    public function bulkShip(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'integer',
+            'provider' => 'nullable|string',
+        ]);
+
+        $provider = $request->provider ?: \App\Models\Setting::get('auto_dispatch_provider', 'jnt');
+        
+        $orders = Order::whereIn('id', $request->order_ids)->get();
+
+        if ($orders->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'لم يتم تحديد أي طلبات.'], 422);
+        }
+
+        $shippingManager = new \App\Services\Shipping\ShippingManager();
+        $dispatched = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($orders as $order) {
+            // التحقق إذا كانت الشحنة مرسلة مسبقاً
+            $exists = \App\Models\Shipment::where('order_id', $order->id)->exists();
+            if ($exists) {
+                $dispatched++;
+                continue;
+            }
+
+            try {
+                $shipment = $shippingManager->createShipment($order, $provider);
+                if ($shipment) {
+                    $order->update(['status' => 'shipped']);
+                    $dispatched++;
+                }
+            } catch (\Throwable $e) {
+                $failed++;
+                $errors[] = "طلب #{$order->reference_number}: " . $e->getMessage();
+            }
+        }
+
+        $msg = $failed > 0
+            ? "تم إرسال {$dispatched} طلب بنجاح، وفشل {$failed} طلب."
+            : "تم إرسال جميع الطلبات المحددة ({$dispatched}) لشركة الشحن بنجاح ✓";
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success'          => true,
+                'dispatched_count' => $dispatched,
+                'failed_count'     => $failed,
+                'errors'           => $errors,
+                'message'          => $msg,
+            ]);
+        }
+
+        return redirect()->back()
+            ->with($failed > 0 && $dispatched === 0 ? 'error' : 'success', $msg)
+            ->with('shipping_errors', $errors);
+    }
+
+    /**
+     * تحديث حالة الطلبات المحددة دفعة واحدة
+     */
+    public function bulkStatus(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'integer',
+            'status' => 'required|string|in:pending,confirmed,shipped,delivered,cancelled,fake',
+        ]);
+
+        $orders = Order::whereIn('id', $request->order_ids)->get();
+        $newStatus = $request->status;
+
+        foreach ($orders as $order) {
+            if ($newStatus === 'cancelled' || $newStatus === 'fake') {
+                if ($order->status !== 'cancelled' && $order->status !== 'fake') {
+                    $this->restoreOrderStock($order);
+                }
+            }
+            $order->update(['status' => $newStatus]);
+        }
+
+        $statusTitles = [
+            'pending' => 'في الانتظار',
+            'confirmed' => 'مؤكد',
+            'shipped' => 'في التوصيل',
+            'delivered' => 'تم التسليم',
+            'cancelled' => 'ملغي',
+            'fake' => 'طلب وهمي',
+        ];
+
+        return redirect()->back()->with('success', "تم تحديث حالة {$orders->count()} طلب إلى '{$statusTitles[$newStatus]}' بنجاح ✓");
+    }
+
+    /**
+     * تصدير الطلبات المحددة كملف Excel / CSV
+     */
+    public function bulkExport(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'integer',
+        ]);
+
+        $orders = Order::whereIn('id', $request->order_ids)
+            ->with(['shipment'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $fileName = 'orders_export_' . date('Y_m_d_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($orders) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+
+            fputcsv($file, [
+                'رقم الطلب',
+                'الرقم المرجعي',
+                'اسم العميل',
+                'رقم الهاتف',
+                'المحافظة',
+                'العنوان',
+                'المنتجات',
+                'المجموع',
+                'سعر الشحن',
+                'الإجمالي',
+                'الحالة',
+                'حالة الطباعة',
+                'شركة الشحن',
+                'رقم البوليصة (Tracking)',
+                'ملاحظات',
+                'تاريخ الإنشاء',
+            ]);
+
+            $statusTitles = [
+                'pending' => 'في الانتظار',
+                'confirmed' => 'مؤكد',
+                'shipped' => 'في التوصيل',
+                'delivered' => 'تم التسليم',
+                'cancelled' => 'ملغي',
+                'fake' => 'طلب وهمي',
+            ];
+
+            foreach ($orders as $order) {
+                $itemsArray = is_string($order->items) ? json_decode($order->items, true) : ($order->items ?? []);
+                $itemsStr = collect($itemsArray)->map(function ($item) {
+                    $name = $item['name'] ?? $item['product_name'] ?? 'منتج';
+                    $qty = $item['quantity'] ?? 1;
+                    $size = !empty($item['size']) ? " [{$item['size']}]" : '';
+                    $color = !empty($item['color']) ? " [{$item['color']}]" : '';
+                    return "{$name} x{$qty}{$size}{$color}";
+                })->implode(' | ');
+
+                fputcsv($file, [
+                    $order->id,
+                    $order->reference_number,
+                    $order->customer_name,
+                    $order->customer_phone,
+                    $order->governorate,
+                    $order->customer_address,
+                    $itemsStr,
+                    $order->subtotal ?? 0,
+                    $order->shipping_cost ?? 0,
+                    $order->total ?? 0,
+                    $statusTitles[$order->status] ?? $order->status,
+                    $order->is_printed ? 'تمت الطباعة' : 'غير مطبوع',
+                    $order->shipment ? strtoupper($order->shipment->provider) : 'لم يُرسل',
+                    $order->shipment ? $order->shipment->tracking_number : '',
+                    $order->notes ?? '',
+                    $order->created_at?->format('Y/m/d H:i'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**
