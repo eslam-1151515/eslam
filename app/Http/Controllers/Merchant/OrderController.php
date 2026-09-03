@@ -139,7 +139,20 @@ class OrderController extends Controller
         $productsList = Product::orderBy('name')->get(['id', 'name']);
 
         // بوابات الشحن المفعلة
-        $activeShippingGateways = \App\Models\ShippingGateway::where('is_active', true)->get(['id', 'provider', 'name']);
+        $providerNames = [
+            'jnt' => 'J&T Express',
+            'bosta' => 'بوسطة (Bosta)',
+            'aramex' => 'أرامكس (Aramex)',
+        ];
+        $activeShippingGateways = \App\Models\ShippingGateway::where('is_active', true)
+            ->get(['id', 'provider'])
+            ->map(function ($gateway) use ($providerNames) {
+                return [
+                    'id' => $gateway->id,
+                    'provider' => $gateway->provider,
+                    'name' => $providerNames[$gateway->provider] ?? strtoupper($gateway->provider),
+                ];
+            });
 
         $tenant = app(\App\Models\Tenant::class);
 
