@@ -33,6 +33,7 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
         customer_code: '',
         api_account: '',
         private_key: '',
+        password: '',
         is_sandbox: false,
     });
 
@@ -50,6 +51,7 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
             customer_code: '',
             api_account: '',
             private_key: '',
+            password: '',
             is_sandbox: false,
         });
     };
@@ -547,6 +549,24 @@ export default function ShippingGatewaysIndex({ providers = [], autoDispatch = {
                                             className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
                                         />
                                         {errors?.private_key && <p className="text-xs text-red-600 mt-1">{errors.private_key}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                            كلمة مرور حساب الـ VIP (VIP Password) <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="password"
+                                            required
+                                            value={jntForm.password}
+                                            onChange={(e) => setJntForm({ ...jntForm, password: e.target.value })}
+                                            placeholder="كلمة مرور حساب الـ VIP من J&T..."
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                        />
+                                        {errors?.password && <p className="text-xs text-red-600 mt-1">{errors.password}</p>}
+                                        <p className="text-[11px] text-gray-400 mt-0.5">
+                                            كلمة مرور الدخول الخاصة بحسابك في J&T والمطلوبة لتوليد التوقيع الرقمي للبوالص.
+                                        </p>
                                     </div>
 
                                     <div className="pt-1 flex items-center gap-2">

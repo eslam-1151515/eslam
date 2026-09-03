@@ -218,12 +218,15 @@ class ShippingGatewaysController extends Controller
             'customer_code' => ['required', 'string', 'max:50'],
             'api_account'   => ['required', 'string', 'max:100'],
             'private_key'   => ['required', 'string', 'max:255'],
+            'password'      => ['nullable', 'string', 'max:100'],
             'is_sandbox'    => ['nullable', 'boolean'],
         ], [
             'customer_code.required' => 'يرجى إدخال كود العميل لـ J&T (Customer Code).',
             'api_account.required'   => 'يرجى إدخال رقم حساب الـ API (apiAccount).',
             'private_key.required'   => 'يرجى إدخال المفتاح السري (Private Key).',
         ]);
+
+        $password = trim($request->password ?: $request->customer_password ?: '');
 
         ShippingGateway::updateOrCreate(
             [
@@ -233,11 +236,13 @@ class ShippingGatewaysController extends Controller
             [
                 'is_active' => true,
                 'credentials' => [
-                    'customer_code' => trim($request->customer_code),
-                    'api_account'   => trim($request->api_account),
-                    'private_key'   => trim($request->private_key),
-                    'is_sandbox'    => (bool) $request->boolean('is_sandbox'),
-                    'connected_at'  => now()->toDateTimeString(),
+                    'customer_code'     => trim($request->customer_code),
+                    'api_account'       => trim($request->api_account),
+                    'private_key'       => trim($request->private_key),
+                    'customer_password' => $password,
+                    'password'          => $password,
+                    'is_sandbox'        => (bool) $request->boolean('is_sandbox'),
+                    'connected_at'      => now()->toDateTimeString(),
                 ],
             ]
         );
