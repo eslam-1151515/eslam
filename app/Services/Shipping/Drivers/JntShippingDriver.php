@@ -73,9 +73,13 @@ class JntShippingDriver implements ShippingProviderInterface
 
         $txlogisticId = "ORD_{$order->id}_{$order->reference_number}";
 
+        $password = $creds['password'] ?? $creds['customer_password'] ?? 'nZ1wCm@1';
+        $pwd = strtoupper(md5($password . 'jadada236t2'));
+        $bodyDigest = base64_encode(md5($customerCode . $pwd . $privateKey, true));
+
         $payload = [
             'customerCode'  => $customerCode,
-            'digest'        => '',
+            'digest'        => $bodyDigest,
             'serviceType'   => '01',
             'orderType'     => '1',
             'deliveryType'  => '04',
@@ -116,13 +120,13 @@ class JntShippingDriver implements ShippingProviderInterface
 
         $bizContent = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $timestamp = (string) round(microtime(true) * 1000);
-        $digest = base64_encode(pack("H*", md5($bizContent . $privateKey)));
+        $headerDigest = base64_encode(md5($bizContent . $privateKey, true));
 
         try {
             $response = Http::asForm()
                 ->withHeaders([
                     'apiAccount'   => $apiAccount,
-                    'digest'       => $digest,
+                    'digest'       => $headerDigest,
                     'timestamp'    => $timestamp,
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
                 ])
@@ -267,21 +271,27 @@ class JntShippingDriver implements ShippingProviderInterface
 
         $url = "{$baseUrl}/order/cancelOrder";
 
+        $password = $creds['password'] ?? $creds['customer_password'] ?? 'nZ1wCm@1';
+        $pwd = strtoupper(md5($password . 'jadada236t2'));
+        $bodyDigest = base64_encode(md5($customerCode . $pwd . $privateKey, true));
+
         $payload = [
             'customerCode' => $customerCode,
+            'digest'       => $bodyDigest,
+            'orderType'    => 1,
             'billCode'     => $trackingNumber,
             'reason'       => 'Cancelled by merchant in OrderSaif',
         ];
 
         $bizContent = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $timestamp = (string) round(microtime(true) * 1000);
-        $digest = base64_encode(pack("H*", md5($bizContent . $privateKey)));
+        $headerDigest = base64_encode(md5($bizContent . $privateKey, true));
 
         try {
             $response = Http::asForm()
                 ->withHeaders([
                     'apiAccount'   => $apiAccount,
-                    'digest'       => $digest,
+                    'digest'       => $headerDigest,
                     'timestamp'    => $timestamp,
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
                 ])

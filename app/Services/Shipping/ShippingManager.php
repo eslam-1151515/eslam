@@ -50,7 +50,7 @@ class ShippingManager
         }
 
         $creds = $gateway->credentials ?? [];
-        $hasKey = !empty($creds['api_key']) || !empty($creds['access_token']) || !empty($creds['password']);
+        $hasKey = !empty($creds['api_key']) || !empty($creds['access_token']) || !empty($creds['password']) || !empty($creds['api_account']) || !empty($creds['private_key']);
         if (!$hasKey) {
             throw new \RuntimeException("لم يتم إدخال بيانات الربط (API Key) لشركة {$providerTitle}. يرجى إدخال البيانات في صفحة شركات الشحن أولاً.");
         }
