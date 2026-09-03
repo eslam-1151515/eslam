@@ -160,16 +160,29 @@
             padding-top: 20px;
         }
         
+        @page {
+            size: auto;
+            margin: 0mm !important;
+        }
+
         @media print {
-            body {
-                margin: 0;
-                padding: 0;
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
             .invoice-container {
-                margin: 0;
-                border: none;
-                box-shadow: none;
+                margin: 0 !important;
+                padding: 12mm 16mm !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: none !important;
+                box-sizing: border-box !important;
             }
             
             .no-print {

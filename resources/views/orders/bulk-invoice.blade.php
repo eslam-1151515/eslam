@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -241,33 +241,37 @@
             color: #9ca3af;
         }
 
-        .barcode-box {
-            font-family: monospace;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            padding: 4px 8px;
-            background: #f3f4f6;
-            border-radius: 4px;
-            color: #111827;
+        @page {
+            size: A4 portrait;
+            margin: 0mm !important;
         }
 
         @media print {
-            body {
-                background: white;
-                padding-bottom: 0;
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .print-toolbar {
                 display: none !important;
             }
             .invoice-page {
-                margin: 0;
-                padding: 24px;
-                border: none;
-                border-radius: 0;
-                box-shadow: none;
-                page-break-after: always;
-                break-after: page;
+                margin: 0 !important;
+                padding: 12mm 16mm !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                box-sizing: border-box !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .invoice-page:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
             }
         }
     </style>
@@ -402,15 +406,8 @@
                 </div>
             </div>
 
-            @if ($order->notes)
-                <div style="margin-top: 16px; background: #fffbeb; padding: 10px; border-radius: 6px; border: 1px solid #fef3c7; font-size: 12px; color: #92400e;">
-                    <strong>ملاحظات العميل:</strong> {{ $order->notes }}
-                </div>
-            @endif
-
             <!-- Footer -->
-            <div class="invoice-footer">
-                <div class="barcode-box">*{{ $order->reference_number }}*</div>
+            <div class="invoice-footer" style="margin-top: 24px; padding-top: 14px; border-top: 1px dashed #e5e7eb; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: 600; color: #6b7280;">
                 <div>شكراً لتعاملكم معنا ❤️</div>
             </div>
         </div>

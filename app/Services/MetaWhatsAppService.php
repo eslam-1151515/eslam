@@ -178,7 +178,6 @@ class MetaWhatsAppService
                 'whatsapp_message_id'    => $simulatedMsgId,
                 'whatsapp_sent_at'       => $sentTime,
                 'whatsapp_charge_amount' => $this->costPerOrder,
-                'notes'                  => trim(($order->notes ? $order->notes . "\n" : '') . "💬 [واتساب] تم إرسال رسالة التأكيد عبر الواتساب في {$sentTime->format('Y-m-d H:i:s')} (معرف الرسالة: {$simulatedMsgId})"),
             ]);
 
             // Deduct cost from tenant's wallet balance
@@ -254,7 +253,6 @@ class MetaWhatsAppService
                     'whatsapp_message_id'    => $messageId,
                     'whatsapp_sent_at'       => $sentTime,
                     'whatsapp_charge_amount' => $this->costPerOrder,
-                    'notes'                  => trim(($order->notes ? $order->notes . "\n" : '') . "💬 [واتساب] تم إرسال رسالة التأكيد عبر الواتساب في {$sentTime->format('Y-m-d H:i:s')} (معرف الرسالة: {$messageId})"),
                 ]);
 
                 // Deduct cost from tenant's wallet balance
