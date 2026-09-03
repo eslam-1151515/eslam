@@ -1,9 +1,122 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
-export default function OrderShow({ order, active_shipping_gateways = [] }) {
+export default function OrderShow({ order, productsList = [], governoratesList = [], active_shipping_gateways = [] }) {
     const { flash } = usePage().props;
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [selectedNewProduct, setSelectedNewProduct] = useState('');
+
+    const [editForm, setEditForm] = useState({
+        customer_name: order.customer_name || '',
+        customer_phone: order.customer_phone || '',
+        customer_address: order.customer_address || '',
+        governorate: order.governorate || '',
+        shipping_cost: Number(order.shipping_cost) || 0,
+        notes: order.notes || '',
+        items: (order.items || []).map(item => ({
+            id: item.id || null,
+            name: item.name || '',
+            price: Number(item.price) || 0,
+            quantity: Number(item.quantity) || 1,
+            selectedColor: item.selectedColor || item.color || '',
+            selectedSize: item.selectedSize || item.size || '',
+            options: item.options || null,
+            image_url: item.image_url || item.image || '',
+        })),
+    });
+
+    const handleOpenEditModal = () => {
+        setEditForm({
+            customer_name: order.customer_name || '',
+            customer_phone: order.customer_phone || '',
+            customer_address: order.customer_address || '',
+            governorate: order.governorate || '',
+            shipping_cost: Number(order.shipping_cost) || 0,
+            notes: order.notes || '',
+            items: (order.items || []).map(item => ({
+                id: item.id || null,
+                name: item.name || '',
+                price: Number(item.price) || 0,
+                quantity: Number(item.quantity) || 1,
+                selectedColor: item.selectedColor || item.color || '',
+                selectedSize: item.selectedSize || item.size || '',
+                options: item.options || null,
+                image_url: item.image_url || item.image || '',
+            })),
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleItemQtyChange = (index, delta) => {
+        setEditForm(prev => {
+            const nextItems = [...prev.items];
+            const newQty = Math.max(1, (nextItems[index].quantity || 1) + delta);
+            nextItems[index] = { ...nextItems[index], quantity: newQty };
+            return { ...prev, items: nextItems };
+        });
+    };
+
+    const handleItemFieldChange = (index, field, value) => {
+        setEditForm(prev => {
+            const nextItems = [...prev.items];
+            nextItems[index] = { ...nextItems[index], [field]: value };
+            return { ...prev, items: nextItems };
+        });
+    };
+
+    const handleRemoveItem = (index) => {
+        if (editForm.items.length <= 1) {
+            alert('يجب أن يحتوي الطلب على منتج واحد على الأقل.');
+            return;
+        }
+        setEditForm(prev => ({
+            ...prev,
+            items: prev.items.filter((_, idx) => idx !== index)
+        }));
+    };
+
+    const handleAddProduct = (productId) => {
+        if (!productId) return;
+        const prod = productsList.find(p => String(p.id) === String(productId));
+        if (!prod) return;
+
+        setEditForm(prev => ({
+            ...prev,
+            items: [
+                ...prev.items,
+                {
+                    id: prod.id,
+                    name: prod.name,
+                    price: Number(prod.price) || 0,
+                    quantity: 1,
+                    selectedColor: prod.colors?.[0] || '',
+                    selectedSize: prod.sizes?.[0] || '',
+                    image_url: prod.image_url || '',
+                }
+            ]
+        }));
+        setSelectedNewProduct('');
+    };
+
+    const calculatedSubtotal = editForm.items.reduce((sum, it) => sum + (Number(it.price) * Number(it.quantity)), 0);
+    const calculatedTotal = Math.max(0, calculatedSubtotal + Number(editForm.shipping_cost || 0));
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        setIsSavingEdit(true);
+        router.put(`/admin/orders/${order.id}`, editForm, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsEditModalOpen(false);
+                setIsSavingEdit(false);
+            },
+            onError: () => {
+                setIsSavingEdit(false);
+            }
+        });
+    };
 
     const handleStatusChange = (newStatus) => {
         router.patch(`/admin/orders/${order.id}/status`, { status: newStatus }, {
@@ -25,6 +138,7 @@ export default function OrderShow({ order, active_shipping_gateways = [] }) {
             shipped: 'في التوصيل',
             delivered: 'تم التسليم',
             cancelled: 'ملغي',
+            fake: 'طلب وهمي',
         };
         return statuses[status] || status;
     };
@@ -36,6 +150,7 @@ export default function OrderShow({ order, active_shipping_gateways = [] }) {
             shipped: 'bg-purple-50 text-purple-700 border-purple-100',
             delivered: 'bg-green-50 text-green-700 border-green-100',
             cancelled: 'bg-red-50 text-red-700 border-red-100',
+            fake: 'bg-rose-50 text-rose-700 border-rose-200',
         };
         return classes[status] || 'bg-gray-50 text-gray-700 border-gray-150';
     };
@@ -163,6 +278,16 @@ ${totalsBlock}${shippingBlock}`;
                     </nav>
                     
                     <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={handleOpenEditModal}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm cursor-pointer"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            <span>تعديل الطلب</span>
+                        </button>
                         <a
                             href={`/admin/orders/${order.id}/invoice`}
                             target="_blank"
@@ -199,6 +324,7 @@ ${totalsBlock}${shippingBlock}`;
                                 <option value="shipped">في التوصيل</option>
                                 <option value="delivered">تم التسليم</option>
                                 <option value="cancelled">ملغي</option>
+                                <option value="fake">طلب وهمي</option>
                             </select>
                         </div>
 
@@ -617,6 +743,315 @@ ${totalsBlock}${shippingBlock}`;
                         </div>
                     </div>
                 </div>
+
+                {/* Edit Order Modal */}
+                {isEditModalOpen && (
+                    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+                        <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-gray-100">
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/80 shrink-0">
+                                <div className="flex items-center gap-2.5">
+                                    <span className="p-2 bg-amber-100 text-amber-700 rounded-xl text-base">✏️</span>
+                                    <div>
+                                        <h3 className="font-extrabold text-gray-900 text-base">
+                                            تعديل الطلب رقم #{order.reference_number}
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mt-0.5">
+                                            يمكنك تعديل بيانات العميل، المنتجات، الكميات، الألوان، المقاسات، وسعر الشحن
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="w-8 h-8 rounded-full bg-gray-200/70 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors cursor-pointer"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            {/* Modal Body */}
+                            <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+                                {/* 1. بيانات العميل */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                        <span>👤</span>
+                                        <span>بيانات العميل ومكان التوصيل</span>
+                                    </h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                اسم العميل <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={editForm.customer_name}
+                                                onChange={(e) => setEditForm({ ...editForm, customer_name: e.target.value })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                رقم الهاتف <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={editForm.customer_phone}
+                                                onChange={(e) => setEditForm({ ...editForm, customer_phone: e.target.value })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                المحافظة
+                                            </label>
+                                            <select
+                                                value={editForm.governorate}
+                                                onChange={(e) => setEditForm({ ...editForm, governorate: e.target.value })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500"
+                                            >
+                                                <option value="">اختر المحافظة...</option>
+                                                {governoratesList.map((gov) => (
+                                                    <option key={gov} value={gov}>{gov}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                تكلفة الشحن والتوصيل (ج.م) <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="1"
+                                                required
+                                                value={editForm.shipping_cost}
+                                                onChange={(e) => setEditForm({ ...editForm, shipping_cost: Number(e.target.value) })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-bold focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                العنوان التفصيلي <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                rows="2"
+                                                required
+                                                value={editForm.customer_address}
+                                                onChange={(e) => setEditForm({ ...editForm, customer_address: e.target.value })}
+                                                placeholder="الشارع، رقم العمارة، الشقة، علامة مميزة..."
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                                ملاحظات الطلب (Notes)
+                                            </label>
+                                            <textarea
+                                                rows="2"
+                                                value={editForm.notes}
+                                                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                                                placeholder="أي تعليمات أو ملاحظات إضافية..."
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="border-t border-gray-100 pt-5">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-xs font-bold text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
+                                            <span>🛍️</span>
+                                            <span>المنتجات والبنود في الطلب ({editForm.items.length})</span>
+                                        </h4>
+                                        <div className="flex items-center gap-2">
+                                            <select
+                                                value={selectedNewProduct}
+                                                onChange={(e) => {
+                                                    const pid = e.target.value;
+                                                    setSelectedNewProduct(pid);
+                                                    handleAddProduct(pid);
+                                                }}
+                                                className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                            >
+                                                <option value="">+ إضافة منتج آخر للطلب...</option>
+                                                {productsList.map((p) => (
+                                                    <option key={p.id} value={p.id}>
+                                                        {p.name} ({p.price} ج.م)
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Items List */}
+                                    <div className="space-y-3">
+                                        {editForm.items.map((item, idx) => (
+                                            <div key={idx} className="p-3.5 bg-gray-50/70 border border-gray-200 rounded-xl space-y-3">
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                                        {item.image_url ? (
+                                                            <img
+                                                                src={item.image_url}
+                                                                alt=""
+                                                                className="w-11 h-11 rounded-lg object-cover border border-gray-200 shrink-0"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-11 h-11 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 shrink-0 text-sm">
+                                                                📦
+                                                            </div>
+                                                        )}
+                                                        <div className="flex-1 min-w-0">
+                                                            <input
+                                                                type="text"
+                                                                required
+                                                                value={item.name}
+                                                                onChange={(e) => handleItemFieldChange(idx, 'name', e.target.value)}
+                                                                placeholder="اسم المنتج"
+                                                                className="w-full font-bold text-gray-900 text-sm bg-transparent border-b border-transparent hover:border-gray-300 focus:border-indigo-500 focus:bg-white px-1 py-0.5 rounded"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveItem(idx)}
+                                                        className="w-8 h-8 rounded-lg text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors shrink-0"
+                                                        title="حذف هذا المنتج من الطلب"
+                                                    >
+                                                        🗑️
+                                                    </button>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                                                    <div>
+                                                        <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">
+                                                            السعر الفردي (ج.م)
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="1"
+                                                            required
+                                                            value={item.price}
+                                                            onChange={(e) => handleItemFieldChange(idx, 'price', Number(e.target.value))}
+                                                            className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs font-bold text-gray-800"
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">
+                                                            الكمية
+                                                        </label>
+                                                        <div className="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleItemQtyChange(idx, -1)}
+                                                                className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold"
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                value={item.quantity}
+                                                                onChange={(e) => handleItemFieldChange(idx, 'quantity', Math.max(1, parseInt(e.target.value) || 1))}
+                                                                className="w-full text-center text-xs font-bold py-1 border-0 focus:ring-0"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleItemQtyChange(idx, 1)}
+                                                                className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">
+                                                            اللون (Color)
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={item.selectedColor}
+                                                            onChange={(e) => handleItemFieldChange(idx, 'selectedColor', e.target.value)}
+                                                            placeholder="مثال: أسود، أزرق..."
+                                                            className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs"
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">
+                                                            المقاس (Size)
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={item.selectedSize}
+                                                            onChange={(e) => handleItemFieldChange(idx, 'selectedSize', e.target.value)}
+                                                            placeholder="مثال: XL, 42, M..."
+                                                            className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex justify-end items-center gap-1.5 text-xs text-gray-500 pt-1 border-t border-gray-200/60">
+                                                    <span>إجمالي البند:</span>
+                                                    <span className="font-extrabold text-indigo-700 font-mono">
+                                                        {formatCurrency(Number(item.price) * Number(item.quantity))}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Live Calculations Box */}
+                                <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-2 text-xs">
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>مجموع المنتجات:</span>
+                                        <span className="font-bold">{formatCurrency(calculatedSubtotal)}</span>
+                                    </div>
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>تكلفة الشحن:</span>
+                                        <span className="font-bold">{formatCurrency(editForm.shipping_cost)}</span>
+                                    </div>
+                                    <div className="border-t border-indigo-200 pt-2 flex justify-between text-sm font-extrabold text-indigo-900">
+                                        <span>الإجمالي النهائي الجديد:</span>
+                                        <span className="text-base text-indigo-700">{formatCurrency(calculatedTotal)}</span>
+                                    </div>
+                                </div>
+
+                                {/* Modal Footer */}
+                                <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                                    <button
+                                        type="button"
+                                        disabled={isSavingEdit}
+                                        onClick={() => setIsEditModalOpen(false)}
+                                        className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+                                    >
+                                        إلغاء
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSavingEdit}
+                                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-extrabold transition-colors shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                                    >
+                                        <span>💾</span>
+                                        <span>{isSavingEdit ? 'جاري حفظ التعديلات...' : 'حفظ التعديلات في الطلب'}</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </MerchantLayout>
     );

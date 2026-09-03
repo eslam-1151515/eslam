@@ -87,14 +87,17 @@ class OrderController extends Controller
             'shipped'   => (clone $statsQuery)->where('status', 'shipped')->count(),
             'delivered' => (clone $statsQuery)->where('status', 'delivered')->count(),
             'cancelled' => (clone $statsQuery)->where('status', 'cancelled')->count(),
+            'fake'      => (clone $statsQuery)->where('status', 'fake')->count(),
         ];
 
-        // حساب المجموع الإجمالي للطلبات المفلترة
-        $totalAmount = (clone $query)->sum('total');
+        // حساب المجموع الإجمالي للطلبات المفلترة (باستثناء الملغية والوهمية)
+        $totalAmount = (clone $query)->whereNotIn('status', ['cancelled', 'fake'])->sum('total');
+
+        $perPage = min(100, max(10, (int) $request->input('per_page', 10)));
 
         $orders = $query->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
 
         // قائمة المنتجات للفلتر
@@ -112,6 +115,11 @@ class OrderController extends Controller
             }
         }
 
+        $filters = array_merge(
+            $request->only(['search', 'status', 'date_from', 'date_to', 'product_id']),
+            ['per_page' => $perPage]
+        );
+
         return Inertia::render('Merchant/Orders/Index', [
             'orders'                 => $orders,
             'totalAmount'            => round((float) $totalAmount, 2),
@@ -119,7 +127,7 @@ class OrderController extends Controller
             'productsList'           => $productsList,
             'wallet_balance'         => (float) ($tenant->wallet_balance ?? 0),
             'isSubscriptionExpired'  => $isSubscriptionExpired,
-            'filters'                => $request->only(['search', 'status', 'date_from', 'date_to', 'product_id']),
+            'filters'                => $filters,
         ]);
     }
 
@@ -205,6 +213,29 @@ class OrderController extends Controller
             ->pluck('provider')
             ->toArray();
 
+        $productsList = Product::orderBy('name')
+            ->get(['id', 'name', 'price', 'main_image_path', 'colors', 'sizes', 'options', 'stock_quantity'])
+            ->map(function ($p) {
+                return [
+                    'id'               => $p->id,
+                    'name'             => $p->name,
+                    'price'            => (float) $p->price,
+                    'image_url'        => Product::resolveImageUrl($p->main_image_path) ?: 'https://dummyimage.com/150x150/f3f4f6/9ca3af&text=منتج',
+                    'colors'           => is_array($p->colors) ? $p->colors : (json_decode($p->colors ?? '[]', true) ?: []),
+                    'sizes'            => is_array($p->sizes) ? $p->sizes : (json_decode($p->sizes ?? '[]', true) ?: []),
+                    'options'          => is_array($p->options) ? $p->options : (json_decode($p->options ?? '[]', true) ?: []),
+                    'stock_quantity'   => $p->stock_quantity,
+                ];
+            });
+
+        $governoratesList = [
+            'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة',
+            'الفيوم', 'الغربية', 'الإسماعيلية', 'المنوفية', 'المنيا', 'القليوبية',
+            'الوادي الجديد', 'السويس', 'أسوان', 'أسيوط', 'بني سويف', 'بورسعيد',
+            'دمياط', 'الشرقية', 'جنوب سيناء', 'كفر الشيخ', 'مطروح', 'الأقصر',
+            'قنا', 'شمال سيناء', 'سوهـاج'
+        ];
+
         return Inertia::render('Merchant/Orders/Show', [
             'order' => [
                 'id'               => $order->id,
@@ -230,8 +261,75 @@ class OrderController extends Controller
                 'whatsapp_message_id'  => $order->whatsapp_message_id,
                 'created_at'           => $order->created_at ? \Carbon\Carbon::parse($order->created_at)->format('Y-m-d H:i') : null,
             ],
+            'productsList'             => $productsList,
+            'governoratesList'         => $governoratesList,
             'active_shipping_gateways' => $activeShippingGateways,
         ]);
+    }
+
+    /**
+     * تعديل بيانات الطلب بالكامل (العميل، المنتجات، الكميات، الشحن)
+     */
+    public function update(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'customer_name'    => 'required|string|max:255',
+            'customer_phone'   => 'required|string|max:50',
+            'customer_address' => 'required|string|max:500',
+            'governorate'      => 'nullable|string|max:100',
+            'shipping_cost'    => 'required|numeric|min:0',
+            'notes'            => 'nullable|string|max:2000',
+            'items'            => 'required|array|min:1',
+            'items.*.name'     => 'required|string|max:255',
+            'items.*.price'    => 'required|numeric|min:0',
+            'items.*.quantity' => 'required|integer|min:1',
+        ], [
+            'customer_name.required'    => 'اسم العميل مطلوب.',
+            'customer_phone.required'   => 'رقم هاتف العميل مطلوب.',
+            'customer_address.required' => 'عنوان العميل مطلوب.',
+            'items.required'            => 'يجب أن يحتوي الطلب على منتج واحد على الأقل.',
+            'items.min'                 => 'يجب أن يحتوي الطلب على منتج واحد على الأقل.',
+        ]);
+
+        $subtotal = 0;
+        $formattedItems = [];
+
+        foreach ($request->input('items', []) as $item) {
+            $price = round((float) ($item['price'] ?? 0), 2);
+            $qty = max(1, (int) ($item['quantity'] ?? 1));
+            $itemTotal = round($price * $qty, 2);
+            $subtotal += $itemTotal;
+
+            $formattedItems[] = [
+                'id'            => $item['id'] ?? null,
+                'name'          => $item['name'] ?? 'منتج',
+                'price'         => $price,
+                'quantity'      => $qty,
+                'total'         => $itemTotal,
+                'selectedColor' => $item['selectedColor'] ?? $item['color'] ?? null,
+                'selectedSize'  => $item['selectedSize'] ?? $item['size'] ?? null,
+                'options'       => $item['options'] ?? null,
+                'image_url'     => $item['image_url'] ?? $item['image'] ?? null,
+            ];
+        }
+
+        $shippingCost = round((float) $request->input('shipping_cost', 0), 2);
+        $discount = round((float) ($order->discount ?? 0), 2);
+        $total = max(0, round($subtotal + $shippingCost - $discount, 2));
+
+        $order->update([
+            'customer_name'    => trim($validated['customer_name']),
+            'customer_phone'   => trim($validated['customer_phone']),
+            'customer_address' => trim($validated['customer_address']),
+            'governorate'      => trim($validated['governorate'] ?? $order->governorate),
+            'shipping_cost'    => $shippingCost,
+            'subtotal'         => $subtotal,
+            'total'            => $total,
+            'items'            => $formattedItems,
+            'notes'            => $request->filled('notes') ? trim($request->notes) : $order->notes,
+        ]);
+
+        return redirect()->back()->with('success', 'تم تعديل بيانات الطلب والمنتجات بنجاح ✓');
     }
 
     /**
@@ -240,15 +338,15 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,shipped,delivered,cancelled',
+            'status' => 'required|in:pending,confirmed,shipped,delivered,cancelled,fake',
             'notes'  => 'nullable|string|max:1000',
         ]);
 
         $oldStatus = $order->status;
         $newStatus = $validated['status'];
 
-        // لو تحولت الحالة إلى ملغي ولم تكن ملغية من قبل → استرجاع المخزون
-        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+        // لو تحولت الحالة إلى ملغي أو طلب وهمي ولم تكن كذلك من قبل → استرجاع المخزون
+        if (in_array($newStatus, ['cancelled', 'fake']) && !in_array($oldStatus, ['cancelled', 'fake'])) {
             $this->restoreOrderStock($order);
         }
 

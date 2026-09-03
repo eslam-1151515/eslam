@@ -9,6 +9,7 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
     const [dateFrom, setDateFrom] = useState(filters?.date_from || '');
     const [dateTo, setDateTo] = useState(filters?.date_to || '');
     const [productId, setProductId] = useState(filters?.product_id || '');
+    const [perPage, setPerPage] = useState(Number(filters?.per_page) || 10);
     const [showInsufficientModal, setShowInsufficientModal] = useState(false);
 
     useEffect(() => {
@@ -24,7 +25,20 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
             status,
             date_from: dateFrom,
             date_to: dateTo,
-            product_id: productId
+            product_id: productId,
+            per_page: perPage,
+        }, { preserveState: true });
+    };
+
+    const handlePerPageChange = (newPerPage) => {
+        setPerPage(newPerPage);
+        router.get('/admin/orders', {
+            search,
+            status,
+            date_from: dateFrom,
+            date_to: dateTo,
+            product_id: productId,
+            per_page: newPerPage,
         }, { preserveState: true });
     };
 
@@ -34,6 +48,7 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
         setDateFrom('');
         setDateTo('');
         setProductId('');
+        setPerPage(10);
         router.get('/admin/orders', {}, { replace: true });
     };
 
@@ -55,6 +70,7 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
         shipped:   { text: 'في التوصيل', color: 'bg-purple-50 text-purple-700 border-purple-100' },
         delivered: { text: 'تم التسليم', color: 'bg-green-50 text-green-700 border-green-100' },
         cancelled: { text: 'ملغي', color: 'bg-red-50 text-red-700 border-red-100' },
+        fake:      { text: 'طلب وهمي', color: 'bg-rose-50 text-rose-700 border-rose-200' },
     };
 
     const getStatusBadge = (statusKey) => {
@@ -144,6 +160,25 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
+                        {/* Desktop Only Page Size Selector */}
+                        <div className="hidden md:flex items-center gap-1.5 bg-white border border-gray-200 p-1 rounded-xl shadow-xs text-xs font-semibold">
+                            <span className="text-gray-500 px-2">عرض بالصفحة:</span>
+                            {[10, 25, 50, 100].map((size) => (
+                                <button
+                                    key={size}
+                                    type="button"
+                                    onClick={() => handlePerPageChange(size)}
+                                    className={`px-2.5 py-1.5 rounded-lg transition-all ${
+                                        Number(perPage) === size
+                                            ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                    }`}
+                                >
+                                    {size}
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="hidden md:flex flex-wrap items-center gap-2">
                             <a
                                 href={`/admin/orders/export?format=excel&search=${search}&status=${status}&date_from=${dateFrom}&date_to=${dateTo}&product_id=${productId}`}
@@ -166,48 +201,55 @@ export default function OrdersIndex({ orders, totalAmount, statusCounts, product
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                     <button
-                        onClick={() => { setStatus(''); router.get('/admin/orders', { search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus(''); router.get('/admin/orders', { search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === '' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.total}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">كل الطلبات</p>
                     </button>
                     <button
-                        onClick={() => { setStatus('pending'); router.get('/admin/orders', { status: 'pending', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus('pending'); router.get('/admin/orders', { status: 'pending', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'pending' ? 'bg-yellow-500 text-white border-yellow-500 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.pending}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">في الانتظار</p>
                     </button>
                     <button
-                        onClick={() => { setStatus('confirmed'); router.get('/admin/orders', { status: 'confirmed', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus('confirmed'); router.get('/admin/orders', { status: 'confirmed', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'confirmed' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.confirmed}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">مؤكد</p>
                     </button>
                     <button
-                        onClick={() => { setStatus('shipped'); router.get('/admin/orders', { status: 'shipped', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus('shipped'); router.get('/admin/orders', { status: 'shipped', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'shipped' ? 'bg-purple-600 text-white border-purple-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.shipped ?? 0}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">في التوصيل</p>
                     </button>
                     <button
-                        onClick={() => { setStatus('delivered'); router.get('/admin/orders', { status: 'delivered', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus('delivered'); router.get('/admin/orders', { status: 'delivered', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'delivered' ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.delivered ?? 0}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">تم التسليم</p>
                     </button>
                     <button
-                        onClick={() => { setStatus('cancelled'); router.get('/admin/orders', { status: 'cancelled', search, date_from: dateFrom, date_to: dateTo, product_id: productId }); }}
+                        onClick={() => { setStatus('cancelled'); router.get('/admin/orders', { status: 'cancelled', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'cancelled' ? 'bg-red-600 text-white border-red-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.cancelled}</p>
                         <p className="text-xs font-medium opacity-80 mt-1">ملغي</p>
+                    </button>
+                    <button
+                        onClick={() => { setStatus('fake'); router.get('/admin/orders', { status: 'fake', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
+                        className={`p-4 rounded-xl border text-right transition-all ${status === 'fake' ? 'bg-rose-700 text-white border-rose-700 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                    >
+                        <p className="text-2xl font-bold">{statusCounts.fake ?? 0}</p>
+                        <p className="text-xs font-medium opacity-80 mt-1">طلب وهمي</p>
                     </button>
                 </div>
 

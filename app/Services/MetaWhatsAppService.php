@@ -80,6 +80,47 @@ class MetaWhatsAppService
             ];
         }
 
+        // التحقق من رصيد المحفظة وأهلية الباقة لإرسال رسالة الواتساب
+        $tenant = \App\Models\Tenant::find($order->tenant_id);
+        if ($tenant) {
+            if (($tenant->wallet_balance ?? 0) < $this->costPerOrder) {
+                $order->update([
+                    'whatsapp_status' => 'failed',
+                    'notes' => trim(($order->notes ? $order->notes . "\n" : '') . '⚠️ [واتساب] رصيد المحفظة غير كافٍ لإرسال رسالة التأكيد (تكلفة الرسالة 1 ج.م، يرجى شحن المحفظة).'),
+                ]);
+
+                return [
+                    'success' => false,
+                    'status'  => 'insufficient_balance',
+                    'error'   => 'رصيد المحفظة غير كافٍ لإرسال رسالة التأكيد (تكلفة الرسالة 1 ج.م).',
+                ];
+            }
+
+            // إذا كان المتجر في الباقة التجريبية المجانية، يجب أن يكون قد قام بشحن فعلي للمحفظة أولاً
+            $activeSub = $tenant->subscriptions()->where('status', 'active')->latest()->first();
+            $isFreeTrial = !$activeSub || ($activeSub->plan?->slug === 'free' || str_contains($activeSub->plan?->name ?? '', 'تجريب') || $tenant->subscription_status === 'trial');
+
+            if ($isFreeTrial) {
+                $hasActualRecharge = \App\Models\SubscriptionReceipt::where('tenant_id', $tenant->id)
+                    ->where('type', 'wallet')
+                    ->where('status', 'approved')
+                    ->exists();
+
+                if (!$hasActualRecharge) {
+                    $order->update([
+                        'whatsapp_status' => 'failed',
+                        'notes' => trim(($order->notes ? $order->notes . "\n" : '') . '⚠️ [واتساب] ميزة التأكيد التلقائي عبر الواتساب في الباقة التجريبية تتطلب شحن المحفظة فعلياً أولاً.'),
+                    ]);
+
+                    return [
+                        'success' => false,
+                        'status'  => 'recharge_required',
+                        'error'   => 'ميزة التأكيد التلقائي عبر الواتساب تتطلب شحن المحفظة فعلياً أولاً.',
+                    ];
+                }
+            }
+        }
+
         // Format Items list (Single line separated by | because Meta Cloud API rejects newlines in parameters with code #132018)
         $itemsList = [];
         if (is_array($order->items)) {

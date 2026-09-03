@@ -202,6 +202,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/orders', [App\Http\Controllers\Merchant\OrderController::class, 'index'])->name('orders.index');
             Route::get('/orders/export', [App\Http\Controllers\Merchant\OrderController::class, 'export'])->name('orders.export');
             Route::get('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'show'])->name('orders.show');
+            Route::put('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'update'])->name('orders.update');
             Route::post('/orders/{order}/unlock', [App\Http\Controllers\Merchant\OrderController::class, 'unlock'])->name('orders.unlock');
             Route::patch('/orders/{order}/status', [App\Http\Controllers\Merchant\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
             Route::patch('/orders/{order}/cancel', [App\Http\Controllers\Merchant\OrderController::class, 'cancel'])->name('orders.cancel');

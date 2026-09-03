@@ -192,11 +192,10 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
 
                     {/* Pricing Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {plans.map((plan) => {
+                        {plans.filter(p => p.slug !== 'yearly' && p.is_active !== false && p.is_active !== 0).map((plan) => {
                             const isCommissionPlan = plan.slug === 'commission' || plan.name?.includes('عمولة') || plan.name?.includes('محفظة');
                             const isFreePlan = plan.slug === 'free' || plan.name?.includes('مجانية');
                             const isMonthlyPlan = plan.slug === 'monthly' || plan.name?.includes('شهرية');
-                            const isYearlyPlan = plan.slug === 'yearly' || plan.name?.includes('سنوية');
                             
                             const activePlanId = subscription?.plan?.id;
                             let isCurrent = false;
@@ -229,37 +228,27 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                                         </div>
                                         <p className="text-sm text-gray-500 min-h-[40px] mb-4">
                                             {isCommissionPlan
-                                                ? 'باقة الخصم بالعمولة على كل طلب ناجح عبر شحن محفظة التاجر. يظل متجرك مفتوحاً دائماً أمام العملاء.'
+                                                ? 'بدون أي اشتراك شهري ثابت! اشحن محفظتك بـ فودافون كاش أو إنستاباي وادفع 2 ج.م فقط عند فتح ومعاينة الأوردر.'
                                                 : (isFreePlan 
-                                                    ? 'الباقة المجانية مدتها 7 أيام فقط وتنتهي بانتهاء المدة (7 أيام) أو عند الوصول لعدد 50 طلب.' 
-                                                    : (isMonthlyPlan || isYearlyPlan
-                                                        ? 'سيظل متجرك مفتوحاً دائماً أمام العملاء، وعند انتهاء الاشتراك يلزم التجديد أو التحويل لباقة العمولة لاستعراض الطلبات.'
+                                                    ? 'احصل على 100 ج.م رصيد هدية في محفظتك ترحيباً بك لتجربة واستقبال الطلبات مجاناً، مدة مفتوحة بدون أي قيود.' 
+                                                    : (isMonthlyPlan
+                                                        ? 'اشتراك 4000 ج.م شهرياً بدون أي حد أقصى للطلبات أو المنتجات و0% عمولة، مع ميزة الأوتوكونفرم بـ 1ج للرسالة من المحفظة.'
                                                         : plan.description))}
                                         </p>
                                         
                                         <div className="mb-6">
                                             {isMonthlyPlan && (
                                                 <div className="flex flex-col mb-1 items-start">
-                                                    <span className="text-sm text-red-500 font-bold line-through">1,000 ج.م</span>
                                                     <span className="text-xs font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1 border border-emerald-200">
-                                                        السعر الحالي لفترة محدودة جداً! (500ج بدلاً من 1000ج - وفر 50%)
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                            {isYearlyPlan && (
-                                                <div className="flex flex-col mb-1 items-start">
-                                                    <span className="text-sm text-red-500 font-bold line-through">10,000 ج.م</span>
-                                                    <span className="text-xs font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1 border border-emerald-200">
-                                                        خصم 50% بمناسبة الإطلاق! (5,000ج بدلاً من 10,000ج سنوياً)
+                                                        🚀 بدون حد أقصى للطلبات و0% عمولة
                                                     </span>
                                                 </div>
                                             )}
 
                                             {isFreePlan && (
                                                 <div className="flex flex-col mb-1 items-start">
-                                                    <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full mt-1 border border-indigo-200">
-                                                        تُفعل لمدة 7 أيام أو 50 طلب فقط
+                                                    <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1 border border-emerald-200">
+                                                        🎁 100 ج.م رصيد هدية ترحيبي
                                                     </span>
                                                 </div>
                                             )}
@@ -267,7 +256,7 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                                             {isCommissionPlan && (
                                                 <div className="flex flex-col mb-1 items-start">
                                                     <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full mt-1 border border-amber-200">
-                                                        عمولة 2 ج.م فقط تخصم تلقائياً لكل أوردر
+                                                        خصم 2 ج.م فقط عند فتح كل أوردر
                                                     </span>
                                                 </div>
                                             )}
@@ -275,16 +264,16 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                                             {isCommissionPlan ? (
                                                 <div className="mt-2">
                                                     <span className="text-3xl font-extrabold text-emerald-700">2 ج.م</span>
-                                                    <span className="text-gray-500 text-sm font-semibold mr-1.5">/ لكل أوردر ناجح</span>
+                                                    <span className="text-gray-500 text-sm font-semibold mr-1.5">/ لكل أوردر مفتوح</span>
                                                 </div>
                                             ) : (
                                                 <div className="mt-2">
                                                     <span className="text-4xl font-extrabold text-gray-900">
-                                                        {isYearlyPlan ? '5,000 ج.م' : formatCurrency(plan.price_monthly || plan.price_yearly)}
+                                                        {formatCurrency(plan.price_monthly || plan.price_yearly)}
                                                     </span>
                                                     {plan.price_monthly > 0 && (
                                                         <span className="text-gray-400 text-sm font-semibold mr-1">
-                                                            / {isYearlyPlan ? 'سنوياً' : 'شهرياً'}
+                                                            / شهرياً
                                                         </span>
                                                     )}
                                                 </div>
@@ -294,27 +283,27 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                                         {/* Limits & Features list */}
                                         <ul className="space-y-3 text-sm text-gray-600 mb-6 border-t border-gray-100 pt-4">
                                             {isFreePlan ? (
-                                                <li className="flex items-start gap-2.5 bg-rose-50 p-2.5 rounded-xl border border-rose-200 text-rose-900 font-bold text-xs">
-                                                    <span className="text-base leading-none">🔴</span>
-                                                    <span>سيتوقف المتجر تلقائياً بعد انتهاء المدة (7 أيام أو 50 طلب)</span>
+                                                <li className="flex items-start gap-2.5 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 text-emerald-900 font-bold text-xs">
+                                                    <span className="text-base leading-none">🟢</span>
+                                                    <span>مدة مفتوحة لتجربة المتجر واستقبال الطلبات مجاناً</span>
                                                 </li>
                                             ) : (
                                                 <li className="flex items-start gap-2.5 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 text-emerald-900 font-bold text-xs">
                                                     <span className="text-base leading-none">🟢</span>
-                                                    <span>سيظل المتجر مفتوحاً أمام العملاء دائماً لاستقبال الطلبات</span>
+                                                    <span>المتجر مفتوح دائماً لاستقبال جميع الأوردرات والعملاء</span>
                                                 </li>
                                             )}
                                             <li className="flex items-center gap-2.5">
                                                 <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                                                 </svg>
-                                                <span>أقصى عدد منتجات: <b>{isMonthlyPlan || isYearlyPlan || isCommissionPlan ? 'غير محدود' : getLimitText(parsedLimits?.max_products ?? 50)}</b></span>
+                                                <span>أقصى عدد منتجات: <b>غير محدود 🚀</b></span>
                                             </li>
                                             <li className="flex items-center gap-2.5">
                                                 <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                                                 </svg>
-                                                <span>أقصى عدد طلبات: <b>{isMonthlyPlan || isYearlyPlan || isCommissionPlan ? 'غير محدود' : '50 طلب (أو 7 أيام)'}</b></span>
+                                                <span>أقصى عدد طلبات: <b>غير محدود 🚀</b></span>
                                             </li>
                                             {features.map((feature, i) => (
                                                 <li key={i} className="flex items-center gap-2.5">

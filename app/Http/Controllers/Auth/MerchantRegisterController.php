@@ -109,9 +109,9 @@ class MerchantRegisterController extends Controller
                 'phone' => $request->phone,
                 'email' => $email,
                 'subscription_status' => 'trial',
-                'trial_ends_at' => now()->addDays(7),
-                'subscription_ends_at' => now()->addDays(7),
-                'wallet_balance' => 0.00,
+                'trial_ends_at' => null,
+                'subscription_ends_at' => null,
+                'wallet_balance' => 100.00,
                 'is_active' => true,
                 'settings' => [
                     'activity' => $request->activity ?? 'تجارة عامة',
@@ -129,8 +129,16 @@ class MerchantRegisterController extends Controller
                     'billing_cycle' => 'monthly',
                     'price'         => 0,
                     'starts_at'     => now(),
-                    'ends_at'       => now()->addDays(7),
-                    'trial_ends_at' => now()->addDays(7),
+                    'ends_at'       => null,
+                    'trial_ends_at' => null,
+                ]);
+
+                \App\Models\WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => 100.00,
+                    'type'        => 'credit',
+                    'description' => 'رصيد هدية افتتاحي عند التسجيل 🎁',
+                    'created_by'  => null,
                 ]);
             }
 

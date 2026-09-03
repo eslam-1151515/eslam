@@ -339,13 +339,13 @@
                         <div class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">
                             🎁 100 ج.م رصيد هدية ترحيبية
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900">الباقة التجريبية</h3>
+                        <h3 class="text-2xl font-black text-slate-900">الباقة التجريبية المجانية</h3>
                         <div class="flex items-baseline gap-1 font-mono">
                             <span class="text-4xl font-black text-slate-900">0</span>
-                            <span class="text-sm font-bold text-slate-500">ج.م / 7 أيام</span>
+                            <span class="text-sm font-bold text-slate-500">ج.م / رصيد افتتاحي</span>
                         </div>
                         <p class="text-xs text-slate-500">
-                            احصل على 100 ج.م رصيد هدية مجانية في محفظتك ترحيباً بك لتجربة واستقبال أول 50 أوردر مجاناً بدون أي بطاقة ائتمانية.
+                            احصل على 100 ج.م رصيد هدية مجانية في محفظتك ترحيباً بك لتجربة واستقبال أول 50 أوردر مجاناً بدون أي بطاقة ائتمانية، مدة مفتوحة بدون أي قيود.
                         </p>
 
                         <div class="pt-4 border-t border-slate-100 space-y-2.5 text-sm text-slate-700 font-semibold">
@@ -354,7 +354,8 @@
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> لوحة تحكم عربية سهلة</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> تجربة فتح ومعاينة الطلبات مجاناً</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> 0% عمولة على المبيعات</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> دعم فني متواصل 24/7</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> ميزة الأوتوكونفرم تتفعل بعد أول شحن فعلي</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> دعم فني عبر الواتس اب أو الاتصال</div>
                         </div>
                     </div>
 
@@ -388,7 +389,9 @@
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> خصم 2 ج.م فقط عند فتح كل أوردر</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> شحن فوري بـ فودافون كاش وإنستاباي</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> منتجات وثيمات غير محدودة</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> ميزة تأكيد الطلبات عبر الواتساب (1ج للرسالة)</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> ربط دومين وبيكسلات مجاناً</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> دعم فني عبر الواتس اب أو الاتصال</div>
                         </div>
                     </div>
 
@@ -406,25 +409,26 @@
                         </div>
                         <h3 class="text-2xl font-black text-slate-900">الاشتراك الشهري الشامل</h3>
                         <div class="flex items-baseline gap-2 font-mono">
-                            <span class="text-4xl font-black text-slate-900">1,000</span>
+                            <span class="text-4xl font-black text-slate-900">4,000</span>
                             <span class="text-sm font-bold text-slate-500">ج.م / شهرياً</span>
                         </div>
                         <p class="text-xs text-slate-500">
-                            فتح غير محدود لكافة الأوردرات بدون خصم 2ج مع سيرفرات فائقة السرعة ودعم VIP.
+                            اشتراك 4000 ج.م شهرياً مع فتح وإدارة غير محدودة لكافة الأوردرات والمنتجات و0% عمولة، مع ميزة الأوتوكونفرم بـ 1ج للرسالة من المحفظة.
                         </p>
 
                         <div class="pt-4 border-t border-slate-100 space-y-2.5 text-sm text-slate-700 font-semibold">
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> فتح غير محدود لجميع الأوردرات</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> بدون خصم 2ج على الأوردر</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> 0% عمولة على المبيعات</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> فتح جميع الثيمات الاحترافية</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> مدير حساب مخصص ودعم VIP</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> فتح وإدارة غير محدودة لجميع الأوردرات والمنتجات</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> بدون خصم 2ج على الأوردر (0% عمولة)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> ميزة تأكيد الطلبات عبر الواتساب (1ج للرسالة)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> فتح جميع الثيمات الاحترافية والتخصيصات</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> سيرفرات فائقة السرعة وأولوية معالجة</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> دعم فني عبر الواتس اب أو الاتصال 24/7</div>
                         </div>
                     </div>
 
                     <a href="{{ Route::has('register') ? route('register') : url('/register') }}" 
                        class="w-full py-3.5 rounded-xl text-center font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-all">
-                        اشترك في الباقة الشهرية (1,000ج)
+                        اشترك في الباقة الشهرية (4,000ج)
                     </a>
                 </div>
 
