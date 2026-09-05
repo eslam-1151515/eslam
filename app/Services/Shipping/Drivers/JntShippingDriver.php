@@ -86,6 +86,59 @@ class JntShippingDriver implements ShippingProviderInterface
         $pwd = strtoupper(md5($password . 'jadada236t2'));
         $bodyDigest = base64_encode(md5($customerCode . $pwd . $privateKey, true));
 
+        // Build rich remark: product options/specs + real customer notes (excluding WhatsApp logs)
+        $remarkParts = [];
+        if (!empty($orderItems)) {
+            $itemSpecs = [];
+            foreach ($orderItems as $item) {
+                $specs = [];
+                if (!empty($item['options']) && is_array($item['options'])) {
+                    foreach ($item['options'] as $optKey => $optVal) {
+                        if (!empty($optVal)) {
+                            $specs[] = "{$optKey}: {$optVal}";
+                        }
+                    }
+                }
+                if (!empty($item['selectedColor'])) {
+                    $specs[] = "اللون: {$item['selectedColor']}";
+                }
+                if (!empty($item['selectedSize'])) {
+                    $specs[] = "المقاس: {$item['selectedSize']}";
+                }
+
+                if (!empty($specs)) {
+                    $specsStr = implode(' | ', $specs);
+                    $itemName = $item['name'] ?? ($item['product_name'] ?? '');
+                    if (count($orderItems) > 1 && $itemName) {
+                        $itemSpecs[] = "{$itemName} ({$specsStr})";
+                    } else {
+                        $itemSpecs[] = $specsStr;
+                    }
+                }
+            }
+            if (!empty($itemSpecs)) {
+                $remarkParts[] = implode(' - ', $itemSpecs);
+            }
+        }
+
+        if (!empty($order->notes)) {
+            $cleanNotes = [];
+            $lines = explode("\n", (string) $order->notes);
+            foreach ($lines as $line) {
+                $lineTrim = trim($line);
+                if ($lineTrim === '') continue;
+                if (preg_match('/\[واتساب\]|\[whatsapp\]|بواسطة الواتس/ui', $lineTrim)) {
+                    continue;
+                }
+                $cleanNotes[] = $lineTrim;
+            }
+            if (!empty($cleanNotes)) {
+                $remarkParts[] = "ملاحظات: " . implode(' - ', $cleanNotes);
+            }
+        }
+
+        $remark = !empty($remarkParts) ? implode(" | ", $remarkParts) : '';
+
         $payload = [
             'customerCode'  => $customerCode,
             'digest'        => $bodyDigest,
@@ -101,7 +154,7 @@ class JntShippingDriver implements ShippingProviderInterface
             'totalQuantity' => max(1, (int) array_sum(array_column($orderItems, 'quantity'))),
             'weight'        => 1.0,
             'itemsValue'    => (float) $order->total,
-            'remark'        => $order->notes ?: '',
+            'remark'        => $remark,
             'sender'        => [
                 'name'        => $senderName,
                 'mobile'      => $senderPhone,
