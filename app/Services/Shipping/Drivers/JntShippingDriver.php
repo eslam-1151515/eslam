@@ -34,12 +34,41 @@ class JntShippingDriver implements ShippingProviderInterface
 
         $url = "{$baseUrl}/order/addOrder";
 
-        // Determine Store/Sender information
-        $senderName = \App\Models\Setting::get('site_name', 'Order Saif Store');
-        $senderPhone = \App\Models\Setting::get('contact_phone', '01015660731');
-        $senderAddress = \App\Models\Setting::get('store_address', 'القاهرة - مصر');
-        $senderCity = 'القاهرة';
-        $senderProv = 'القاهرة';
+        // Determine Store/Sender information dynamically from merchant settings
+        $tenantId = $order->tenant_id;
+        $tenant = $order->tenant ?? \App\Models\Tenant::find($tenantId);
+
+        // 1. Sender Name from merchant settings ('store_name') or tenant name
+        $senderName = \App\Models\Setting::get('store_name', null, $tenantId)
+            ?: ($tenant?->name ?: 'متجر');
+
+        // 2. Sender Phone from merchant settings ('phone' - رقم الهاتف للاتصال)
+        $senderPhoneRaw = \App\Models\Setting::get('phone', null, $tenantId);
+        if (empty($senderPhoneRaw)) {
+            $senderPhoneRaw = \App\Models\Setting::get('whatsapp', null, $tenantId) ?: ($tenant?->phone ?: '01033398191');
+        }
+        $senderPhone = preg_replace('/[\s\+\-]/', '', (string) $senderPhoneRaw);
+        if (str_starts_with($senderPhone, '201')) {
+            $senderPhone = '0' . substr($senderPhone, 2);
+        }
+
+        // 3. Sender Address from merchant settings ('address')
+        $senderAddress = \App\Models\Setting::get('address', null, $tenantId);
+        $senderCity = 'مدينة طلخا';
+        $senderProv = 'الدقهلية';
+
+        if (!empty($senderAddress)) {
+            $egGovs = ['القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحيرة', 'الشرقية', 'الغربية', 'المنوفية', 'القليوبية', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'شمال سيناء', 'جنوب سيناء', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'الوادي الجديد', 'مطروح', 'الفيوم'];
+            foreach ($egGovs as $gov) {
+                if (str_contains($senderAddress, $gov)) {
+                    $senderProv = $gov;
+                    $senderCity = $gov;
+                    break;
+                }
+            }
+        } else {
+            $senderAddress = 'شارع معتصم، مدينة طلخا، الدقهلية';
+        }
 
         // Clean and format recipient details
         $receiverPhone = preg_replace('/[\s\+\-]/', '', $order->customer_phone);
@@ -143,7 +172,7 @@ class JntShippingDriver implements ShippingProviderInterface
             'customerCode'  => $customerCode,
             'digest'        => $bodyDigest,
             'serviceType'   => '01',
-            'orderType'     => '1',
+            'orderType'     => '2',
             'deliveryType'  => '04',
             'operateType'   => '1',
             'txlogisticId'  => $txlogisticId,
@@ -151,7 +180,7 @@ class JntShippingDriver implements ShippingProviderInterface
             'expressType'   => 'EZ',
             'payType'       => $order->payment_method === 'online' ? 'FREIGHT_PREPAID' : 'PP_PM',
             'priceCurrency' => 'EGP',
-            'totalQuantity' => max(1, (int) array_sum(array_column($orderItems, 'quantity'))),
+            'totalQuantity' => 1,
             'weight'        => 1.0,
             'itemsValue'    => (float) $order->total,
             'remark'        => $remark,
