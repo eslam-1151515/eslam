@@ -47,7 +47,15 @@ class JntShippingDriver implements ShippingProviderInterface
             $receiverPhone = '0' . substr($receiverPhone, 2);
         }
 
-        $receiverProv = $order->governorate ? $order->governorate->name : 'القاهرة';
+        // governorate might be a string column or an object relation
+        $receiverProv = 'القاهرة';
+        if ($order->governorate) {
+            if (is_string($order->governorate)) {
+                $receiverProv = $order->governorate;
+            } elseif (is_object($order->governorate) && isset($order->governorate->name)) {
+                $receiverProv = $order->governorate->name;
+            }
+        }
         $receiverAddress = $order->customer_address ?: ($order->shipping_address ?: $receiverProv);
         $receiverCity = $receiverProv;
 
