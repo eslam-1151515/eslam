@@ -158,7 +158,7 @@ class JntShippingDriver implements ShippingProviderInterface
                 return [
                     'success'         => true,
                     'tracking_number' => $trackingNumber,
-                    'airway_bill_url' => route('merchant.shipments.awb', ['tracking_number' => $trackingNumber]),
+                    'airway_bill_url' => "https://www.jtjms-eg.com/track?bills={$trackingNumber}",
                     'status'          => 'created',
                     'cost'            => (float) ($order->shipping_cost ?? 60.0),
                     'sorting_code'    => $sortingCode,
