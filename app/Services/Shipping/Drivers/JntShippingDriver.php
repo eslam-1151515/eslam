@@ -92,7 +92,7 @@ class JntShippingDriver implements ShippingProviderInterface
             'serviceType'   => '01',
             'orderType'     => '1',
             'deliveryType'  => '04',
-            'operateType'   => '1',
+            'operateType'   => '0',
             'txlogisticId'  => $txlogisticId,
             'goodsType'     => 'ITN1',
             'expressType'   => 'EZ',
