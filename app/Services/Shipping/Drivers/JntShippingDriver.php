@@ -51,14 +51,15 @@ class JntShippingDriver implements ShippingProviderInterface
         $receiverAddress = $order->customer_address ?: ($order->shipping_address ?: $receiverProv);
         $receiverCity = $receiverProv;
 
-        // Build items array
+        // Build items array - items is a JSON column (array), not an Eloquent relation
         $items = [];
-        if ($order->items && $order->items->count() > 0) {
-            foreach ($order->items as $item) {
+        $orderItems = is_string($order->items) ? json_decode($order->items, true) : (array)($order->items ?? []);
+        if (!empty($orderItems)) {
+            foreach ($orderItems as $item) {
                 $items[] = [
-                    'itemName'  => $item->product_name ?? ($item->product->name ?? 'منتج'),
-                    'number'    => (int) ($item->quantity ?? 1),
-                    'itemValue' => (float) ($item->price ?? $order->total),
+                    'itemName'  => $item['name'] ?? ($item['product_name'] ?? 'منتج'),
+                    'number'    => (int) ($item['quantity'] ?? 1),
+                    'itemValue' => (float) ($item['price'] ?? $order->total),
                     'itemType'  => 'ITN1',
                 ];
             }
@@ -89,7 +90,7 @@ class JntShippingDriver implements ShippingProviderInterface
             'expressType'   => 'EZ',
             'payType'       => $order->payment_method === 'online' ? 'FREIGHT_PREPAID' : 'PP_PM',
             'priceCurrency' => 'EGP',
-            'totalQuantity' => max(1, (int) $order->items->sum('quantity')),
+            'totalQuantity' => max(1, (int) array_sum(array_column($orderItems, 'quantity'))),
             'weight'        => 1.0,
             'itemsValue'    => (float) $order->total,
             'remark'        => $order->notes ?: '',
