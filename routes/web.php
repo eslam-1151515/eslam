@@ -313,6 +313,7 @@ Route::prefix('admin')->group(function () {
             // Shipment actions for orders
             Route::post('/orders/{order}/shipment', [\App\Http\Controllers\Merchant\ShipmentController::class, 'store'])->name('merchant.orders.shipment.store');
             Route::get('/shipments/{shipment}/track', [\App\Http\Controllers\Merchant\ShipmentController::class, 'track'])->name('merchant.shipments.track');
+            Route::post('/shipments/{shipment}/cancel', [\App\Http\Controllers\Merchant\ShipmentController::class, 'cancel'])->name('merchant.shipments.cancel');
 
             // Payment Gateways management
             Route::prefix('payment-gateways')->name('merchant.payment-gateways')->group(function () {

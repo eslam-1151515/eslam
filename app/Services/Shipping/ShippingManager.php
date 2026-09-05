@@ -73,4 +73,31 @@ class ShippingManager
             'raw_response' => $result['raw_response'] ?? [],
         ]);
     }
+
+    /**
+     * Cancel an existing shipment with the provider.
+     */
+    public function cancelShipment(Shipment $shipment): bool
+    {
+        $tenantId = $shipment->tenant_id;
+        $gateway = ShippingGateway::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->where('provider', $shipment->provider)
+            ->where('is_active', true)
+            ->first();
+
+        if (!$gateway) {
+            return false;
+        }
+
+        $driver = $this->driver($shipment->provider);
+        $success = $driver->cancelShipment($shipment->tracking_number, $gateway);
+
+        if ($success) {
+            $shipment->update(['status' => 'cancelled']);
+        }
+
+        return $success;
+    }
 }
+

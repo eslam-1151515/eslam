@@ -403,6 +403,11 @@ class OrderController extends Controller
             $this->restoreOrderStock($order);
         }
 
+        // إلغاء الشحنة مع شركة الشحن تلقائياً عند إلغاء الطلب
+        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            $this->cancelShipmentIfDispatched($order);
+        }
+
         $updateData = ['status' => $newStatus];
         if ($request->filled('notes')) {
             $updateData['notes'] = ($order->notes ? $order->notes . "\n" : '') . $request->notes;
@@ -449,10 +454,27 @@ class OrderController extends Controller
     {
         if ($order->status !== 'cancelled') {
             $this->restoreOrderStock($order);
+            $this->cancelShipmentIfDispatched($order);
             $order->update(['status' => 'cancelled']);
         }
 
         return redirect()->back()->with('success', 'تم إلغاء الطلب واسترجاع المخزون بنجاح ✓');
+    }
+
+    /**
+     * إلغاء الشحنة لدى شركة الشحن تلقائياً في حال تم إرسالها مسبقاً
+     */
+    protected function cancelShipmentIfDispatched(Order $order): void
+    {
+        try {
+            $shipment = $order->shipment;
+            if ($shipment && $shipment->status !== 'cancelled') {
+                $shippingManager = new \App\Services\Shipping\ShippingManager();
+                $shippingManager->cancelShipment($shipment);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Failed to cancel shipment for order #{$order->id}: " . $e->getMessage());
+        }
     }
 
     /**
@@ -728,6 +750,9 @@ class OrderController extends Controller
             if ($newStatus === 'cancelled' || $newStatus === 'fake') {
                 if ($order->status !== 'cancelled' && $order->status !== 'fake') {
                     $this->restoreOrderStock($order);
+                }
+                if ($newStatus === 'cancelled') {
+                    $this->cancelShipmentIfDispatched($order);
                 }
             }
             $order->update(['status' => $newStatus]);

@@ -51,4 +51,23 @@ class ShipmentController extends Controller
 
         return response()->json($trackingData);
     }
+
+    /**
+     * Cancel an active shipment with carrier.
+     */
+    public function cancel(Shipment $shipment): RedirectResponse
+    {
+        try {
+            $shippingManager = new ShippingManager();
+            $success = $shippingManager->cancelShipment($shipment);
+
+            if ($success) {
+                return redirect()->back()->with('success', 'تم إلغاء الشحنة لدى شركة الشحن بنجاح ✓');
+            }
+
+            return redirect()->back()->with('error', 'تعذر إلغاء الشحنة من جانب شركة الشحن (قد تكون خرجت بالفعل).');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء إلغاء الشحنة: ' . $e->getMessage());
+        }
+    }
 }
