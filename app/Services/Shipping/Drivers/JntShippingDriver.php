@@ -337,10 +337,17 @@ class JntShippingDriver implements ShippingProviderInterface
         $pwd = strtoupper(md5($password . 'jadada236t2'));
         $bodyDigest = base64_encode(md5($customerCode . $pwd . $privateKey, true));
 
+        $txlogisticId = '';
+        $shipment = \App\Models\Shipment::where('tracking_number', $trackingNumber)->first();
+        if ($shipment && $shipment->order) {
+            $txlogisticId = "ORD_{$shipment->order->id}_{$shipment->order->reference_number}";
+        }
+
         $payload = [
             'customerCode' => $customerCode,
             'digest'       => $bodyDigest,
             'orderType'    => 1,
+            'txlogisticId' => $txlogisticId,
             'billCode'     => $trackingNumber,
             'reason'       => 'Cancelled by merchant in OrderSaif',
         ];
