@@ -53,22 +53,42 @@ class JntShippingDriver implements ShippingProviderInterface
         }
 
         // 3. Sender Address from merchant settings ('address')
-        $senderAddress = \App\Models\Setting::get('address', null, $tenantId);
-        $senderCity = 'مدينة طلخا';
-        $senderProv = 'الدقهلية';
-
-        if (!empty($senderAddress)) {
-            $egGovs = ['القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحيرة', 'الشرقية', 'الغربية', 'المنوفية', 'القليوبية', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'شمال سيناء', 'جنوب سيناء', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'الوادي الجديد', 'مطروح', 'الفيوم'];
-            foreach ($egGovs as $gov) {
-                if (str_contains($senderAddress, $gov)) {
-                    $senderProv = $gov;
-                    $senderCity = $gov;
-                    break;
-                }
-            }
-        } else {
-            $senderAddress = 'شارع معتصم، مدينة طلخا، الدقهلية';
+        $rawSenderAddress = \App\Models\Setting::get('address', null, $tenantId);
+        if (empty($rawSenderAddress)) {
+            $rawSenderAddress = 'شركه ال سيف، ش معتصم، طلخا، الدقهلية';
         }
+
+        $senderProv = 'الدقهلية';
+        $egGovs = ['القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحيرة', 'الشرقية', 'الغربية', 'المنوفية', 'القليوبية', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'شمال سيناء', 'جنوب سيناء', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'الوادي الجديد', 'مطروح', 'الفيوم'];
+        foreach ($egGovs as $gov) {
+            if (str_contains($rawSenderAddress, $gov)) {
+                $senderProv = $gov;
+                break;
+            }
+        }
+
+        $parts = preg_split('/[\/،,\-]+/u', $rawSenderAddress);
+        $cleanParts = [];
+        foreach ($parts as $p) {
+            $p = trim($p);
+            if ($p !== '' && !in_array($p, $cleanParts)) {
+                $cleanParts[] = $p;
+            }
+        }
+
+        $senderCity = 'طلخا';
+        foreach ($cleanParts as $cp) {
+            if ($cp !== $senderProv && (str_contains($cp, 'طلخا') || str_contains($cp, 'منصورة') || str_contains($cp, 'مدينة'))) {
+                $senderCity = trim(str_replace('مدينة', '', $cp)) ?: 'طلخا';
+                break;
+            }
+        }
+
+        $streetParts = array_filter($cleanParts, function($cp) use ($senderProv, $senderCity) {
+            return !str_contains($cp, $senderProv) && !str_contains($cp, $senderCity);
+        });
+        $senderStreet = !empty($streetParts) ? implode(' - ', $streetParts) : ($cleanParts[0] ?? 'شارع معتصم');
+
 
         // Clean and format recipient details
         $receiverPhone = preg_replace('/[\s\+\-]/', '', $order->customer_phone);
@@ -187,13 +207,13 @@ class JntShippingDriver implements ShippingProviderInterface
             'sender'        => [
                 'name'        => $senderName,
                 'mobile'      => $senderPhone,
-                'phone'       => $senderPhone,
+                'phone'       => '',
                 'countryCode' => 'EGY',
                 'prov'        => $senderProv,
                 'city'        => $senderCity,
                 'area'        => $senderCity,
-                'street'      => $senderAddress,
-                'address'     => $senderAddress,
+                'street'      => $senderStreet,
+                'address'     => $senderStreet,
             ],
             'receiver'      => [
                 'name'        => $order->customer_name,
