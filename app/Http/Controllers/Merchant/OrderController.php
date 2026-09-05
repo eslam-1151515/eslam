@@ -668,7 +668,10 @@ class OrderController extends Controller
         $errors = [];
 
         foreach ($orders as $order) {
-            // التحقق إذا كانت الشحنة مرسلة مسبقاً
+            // تحديث حالة الطلب إلى "مع شركة الشحن" فوراً
+            $order->update(['status' => 'shipped']);
+
+            // التحقق إذا كانت الشحنة مرسلة مسبقاً عبر API
             $exists = \App\Models\Shipment::where('order_id', $order->id)->exists();
             if ($exists) {
                 $dispatched++;
@@ -678,11 +681,12 @@ class OrderController extends Controller
             try {
                 $shipment = $shippingManager->createShipment($order, $provider);
                 if ($shipment) {
-                    $order->update(['status' => 'shipped']);
                     $dispatched++;
+                } else {
+                    $dispatched++; // تم تحويل الحالة حتى لو مفيش API شحن
                 }
             } catch (\Throwable $e) {
-                $failed++;
+                $dispatched++; // الحالة اتغيرت حتى لو API فشل
                 $errors[] = "طلب #{$order->reference_number}: " . $e->getMessage();
             }
         }
@@ -732,7 +736,7 @@ class OrderController extends Controller
         $statusTitles = [
             'pending' => 'في الانتظار',
             'confirmed' => 'مؤكد',
-            'shipped' => 'في التوصيل',
+            'shipped' => 'مع شركة الشحن',
             'delivered' => 'تم التسليم',
             'cancelled' => 'ملغي',
             'fake' => 'طلب وهمي',
@@ -792,7 +796,7 @@ class OrderController extends Controller
             $statusTitles = [
                 'pending' => 'في الانتظار',
                 'confirmed' => 'مؤكد',
-                'shipped' => 'في التوصيل',
+                'shipped' => 'مع شركة الشحن',
                 'delivered' => 'تم التسليم',
                 'cancelled' => 'ملغي',
                 'fake' => 'طلب وهمي',

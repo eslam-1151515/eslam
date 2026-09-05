@@ -233,7 +233,7 @@ export default function OrdersIndex({
     const statusConfig = {
         pending:   { text: 'في الانتظار', color: 'bg-yellow-50 text-yellow-700 border-yellow-100' },
         confirmed: { text: 'مؤكد', color: 'bg-blue-50 text-blue-700 border-blue-100' },
-        shipped:   { text: 'في التوصيل', color: 'bg-purple-50 text-purple-700 border-purple-100' },
+        shipped:   { text: 'مع شركة الشحن', color: 'bg-purple-50 text-purple-700 border-purple-100' },
         delivered: { text: 'تم التسليم', color: 'bg-green-50 text-green-700 border-green-100' },
         cancelled: { text: 'ملغي', color: 'bg-red-50 text-red-700 border-red-100' },
         fake:      { text: 'طلب وهمي', color: 'bg-rose-50 text-rose-700 border-rose-200' },
@@ -394,7 +394,7 @@ export default function OrdersIndex({
                         className={`p-4 rounded-xl border text-right transition-all ${status === 'shipped' ? 'bg-purple-600 text-white border-purple-600 shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                         <p className="text-2xl font-bold">{statusCounts.shipped ?? 0}</p>
-                        <p className="text-xs font-medium opacity-80 mt-1">في التوصيل</p>
+                        <p className="text-xs font-medium opacity-80 mt-1">مع شركة الشحن</p>
                     </button>
                     <button
                         onClick={() => { setStatus('delivered'); router.get('/admin/orders', { status: 'delivered', search, date_from: dateFrom, date_to: dateTo, product_id: productId, per_page: perPage }); }}
@@ -1100,7 +1100,7 @@ export default function OrdersIndex({
                         >
                             <option value="" disabled>🔄 تغيير الحالة إلى...</option>
                             <option value="confirmed">مؤكد</option>
-                            <option value="shipped">في التوصيل</option>
+                            <option value="shipped">مع شركة الشحن</option>
                             <option value="delivered">تم التسليم</option>
                             <option value="cancelled">ملغي</option>
                             <option value="fake">طلب وهمي</option>
