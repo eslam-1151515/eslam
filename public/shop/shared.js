@@ -413,11 +413,13 @@ function formatPrice(after, before){
   
   if (hasDiscount) {
     return `<div class='price-block'>
-      <div class='price-now'>${priceNow}</div>
-      <div class='price-row'><span class='old'>${formatEGP(beforeVal)}</span></div>
+      <div class='price-row'>
+        <span class='price-now'>${priceNow}</span>
+        <span class='old'>${formatEGP(beforeVal)}</span>
+      </div>
     </div>`;
   } else {
-    return `<div class='price-block'><div class='price-now'>${priceNow}</div></div>`;
+    return `<div class='price-block'><div class='price-row'><span class='price-now'>${priceNow}</span></div></div>`;
   }
 }
 
@@ -425,40 +427,70 @@ function productCard(p){
   const card = createEl('div','card');
   card.style.position = 'relative';
   
-  const link = createEl('a'); link.href = `/shop/product.html?id=${p.id}`; link.style.textDecoration='none'; link.style.color='inherit';
+  const imgContainer = createEl('div', 'product-img-wrapper');
+  imgContainer.style.position = 'relative';
+  imgContainer.style.overflow = 'hidden';
+
+  const link = createEl('a'); link.href = `/shop/product.html?id=${p.id}`; link.style.textDecoration='none'; link.style.color='inherit'; link.style.display = 'block';
   const img = createEl('img'); img.src = p.image_url || 'https://dummyimage.com/600x400/e5e7eb/9ca3af.png&text=No+Image'; img.alt=p.name||''; link.appendChild(img);
+  imgContainer.appendChild(link);
   
-  // بادج الخصم والشحن المجاني مع فحص وجود الاثنين معاً
-  const nowVal = Math.round(Number(p.price_after ?? 0));
-  const beforeVal = p.price_before != null ? Math.round(Number(p.price_before)) : null;
-  const hasDiscount = Boolean(beforeVal && beforeVal > nowVal && Math.round(((beforeVal - nowVal) / beforeVal) * 100) > 0);
-  const hasFreeShipping = (p.shipping_type === 'free');
-
-  if (hasDiscount && hasFreeShipping) {
-    card.classList.add('has-dual-badges');
+  // Discount badge overlaid on top of the image
+  const nowPrice = Math.round(Number(p.price_after ?? 0));
+  const beforePrice = (p.price_before != null) ? Math.round(Number(p.price_before)) : null;
+  if (beforePrice && beforePrice > nowPrice) {
+    const pct = Math.round(((beforePrice - nowPrice) / beforePrice) * 100);
+    if (pct > 0) {
+      const discountBadge = createEl('div', 'product-img-discount-badge');
+      discountBadge.textContent = `-${pct}%`;
+      discountBadge.style.cssText = `
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: #09090b;
+        color: #ffffff;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        font-family: monospace, system-ui, sans-serif;
+        z-index: 3;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.2);
+      `;
+      imgContainer.appendChild(discountBadge);
+    }
   }
 
-  if (hasDiscount) {
-    const pct = Math.round(((beforeVal - nowVal) / beforeVal) * 100);
-    const discountBadge = createEl('div', 'discount-badge');
-    const currentLang = getStorefrontLang();
-    discountBadge.textContent = currentLang === 'en' ? `${pct}% OFF` : `خصم ${pct}%`;
-    card.appendChild(discountBadge);
-  }
-
-  // إضافة بادج الشحن المجاني
-  if (hasFreeShipping) {
+  // Free shipping badge overlaid on top of the image
+  if (p.shipping_type === 'free') {
     const freeShippingBadge = createEl('div', 'free-shipping-badge');
     const currentLang = getStorefrontLang();
-    freeShippingBadge.textContent = currentLang === 'en' ? 'Free Shipping' : 'شحن مجاناً';
-    card.appendChild(freeShippingBadge);
+    freeShippingBadge.innerHTML = currentLang === 'en' ? '<i class="fa fa-truck"></i> Free' : '<i class="fa fa-truck"></i> شحن مجاني';
+    freeShippingBadge.style.cssText = `
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #15803d;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      z-index: 3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    `;
+    imgContainer.appendChild(freeShippingBadge);
   }
   
-  card.appendChild(link);
+  card.appendChild(imgContainer);
   const body = createEl('div','body');
-  const titleLink = createEl('a'); titleLink.href = `/shop/product.html?id=${p.id}`; titleLink.style.textDecoration='none'; titleLink.style.color='inherit';
+  const titleLink = createEl('a'); titleLink.href = `/shop/product.html?id=${p.id}`; titleLink.style.textDecoration='none'; titleLink.style.color='inherit'; titleLink.style.width='100%';
   const title = createEl('h3','title'); title.textContent = p.name || ''; titleLink.appendChild(title);
-  const price = createEl('div'); price.innerHTML = formatPrice(p.price_after, p.price_before);
+  const price = createEl('div'); price.style.width='100%'; price.innerHTML = formatPrice(p.price_after, p.price_before);
   
   const addBtn = createEl('button','btn btn-primary btn-add');
   const currentLang = getStorefrontLang();
