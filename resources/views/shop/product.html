@@ -1809,14 +1809,22 @@
       quickForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        // منع أي ضغط متكرر أثناء المعالجة
+        if (this.dataset.submitting === 'true') {
+          return;
+        }
+
         if (!validateQuickForm(this)) {
           return;
         }
 
+        this.dataset.submitting = 'true';
         var btn = document.getElementById('quickSubmitBtn');
         var originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> جاري تأكيد الطلب...';
         btn.disabled = true;
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.7';
 
         var fd = new FormData(this);
         
@@ -1842,6 +1850,9 @@
            alert("الرجاء اختيار المنتج أولاً.");
            btn.innerHTML = originalText;
            btn.disabled = false;
+           btn.style.pointerEvents = 'auto';
+           btn.style.opacity = '1';
+           quickForm.dataset.submitting = 'false';
            return;
         }
 
@@ -1917,11 +1928,17 @@
             alert((data.message || 'حدث خطأ أثناء إتمام الطلب') + errorDetails);
             btn.innerHTML = originalText;
             btn.disabled = false;
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+            quickForm.dataset.submitting = 'false';
           }
         } catch(err) {
           alert('تعذر الاتصال بالخادم: ' + err.message);
           btn.innerHTML = originalText;
           btn.disabled = false;
+          btn.style.pointerEvents = 'auto';
+          btn.style.opacity = '1';
+          quickForm.dataset.submitting = 'false';
         }
       });
     }

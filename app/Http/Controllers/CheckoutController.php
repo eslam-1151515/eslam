@@ -187,6 +187,38 @@ class CheckoutController extends Controller
                 $notes .= ($notes ? "\n" : "") . "[كوبون خصم: {$couponCode} | الخصم: {$discount} ج.م]";
             }
 
+            $tenantId = optional($request->attributes->get('tenant'))->id ?? ($governorate->tenant_id ?? null);
+            // 🛡️ فحص التكرار (Deduplication Guard): منع تكرار نفس الطلب لنفس العميل ونفس القيمة خلال 60 ثانية
+            if ($tenantId && !empty($validated['customer_phone'])) {
+                $recentDuplicate = Order::where('tenant_id', $tenantId)
+                    ->where('customer_phone', $validated['customer_phone'])
+                    ->where('total', $total)
+                    ->where('created_at', '>=', now()->subSeconds(60))
+                    ->latest('id')
+                    ->first();
+                if ($recentDuplicate) {
+                    $redirectUrl = '/shop/order-success.html?ref=' . $recentDuplicate->reference_number . '&id=' . $recentDuplicate->id;
+                    if ($request->wantsJson() || $request->ajax()) {
+                        return response()->json([
+                            'success'          => true,
+                            'message'          => 'تم استلام طلبك بنجاح',
+                            'reference_number' => $recentDuplicate->reference_number,
+                            'total'            => $recentDuplicate->total,
+                            'redirect'         => $redirectUrl,
+                            'redirect_url'     => $redirectUrl,
+                            'data'             => [
+                                'id'               => $recentDuplicate->id,
+                                'order_id'         => $recentDuplicate->id,
+                                'reference_number' => $recentDuplicate->reference_number,
+                                'total'            => $recentDuplicate->total,
+                                'redirect_url'     => $redirectUrl,
+                            ]
+                        ]);
+                    }
+                    return redirect(url($redirectUrl));
+                }
+            }
+
             DB::beginTransaction();
 
             $order = Order::createWithReference([

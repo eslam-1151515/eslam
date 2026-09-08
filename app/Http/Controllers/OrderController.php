@@ -78,6 +78,36 @@ class OrderController extends Controller
         $shippingCost = $hasNonFreeShipping ? $governorate->price : 0;
         $total = $subtotal + $shippingCost;
 
+        $tenantId = optional($request->attributes->get('tenant'))->id ?? ($governorate->tenant_id ?? null);
+        // 🛡️ فحص التكرار (Deduplication Guard): منع تكرار نفس الطلب لنفس العميل ونفس القيمة خلال 60 ثانية
+        if ($tenantId && !empty($validated['customer_phone'])) {
+            $recentDuplicate = Order::where('tenant_id', $tenantId)
+                ->where('customer_phone', $validated['customer_phone'])
+                ->where('total', $total)
+                ->where('created_at', '>=', now()->subSeconds(60))
+                ->latest('id')
+                ->first();
+            if ($recentDuplicate) {
+                $redirectUrl = route('orders.success', $recentDuplicate->reference_number) . '?clear_cart=1';
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success'          => true,
+                        'message'          => 'تم استلام طلبك بنجاح',
+                        'reference_number' => $recentDuplicate->reference_number,
+                        'total'            => $recentDuplicate->total,
+                        'redirect_url'     => $redirectUrl,
+                        'data'             => [
+                            'id'               => $recentDuplicate->id,
+                            'reference_number' => $recentDuplicate->reference_number,
+                            'total'            => $recentDuplicate->total,
+                            'redirect_url'     => $redirectUrl,
+                        ]
+                    ]);
+                }
+                return redirect($redirectUrl);
+            }
+        }
+
         $order = Order::createWithReference([
             'customer_name'    => $validated['customer_name'],
             'customer_phone'   => $validated['customer_phone'],
@@ -206,6 +236,33 @@ class OrderController extends Controller
 
             $shippingCost = $hasNonFreeShipping ? $governorate->price : 0;
             $total = max(0, $subtotal - $discount + $shippingCost);
+
+            $tenantId = optional($request->attributes->get('tenant'))->id ?? ($governorate->tenant_id ?? null);
+            // 🛡️ فحص التكرار (Deduplication Guard): منع تكرار نفس الطلب لنفس العميل ونفس القيمة خلال 60 ثانية
+            if ($tenantId && !empty($validated['customer_phone'])) {
+                $recentDuplicate = Order::where('tenant_id', $tenantId)
+                    ->where('customer_phone', $validated['customer_phone'])
+                    ->where('total', $total)
+                    ->where('created_at', '>=', now()->subSeconds(60))
+                    ->latest('id')
+                    ->first();
+                if ($recentDuplicate) {
+                    $redirectUrl = '/shop/order-success.html?ref=' . $recentDuplicate->reference_number . '&id=' . $recentDuplicate->id;
+                    return response()->json([
+                        'success'          => true,
+                        'message'          => 'تم استلام طلبك بنجاح',
+                        'reference_number' => $recentDuplicate->reference_number,
+                        'total'            => $recentDuplicate->total,
+                        'redirect_url'     => $redirectUrl,
+                        'data'             => [
+                            'id'               => $recentDuplicate->id,
+                            'reference_number' => $recentDuplicate->reference_number,
+                            'total'            => $recentDuplicate->total,
+                            'redirect_url'     => $redirectUrl,
+                        ]
+                    ]);
+                }
+            }
 
             DB::beginTransaction();
 
