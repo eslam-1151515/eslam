@@ -377,6 +377,8 @@ Route::prefix('admin')->group(function () {
             Route::prefix('abandoned-carts')->name('merchant.abandoned-carts.')->group(function () {
                 Route::get('/', [\App\Http\Controllers\Merchant\AbandonedCartController::class, 'index'])->name('index');
                 Route::post('/{abandonedCart}/send-reminder', [\App\Http\Controllers\Merchant\AbandonedCartController::class, 'sendReminder'])->name('send-reminder');
+                Route::post('/{abandonedCart}/convert', [\App\Http\Controllers\Merchant\AbandonedCartController::class, 'convert'])->name('convert');
+                Route::post('/{abandonedCart}/mark-contacted', [\App\Http\Controllers\Merchant\AbandonedCartController::class, 'markContacted'])->name('mark-contacted');
                 Route::delete('/{abandonedCart}', [\App\Http\Controllers\Merchant\AbandonedCartController::class, 'destroy'])->name('destroy');
             });
 
@@ -442,8 +444,11 @@ Route::prefix('admin')->group(function () {
         // Cart recovery routes (Phase 85)
         Route::get('/shop/cart/recover/{token}', [\App\Http\Controllers\StorefrontCartRecoveryController::class, 'recover'])
             ->name('storefront.cart.recover');
+        Route::get('/cart/recover/{token}', [\App\Http\Controllers\StorefrontCartRecoveryController::class, 'recover']);
         Route::post('/shop/checkout/track-partial', [\App\Http\Controllers\StorefrontCartRecoveryController::class, 'trackPartial'])
             ->name('storefront.checkout.track_partial');
+        Route::post('/checkout/track-partial', [\App\Http\Controllers\StorefrontCartRecoveryController::class, 'trackPartial']);
+        Route::post('/api/abandoned-cart/track', [\App\Http\Controllers\StorefrontCartRecoveryController::class, 'trackPartial']);
 
         // Phase 57: Wishlist routes
         Route::get('/wishlist', function(\Illuminate\Http\Request $r) {

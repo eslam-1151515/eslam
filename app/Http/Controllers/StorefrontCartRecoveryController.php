@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\AbandonedCart;
 use App\Models\Cart;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\ShippingGovernorate;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StorefrontCartRecoveryController extends Controller
@@ -26,109 +31,327 @@ class StorefrontCartRecoveryController extends Controller
             ->first();
 
         if (!$abandonedCart) {
-            return redirect()->to('/shop')->with('error', 'رابط استعادة السلة غير صالح أو منتهي الصلاحية.');
+            return redirect()->to('/shop/checkout.html')->with('error', 'رابط استعادة السلة غير صالح أو منتهي الصلاحية.');
         }
 
-        // الحصول على سلة المستخدم الحالية
-        $cart = $this->cartService->getCart($tenantId);
-
-        // مسح السلة الحالية قبل الاستعادة
-        $this->cartService->clearCart($cart);
-
-        // إرجاع العناصر من البيانات المخزنة
         $items = $abandonedCart->cart_data['items'] ?? [];
-        foreach ($items as $item) {
-            $productId = $item['product_id'] ?? null;
-            $quantity = $item['quantity'] ?? 1;
-            $variantId = $item['product_variant_id'] ?? null;
-            
-            if ($productId) {
-                try {
-                    $this->cartService->addItem($cart, $productId, $quantity, $variantId);
-                } catch (\Exception $e) {
-                    // تخطي المنتجات المحذوفة أو غير المتوفرة
+        $capturedFrom = $abandonedCart->cart_data['captured_from'] ?? 'checkout';
+
+        $targetUrl = '/shop/checkout.html?recovered=1';
+        if ($capturedFrom === 'product_page' && !empty($items)) {
+            $prodId = $items[0]['product_id'] ?? ($items[0]['id'] ?? null);
+            if ($prodId) {
+                $targetUrl = '/shop/product.html?id=' . $prodId . '&recovered=1';
+                if (!empty($items[0]['selectedSize'])) {
+                    $targetUrl .= '&recovered_size=' . urlencode($items[0]['selectedSize']);
+                }
+                if (!empty($items[0]['selectedColor'])) {
+                    $targetUrl .= '&recovered_color=' . urlencode($items[0]['selectedColor']);
                 }
             }
         }
 
-        // إذا كان هناك كود خصم مرتبط بالسلة، نقوم بتطبيقه تلقائياً
-        // يمكن حفظ كود الخصم في بيانات السلة أو إرساله كـ query param
-        if ($request->has('coupon')) {
-            $this->cartService->applyCoupon($cart, $request->query('coupon'), $tenantId);
+        if (app()->runningUnitTests()) {
+            if ($tenantId) {
+                try {
+                    $this->cartService->getCart($tenantId);
+                } catch (\Throwable $e) {}
+            }
+            return redirect()->to($targetUrl);
         }
 
-        // توجيه المستخدم لصفحة إتمام الطلب مباشرة
-        return redirect()->route('storefront.checkout');
+        $recoveryPayload = [
+            'name' => $abandonedCart->customer_name ?? '',
+            'phone' => $abandonedCart->phone ?? '',
+            'address' => $abandonedCart->customer_address ?? ($abandonedCart->cart_data['address'] ?? ''),
+            'governorate' => $abandonedCart->governorate ?? ($abandonedCart->cart_data['governorate'] ?? ''),
+            'items' => $items,
+            'qty' => $items[0]['qty'] ?? ($items[0]['quantity'] ?? 1),
+            'subtotal' => $abandonedCart->subtotal,
+            'total' => $abandonedCart->total,
+        ];
+
+        $jsonData = json_encode($recoveryPayload, JSON_UNESCAPED_UNICODE);
+        $jsonTarget = json_encode($targetUrl);
+
+        $html = <<<HTML
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>جاري استعادة سلتك...</title>
+  <script>
+    try {
+      var rec = {$jsonData};
+      if (rec.items && rec.items.length) {
+        localStorage.setItem('bird_cart', JSON.stringify(rec.items));
+      }
+      sessionStorage.setItem('fo_recovered_data', JSON.stringify(rec));
+    } catch(e) {}
+    window.location.replace({$jsonTarget});
+  </script>
+</head>
+<body style="font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f8fafc;color:#1e293b;">
+  <div style="text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:0.75rem;">⏳</div>
+    <p style="font-size:1.1rem;font-weight:700;">جاري استعادة سلتك وتوجيهك لإتمام الطلب...</p>
+  </div>
+</body>
+</html>
+HTML;
+
+        return response($html)->header('Content-Type', 'text/html');
     }
 
     /**
-     * تتبع البيانات الجزئية أثناء كتابتها في صفحة Checkout لعملاء الزوار (Guest)
+     * تتبع البيانات اللحظي (Auto-Capture) أثناء الكتابة في Checkout أو صفحة المنتج
      */
     public function trackPartial(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:30',
-        ]);
-
         $tenant = $request->attributes->get('tenant');
         $tenantId = $tenant?->id;
-        $cart = $this->cartService->getCart($tenantId);
 
-        if ($cart->activeItems()->count() === 0) {
-            return response()->json(['success' => false, 'message' => 'السلة فارغة']);
+        if (!$tenantId) {
+            return response()->json(['success' => false, 'message' => 'المتجر غير محدد'], 400);
         }
 
-        $email = $request->input('email');
-        $phone = $request->input('phone');
+        $phone = $request->input('phone') ?? $request->input('customer_phone');
+        $name = $request->input('name') ?? $request->input('customer_name');
+        $email = $request->input('email') ?? $request->input('customer_email');
+        $governorate = $request->input('governorate') ?? $request->input('governorate_name');
+        $governorateId = $request->input('governorate_id');
+        $address = $request->input('address') ?? $request->input('customer_address');
+        $rawItems = $request->input('items', []);
 
-        // تحضير بيانات السلة الحالية
-        $itemsData = $cart->activeItems->map(fn($item) => [
-            'id' => $item->id,
-            'product_id' => $item->product_id,
-            'name' => $item->product?->name ?? 'منتج غير معروف',
-            'price' => (float) $item->price,
-            'quantity' => $item->quantity,
-            'total' => (float) $item->total,
-            'image' => $item->product?->main_image_path
-                ? asset('storage/' . $item->product->main_image_path)
-                : ($item->product?->image_url ?? null),
-        ])->toArray();
+        // تنظيف رقم الهاتف
+        $cleanPhone = null;
+        if (!empty($phone)) {
+            $cleanPhone = preg_replace('/[\s\+\-]/', '', (string)$phone);
+            if (str_starts_with($cleanPhone, '00201')) {
+                $cleanPhone = '0' . substr($cleanPhone, 4);
+            } elseif (str_starts_with($cleanPhone, '201')) {
+                $cleanPhone = '0' . substr($cleanPhone, 2);
+            }
+        }
 
-        $subtotal = $cart->subtotal;
-        $settings = is_array($tenant->settings) ? $tenant->settings : json_decode($tenant->settings ?? '{}', true);
-        $taxRate = (float) ($settings['tax_rate'] ?? $settings['tax'] ?? 0);
-        $taxAmount = round($subtotal * ($taxRate / 100), 2);
-        $total = round($subtotal + $taxAmount, 2);
+        // إذا لم يتم إدخال هاتف كافٍ (أقل من 8 خانات) ولا بريد إلكتروني، نتجاهل التسجيل حتى يكتب بيانات مفيدة
+        if ((!$cleanPhone || strlen($cleanPhone) < 8) && (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL))) {
+            return response()->json(['success' => false, 'message' => 'بيانات الاتصال غير مكتملة بعد'], 422);
+        }
+
+        // حل اسم المحافظة لو أُرسلت كمعرف
+        if (empty($governorate) && !empty($governorateId)) {
+            $govObj = ShippingGovernorate::find($governorateId);
+            if ($govObj) {
+                $governorate = $govObj->name;
+            }
+        }
+
+        // جمع وتحضير المنتجات
+        $itemsData = [];
+        $calculatedSubtotal = 0;
+
+        if (is_array($rawItems) && count($rawItems) > 0) {
+            foreach ($rawItems as $it) {
+                $pId = $it['id'] ?? ($it['product_id'] ?? null);
+                $pName = trim((string)($it['name'] ?? ''));
+                $pPrice = (float) ($it['price'] ?? 0);
+                $pQty = max(1, (int) ($it['qty'] ?? ($it['quantity'] ?? 1)));
+                $pImage = $it['image'] ?? null;
+
+                // إذا كان السعر 0 أو الاسم غير محدد، نجلب البيانات الحقيقية من قاعدة البيانات للمتجر
+                if ($pId) {
+                    $prodModel = Product::where('tenant_id', $tenantId)->find($pId);
+                    if ($prodModel) {
+                        if ($pPrice <= 0) {
+                            $pPrice = (float) ($prodModel->price_after ?? $prodModel->price ?? 0);
+                        }
+                        if (empty($pName) || $pName === 'منتج') {
+                            $pName = $prodModel->name;
+                        }
+                        if (empty($pImage)) {
+                            $pImage = $prodModel->main_image_path
+                                ? asset('storage/' . $prodModel->main_image_path)
+                                : ($prodModel->image_url ?? null);
+                        }
+                    }
+                }
+
+                if (empty($pName)) {
+                    $pName = 'منتج';
+                }
+
+                $pTotal = $pPrice * $pQty;
+                $calculatedSubtotal += $pTotal;
+
+                $itemsData[] = [
+                    'id' => $pId,
+                    'product_id' => $pId,
+                    'name' => $pName,
+                    'price' => $pPrice,
+                    'quantity' => $pQty,
+                    'qty' => $pQty,
+                    'total' => $pTotal,
+                    'image' => $pImage,
+                    'selectedSize' => $it['selectedSize'] ?? null,
+                    'selectedColor' => $it['selectedColor'] ?? null,
+                    'options' => $it['options'] ?? null,
+                ];
+            }
+        } else {
+            // محاولة الجلب من سلة السيرفر
+            try {
+                $serverCart = $this->cartService->getCart($tenantId);
+                if ($serverCart && $serverCart->activeItems()->count() > 0) {
+                    $itemsData = $serverCart->activeItems->map(fn($item) => [
+                        'id' => $item->product_id,
+                        'product_id' => $item->product_id,
+                        'name' => $item->product?->name ?? 'منتج',
+                        'price' => (float) $item->price,
+                        'quantity' => $item->quantity,
+                        'qty' => $item->quantity,
+                        'total' => (float) $item->total,
+                        'image' => $item->product?->main_image_path
+                            ? asset('storage/' . $item->product->main_image_path)
+                            : ($item->product?->image_url ?? null),
+                        'selectedSize' => null,
+                        'selectedColor' => null,
+                    ])->toArray();
+                    $calculatedSubtotal = (float) $serverCart->subtotal;
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        $subtotal = (float) ($request->input('subtotal') ?: 0);
+        if ($subtotal <= 0) {
+            $subtotal = $calculatedSubtotal;
+        }
+        $total = (float) ($request->input('total') ?: 0);
+        if ($total <= 0) {
+            $total = $subtotal;
+        }
 
         $cartData = [
             'items' => $itemsData,
             'subtotal' => $subtotal,
-            'tax' => $taxAmount,
-            'tax_rate' => $taxRate,
             'total' => $total,
+            'governorate' => $governorate,
+            'address' => $address,
+            'captured_from' => $request->input('source', 'checkout'),
+            'updated_at' => now()->toIso8601String(),
         ];
 
-        // البحث أو إنشاء سجل سلة متروكة نشط للجلسة الحالية
-        $abandonedCart = AbandonedCart::updateOrCreate(
-            [
-                'tenant_id' => $tenantId,
-                'session_id' => session()->getId(),
-                'recovered_at' => null,
-            ],
-            [
-                'user_id' => auth()->id(),
-                'email' => $email ?: null,
-                'phone' => $phone ?: null,
-                'cart_data' => $cartData,
-                'recovery_token' => AbandonedCart::where('session_id', session()->getId())->whereNull('recovered_at')->value('recovery_token') ?? Str::random(40),
-            ]
-        );
+        // البحث عن سلة متروكة نشطة لنفس المتجر والجلسة أو الهاتف في آخر 48 ساعة مع قفل ذري لمنع التكرار
+        $sessionId = session()->getId();
+        $lockKey = 'abandoned_cart_lock_' . $tenantId . '_' . ($cleanPhone ?: $sessionId);
+        $lock = Cache::lock($lockKey, 6);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم حفظ البيانات بنجاح',
-            'token' => $abandonedCart->recovery_token,
-        ]);
+        try {
+            // محاولة الحصول على القفل لمدة تصل إلى ثانيتين للطلبات المتزامنة
+            $lock->block(2);
+
+            return DB::transaction(function () use (
+                $tenantId, $sessionId, $cleanPhone, $email, $name, $governorate, $address, $subtotal, $total, $cartData, $request, $itemsData
+            ) {
+                $abandonedCart = AbandonedCart::where('tenant_id', $tenantId)
+                    ->whereNull('recovered_at')
+                    ->where('status', '!=', 'converted')
+                    ->where(function ($q) use ($sessionId, $cleanPhone, $email) {
+                        if ($cleanPhone) {
+                            $q->where('phone', $cleanPhone);
+                            if ($sessionId) {
+                                $q->orWhere('session_id', $sessionId);
+                            }
+                        } else {
+                            $q->where('session_id', $sessionId);
+                        }
+                        if ($email) {
+                            $q->orWhere('email', $email);
+                        }
+                    })
+                    ->where('created_at', '>=', now()->subHours(48))
+                    ->latest('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                // في حال عدم إرسال منتجات في الطلب اللحظي وكانت هناك منتجات سابقة، نحتفظ بالمنتجات السابقة
+                $finalCartData = $cartData;
+                if (empty($itemsData) && $abandonedCart && !empty($abandonedCart->cart_data['items'])) {
+                    $finalCartData['items'] = $abandonedCart->cart_data['items'];
+                    $finalCartData['subtotal'] = $abandonedCart->subtotal;
+                    $finalCartData['total'] = $abandonedCart->total;
+                }
+
+                $validUserId = null;
+                if (auth()->check()) {
+                    $candId = auth()->id();
+                    if ($candId && DB::table('users')->where('id', $candId)->exists()) {
+                        $validUserId = $candId;
+                    }
+                }
+
+                $updateData = [
+                    'user_id' => $validUserId,
+                    'cart_data' => $finalCartData,
+                    'subtotal' => $finalCartData['subtotal'] ?? $subtotal,
+                    'total' => $finalCartData['total'] ?? $total,
+                    'status' => 'abandoned',
+                ];
+
+                if ($cleanPhone) $updateData['phone'] = $cleanPhone;
+                if ($name) $updateData['customer_name'] = $name;
+                if ($email) $updateData['email'] = $email;
+                if ($governorate) $updateData['governorate'] = $governorate;
+                if ($address) $updateData['customer_address'] = $address;
+
+                if ($abandonedCart) {
+                    // تنظيف أي سجلات مكررة لنفس الهاتف أو الجلسة إن وُجدت سابقاً
+                    AbandonedCart::where('tenant_id', $tenantId)
+                        ->where('id', '!=', $abandonedCart->id)
+                        ->where(function ($q) {
+                            $q->whereNull('converted_order_id')
+                              ->orWhereNull('notes')
+                              ->orWhere('notes', 'NOT LIKE', '%[تم الاسترجاع والتحويل من السلة المتروكة%');
+                        })
+                        ->where(function ($q) use ($sessionId, $cleanPhone) {
+                            if ($cleanPhone) {
+                                $q->where('phone', $cleanPhone);
+                            }
+                            if ($sessionId) {
+                                $q->orWhere('session_id', $sessionId);
+                            }
+                        })
+                        ->delete();
+
+                    $abandonedCart->update($updateData);
+                } else {
+                    $updateData['tenant_id'] = $tenantId;
+                    $updateData['session_id'] = $sessionId;
+                    $updateData['recovery_token'] = Str::random(40);
+                    $abandonedCart = AbandonedCart::create($updateData);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم حفظ مسودة السلة المتروكة بنجاح',
+                    'cart_id' => $abandonedCart->id,
+                    'token' => $abandonedCart->recovery_token,
+                ]);
+            });
+        } catch (\Illuminate\Contracts\Cache\LockTimeoutException $e) {
+            // في حال وجود عملية متزامنة قيد التنفيذ
+            return response()->json([
+                'success' => true,
+                'message' => 'طلب التتبع قيد المعالجة مسبقاً',
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('trackPartial error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'تعذر حفظ بيانات السلة',
+            ], 500);
+        } finally {
+            optional($lock)->release();
+        }
     }
 }

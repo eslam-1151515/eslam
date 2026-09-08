@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>إتمام الطلب - {{ $tenant->name ?? 'المتجر' }}</title>
+    @php
+        $storeName = \App\Models\Setting::get('store_name') ?: ($tenant->name ?? 'المتجر');
+        $storeLogo = \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : ($tenant->logo ? asset('storage/' . $tenant->logo) : asset('images/logo.png'));
+    @endphp
+    <title>إتمام الطلب - {{ $storeName }}</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ $storeName }}">
+    <meta property="og:title" content="إتمام الطلب - {{ $storeName }}">
+    <meta property="og:image" content="{{ $storeLogo }}">
     <link rel="stylesheet" href="/shop/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -654,38 +662,108 @@ function addCrossSellToCheckout(id, name, price, image) {
 }
 
 function trackPartialData() {
-    const emailInput = document.querySelector('input[name="customer_email"]');
+    const nameInput = document.querySelector('input[name="customer_name"]');
     const phoneInput = document.querySelector('input[name="customer_phone"]');
+    const emailInput = document.querySelector('input[name="customer_email"]');
+    const addressInput = document.querySelector('input[name="customer_address"]');
+    const govSelect = document.getElementById('governorate-select');
     
+    let debounceTimer = null;
+    let lastSentPhone = '';
+
     const sendTracking = async () => {
+        const phone = phoneInput ? phoneInput.value.trim().replace(/[\s\+\-]/g, '') : '';
         const email = emailInput ? emailInput.value.trim() : '';
-        const phone = phoneInput ? phoneInput.value.trim() : '';
+        const name = nameInput ? nameInput.value.trim() : '';
+        const address = addressInput ? addressInput.value.trim() : '';
+        const govId = govSelect ? govSelect.value : '';
+        const govName = (govSelect && govSelect.selectedIndex >= 0 && govSelect.options[govSelect.selectedIndex]) 
+            ? govSelect.options[govSelect.selectedIndex].text.split('-')[0].trim() 
+            : '';
         
-        if (!email && !phone) return;
-        
+        if (window.__orderSubmitted) return;
+        if (typeof window.captureAbandonedCart === 'function') {
+            window.captureAbandonedCart(false);
+            return;
+        }
+
+        // لا تسجل إذا لم يكن هناك هاتف مكون من 8 أرقام على الأقل أو إيميل صالح
+        if ((!phone || phone.length < 8) && !email) return;
+
+        let items = [];
         try {
+            items = JSON.parse(localStorage.getItem('bird_cart') || '[]');
+        } catch (e) {
+            items = [];
+        }
+
+        const subtotal = items.reduce((sum, it) => sum + ((parseFloat(it.price) || 0) * (parseInt(it.qty) || 1)), 0);
+        const total = subtotal;
+
+        try {
+            const csrfMeta = document.querySelector('meta[name=csrf-token]');
+            const csrf = csrfMeta ? csrfMeta.content : '';
             await fetch('/checkout/track-partial', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
                 },
-                body: JSON.stringify({ email, phone })
+                body: JSON.stringify({
+                    phone,
+                    customer_name: name,
+                    customer_email: email,
+                    customer_address: address,
+                    governorate_id: govId,
+                    governorate: govName,
+                    items,
+                    subtotal,
+                    total,
+                    source: 'checkout'
+                }),
+                keepalive: true
             });
+            lastSentPhone = phone;
         } catch (e) {
-            // Ignore background tracking errors
+            // تجاهل أخطاء التتبع بالخلفية
         }
     };
-    
-    if (emailInput) {
-        emailInput.addEventListener('blur', sendTracking);
-        emailInput.addEventListener('change', sendTracking);
-    }
+
+    const triggerDebounced = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(sendTracking, 600);
+    };
+
     if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[\s\+\-]/g, '');
+            if (val.length >= 11 && val !== lastSentPhone) {
+                triggerDebounced();
+            }
+        });
         phoneInput.addEventListener('blur', sendTracking);
         phoneInput.addEventListener('change', sendTracking);
     }
+    if (nameInput) {
+        nameInput.addEventListener('blur', sendTracking);
+    }
+    if (emailInput) {
+        emailInput.addEventListener('blur', sendTracking);
+    }
+    if (addressInput) {
+        addressInput.addEventListener('blur', sendTracking);
+    }
+    if (govSelect) {
+        govSelect.addEventListener('change', sendTracking);
+    }
+
+    window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') sendTracking();
+    });
+    window.addEventListener('pagehide', sendTracking);
+    window.addEventListener('beforeunload', sendTracking);
 }
 
 
@@ -960,6 +1038,7 @@ async function placeOrder(e) {
         const result = await res.json();
 
         if (result.success) {
+            window.__orderSubmitted = true;
             // Clear cart
             localStorage.removeItem('bird_cart');
             window.location.href = result.redirect;
