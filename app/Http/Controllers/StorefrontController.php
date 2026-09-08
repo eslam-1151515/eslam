@@ -822,8 +822,47 @@ s0.parentNode.insertBefore(s1,s0);
     var cvInputs = document.querySelectorAll('input[name^="product_cv_"]:checked');
     cvInputs.forEach(function(inp) {
       if (inp.value) {
-        var name = inp.getAttribute('data-name') || inp.name;
-        customOptions[name] = inp.value;
+        var name = inp.getAttribute('data-name');
+        if (!name || name.startsWith('product_cv_')) {
+          var cGroup = inp.closest('.cv-group-container');
+          if (cGroup && cGroup.previousElementSibling) {
+            name = (cGroup.previousElementSibling.textContent || '').replace(/[*:\s]+$/, '').trim();
+          }
+        }
+        if (!name || name.startsWith('product_cv_')) {
+          var match = inp.name.match(/product_cv_(\d+)_/);
+          if (match && window.productData && window.productData.custom_variants && window.productData.custom_variants[match[1]]) {
+            name = window.productData.custom_variants[match[1]].name;
+          }
+        }
+        if (!name || name.startsWith('product_cv_')) {
+          name = 'خيار إضافي';
+        }
+
+        var pieceIdx = inp.getAttribute('data-piece');
+        if (pieceIdx === null || pieceIdx === undefined) {
+          var pMatch = inp.name.match(/product_cv_\d+_(\d+)/);
+          if (pMatch) pieceIdx = pMatch[1];
+        }
+
+        if (qty > 1 && pieceIdx !== null && pieceIdx !== undefined) {
+          if (!customOptions[name]) {
+            customOptions[name] = [];
+          }
+          if (Array.isArray(customOptions[name])) {
+            customOptions[name].push('ق' + (parseInt(pieceIdx) + 1) + ': ' + inp.value);
+          } else {
+            customOptions[name] = [customOptions[name], 'ق' + (parseInt(pieceIdx) + 1) + ': ' + inp.value];
+          }
+        } else {
+          customOptions[name] = inp.value;
+        }
+      }
+    });
+
+    Object.keys(customOptions).forEach(function(k) {
+      if (Array.isArray(customOptions[k])) {
+        customOptions[k] = customOptions[k].join(' | ');
       }
     });
 
@@ -1199,11 +1238,17 @@ s0.parentNode.insertBefore(s1,s0);
     if (itemData.options && typeof itemData.options === 'object') {
       Object.keys(itemData.options).forEach(function(optKey) {
         var val = itemData.options[optKey];
-        if (val) {
-          var cleanVal = normalizeVariantVal(String(val).replace(/^ق\d+:\s*/, ''));
+        if (!val) return;
+        var parts = String(val).split(/\s*\|\s*/);
+        parts.forEach(function(piecePart, pieceIdx) {
+          var cleanPartVal = normalizeVariantVal(piecePart.replace(/^ق\d+:\s*/, ''));
           var cvInputs = document.querySelectorAll('input[name^="product_cv_"]');
           cvInputs.forEach(function(inp) {
-            if (normalizeVariantVal(inp.value) === cleanVal) {
+            var inpPiece = inp.getAttribute('data-piece');
+            var matchPiece = (inpPiece === null || inpPiece === undefined || parseInt(inpPiece) === pieceIdx || parts.length === 1);
+            var inpName = inp.getAttribute('data-name');
+            var matchName = !inpName || !optKey || inpName === optKey || optKey.startsWith('product_cv_') || optKey === 'خيار إضافي';
+            if (matchPiece && matchName && normalizeVariantVal(inp.value) === cleanPartVal) {
               inp.checked = true;
               highlightVariantBtn(inp);
               inp.dispatchEvent(new Event('change', { bubbles: true }));
@@ -1211,7 +1256,7 @@ s0.parentNode.insertBefore(s1,s0);
               restored = true;
             }
           });
-        }
+        });
       });
     }
 

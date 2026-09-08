@@ -69,6 +69,14 @@ export default function AbandonedCartsIndex({ abandonedCarts, records, stats, st
         }
     };
 
+    const formatOptionKey = (k) => {
+        if (!k) return '';
+        if (typeof k === 'string' && (k.startsWith('product_cv_') || k.startsWith('cv_'))) {
+            return 'خيار إضافي';
+        }
+        return k;
+    };
+
     // Open WhatsApp with pre-filled professional recovery message
     const handleWhatsAppRecovery = (cart) => {
         let phone = cart.phone ? cart.phone.replace(/[\s\+\-]/g, '') : '';
@@ -97,7 +105,7 @@ export default function AbandonedCartsIndex({ abandonedCarts, records, stats, st
             if (i.selectedSize || i.size) variants.push(`مقاس: ${i.selectedSize || i.size}`);
             if (i.selectedColor || i.color) variants.push(`لون: ${i.selectedColor || i.color}`);
             if (i.options && typeof i.options === 'object') {
-                Object.entries(i.options).forEach(([k, v]) => variants.push(`${k}: ${v}`));
+                Object.entries(i.options).forEach(([k, v]) => variants.push(`${formatOptionKey(k)}: ${v}`));
             }
             const variantStr = variants.length > 0 ? ` (${variants.join('، ')})` : '';
             return `${i.name}${variantStr} [${i.qty || i.quantity || 1} قطعة]`;
@@ -436,8 +444,8 @@ export default function AbandonedCartsIndex({ abandonedCarts, records, stats, st
                                                                                 </span>
                                                                             )}
                                                                             {item.options && typeof item.options === 'object' && Object.entries(item.options).map(([k, v], oIdx) => (
-                                                                                <span key={oIdx} className="text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded font-medium">
-                                                                                    {k}: {v}
+                                                                                <span key={oIdx} className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-medium border border-emerald-100">
+                                                                                    {formatOptionKey(k)}: {v}
                                                                                 </span>
                                                                             ))}
                                                                         </div>
@@ -607,8 +615,8 @@ export default function AbandonedCartsIndex({ abandonedCarts, records, stats, st
                                                                     </span>
                                                                 )}
                                                                 {it.options && typeof it.options === 'object' && Object.entries(it.options).map(([k, v], oIdx) => (
-                                                                    <span key={oIdx} className="text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">
-                                                                        {k}: {v}
+                                                                    <span key={oIdx} className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-100">
+                                                                        {formatOptionKey(k)}: {v}
                                                                     </span>
                                                                 ))}
                                                             </div>

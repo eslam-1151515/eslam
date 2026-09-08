@@ -1145,7 +1145,7 @@
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="cv-group-container" data-piece="${i}" data-cv-idx="${cvIdx}">
                   ${cv.values.map(val => `
                     <label class="cv-option" style="cursor: pointer; position: relative;">
-                      <input type="radio" name="product_cv_${cvIdx}_${i}" value="${val}" style="display: none;" onchange="updateVariantAvailability(${i})">
+                      <input type="radio" name="product_cv_${cvIdx}_${i}" value="${val}" data-name="${cv.name}" data-piece="${i}" style="display: none;" onchange="updateVariantAvailability(${i})">
                       <span class="variant-btn" data-type="cv_${cvIdx}" data-val="${val}">${val}</span>
                     </label>
                   `).join('')}
@@ -1991,7 +1991,19 @@
                 if (colorSel && colorSel.value) colorPieces.push(colorSel.value);
             }
             document.querySelectorAll('input[name^="product_cv_"]:checked').forEach(function(inp) {
-                if (inp.value) customOptions[inp.getAttribute('data-name') || inp.name] = inp.value;
+                if (inp.value) {
+                    var cvName = inp.getAttribute('data-name');
+                    if (!cvName || cvName.startsWith('product_cv_')) {
+                        var cGroup = inp.closest('.cv-group-container');
+                        if (cGroup && cGroup.previousElementSibling) {
+                            cvName = (cGroup.previousElementSibling.textContent || '').replace(/[*:\s]+$/, '').trim();
+                        }
+                    }
+                    if (!cvName || cvName.startsWith('product_cv_')) {
+                        cvName = 'خيار إضافي';
+                    }
+                    customOptions[cvName] = inp.value;
+                }
             });
             variantInfo = {
                 selectedSize: sizePieces.length > 1 ? sizePieces.map(function(s, idx) { return 'ق' + (idx + 1) + ': ' + s; }).join(' | ') : (sizePieces[0] || null),
