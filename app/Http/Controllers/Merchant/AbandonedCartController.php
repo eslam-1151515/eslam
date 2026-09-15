@@ -7,6 +7,7 @@ use App\Models\AbandonedCart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingGovernorate;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -19,7 +20,7 @@ class AbandonedCartController extends Controller
      */
     public function index(Request $request): Response
     {
-        $tenant = $request->attributes->get('tenant') ?? auth()->user()?->tenant;
+        $tenant = $this->resolveTenant($request);
         $tenantId = $tenant?->id;
 
         $search = trim((string) $request->input('search', ''));
@@ -173,20 +174,28 @@ class AbandonedCartController extends Controller
     /**
      * تحويل السلة المتروكة إلى طلب رسمي مؤكد
      */
-    public function convert(Request $request, AbandonedCart $abandonedCart)
+    public function convert(Request $request, $id)
     {
-        $tenant = $request->attributes->get('tenant') ?? auth()->user()?->tenant;
-        if ($abandonedCart->tenant_id !== $tenant?->id) {
-            abort(403);
+        $tenant = $this->resolveTenant($request);
+        if (!$tenant) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'تعذر تحديد المتجر الحالي.');
+        }
+
+        $abandonedCart = AbandonedCart::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->find($id);
+
+        if (!$abandonedCart) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'السلة المتروكة غير موجودة أو لا تنتمي لمتجرك.');
         }
 
         if ($abandonedCart->status === 'converted' && $abandonedCart->converted_order_id) {
-            return back()->with('error', 'تم تحويل هذه السلة بالفعل مسبقاً.');
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'تم تحويل هذه السلة بالفعل مسبقاً.');
         }
 
         $items = $abandonedCart->cart_data['items'] ?? [];
         if (empty($items)) {
-            return back()->with('error', 'لا يمكن تحويل سلة فارغة إلى طلب. برجاء التأكد من وجود منتجات.');
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'لا يمكن تحويل سلة فارغة إلى طلب. برجاء التأكد من وجود منتجات.');
         }
 
         $validated = $request->validate([
@@ -334,21 +343,35 @@ class AbandonedCartController extends Controller
 
             DB::commit();
 
-            return back()->with('success', "تم تحويل السلة بنجاح إلى طلب مؤكد برقم مرجعي: {$order->reference_number}");
+            return redirect()->route('merchant.abandoned-carts.index')
+                ->with('success', "تم تحويل السلة بنجاح إلى طلب مؤكد برقم مرجعي: {$order->reference_number}");
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'حدث خطأ أثناء إنشاء الطلب: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Failed to convert abandoned cart to order: ' . $e->getMessage(), [
+                'cart_id' => $id,
+                'trace'   => $e->getTraceAsString(),
+            ]);
+            return redirect()->route('merchant.abandoned-carts.index')
+                ->with('error', 'حدث خطأ أثناء إنشاء الطلب: ' . $e->getMessage());
         }
     }
 
     /**
      * تسجيل التواصل مع العميل (مثلاً عند النقر على مراسلة واتساب)
      */
-    public function markContacted(Request $request, AbandonedCart $abandonedCart)
+    public function markContacted(Request $request, $id)
     {
-        $tenant = $request->attributes->get('tenant') ?? auth()->user()?->tenant;
-        if ($abandonedCart->tenant_id !== $tenant?->id) {
-            abort(403);
+        $tenant = $this->resolveTenant($request);
+        if (!$tenant) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'تعذر تحديد المتجر.');
+        }
+
+        $abandonedCart = AbandonedCart::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->find($id);
+
+        if (!$abandonedCart) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'السلة غير موجودة.');
         }
 
         if ($abandonedCart->status !== 'converted') {
@@ -358,21 +381,29 @@ class AbandonedCartController extends Controller
             ]);
         }
 
-        return back()->with('success', 'تم تحديث حالة السلة إلى "تم التواصل" بنجاح.');
+        return redirect()->route('merchant.abandoned-carts.index')->with('success', 'تم تحديث حالة السلة إلى "تم التواصل" بنجاح.');
     }
 
     /**
      * إرسال بريد تذكيري لاستعادة السلة المتروكة
      */
-    public function sendReminder(Request $request, AbandonedCart $abandonedCart)
+    public function sendReminder(Request $request, $id)
     {
-        $tenant = $request->attributes->get('tenant') ?? auth()->user()?->tenant;
-        if ($abandonedCart->tenant_id !== $tenant?->id) {
-            abort(403);
+        $tenant = $this->resolveTenant($request);
+        if (!$tenant) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'تعذر تحديد المتجر.');
+        }
+
+        $abandonedCart = AbandonedCart::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->find($id);
+
+        if (!$abandonedCart) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'السلة غير موجودة.');
         }
 
         if (empty($abandonedCart->email)) {
-            return back()->with('error', 'هذه السلة لا تحتوي على بريد إلكتروني للعميل.');
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'هذه السلة لا تحتوي على بريد إلكتروني للعميل.');
         }
 
         $locale = $request->input('locale', 'ar');
@@ -388,22 +419,54 @@ class AbandonedCartController extends Controller
             'status' => $abandonedCart->status === 'abandoned' ? 'contacted' : $abandonedCart->status,
         ]);
 
-        return back()->with('success', 'تم إرسال إيميل التذكير بالاستعادة بنجاح.');
+        return redirect()->route('merchant.abandoned-carts.index')->with('success', 'تم إرسال إيميل التذكير بالاستعادة بنجاح.');
     }
 
     /**
      * حذف سلة متروكة
      */
-    public function destroy(Request $request, AbandonedCart $abandonedCart)
+    public function destroy(Request $request, $id)
     {
-        $tenant = $request->attributes->get('tenant') ?? auth()->user()?->tenant;
-        if ($abandonedCart->tenant_id !== $tenant?->id) {
-            abort(403);
+        $tenant = $this->resolveTenant($request);
+        if (!$tenant) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'تعذر تحديد المتجر.');
+        }
+
+        $abandonedCart = AbandonedCart::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->find($id);
+
+        if (!$abandonedCart) {
+            return redirect()->route('merchant.abandoned-carts.index')->with('error', 'السلة غير موجودة.');
         }
 
         $abandonedCart->delete();
 
-        return back()->with('success', 'تم حذف السلة المتروكة بنجاح.');
+        return redirect()->route('merchant.abandoned-carts.index')->with('success', 'تم حذف السلة المتروكة بنجاح.');
+    }
+
+    /**
+     * استرجاع بيانات المستأجر/المتجر الحالي بدقة وبشكل آمن
+     */
+    protected function resolveTenant(Request $request): ?Tenant
+    {
+        if ($tenant = $request->attributes->get('tenant')) {
+            return $tenant;
+        }
+
+        $tenantId = session()->get('tenant_id')
+            ?? config('tenant.id')
+            ?? auth()->user()?->tenant_id;
+
+        if ($tenantId) {
+            return Tenant::find($tenantId);
+        }
+
+        if ($user = auth()->user()) {
+            return $user->currentTenant ?? $user->ownedTenants()->first();
+        }
+
+        return null;
     }
 }
 
