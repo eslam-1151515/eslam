@@ -7,6 +7,7 @@ export default function OrderShow({ order, productsList = [], governoratesList =
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isSavingEdit, setIsSavingEdit] = useState(false);
     const [isBlacklistLoading, setIsBlacklistLoading] = useState(false);
+    const [previewMedia, setPreviewMedia] = useState(null);
     const [selectedNewProduct, setSelectedNewProduct] = useState('');
 
     const [editForm, setEditForm] = useState({
@@ -684,6 +685,114 @@ ${totalsBlock}${shippingBlock}`;
                                                 <p className="text-xs text-gray-900 font-medium leading-relaxed bg-gray-50/80 p-2.5 rounded-lg border border-gray-100 break-words whitespace-pre-wrap">
                                                     {reply.text || reply.message}
                                                 </p>
+
+                                                {/* عرض الوسائط المرفقة (صور، فويس، فيديو، مستندات) */}
+                                                {reply.media_url && (
+                                                    <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
+                                                        {/* 1. الصور */}
+                                                        {reply.type === 'image' && (
+                                                            <div className="space-y-1.5">
+                                                                <div className="relative group inline-block max-w-full">
+                                                                    <img
+                                                                        src={reply.media_url}
+                                                                        alt="صورة العميل"
+                                                                        onClick={() => setPreviewMedia({ type: 'image', url: reply.media_url, caption: reply.caption || reply.text })}
+                                                                        className="max-h-60 max-w-full sm:max-w-xs rounded-xl border border-gray-200 object-cover cursor-zoom-in hover:opacity-95 transition-all shadow-xs"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center gap-3 text-[11px] font-bold">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setPreviewMedia({ type: 'image', url: reply.media_url, caption: reply.caption || reply.text })}
+                                                                        className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+                                                                    >
+                                                                        <span>🔍</span>
+                                                                        <span>تكبير الصورة</span>
+                                                                    </button>
+                                                                    <span className="text-gray-300">•</span>
+                                                                    <a
+                                                                        href={reply.media_url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        download
+                                                                        className="text-gray-600 hover:text-gray-900 flex items-center gap-1 cursor-pointer"
+                                                                    >
+                                                                        <span>⬇️</span>
+                                                                        <span>تنزيل</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* 2. الرسائل الصوتية (الفويس) */}
+                                                        {reply.type === 'audio' && (
+                                                            <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 space-y-2 max-w-md">
+                                                                <div className="flex items-center justify-between text-xs font-bold text-emerald-900">
+                                                                    <span className="flex items-center gap-1.5">
+                                                                        <span>🎤</span>
+                                                                        <span>رسالة صوتية من العميل:</span>
+                                                                    </span>
+                                                                    <a
+                                                                        href={reply.media_url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        download
+                                                                        className="text-[11px] text-emerald-700 hover:text-emerald-900 flex items-center gap-1 font-bold"
+                                                                    >
+                                                                        <span>⬇️</span>
+                                                                        <span>تنزيل الفويس</span>
+                                                                    </a>
+                                                                </div>
+                                                                <audio controls className="w-full h-9 rounded-lg">
+                                                                    <source src={reply.media_url} />
+                                                                    متصفحك لا يدعم مشغل الصوت.
+                                                                </audio>
+                                                            </div>
+                                                        )}
+
+                                                        {/* 3. الفيديو */}
+                                                        {reply.type === 'video' && (
+                                                            <div className="max-w-md space-y-2">
+                                                                <video controls className="w-full max-h-72 rounded-xl border border-gray-200 bg-black">
+                                                                    <source src={reply.media_url} />
+                                                                    متصفحك لا يدعم مشغل الفيديو.
+                                                                </video>
+                                                                <div className="flex items-center justify-end">
+                                                                    <a
+                                                                        href={reply.media_url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        download
+                                                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-600 hover:text-gray-900"
+                                                                    >
+                                                                        <span>⬇️</span>
+                                                                        <span>تنزيل الفيديو</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* 4. المستندات والملفات */}
+                                                        {reply.type === 'document' && (
+                                                            <div className="flex items-center justify-between gap-3 bg-gray-50 border border-gray-200 rounded-xl p-3 max-w-md">
+                                                                <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                                                    <span className="text-xl">📄</span>
+                                                                    <span className="truncate">{reply.caption || 'مستند مرفق'}</span>
+                                                                </div>
+                                                                <a
+                                                                    href={reply.media_url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    download
+                                                                    className="shrink-0 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                                                                >
+                                                                    <span>⬇️</span>
+                                                                    <span>تحميل المستند</span>
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -1286,6 +1395,53 @@ ${totalsBlock}${shippingBlock}`;
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* نافذة تكبير وعرض وسائط الواتساب (Lightbox Modal) */}
+                {previewMedia && (
+                    <div
+                        className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4"
+                        onClick={() => setPreviewMedia(null)}
+                    >
+                        <div
+                            className="relative max-w-4xl max-h-[92vh] w-full bg-gray-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-gray-700"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="p-3.5 bg-gray-900/90 border-b border-gray-800 text-white flex items-center justify-between gap-3">
+                                <span className="text-xs font-bold truncate text-gray-200">
+                                    {previewMedia.caption || 'معاينة وسائط الواتساب'}
+                                </span>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    <a
+                                        href={previewMedia.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        download
+                                        className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+                                    >
+                                        <span>⬇️</span>
+                                        <span>تنزيل الملف</span>
+                                    </a>
+                                    <button
+                                        type="button"
+                                        onClick={() => setPreviewMedia(null)}
+                                        className="text-gray-400 hover:text-white text-lg font-bold p-1 cursor-pointer"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="p-3 overflow-auto flex items-center justify-center bg-black/60 max-h-[82vh]">
+                                {previewMedia.type === 'image' && (
+                                    <img
+                                        src={previewMedia.url}
+                                        alt="معاينة كاملة"
+                                        className="max-h-[78vh] w-auto max-w-full object-contain rounded-lg"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}

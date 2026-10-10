@@ -93,6 +93,9 @@ class WhatsAppWebhookController extends Controller
         $order = null;
         $orderId = null;
         $rawText = '';
+        $mediaType = 'text';
+        $mediaUrl = null;
+        $caption = null;
 
         // A. Quick reply button (Template button click)
         if ($msgType === 'button') {
@@ -110,6 +113,33 @@ class WhatsAppWebhookController extends Controller
         elseif ($msgType === 'text') {
             $rawText = trim((string) ($message['text']['body'] ?? ''));
             $payloadAction = $this->parseTextToIntent($rawText);
+        }
+        // D. Media message (image, audio, voice note, video, document, sticker)
+        elseif (in_array($msgType, ['image', 'audio', 'voice', 'video', 'document', 'sticker'])) {
+            $mediaObj = $message[$msgType] ?? [];
+            $mediaId = $mediaObj['id'] ?? null;
+            $mimeType = $mediaObj['mime_type'] ?? null;
+            $caption = trim((string)($mediaObj['caption'] ?? ''));
+            $origFilename = $mediaObj['filename'] ?? null;
+            
+            $mediaType = in_array($msgType, ['audio', 'voice']) ? 'audio' : ($msgType === 'sticker' ? 'image' : $msgType);
+            
+            if ($mediaId) {
+                try {
+                    $whatsAppService = new \App\Services\MetaWhatsAppService();
+                    $mediaUrl = $whatsAppService->downloadMedia($mediaId, $mimeType, $origFilename);
+                } catch (\Throwable $e) {
+                    Log::error("Failed to download WhatsApp media {$mediaId}: " . $e->getMessage());
+                }
+            }
+
+            $rawText = $caption ?: match ($mediaType) {
+                'image'    => '📷 صورة مرسلة من العميل',
+                'audio'    => '🎤 رسالة صوتية من العميل',
+                'video'    => '🎥 مقطع فيديو من العميل',
+                'document' => '📄 مستند من العميل',
+                default    => "[ملف {$msgType}]",
+            };
         } else {
             $rawText = "[رسالة {$msgType}]";
         }
@@ -174,7 +204,7 @@ class WhatsAppWebhookController extends Controller
         }
 
         // تسجيل الرسالة والملاحظات بالتوقيت الدقيق وتحديث الحالة
-        $this->recordCustomerReplyAndProcess($order, $rawText, $actionType);
+        $this->recordCustomerReplyAndProcess($order, $rawText, $actionType, $mediaType, $mediaUrl, $caption);
     }
 
     /**
@@ -204,7 +234,14 @@ class WhatsAppWebhookController extends Controller
     /**
      * Record customer reply in whatsapp_replies and notes, and update status accordingly.
      */
-    protected function recordCustomerReplyAndProcess(Order $order, string $rawText, ?string $actionType): void
+    protected function recordCustomerReplyAndProcess(
+        Order $order, 
+        string $rawText, 
+        ?string $actionType,
+        string $mediaType = 'text',
+        ?string $mediaUrl = null,
+        ?string $caption = null
+    ): void
     {
         $nowTime = now();
         $period = $nowTime->format('A') === 'PM' ? 'م' : 'ص';
@@ -216,16 +253,20 @@ class WhatsAppWebhookController extends Controller
             : (json_decode($order->whatsapp_replies ?? '[]', true) ?: []);
 
         $replies[] = [
-            'sender'  => 'customer',
-            'text'    => $rawText,
-            'action'  => $actionType ?: 'CUSTOM',
-            'time'    => $time12,
+            'sender'    => 'customer',
+            'text'      => $rawText,
+            'action'    => $actionType ?: 'CUSTOM',
+            'time'      => $time12,
+            'type'      => $mediaType,
+            'media_url' => $mediaUrl,
+            'caption'   => $caption,
         ];
 
         // 2. تدوين الرد في الملاحظات / سجل الطلب
         $existingNotes = trim((string) $order->notes);
         $actionLabel = $actionType === 'CONFIRM' ? 'تأكيد' : ($actionType === 'CANCEL' ? 'إلغاء' : 'رد العميل');
-        $noteEntry = "💬 [واتساب {$time12} - {$actionLabel}]: {$rawText}";
+        $mediaNoteSuffix = $mediaUrl ? " (ملف مرفق: {$mediaUrl})" : '';
+        $noteEntry = "💬 [واتساب {$time12} - {$actionLabel}]: {$rawText}{$mediaNoteSuffix}";
         $newNotes = $existingNotes ? ($existingNotes . "\n" . $noteEntry) : $noteEntry;
 
         $updateData = [
