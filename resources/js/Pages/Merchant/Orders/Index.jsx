@@ -72,6 +72,22 @@ export default function OrdersIndex({
         }, { preserveState: true });
     };
 
+    const filterByCustomerPhone = (phone) => {
+        if (!phone) return;
+        setSearch(phone);
+        router.get('/admin/orders', {
+            search: phone,
+            status,
+            date_from: dateFrom,
+            date_to: dateTo,
+            product_id: productId,
+            per_page: perPage,
+            quick_filter: quickFilter,
+            print_status: printStatus,
+            shipping_status: shippingStatus,
+        }, { preserveState: true });
+    };
+
     const handleReset = () => {
         setSearch('');
         setStatus('');
@@ -700,11 +716,39 @@ export default function OrdersIndex({
                                                         <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" title="أوردر مؤكد وجاهز للطباعة والتجهيز"></span>
                                                     )}
                                                     <span>{order.reference_number}</span>
+                                                    {order.is_duplicate && (
+                                                        <span
+                                                            className="inline-flex items-center text-amber-600 hover:text-amber-700 cursor-pointer text-xs"
+                                                            title={`أوردر مكرر لنفس العميل (${order.duplicate_count} طلبات) - اضغط للفلترة`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (order.customer_phone) filterByCustomerPhone(order.customer_phone);
+                                                            }}
+                                                        >
+                                                            🔁
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-semibold text-gray-900">
-                                                    {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
+                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                    <span className="font-semibold text-gray-900">
+                                                        {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
+                                                    </span>
+                                                    {order.is_duplicate && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (order.customer_phone) filterByCustomerPhone(order.customer_phone);
+                                                            }}
+                                                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-300 transition-colors shadow-2xs cursor-pointer"
+                                                            title={`العميل لديه ${order.duplicate_count} طلبات مسجلة - اضغط للفلترة على رقم الهاتف`}
+                                                        >
+                                                            <span className="text-[11px]">🔁</span>
+                                                            <span>مكرر ({order.duplicate_count})</span>
+                                                        </button>
+                                                    )}
                                                 </div>
                                                 <div className="text-xs text-gray-500 font-mono mt-0.5" dir="ltr">
                                                     {order.is_unlocked || wallet_balance >= 2 ? order.customer_phone : `${order.customer_phone?.substring(0, 4)}******`}
@@ -841,8 +885,11 @@ export default function OrdersIndex({
                                             <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">
                                                 # {(orders.current_page - 1) * orders.per_page + idx + 1}
                                             </span>
-                                            <span className="font-mono font-bold text-gray-900 text-sm">
-                                                رقم: {order.reference_number}
+                                            <span className="font-mono font-bold text-gray-900 text-sm flex items-center gap-1">
+                                                <span>رقم: {order.reference_number}</span>
+                                                {order.is_duplicate && (
+                                                    <span className="text-amber-600 text-xs" title={`طلب مكرر (${order.duplicate_count})`}>🔁</span>
+                                                )}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1.5 flex-wrap justify-end">
@@ -851,11 +898,26 @@ export default function OrdersIndex({
                                         </div>
                                     </div>
                                     <div className="text-sm space-y-1.5 text-gray-600">
-                                        <div className="flex justify-between">
-                                            <span className="font-semibold text-gray-900">
-                                                {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
-                                            </span>
-                                            <span className="font-bold text-indigo-600">{formatCurrency(order.total)}</span>
+                                        <div className="flex justify-between items-center gap-2">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                <span className="font-semibold text-gray-900">
+                                                    {order.is_unlocked || wallet_balance >= 2 ? order.customer_name : `${order.customer_name?.substring(0, 4)}***`}
+                                                </span>
+                                                {order.is_duplicate && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (order.customer_phone) filterByCustomerPhone(order.customer_phone);
+                                                        }}
+                                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-300 transition-colors shadow-2xs"
+                                                    >
+                                                        <span className="text-[11px]">🔁</span>
+                                                        <span>مكرر ({order.duplicate_count})</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <span className="font-bold text-indigo-600 shrink-0">{formatCurrency(order.total)}</span>
                                         </div>
                                         <div className="flex justify-between text-xs">
                                             <span className="font-mono" dir="ltr">

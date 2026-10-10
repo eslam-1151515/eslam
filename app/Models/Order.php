@@ -19,6 +19,8 @@ class Order extends Model
         'customer_email',
         'customer_phone',
         'customer_address',
+        'ip_address',
+        'ip_country',
         'governorate',
         'payment_method',
         'payment_status',
@@ -42,6 +44,7 @@ class Order extends Model
         'whatsapp_sent_at',
         'whatsapp_response_at',
         'whatsapp_charge_amount',
+        'whatsapp_replies',
     ];
 
     protected $casts = [
@@ -59,6 +62,7 @@ class Order extends Model
         'whatsapp_sent_at' => 'datetime',
         'whatsapp_response_at' => 'datetime',
         'whatsapp_charge_amount' => 'float',
+        'whatsapp_replies' => 'array',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
@@ -91,6 +95,7 @@ class Order extends Model
             'unlocked_at' => 'datetime',
             'is_printed' => 'boolean',
             'printed_at' => 'datetime',
+            'whatsapp_replies' => 'array',
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];

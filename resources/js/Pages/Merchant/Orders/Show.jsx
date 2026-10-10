@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
-export default function OrderShow({ order, productsList = [], governoratesList = [], active_shipping_gateways = [] }) {
+export default function OrderShow({ order, productsList = [], governoratesList = [], active_shipping_gateways = [], duplicate_orders = [] }) {
     const { flash } = usePage().props;
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [isBlacklistLoading, setIsBlacklistLoading] = useState(false);
     const [selectedNewProduct, setSelectedNewProduct] = useState('');
 
     const [editForm, setEditForm] = useState({
@@ -128,6 +129,26 @@ export default function OrderShow({ order, productsList = [], governoratesList =
         if (!confirm('هل أنت متأكد من إلغاء هذا الطلب؟')) return;
         router.patch(`/admin/orders/${order.id}/cancel`, {}, {
             preserveScroll: true,
+        });
+    };
+
+    const handleToggleBlacklist = (type, value, label) => {
+        if (!value) return;
+        const isBlocked = type === 'phone' ? order.is_phone_blocked : order.is_ip_blocked;
+        const confirmMsg = isBlocked
+            ? `هل أنت متأكد من إلغاء حظر ${label} (${value}) لهذا المتجر؟`
+            : `هل أنت متأكد من حظر ${label} (${value})؟ لن يتمكن هذا العميل من تقديم أي طلبات جديدة في متجرك.`;
+
+        if (!confirm(confirmMsg)) return;
+
+        setIsBlacklistLoading(true);
+        router.post('/admin/blacklist/toggle', {
+            type,
+            value,
+            reason: `حظر مباشر من تفاصيل الطلب #${order.reference_number || order.id}`,
+        }, {
+            preserveScroll: true,
+            onFinish: () => setIsBlacklistLoading(false),
         });
     };
 
@@ -357,6 +378,64 @@ ${totalsBlock}${shippingBlock}`;
                     </div>
                 )}
 
+                {/* تنبيه الأوردرات المكررة لنفس العميل */}
+                {duplicate_orders && duplicate_orders.length > 0 && (
+                    <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 shadow-sm space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div className="flex items-center gap-2.5">
+                                <span className="text-xl">⚠️</span>
+                                <div>
+                                    <h4 className="font-extrabold text-amber-950 text-sm">
+                                        تنبيه أوردر مكرر: تم العثور على {duplicate_orders.length} طلبات أخرى مسجلة بنفس رقم الهاتف ({order.customer_phone})
+                                    </h4>
+                                    <p className="text-xs text-amber-800 mt-0.5">
+                                        يرجى مراجعة الطلبات السابقة وتأكيدها مع العميل قبل الشحن لتجنب إرسال شحنات مكررة لنفس الشخص.
+                                    </p>
+                                </div>
+                            </div>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-amber-200 text-amber-900 shrink-0 self-start sm:self-auto shadow-2xs">
+                                <span>🔁</span>
+                                <span>إجمالي طلبات العميل: {duplicate_orders.length + 1}</span>
+                            </span>
+                        </div>
+
+                        <div className="bg-white rounded-lg border border-amber-200 overflow-hidden divide-y divide-gray-100">
+                            {duplicate_orders.map((dup) => (
+                                <div key={dup.id} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-amber-50/50 transition-colors text-xs">
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-mono font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">
+                                            #{dup.reference_number || dup.id}
+                                        </span>
+                                        <span className="text-gray-500 font-sans">
+                                            {dup.created_at}
+                                        </span>
+                                        <span className="font-bold text-gray-800">
+                                            {formatCurrency(dup.total)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${getStatusBadgeClass(dup.status)}`}>
+                                            {getStatusText(dup.status)}
+                                        </span>
+                                        <a
+                                            href={`/admin/orders/${dup.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-md font-bold transition-colors"
+                                        >
+                                            <span>فتح الطلب</span>
+                                            <svg className="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 items-stretch lg:items-start w-full">
                     {/* العمود الرئيسي (يسار على الديسكتوب 3/5) */}
                     <div className="contents lg:block lg:col-span-3 lg:space-y-6 w-full">
@@ -536,6 +615,62 @@ ${totalsBlock}${shippingBlock}`;
                                     <span className="font-bold">{order.whatsapp_charge_amount} ج.م</span>
                                 </div>
                             )}
+
+                            {/* سجل ردود وملاحظات العميل عبر الواتساب */}
+                            <div className="pt-2.5 border-t border-emerald-200/60 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+                                        <span>📥</span>
+                                        <span>الملاحظات وردود العميل عبر الواتساب:</span>
+                                    </span>
+                                    {order.whatsapp_replies && order.whatsapp_replies.length > 0 ? (
+                                        <span className="text-[11px] font-black bg-emerald-600 text-white px-2.5 py-0.5 rounded-full shadow-2xs">
+                                            {order.whatsapp_replies.length} {order.whatsapp_replies.length === 1 ? 'رسالة مسجلة' : 'رسائل مسجلة'}
+                                        </span>
+                                    ) : (
+                                        <span className="text-[11px] text-gray-500 font-medium">
+                                            لا توجد ردود بعد
+                                        </span>
+                                    )}
+                                </div>
+
+                                {order.whatsapp_replies && order.whatsapp_replies.length > 0 ? (
+                                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                                        {order.whatsapp_replies.map((reply, rIdx) => (
+                                            <div
+                                                key={rIdx}
+                                                className="bg-white rounded-xl p-3 border border-emerald-100 shadow-2xs space-y-1.5 transition-all hover:border-emerald-300"
+                                            >
+                                                <div className="flex items-center justify-between gap-2 text-[11px]">
+                                                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold ${
+                                                        reply.action === 'CONFIRM'
+                                                            ? 'bg-emerald-100 text-emerald-800'
+                                                            : (reply.action === 'CANCEL'
+                                                                ? 'bg-red-100 text-red-800'
+                                                                : 'bg-teal-100 text-teal-800')
+                                                    }`}>
+                                                        {reply.action === 'CONFIRM' && '✅ تأكيد الطلب'}
+                                                        {reply.action === 'CANCEL' && '❌ إلغاء الطلب'}
+                                                        {reply.action !== 'CONFIRM' && reply.action !== 'CANCEL' && '💬 رد العميل'}
+                                                    </span>
+                                                    <span className="text-gray-400 font-mono text-[10px]" dir="ltr">
+                                                        {reply.time || ''}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-gray-900 font-medium leading-relaxed bg-gray-50/80 p-2.5 rounded-lg border border-gray-100 break-words whitespace-pre-wrap">
+                                                    {reply.text || reply.message}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="p-3 bg-white/70 rounded-xl border border-emerald-100 text-center text-xs text-gray-500">
+                                        {order.whatsapp_status === 'pending'
+                                            ? '⏳ تم إرسال رسالة التأكيد وبانتظار رد وملاحظات العميل...'
+                                            : 'لم يقم العميل بإرسال أي رسائل نصية أو ملاحظات عبر الواتساب حتى الآن.'}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* 7. إرسال الشحنة لشركة الشحن وتوليد البوليسة */}
@@ -629,11 +764,19 @@ ${totalsBlock}${shippingBlock}`;
                     <div className="contents lg:block lg:col-span-2 lg:space-y-6 w-full">
                         {/* 2. بيانات العميل */}
                         <div className="order-2 w-full bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-4">
-                            <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <span>بيانات العميل</span>
+                            <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-3 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span>بيانات العميل</span>
+                                </div>
+                                {duplicate_orders && duplicate_orders.length > 0 && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                        <span>🔁</span>
+                                        <span>مكرر ({duplicate_orders.length + 1})</span>
+                                    </span>
+                                )}
                             </h3>
 
                             <div className="space-y-3 text-sm">
@@ -643,19 +786,44 @@ ${totalsBlock}${shippingBlock}`;
                                 </div>
                                 <div>
                                     <span className="text-xs text-gray-400 block mb-0.5">الهاتف:</span>
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="font-mono font-semibold text-gray-900" dir="ltr">{order.customer_phone}</span>
-                                        <a
-                                            href={generateWhatsAppUrl(order)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md text-xs font-bold transition-colors cursor-pointer"
-                                        >
-                                            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                                            </svg>
-                                            واتساب
-                                        </a>
+                                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-mono font-semibold text-gray-900" dir="ltr">{order.customer_phone}</span>
+                                            {order.is_phone_blocked && (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-300">
+                                                    محظور 🚫
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            {order.customer_phone && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleToggleBlacklist('phone', order.customer_phone, 'رقم الهاتف')}
+                                                    disabled={isBlacklistLoading}
+                                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer border ${
+                                                        order.is_phone_blocked
+                                                            ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                                                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
+                                                    }`}
+                                                    title={order.is_phone_blocked ? 'إلغاء حظر هذا الرقم لمتجرك' : 'حظر هذا الرقم ومنعه من الطلب في متجرك'}
+                                                >
+                                                    <span>🚫</span>
+                                                    <span>{order.is_phone_blocked ? 'إلغاء الحظر' : 'حظر الرقم'}</span>
+                                                </button>
+                                            )}
+                                            <a
+                                                href={generateWhatsAppUrl(order)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md text-xs font-bold transition-colors cursor-pointer"
+                                            >
+                                                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                                                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.205 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                                </svg>
+                                                واتساب
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -665,6 +833,47 @@ ${totalsBlock}${shippingBlock}`;
                                 <div>
                                     <span className="text-xs text-gray-400 block mb-0.5">العنوان:</span>
                                     <span className="text-gray-700 leading-relaxed block">{order.customer_address}</span>
+                                </div>
+
+                                {/* بيانات الـ IP ومكافحة الأوردرات الفيك */}
+                                <div className="pt-2 border-t border-gray-100">
+                                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center justify-between gap-2 flex-wrap">
+                                        <div className="space-y-0.5 text-xs">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="font-bold text-slate-500">IP:</span>
+                                                <span className="font-mono font-semibold text-slate-800" dir="ltr">
+                                                    {order.ip_address || 'غير متوفر'}
+                                                </span>
+                                                {order.is_ip_blocked && (
+                                                    <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-300">
+                                                        محظور 🚫
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="font-bold text-slate-500">IP Country:</span>
+                                                <span className="font-semibold uppercase text-slate-700">
+                                                    {order.ip_country || 'eg'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {order.ip_address && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleToggleBlacklist('ip', order.ip_address, 'عنوان IP')}
+                                                disabled={isBlacklistLoading}
+                                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer border ${
+                                                    order.is_ip_blocked
+                                                        ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                                                        : 'bg-white text-slate-700 border-slate-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
+                                                }`}
+                                                title={order.is_ip_blocked ? 'إلغاء حظر عنوان IP' : 'حظر عنوان IP هذا لمنع الطلبات الفيك'}
+                                            >
+                                                <span>🛡️</span>
+                                                <span>{order.is_ip_blocked ? 'إلغاء حظر IP' : 'حظر الـ IP'}</span>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 {customerNote && (
                                     <div className="pt-3 border-t border-gray-100">
