@@ -207,8 +207,8 @@ class WhatsAppWebhookController extends Controller
     protected function recordCustomerReplyAndProcess(Order $order, string $rawText, ?string $actionType): void
     {
         $nowTime = now();
-        $timeStr = $nowTime->format('Y-m-d H:i:s');
-        $displayTime = $nowTime->format('Y-m-d h:i A');
+        $period = $nowTime->format('A') === 'PM' ? 'م' : 'ص';
+        $time12 = $nowTime->format('Y-m-d h:i') . ' ' . $period;
 
         // 1. تسجيل الرد في مصفوفة whatsapp_replies
         $replies = is_array($order->whatsapp_replies)
@@ -219,13 +219,13 @@ class WhatsAppWebhookController extends Controller
             'sender'  => 'customer',
             'text'    => $rawText,
             'action'  => $actionType ?: 'CUSTOM',
-            'time'    => $timeStr,
+            'time'    => $time12,
         ];
 
         // 2. تدوين الرد في الملاحظات / سجل الطلب
         $existingNotes = trim((string) $order->notes);
         $actionLabel = $actionType === 'CONFIRM' ? 'تأكيد' : ($actionType === 'CANCEL' ? 'إلغاء' : 'رد العميل');
-        $noteEntry = "💬 [واتساب {$displayTime} - {$actionLabel}]: {$rawText}";
+        $noteEntry = "💬 [واتساب {$time12} - {$actionLabel}]: {$rawText}";
         $newNotes = $existingNotes ? ($existingNotes . "\n" . $noteEntry) : $noteEntry;
 
         $updateData = [

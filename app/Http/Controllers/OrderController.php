@@ -306,6 +306,8 @@ class OrderController extends Controller
                 'customer_name'    => $validated['customer_name'],
                 'customer_phone'   => $validated['customer_phone'],
                 'customer_address' => $validated['customer_address'],
+                'ip_address'       => $request->header('CF-Connecting-IP') ?: ($request->header('X-Forwarded-For') ? trim(explode(',', $request->header('X-Forwarded-For'))[0]) : null) ?: $request->ip(),
+                'ip_country'       => strtolower($request->header('CF-IPCountry') ?: $request->header('X-Country') ?: 'eg'),
                 'governorate'      => $governorate->name,
                 'payment_method'   => $validated['payment_method'] ?? 'cod',
                 'shipping_cost'    => $shippingCost,

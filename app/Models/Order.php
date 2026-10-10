@@ -124,6 +124,19 @@ class Order extends Model
 
     protected static function booted()
     {
+        static::creating(function ($order) {
+            if (empty($order->ip_address) && request()) {
+                $req = request();
+                $order->ip_address = $req->header('CF-Connecting-IP')
+                    ?: ($req->header('X-Forwarded-For') ? trim(explode(',', $req->header('X-Forwarded-For'))[0]) : null)
+                    ?: $req->ip();
+            }
+            if (empty($order->ip_country) && request()) {
+                $req = request();
+                $order->ip_country = strtolower($req->header('CF-IPCountry') ?: $req->header('X-Country') ?: 'eg');
+            }
+        });
+
         static::created(function ($order) {
             if ($order->tenant_id) {
                 try {

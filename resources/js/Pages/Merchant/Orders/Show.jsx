@@ -180,6 +180,30 @@ export default function OrderShow({ order, productsList = [], governoratesList =
         return Math.round(Number(amount)).toLocaleString('en-US') + ' ج.م';
     };
 
+    const formatDateTime12h = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+            if (String(dateStr).includes('م') || String(dateStr).includes('ص')) return dateStr;
+            const parts = String(dateStr).trim().split(' ');
+            if (parts.length >= 2) {
+                const datePart = parts[0];
+                const timePart = parts[1];
+                const [hourStr, minStr] = timePart.split(':');
+                let hour = parseInt(hourStr, 10);
+                if (isNaN(hour)) return dateStr;
+                const minute = minStr || '00';
+                const period = hour >= 12 ? 'م' : 'ص';
+                hour = hour % 12;
+                if (hour === 0) hour = 12;
+                const formattedHour = String(hour).padStart(2, '0');
+                return `${datePart} ${formattedHour}:${minute} ${period}`;
+            }
+            return dateStr;
+        } catch (e) {
+            return dateStr;
+        }
+    };
+
     const getCleanWhatsAppPhone = (phone) => {
         if (!phone) return '';
         let cleaned = phone.replace(/[^0-9]/g, '');
@@ -588,14 +612,14 @@ ${totalsBlock}${shippingBlock}`;
                                 <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100 space-y-1">
                                     <span className="text-gray-500 font-medium block">وقت وتاريخ الإرسال:</span>
                                     <span className="font-bold text-gray-800">
-                                        {order.whatsapp_sent_at ? order.whatsapp_sent_at : 'لم ترسل بعد'}
+                                        {order.whatsapp_sent_at ? formatDateTime12h(order.whatsapp_sent_at) : 'لم ترسل بعد'}
                                     </span>
                                 </div>
 
                                 <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100 space-y-1">
                                     <span className="text-gray-500 font-medium block">وقت وتاريخ استجابة العميل:</span>
                                     <span className="font-bold text-gray-800">
-                                        {order.whatsapp_response_at ? order.whatsapp_response_at : 'في انتظار الرد'}
+                                        {order.whatsapp_response_at ? formatDateTime12h(order.whatsapp_response_at) : 'في انتظار الرد'}
                                     </span>
                                 </div>
 
@@ -653,8 +677,8 @@ ${totalsBlock}${shippingBlock}`;
                                                         {reply.action === 'CANCEL' && '❌ إلغاء الطلب'}
                                                         {reply.action !== 'CONFIRM' && reply.action !== 'CANCEL' && '💬 رد العميل'}
                                                     </span>
-                                                    <span className="text-gray-400 font-mono text-[10px]" dir="ltr">
-                                                        {reply.time || ''}
+                                                    <span className="text-gray-500 font-bold text-[11px]" dir="ltr">
+                                                        {formatDateTime12h(reply.time)}
                                                     </span>
                                                 </div>
                                                 <p className="text-xs text-gray-900 font-medium leading-relaxed bg-gray-50/80 p-2.5 rounded-lg border border-gray-100 break-words whitespace-pre-wrap">
@@ -838,14 +862,14 @@ ${totalsBlock}${shippingBlock}`;
                                 {/* بيانات الـ IP ومكافحة الأوردرات الفيك */}
                                 <div className="pt-2 border-t border-gray-100">
                                     <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center justify-between gap-2 flex-wrap">
-                                        <div className="space-y-0.5 text-xs">
+                                        <div className="space-y-1 text-xs" dir="ltr">
                                             <div className="flex items-center gap-1.5">
                                                 <span className="font-bold text-slate-500">IP:</span>
-                                                <span className="font-mono font-semibold text-slate-800" dir="ltr">
+                                                <span className="font-mono font-semibold text-slate-800">
                                                     {order.ip_address || 'غير متوفر'}
                                                 </span>
                                                 {order.is_ip_blocked && (
-                                                    <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-300">
+                                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-300">
                                                         محظور 🚫
                                                     </span>
                                                 )}
@@ -857,7 +881,7 @@ ${totalsBlock}${shippingBlock}`;
                                                 </span>
                                             </div>
                                         </div>
-                                        {order.ip_address && (
+                                        {order.ip_address ? (
                                             <button
                                                 type="button"
                                                 onClick={() => handleToggleBlacklist('ip', order.ip_address, 'عنوان IP')}
@@ -872,6 +896,10 @@ ${totalsBlock}${shippingBlock}`;
                                                 <span>🛡️</span>
                                                 <span>{order.is_ip_blocked ? 'إلغاء حظر IP' : 'حظر الـ IP'}</span>
                                             </button>
+                                        ) : (
+                                            <span className="text-[11px] text-gray-400 font-medium">
+                                                (مسجل من الطلبات القادمة)
+                                            </span>
                                         )}
                                     </div>
                                 </div>

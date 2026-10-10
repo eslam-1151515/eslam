@@ -376,6 +376,13 @@ class OrderController extends Controller
                 ->exists();
         }
 
+        $format12h = function ($date) {
+            if (!$date) return null;
+            $c = \Carbon\Carbon::parse($date);
+            $period = $c->format('A') === 'PM' ? 'م' : 'ص';
+            return $c->format('Y-m-d h:i') . ' ' . $period;
+        };
+
         return Inertia::render('Merchant/Orders/Show', [
             'order' => [
                 'id'               => $order->id,
@@ -402,12 +409,12 @@ class OrderController extends Controller
                 'items'            => $items,
                 'notes'            => $order->notes,
                 'whatsapp_status'      => $order->whatsapp_status,
-                'whatsapp_sent_at'     => $order->whatsapp_sent_at ? \Carbon\Carbon::parse($order->whatsapp_sent_at)->format('Y-m-d H:i') : null,
-                'whatsapp_response_at' => $order->whatsapp_response_at ? \Carbon\Carbon::parse($order->whatsapp_response_at)->format('Y-m-d H:i') : null,
+                'whatsapp_sent_at'     => $format12h($order->whatsapp_sent_at),
+                'whatsapp_response_at' => $format12h($order->whatsapp_response_at),
                 'whatsapp_message_id'  => $order->whatsapp_message_id,
                 'whatsapp_charge_amount' => $order->whatsapp_charge_amount,
                 'whatsapp_replies'     => is_array($order->whatsapp_replies) ? $order->whatsapp_replies : (json_decode($order->whatsapp_replies ?? '[]', true) ?: []),
-                'created_at'           => $order->created_at ? \Carbon\Carbon::parse($order->created_at)->format('Y-m-d H:i') : null,
+                'created_at'           => $format12h($order->created_at),
             ],
             'duplicate_orders'         => $duplicateOrders,
             'productsList'             => $productsList,
