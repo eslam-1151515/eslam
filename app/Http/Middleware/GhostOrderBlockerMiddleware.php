@@ -21,7 +21,7 @@ class GhostOrderBlockerMiddleware
             ?? (app()->bound(\App\Models\Tenant::class) ? app(\App\Models\Tenant::class)?->id : null);
 
         // Extract customer details from request
-        $ip = $request->ip();
+        $ip = $request->header('CF-Connecting-IP') ?: ($request->header('X-Forwarded-For') ? trim(explode(',', $request->header('X-Forwarded-For'))[0]) : null) ?: $request->ip();
         $phone = trim((string) $request->input('customer_phone', ''));
         $email = trim(strtolower((string) $request->input('customer_email', '')));
         
