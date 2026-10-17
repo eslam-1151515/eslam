@@ -404,6 +404,10 @@ Route::prefix('admin')->group(function () {
 
     // B. Tenant Storefront Routes (tenant.fastorder.test)
     Route::middleware(['web', 'tenant', 'tenant.active'])->group(function () {
+        // Friendly merchant shortcuts (avoids 404 when accessing without /admin)
+        Route::get('/profile', fn() => redirect('/admin/profile'));
+        Route::get('/forgot-password', fn() => redirect('/admin/forgot-password'));
+        Route::get('/login', fn() => redirect('/admin/login'));
         
         Route::get('/', [\App\Http\Controllers\StorefrontController::class, 'servePage'])->name('storefront.home');
 

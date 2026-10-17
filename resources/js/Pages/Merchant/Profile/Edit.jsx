@@ -160,7 +160,7 @@ export default function ProfileEdit({ user: propUser }) {
                             <p className="text-xs text-gray-500 mt-0.5">احرص على استخدام كلمة مرور قوية وعشوائية لحماية حسابك.</p>
                         </div>
                         <a 
-                            href="/forgot-password" 
+                            href="/admin/forgot-password" 
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs font-bold text-orange-600 hover:text-orange-800 hover:underline flex items-center gap-1 transition-colors bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200"
@@ -170,51 +170,63 @@ export default function ProfileEdit({ user: propUser }) {
                     </div>
 
                     <form onSubmit={handlePasswordSubmit} className="p-5 space-y-4">
-                        {/* Current Password */}
-                        <div>
-                            <div className="flex items-center justify-between mb-1.5">
-                                <label className="block text-sm font-semibold text-gray-700">كلمة المرور الحالية</label>
-                                <a 
-                                    href="/forgot-password" 
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-orange-600 font-semibold hover:underline"
-                                >
-                                    نسيت كلمة السر؟
-                                </a>
+                        {isGoogleUser && (
+                            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-start gap-2">
+                                <span className="text-base leading-none">💡</span>
+                                <div>
+                                    <p className="font-bold">حسابك مسجل باستخدام Google</p>
+                                    <p className="text-amber-700 mt-0.5">يمكنك تعيين كلمة مرور جديدة مباشرة لحسابك وموظفيك دون الحاجة لكلمة المرور الحالية.</p>
+                                </div>
                             </div>
-                            <div className="relative">
-                                <input
-                                    type={showCurrentPassword ? "text" : "password"}
-                                    value={passwordData.current_password}
-                                    onChange={(e) => setPasswordData('current_password', e.target.value)}
-                                    className={`w-full px-3 py-2.5 pl-10 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent ${
-                                        passwordErrors.current_password ? 'border-red-400 bg-red-50/30' : 'border-gray-300'
-                                    }`}
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none p-1"
-                                    title={showCurrentPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-                                >
-                                    {showCurrentPassword ? (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    )}
-                                </button>
+                        )}
+
+                        {/* Current Password - Only required for non-Google users */}
+                        {!isGoogleUser && (
+                            <div>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="block text-sm font-semibold text-gray-700">كلمة المرور الحالية</label>
+                                    <a 
+                                        href="/admin/forgot-password" 
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-orange-600 font-semibold hover:underline"
+                                    >
+                                        نسيت كلمة السر؟
+                                    </a>
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type={showCurrentPassword ? "text" : "password"}
+                                        value={passwordData.current_password}
+                                        onChange={(e) => setPasswordData('current_password', e.target.value)}
+                                        className={`w-full px-3 py-2.5 pl-10 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent ${
+                                            passwordErrors.current_password ? 'border-red-400 bg-red-50/30' : 'border-gray-300'
+                                        }`}
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none p-1"
+                                        title={showCurrentPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                                    >
+                                        {showCurrentPassword ? (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                                {passwordErrors.current_password && (
+                                    <p className="text-xs text-red-600 mt-1">{passwordErrors.current_password}</p>
+                                )}
                             </div>
-                            {passwordErrors.current_password && (
-                                <p className="text-xs text-red-600 mt-1">{passwordErrors.current_password}</p>
-                            )}
-                        </div>
+                        )}
 
                         {/* New Password */}
                         <div>

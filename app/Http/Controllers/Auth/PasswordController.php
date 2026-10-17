@@ -15,10 +15,19 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
+        $user = $request->user();
+        $isGoogleUser = !empty($user->google_id);
+
+        $rules = [
             'password' => ['required', Password::defaults(), 'confirmed'],
-        ], [
+        ];
+
+        // Only enforce current_password for non-Google users
+        if (!$isGoogleUser) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+
+        $validated = $request->validate($rules, [
             'current_password.required' => 'يرجى إدخال كلمة المرور الحالية.',
             'current_password.current_password' => 'كلمة المرور الحالية غير صحيحة.',
             'password.required' => 'يرجى إدخال كلمة المرور الجديدة.',
@@ -26,7 +35,7 @@ class PasswordController extends Controller
             'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
         ]);
 
-        $request->user()->update([
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
 
