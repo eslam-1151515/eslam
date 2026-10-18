@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 
-export default function SubscriptionIndex({ subscription, plans, receipts, usage, tenant, paymentSettings }) {
+export default function SubscriptionIndex({ subscription, plans = [], receipts = [], usage = {}, tenant = {}, paymentSettings = {} }) {
     const { flash } = usePage().props;
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -113,6 +113,7 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
         );
     };
 
+    const isCommissionSub = Boolean(subscription?.plan?.slug === 'commission' || subscription?.plan?.name?.includes('عمولة') || subscription?.plan?.name?.includes('محفظة'));
     const isMonthlyPlan = subscription?.plan?.slug === 'monthly' || subscription?.plan?.name?.includes('شهرية');
     const subEndsAtDate = tenant?.subscription_ends_at || subscription?.ends_at;
     const isExpiredSub = isMonthlyPlan && ((tenant?.subscription_status === 'expired') || (subEndsAtDate && new Date(subEndsAtDate) < new Date()));
@@ -192,7 +193,7 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
 
                     {/* Pricing Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {plans.filter(p => p.slug !== 'yearly' && p.is_active !== false && p.is_active !== 0).map((plan) => {
+                        {(plans || []).filter(p => p.slug !== 'yearly' && p.is_active !== false && p.is_active !== 0).map((plan) => {
                             const isCommissionPlan = plan.slug === 'commission' || plan.name?.includes('عمولة') || plan.name?.includes('محفظة');
                             const isFreePlan = plan.slug === 'free' || plan.name?.includes('مجانية');
                             const isMonthlyPlan = plan.slug === 'monthly' || plan.name?.includes('شهرية');
@@ -345,7 +346,7 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                         </div>
                     </div>
 
-                    {receipts.length === 0 ? (
+                    {(receipts || []).length === 0 ? (
                         <div className="text-center py-12">
                             <svg className="mx-auto w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
@@ -369,7 +370,7 @@ export default function SubscriptionIndex({ subscription, plans, receipts, usage
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {receipts.map((receipt) => (
+                                    {(receipts || []).map((receipt) => (
                                         <tr key={receipt.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-5 py-4 font-semibold text-gray-900">
                                                 {receipt.plan_name}
