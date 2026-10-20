@@ -10,18 +10,24 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="{{ url()->current() }}" />
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}?v={{ time() }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
+
     <!-- Open Graph / Facebook / WhatsApp Meta Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Order Saif — أوردر سيف" />
     <meta property="og:title" content="@yield('og_title', 'أوردر سيف (Order Saif) | منصة التجارة الإلكترونية الأسرع في مصر')" />
     <meta property="og:description" content="@yield('og_description', 'أنشئ متجرك الإلكتروني المتكامل في أقل من 3 دقائق بدون عمولات وبسرعة تحميل خارقة.')" />
     <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:image" content="{{ asset('images/logo2.png') }}?v={{ time() }}" />
     <meta property="og:locale" content="ar_EG" />
     
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('og_title', 'أوردر سيف | أنشئ متجرك الإلكتروني المتكامل')">
     <meta name="twitter:description" content="@yield('og_description', 'المنصة الأسرع والأذكى لإدارة تجارتك الإلكترونية بدون عمولات على المبيعات وبتقنيات حديثة.')">
+    <meta name="twitter:image" content="{{ asset('images/logo2.png') }}?v={{ time() }}">
 
     <!-- JSON-LD Structured Data Schema for Google -->
     <script type="application/ld+json">
@@ -149,8 +155,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="{{ route('main.home') }}" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-500 p-0.5 shadow-sm group-hover:scale-105 transition-transform">
-                    <div class="w-full h-full rounded-full bg-white flex items-center justify-center p-1 overflow-hidden">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 p-0.5 shadow-sm group-hover:scale-105 transition-transform">
+                    <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center p-0.5 overflow-hidden">
                         <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" class="w-full h-full object-contain">
                     </div>
                 </div>
@@ -264,8 +270,8 @@
                 <!-- Col 1: Brand & Bio -->
                 <div class="lg:col-span-4 space-y-5">
                     <a href="{{ route('main.home') }}" class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-500 p-0.5 shadow-sm">
-                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center p-1 overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 p-0.5 shadow-sm">
+                            <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center p-0.5 overflow-hidden">
                                 <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" class="w-full h-full object-contain">
                             </div>
                         </div>

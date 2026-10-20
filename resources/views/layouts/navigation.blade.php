@@ -74,16 +74,9 @@
     <!-- Mobile Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden" id="mobile-menu" role="menu">
         <div class="px-4 pt-3 pb-2 border-b border-gray-200">
-            <a href="/admin/dashboard" class="inline-flex items-center gap-2" aria-label="{{ __('شعار بيرد') }}">
-                @php
-                    $logoPath = public_path('images/logo.png?v=202604031');
-                @endphp
-                @if (file_exists($logoPath))
-                    <img src="{{ asset('images/logo.png?v=202604031') }}" alt="{{ __('شعار بيرد') }}" class="h-9 w-9 max-h-9 max-w-9 rounded-full border border-gray-200 object-cover shrink-0" width="36" height="36" style="width:36px;height:36px;" />
-                @else
-                    <img src="https://dummyimage.com/36x36/111827/ffffff&text=SM" alt="{{ __('شعار بيرد') }}" class="h-9 w-9 max-h-9 max-w-9 rounded-full border border-gray-200 object-cover shrink-0" width="36" height="36" style="width:36px;height:36px;" />
-                @endif
-                <span class="text-lg font-bold text-gray-800">Bird</span>
+            <a href="/admin/dashboard" class="inline-flex items-center gap-2" aria-label="{{ __('أوردر سيف') }}">
+                <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="{{ __('أوردر سيف') }}" class="h-9 w-9 max-h-9 max-w-9 rounded-xl border border-gray-200 object-contain shrink-0" width="36" height="36" style="width:36px;height:36px;" />
+                <span class="text-lg font-bold text-gray-800">Order Saif</span>
             </a>
         </div>
         <div class="pt-2 pb-3 space-y-1">

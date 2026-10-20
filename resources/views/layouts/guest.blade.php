@@ -157,8 +157,8 @@
     <div class="card">
         <div class="logo-wrap" style="margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <a href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
-                <div style="width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); padding: 6px; box-shadow: 0 12px 35px rgba(0,0,0,0.35), 0 0 0 4px rgba(99,102,241,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" style="width: 92%; height: 92%; object-fit: contain; border-radius: 50%;">
+                <div style="width: 110px; height: 110px; border-radius: 24px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); padding: 6px; box-shadow: 0 12px 35px rgba(0,0,0,0.12), 0 0 0 4px rgba(99,102,241,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="{{ asset('images/logo2.png') }}?v={{ time() }}" alt="Order Saif" style="width: 96%; height: 96%; object-fit: contain; border-radius: 20px;">
                 </div>
             </a>
         </div>
