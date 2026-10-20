@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'أوردر سيف (Order Saif) | أسرع منصة لإنشاء وإدارة المتاجر الإلكترونية في مصر')</title>
-    <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في مصر لإنشاء متجرك الإلكتروني وزيادة مبيعاتك دون عمولات، مع ربط فوري للبيكسل وباقات مرنة تبدأ من 2ج للأوردر وتجربة مجانية 7 أيام.')">
+    <meta name="description" content="@yield('meta_description', 'المنصة الأسرع والأذكى في مصر لإنشاء متجرك الإلكتروني وزيادة مبيعاتك دون عمولات، مع ربط فوري للبيكسل وباقات مرنة تبدأ من 2ج للأوردر ورصيد مجاني 100ج في محفظتك.')">
     <meta name="keywords" content="تجارة إلكترونية, إنشاء متجر إلكتروني, منصة متاجر, أوردر سيف, Order Saif, بدون عمولة, متجر إلكتروني مصر, ربط بيكسل فيسبوك, تسويق إلكتروني">
     <meta name="author" content="Order Saif Platform">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">

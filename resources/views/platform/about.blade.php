@@ -150,11 +150,11 @@
     <section class="py-16 text-center bg-white border-t border-slate-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
             <h2 class="text-3xl font-black text-slate-900">انضم إلينا وابدأ قصة نجاحك اليوم</h2>
-            <p class="text-slate-600 max-w-2xl mx-auto font-medium">استمتع بـ 7 أيام كاملة من التجربة المجانية لتتعرف على أداء المنصة الممتاز.</p>
+            <p class="text-slate-600 max-w-2xl mx-auto font-medium">استمتع بـ 100 ج.م رصيد هدية مجانية في محفظتك لتتعرف على أداء المنصة الممتاز واستقبال الأوردرات فوراً.</p>
             <div class="pt-2">
                 <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/25 transition-all">
                     <i class="fa-solid fa-rocket text-amber-300"></i>
-                    <span>ابدأ تجربتك المجانية</span>
+                    <span>ابدأ الآن (رصيد مجاني 100ج)</span>
                 </a>
             </div>
         </div>

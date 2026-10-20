@@ -1,8 +1,8 @@
 @extends('layouts.platform')
 
-@section('title', 'الباقات والأسعار | Order Saif - خطط مرنة وتجربة مجانية 7 أيام')
+@section('title', 'الباقات والأسعار | Order Saif - خطط مرنة ورصيد مجاني 100ج')
 
-@section('meta_description', 'اختر الباقة المناسبة لمتجرك الإلكتروني مع Order Saif. أسعار مرنة تبدأ من 2ج للأوردر، باقات شهرية وسنوية، 0% عمولة على المبيعات، وتجربة مجانية لمدة 7 أيام.')
+@section('meta_description', 'اختر الباقة المناسبة لمتجرك الإلكتروني مع Order Saif. أسعار مرنة تبدأ من 2ج للأوردر، باقات شهرية وسنوية، 0% عمولة على المبيعات، ورصيد مجاني 100ج في محفظتك.')
 
 @section('content')
 <div class="overflow-hidden bg-slate-50" x-data="{ billing: 'yearly', activeFaq: null }">
@@ -11,7 +11,7 @@
     <section class="py-16 md:py-24 relative overflow-hidden bg-white border-b border-slate-200/80">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-100 border border-brand-200 text-brand-700 text-xs font-bold uppercase tracking-wider">
-                <i class="fa-solid fa-sparkles text-amber-500"></i> 0% عمولة على مبيعاتك • تجربة مجانية 7 أيام
+                <i class="fa-solid fa-sparkles text-amber-500"></i> 0% عمولة على مبيعاتك • 100 ج.م رصيد مجاني في المحفظة
             </div>
             <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-tight">
                 باقات وأسعار مصممة <br class="hidden sm:block"> 
@@ -98,7 +98,7 @@
 
                             <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-600 font-bold">
                                 <i class="fa-solid fa-gift text-emerald-500"></i>
-                                <span>تجربة مجانية {{ $trialDays }} أيام + 100 ج.م رصيد هدية في المحفظة</span>
+                                <span>100 ج.م رصيد هدية مجانية في المحفظة</span>
                             </div>
                         </div>
 
@@ -134,7 +134,7 @@
                     <div class="pt-4">
                         <a href="{{ Route::has('register') ? route('register') : url('/register') }}" 
                            class="w-full py-3.5 px-6 rounded-xl font-bold text-sm text-center flex items-center justify-center gap-2 transition-all {{ $isPopular ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-500/25' : 'bg-slate-100 hover:bg-slate-200 text-slate-800' }}">
-                            <span>ابدأ التجربة المجانية ({{ $trialDays }} أيام)</span>
+                            <span>ابدأ الآن (رصيد مجاني 100ج)</span>
                             <i class="fa-solid fa-arrow-left text-xs"></i>
                         </a>
                     </div>

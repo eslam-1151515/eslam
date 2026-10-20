@@ -34,7 +34,7 @@
                 <a href="{{ Route::has('register') ? route('register') : url('/register') }}" 
                    class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/20 hover:shadow-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-rocket text-amber-300"></i>
-                    <span>ابدأ تجربتك المجانية (7 أيام)</span>
+                    <span>ابدأ الآن (رصيد مجاني 100ج)</span>
                 </a>
                 <a href="#pricing" 
                    class="w-full sm:w-auto px-7 py-4 rounded-xl text-base font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2">
@@ -187,7 +187,7 @@
                     </div>
                     <h3 class="text-xl font-black text-slate-900">سرعة فائقة تمنع هروب الزوار</h3>
                     <p class="text-sm text-slate-600 leading-relaxed">
-                        صفحات هبوط خفيفة وتخزين كاش ذكي يضمن تحميل المتجر في أقل من ثانية، مما يرفع معدل إتمام الطلبات (Conversion Rate) بنسبة تصل إلى 40%.
+                        صفحات هبوط خفيفة وتقنيات تحميل فائقة السرعة تضمن فتح المتجر في أقل من ثانية، مما يرفع معدل إتمام الطلبات (Conversion Rate) بنسبة تصل إلى 40%.
                     </p>
                 </div>
 
@@ -604,13 +604,13 @@
                         جاهز لمضاعفة مبيعاتك وإطلاق متجرك اليوم؟
                     </h2>
                     <p class="text-sm sm:text-base text-indigo-100 font-medium leading-relaxed">
-                        انضم الآن إلى أكثر من 1,500 تاجر ناجح في مصر وابدأ تجربتك المجانية لمدة 7 أيام بدون أي بطاقة ائتمان.
+                        انضم الآن إلى أكثر من 1,500 تاجر ناجح في مصر وابدأ متجرك فوراً مع 100 ج.م رصيد هدية مجاني في محفظتك بدون أي بطاقة ائتمان.
                     </p>
                     <div class="pt-2">
                         <a href="{{ Route::has('register') ? route('register') : url('/register') }}" 
                            class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-brand-700 bg-white hover:bg-slate-50 shadow-xl hover:shadow-2xl transition-all">
-                            <i class="fa-solid fa-rocket text-amber-500"></i>
-                            <span>أنشئ متجرك مجاناً في 30 ثانية</span>
+                            <i class="fa-solid fa-gift text-amber-500"></i>
+                            <span>أنشئ متجرك واحصل على 100ج هدية</span>
                         </a>
                     </div>
                 </div>

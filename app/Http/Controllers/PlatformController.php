@@ -44,7 +44,7 @@ class PlatformController extends Controller
                 'icon' => 'bolt',
                 'title_ar' => 'سرعة فائقة وأداء استثنائي',
                 'title_en' => 'Blazing Fast Performance',
-                'description_ar' => 'تقنيات تحميل فورية وكاش ذكي تضمن تصفح سريع لعملائك ومعدل تحويل أعلى بكثير.',
+                'description_ar' => 'تقنيات تحميل فورية وسرعة فائقة تضمن تصفح سريع لعملائك ومعدل تحويل أعلى بكثير.',
                 'description_en' => 'Instant load times and smart caching ensure quick browsing for your customers and higher conversion rates.',
                 'color' => 'from-amber-500 to-orange-500',
             ],
@@ -276,10 +276,10 @@ class PlatformController extends Controller
                 'answer_en' => 'We support Cash on Delivery (COD) as it is the most popular, plus integration with local and international online payment gateways. You can easily customize shipping rates for all regions.',
             ],
             [
-                'question_ar' => 'كيف أستفيد من فترة التجربة المجانية (7 أيام)؟',
-                'question_en' => 'How can I benefit from the 7-day free trial?',
-                'answer_ar' => 'يمكنك التسجيل الآن والبدء فوراً في استخدام المنصة وتجربة جميع المميزات لمدة 7 أيام مجاناً، ولا نطلب منك إدخال أي بيانات بطاقة ائتمانية عند التسجيل.',
-                'answer_en' => 'You can sign up now and start using the platform and all its features for 7 days free. We do not require a credit card to sign up.',
+                'question_ar' => 'كيف أستفيد من رصيد الـ 100 ج.م المجاني؟',
+                'question_en' => 'How can I benefit from the 100 EGP free balance?',
+                'answer_ar' => 'بمجرد تسجيلك، يتم إضافة 100 ج.م رصيد هدية مجانية في محفظتك تلقائياً لتجربة واستقبال ومعاينة أول 50 أوردر مجاناً، بدون أي بطاقة ائتمانية وبدون أي اشتراكات معقدة.',
+                'answer_en' => 'Upon registration, 100 EGP free gift balance is automatically added to your wallet to try the platform and view your first 50 orders free, without any credit card or hidden fees.',
             ],
             [
                 'question_ar' => 'هل يمكنني تغيير باقة الاشتراك أو إلغائها لاحقاً؟',
@@ -297,7 +297,11 @@ class PlatformController extends Controller
             ? \App\Models\SupportContact::where('type', 'whatsapp')->where('is_active', true)->first()
             : null;
 
-        return view('platform.index', compact('stats', 'features', 'steps', 'plans', 'testimonials', 'faqs', 'phoneContact', 'whatsappContact'));
+        return response()
+            ->view('platform.index', compact('stats', 'features', 'steps', 'plans', 'testimonials', 'faqs', 'phoneContact', 'whatsappContact'))
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**
