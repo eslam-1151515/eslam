@@ -72,20 +72,13 @@ class PaymobService
             $cleanPhone = '01000000000';
         }
 
-        // If not fully configured, return a Sandbox Simulation Flow
+        // If not fully configured, reject with a clear message - do NOT route to sandbox in production
         if (!$this->isConfigured) {
-            Log::info("Paymob credentials not set. Using Simulation Sandbox mode for Receipt #{$receipt->reference_code}");
-            $simulatedUrl = route('merchant.wallet.paymob.sandbox', [
-                'receipt_id' => $receipt->id,
-                'method'     => $methodType,
-                'amount'     => $receipt->amount,
-            ]);
+            Log::warning("Paymob credentials not configured. Instant deposit rejected for Receipt #{$receipt->reference_code}");
 
             return [
-                'success'         => true,
-                'redirect_url'    => $simulatedUrl,
-                'paymob_order_id' => 'SANDBOX_ORDER_' . $receipt->id,
-                'message'         => 'تم تجهيز رابط الدفع التجريبي (Sandbox).',
+                'success' => false,
+                'message' => 'عفواً، خدمة الدفع الإلكتروني اللحظي عبر البطاقات والمحافظ غير مفعلة حالياً. يرجى استخدام التحويل اليدوي (إنستاباي / فودافون كاش) ورفع إيصال التحويل ليتم مراجعته وتغذية محفظتك فوراً.',
             ];
         }
 

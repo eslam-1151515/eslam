@@ -61,11 +61,14 @@ class WalletController extends Controller
                 'time_formatted' => $t->created_at?->format('h:i A'),
             ]);
 
+        $paymobConfigured = app(\App\Services\PaymobService::class)->isConfigured();
+
         return Inertia::render('Merchant/Wallet/Index', [
-            'wallet_balance'  => (float) ($tenant->wallet_balance ?? 0),
-            'paymentInfo'     => $paymentInfo,
-            'depositRequests' => $depositRequests,
-            'transactions'    => $transactions,
+            'wallet_balance'       => (float) ($tenant->wallet_balance ?? 0),
+            'paymentInfo'          => $paymentInfo,
+            'depositRequests'      => $depositRequests,
+            'transactions'         => $transactions,
+            'is_paymob_configured' => $paymobConfigured,
         ]);
     }
 
@@ -120,6 +123,10 @@ class WalletController extends Controller
      */
     public function instantDeposit(Request $request, \App\Services\PaymobService $paymobService)
     {
+        if (!$paymobService->isConfigured()) {
+            return redirect()->back()->with('error', 'عفواً، خدمة الدفع الإلكتروني اللحظي غير مفعلة حالياً. يرجى اختيار التحويل اليدوي (إنستاباي / فودافون كاش) ورفع إيصال التحويل ليتم مراجعته وتغذية محفظتك فوراً.');
+        }
+
         $validated = $request->validate([
             'amount'       => 'required|numeric|min:300',
             'method_type'  => 'required|string|in:card,wallet',
@@ -176,14 +183,12 @@ class WalletController extends Controller
     /**
      * Browser redirect callback after Paymob payment.
      */
-    public function paymobCallback(Request $request)
+    public function paymobCallback(Request $request, \App\Services\PaymobService $paymobService)
     {
-        $success = filter_var($request->query('success', false), FILTER_VALIDATE_BOOLEAN)
-            || $request->query('txn_response_code') === 'APPROVED';
-
         $orderId = $request->query('order');
         $merchantOrderId = $request->query('merchant_order_id');
         $transactionId = $request->query('id');
+        $hmac = $request->query('hmac');
 
         // Check if there is an associated receipt
         $receipt = null;
@@ -194,44 +199,63 @@ class WalletController extends Controller
             $receipt = SubscriptionReceipt::where('payment_reference', 'like', "%{$orderId}%")->latest()->first();
         }
 
-        if ($success) {
-            if ($receipt && $receipt->status !== 'approved') {
-                $tenant = $receipt->tenant;
-                if ($tenant) {
-                    $tenant->increment('wallet_balance', $receipt->amount);
-                    WalletTransaction::create([
-                        'tenant_id'   => $tenant->id,
-                        'amount'      => $receipt->amount,
-                        'type'        => 'credit',
-                        'description' => "⚡ شحن محفظة لحظي عبر Paymob (معاملة #{$transactionId})",
-                        'created_by'  => null,
-                    ]);
-                }
-                $receipt->update([
-                    'status'            => 'approved',
-                    'approved_at'       => now(),
-                    'payment_reference' => "Paymob Trans #{$transactionId}",
+        // If webhook already processed and approved the receipt
+        if ($receipt && $receipt->status === 'approved') {
+            return redirect()->route('merchant.wallet.index')->with('success', '⚡ تم تأكيد شحن المحفظة بنجاح وإضافة الرصيد إلى حسابك!');
+        }
+
+        // Validate HMAC only if Paymob is configured and HMAC was supplied
+        $hmacValid = false;
+        if ($paymobService->isConfigured() && !empty($hmac)) {
+            $hmacValid = $paymobService->verifyHmac($request->all(), $hmac);
+        }
+
+        $success = (filter_var($request->query('success', false), FILTER_VALIDATE_BOOLEAN)
+            || $request->query('txn_response_code') === 'APPROVED') && $hmacValid;
+
+        if ($success && $receipt && $receipt->status !== 'approved') {
+            $tenant = $receipt->tenant;
+            if ($tenant) {
+                $tenant->increment('wallet_balance', $receipt->amount);
+                WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => $receipt->amount,
+                    'type'        => 'credit',
+                    'description' => "⚡ شحن محفظة لحظي عبر Paymob (معاملة #{$transactionId})",
+                    'created_by'  => null,
                 ]);
             }
+            $receipt->update([
+                'status'            => 'approved',
+                'approved_at'       => now(),
+                'payment_reference' => "Paymob Trans #{$transactionId}",
+            ]);
 
             return redirect()->route('merchant.wallet.index')->with('success', '⚡ تم شحن المحفظة بنجاح وإضافة الرصيد إلى حسابك فوراً!');
         }
 
         if ($receipt && $receipt->status === 'pending') {
-            $receipt->update([
-                'status'           => 'rejected',
-                'rejection_reason' => 'فشلت عملية الدفع من البنك أو تم إلغاؤها من المستخدم.',
-            ]);
+            $txnResponse = $request->query('txn_response_code');
+            if ($txnResponse && $txnResponse !== 'APPROVED') {
+                $receipt->update([
+                    'status'           => 'rejected',
+                    'rejection_reason' => 'فشلت عملية الدفع من البنك أو تم إلغاؤها من المستخدم.',
+                ]);
+            }
         }
 
-        return redirect()->route('merchant.wallet.index')->with('error', '⚠️ تعذر إتمام عملية الدفع، يرجى المحاولة مرة أخرى أو استخدام وسيلة دفع مختلفة.');
+        return redirect()->route('merchant.wallet.index')->with('error', '⚠️ لم يتم تأكيد عملية الدفع. إذا تم الخصم من حسابك، سيتم تحديث رصيدك تلقائياً فور وصول إشعار البنك الرسمي.');
     }
 
     /**
-     * Paymob Sandbox Test Screen (when keys are in simulation/test mode).
+     * Paymob Sandbox Test Screen (strictly disabled in production).
      */
     public function paymobSandbox(Request $request): Response
     {
+        if (!app()->environment('local')) {
+            abort(404, 'Sandbox mode is disabled.');
+        }
+
         $receiptId = $request->query('receipt_id');
         $method = $request->query('method', 'card');
         $amount = (float) $request->query('amount', 300);
@@ -249,10 +273,14 @@ class WalletController extends Controller
     }
 
     /**
-     * Process Sandbox Simulation Action.
+     * Process Sandbox Simulation Action (strictly disabled in production).
      */
     public function completeSandbox(Request $request): RedirectResponse
     {
+        if (!app()->environment('local')) {
+            abort(404, 'Sandbox simulation is strictly disabled in production.');
+        }
+
         $validated = $request->validate([
             'receipt_id' => 'required|exists:subscription_receipts,id',
             'action'     => 'required|in:success,fail',

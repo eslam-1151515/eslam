@@ -261,8 +261,10 @@ Route::prefix('admin')->group(function () {
             Route::post('/wallet/deposit', [App\Http\Controllers\Merchant\WalletController::class, 'deposit'])->name('merchant.wallet.deposit');
             Route::post('/wallet/instant-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'instantDeposit'])->name('merchant.wallet.instant-deposit');
             Route::get('/wallet/paymob-callback', [App\Http\Controllers\Merchant\WalletController::class, 'paymobCallback'])->name('merchant.wallet.paymob.callback');
-            Route::get('/wallet/paymob-sandbox', [App\Http\Controllers\Merchant\WalletController::class, 'paymobSandbox'])->name('merchant.wallet.paymob.sandbox');
-            Route::post('/wallet/paymob-sandbox/complete', [App\Http\Controllers\Merchant\WalletController::class, 'completeSandbox'])->name('merchant.wallet.paymob.sandbox.complete');
+            if (app()->environment('local')) {
+                Route::get('/wallet/paymob-sandbox', [App\Http\Controllers\Merchant\WalletController::class, 'paymobSandbox'])->name('merchant.wallet.paymob.sandbox');
+                Route::post('/wallet/paymob-sandbox/complete', [App\Http\Controllers\Merchant\WalletController::class, 'completeSandbox'])->name('merchant.wallet.paymob.sandbox.complete');
+            }
 
             // Reports routes
             Route::get('/reports', [App\Http\Controllers\Merchant\ReportController::class, 'index'])->name('merchant.reports.index');

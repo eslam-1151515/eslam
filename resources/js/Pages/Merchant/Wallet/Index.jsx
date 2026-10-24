@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 
-export default function WalletIndex({ wallet_balance, paymentInfo, depositRequests, transactions }) {
+export default function WalletIndex({ wallet_balance, paymentInfo, depositRequests, transactions, is_paymob_configured = false }) {
     const { flash } = usePage().props;
 
     const [activeTab, setActiveTab] = useState('deposit'); // deposit, history
-    const [chargeMode, setChargeMode] = useState('instant'); // 'instant' (Paymob) or 'manual' (Cash/InstaPay)
+    const [chargeMode, setChargeMode] = useState(is_paymob_configured ? 'instant' : 'manual'); // 'instant' (Paymob) or 'manual' (Cash/InstaPay)
 
     // Manual Form State
     const [manualQuickAmount, setManualQuickAmount] = useState(300);
@@ -218,19 +218,29 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                         <div className="bg-gradient-to-r from-slate-50 to-indigo-50/40 p-2 rounded-2xl border border-indigo-100 flex flex-col sm:flex-row gap-2">
                             <button
                                 type="button"
-                                onClick={() => setChargeMode('instant')}
-                                className={`flex-1 py-3.5 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
-                                    chargeMode === 'instant'
+                                onClick={() => {
+                                    if (!is_paymob_configured) {
+                                        return;
+                                    }
+                                    setChargeMode('instant');
+                                }}
+                                className={`flex-1 py-3.5 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2.5 ${
+                                    is_paymob_configured ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+                                } ${
+                                    chargeMode === 'instant' && is_paymob_configured
                                         ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-600/20 scale-[1.01]'
                                         : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100'
                                 }`}
+                                title={!is_paymob_configured ? 'الدفع الإلكتروني اللحظي قيد التفعيل حالياً، يرجى استخدام التحويل اليدوي' : ''}
                             >
                                 <span className="text-base">⚡</span>
                                 <span>شحن لحظي (دفع فوري بالفيزا والمحافظ الإلكترونية)</span>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                    chargeMode === 'instant' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                                    !is_paymob_configured
+                                        ? 'bg-amber-100 text-amber-800'
+                                        : (chargeMode === 'instant' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800')
                                 }`}>
-                                    فوري ⚡
+                                    {is_paymob_configured ? 'فوري ⚡' : 'قيد التفعيل ⏳'}
                                 </span>
                             </button>
 
