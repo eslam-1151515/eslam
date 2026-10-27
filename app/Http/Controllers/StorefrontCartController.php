@@ -70,12 +70,16 @@ class StorefrontCartController extends Controller
             ->unique('id')
             ->values()
             ->map(fn($prod) => [
-                'id'           => $prod->id,
-                'name'         => $prod->name,
-                'price_before' => $prod->price_before,
-                'price_after'  => $prod->price_after ?? $prod->price,
-                'stock'        => $prod->stock,
-                'image_url'    => $prod->main_image_path ? asset('storage/' . $prod->main_image_path) : ($prod->image_url ?: null),
+                'id'              => $prod->id,
+                'name'            => $prod->name,
+                'price_before'    => $prod->price_before,
+                'price_after'     => $prod->price_after ?? $prod->price,
+                'stock'           => $prod->stock,
+                'image_url'       => $prod->main_image_path ? asset('storage/' . $prod->main_image_path) : ($prod->image_url ?: null),
+                'sizes'           => is_string($prod->sizes) ? json_decode($prod->sizes, true) : ($prod->sizes ?: []),
+                'colors'          => is_string($prod->colors) ? json_decode($prod->colors, true) : ($prod->colors ?: []),
+                'custom_variants' => is_string($prod->custom_variants) ? json_decode($prod->custom_variants, true) : ($prod->custom_variants ?: []),
+                'price_tiers'     => is_string($prod->price_tiers) ? json_decode($prod->price_tiers, true) : ($prod->price_tiers ?: []),
             ]);
 
         return response()->json([

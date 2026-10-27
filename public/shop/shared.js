@@ -492,11 +492,46 @@ function productCard(p){
   const title = createEl('h3','title'); title.textContent = p.name || ''; titleLink.appendChild(title);
   const price = createEl('div'); price.style.width='100%'; price.innerHTML = formatPrice(p.price_after, p.price_before);
   
+  const parseArrayField = (v) => {
+    if (!v) return [];
+    if (Array.isArray(v)) return v;
+    if (typeof v === 'string') {
+      try {
+        const parsed = JSON.parse(v);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch(e) { return []; }
+    }
+    return [];
+  };
+
+  const pSizes = parseArrayField(p.sizes);
+  const pColors = parseArrayField(p.colors);
+  const pCustomVariants = parseArrayField(p.custom_variants);
+  const pPriceTiers = parseArrayField(p.price_tiers);
+
+  const hasSizes = pSizes.length > 0;
+  const hasColors = pColors.length > 0;
+  const hasCustomVariants = pCustomVariants.length > 0;
+  const hasTiers = pPriceTiers.length > 0;
+  const hasAnyOptions = hasSizes || hasColors || hasCustomVariants || hasTiers;
+
   const addBtn = createEl('button','btn btn-primary btn-add');
   const currentLang = getStorefrontLang();
-  const addText = currentLang === 'en' ? 'Add to Cart' : 'أضف إلى السلة';
+  const addText = hasAnyOptions 
+    ? (currentLang === 'en' ? 'Select Options' : 'اختر المواصفات')
+    : (currentLang === 'en' ? 'Add to Cart' : 'أضف إلى السلة');
   addBtn.textContent = addText;
-  addBtn.dataset.id=p.id; addBtn.dataset.name=p.name||''; addBtn.dataset.price=p.price_after||0; addBtn.dataset.image=p.image_url||''; addBtn.dataset.shipping=p.shipping_type||'free'; addBtn.dataset.priceBefore=p.price_before||0; addBtn.dataset.hasSizes=p.sizes && p.sizes.length ? 'yes':'no'; addBtn.dataset.hasColors=p.colors && p.colors.length ? 'yes':'no';
+  addBtn.dataset.id = p.id;
+  addBtn.dataset.name = p.name || '';
+  addBtn.dataset.price = p.price_after || 0;
+  addBtn.dataset.image = p.image_url || '';
+  addBtn.dataset.shipping = p.shipping_type || 'free';
+  addBtn.dataset.priceBefore = p.price_before || 0;
+  addBtn.dataset.hasSizes = hasSizes ? 'yes' : 'no';
+  addBtn.dataset.hasColors = hasColors ? 'yes' : 'no';
+  addBtn.dataset.hasCustomVariants = hasCustomVariants ? 'yes' : 'no';
+  addBtn.dataset.hasTiers = hasTiers ? 'yes' : 'no';
+  addBtn.dataset.hasOptions = hasAnyOptions ? 'yes' : 'no';
   
   body.append(titleLink, price, addBtn); card.appendChild(body);
   return card;
@@ -757,12 +792,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(btn){
       const hasSizes = btn.dataset.hasSizes === 'yes';
       const hasColors = btn.dataset.hasColors === 'yes';
+      const hasCustomVariants = btn.dataset.hasCustomVariants === 'yes';
+      const hasTiers = btn.dataset.hasTiers === 'yes';
+      const hasOptions = btn.dataset.hasOptions === 'yes' || hasSizes || hasColors || hasCustomVariants || hasTiers;
 
-      if (hasSizes || hasColors) {
-        if (typeof openQuickAddModal === 'function') {
-          openQuickAddModal(btn.dataset.id);
-        } else {
+      if (hasOptions) {
+        if (hasCustomVariants || hasTiers || typeof openQuickAddModal !== 'function') {
           window.location.href = `/shop/product.html?id=${btn.dataset.id}`;
+        } else {
+          openQuickAddModal(btn.dataset.id);
         }
         return;
       }
@@ -1293,6 +1331,28 @@ window.openQuickAddModal = function(productId) {
     .then(({ data }) => {
       window.currentQmProduct = data;
       const p = data;
+
+      const parseArray = (v) => {
+        if (!v) return [];
+        if (Array.isArray(v)) return v;
+        if (typeof v === 'string') {
+          try {
+            const parsed = JSON.parse(v);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch(e) { return []; }
+        }
+        return [];
+      };
+
+      const cvList = parseArray(p.custom_variants);
+      const ptList = parseArray(p.price_tiers);
+
+      // If product has custom variants (like codes) or price tiers, redirect directly to product page
+      if (cvList.length > 0 || ptList.length > 0) {
+        window.location.href = `/shop/product.html?id=${productId}`;
+        return;
+      }
+
       const hasSizes = p.sizes && p.sizes.length > 0;
       const hasColors = p.colors && p.colors.length > 0;
 
