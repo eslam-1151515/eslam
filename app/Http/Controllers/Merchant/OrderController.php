@@ -615,6 +615,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        $order->shipment()?->delete();
         $order->delete();
         return redirect()->route('merchant.orders.index')->with('success', 'تم حذف الطلب بنجاح ✓');
     }
