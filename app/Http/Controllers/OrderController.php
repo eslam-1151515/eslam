@@ -172,7 +172,7 @@ class OrderController extends Controller
 
         // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
         try {
-            if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false)) {
+            if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id)) {
                 $whatsAppService = new \App\Services\MetaWhatsAppService();
                 $whatsAppService->sendOrderConfirmation($order);
             }
@@ -409,7 +409,7 @@ class OrderController extends Controller
 
             // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
             try {
-                if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false)) {
+                if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id)) {
                     $whatsAppService = new \App\Services\MetaWhatsAppService();
                     $whatsAppService->sendOrderConfirmation($order);
                 }

@@ -140,6 +140,9 @@ class MerchantRegisterController extends Controller
                     'description' => 'رصيد هدية افتتاحي عند التسجيل 🎁',
                     'created_by'  => null,
                 ]);
+
+                // تفعيل خدمة التأكيد التلقائي عبر الواتساب افتراضياً لتستفيد من الرصيد الافتتاحي 100 ج
+                \App\Models\Setting::set('auto_confirm_enabled', true, 'auto_confirm', $tenant->id);
             }
 
             // Save phone and whatsapp to settings table if provided

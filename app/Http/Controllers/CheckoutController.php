@@ -340,7 +340,7 @@ class CheckoutController extends Controller
 
             // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
             try {
-                $isAutoConfirmEnabled = (bool) \App\Models\Setting::get('auto_confirm_enabled', false);
+                $isAutoConfirmEnabled = (bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id);
                 if ($isAutoConfirmEnabled && !$isOnlinePayment) {
                     $whatsAppService = new \App\Services\MetaWhatsAppService();
                     $whatsAppService->sendOrderConfirmation($order);
@@ -452,7 +452,7 @@ class CheckoutController extends Controller
 
             // إرسال رسالة التأكيد عبر الواتس بعد نجاح الدفع
             try {
-                $isAutoConfirmEnabled = (bool) \App\Models\Setting::get('auto_confirm_enabled', false);
+                $isAutoConfirmEnabled = (bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id);
                 if ($isAutoConfirmEnabled) {
                     $whatsAppService = new \App\Services\MetaWhatsAppService();
                     $whatsAppService->sendOrderConfirmation($order);

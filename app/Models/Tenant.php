@@ -244,5 +244,8 @@ class Tenant extends Model
                 'description' => 'رصيد هدية افتتاحي عند التسجيل 🎁',
             ]);
         }
+
+        // تفعيل التأكيد التلقائي بالواتساب للاستفادة من رصيد الـ 100 ج الافتتاحي
+        \App\Models\Setting::set('auto_confirm_enabled', true, 'auto_confirm', $tenant->id);
     }
 }
