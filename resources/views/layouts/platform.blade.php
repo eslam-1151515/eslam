@@ -309,8 +309,10 @@
                     <ul class="space-y-2 text-sm font-semibold text-slate-500">
                         <li><a href="{{ route('main.help') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-circle-question text-xs text-brand-500"></i> مركز المساعدة</a></li>
                         <li><a href="{{ route('main.contact') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-headset text-xs text-emerald-500"></i> التواصل والدعم الفني</a></li>
-                        <li><a href="{{ route('main.terms') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-file-contract text-xs text-amber-500"></i> شروط الاستخدام</a></li>
+                        <li><a href="{{ route('main.terms') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-file-contract text-xs text-amber-500"></i> الشروط والأحكام</a></li>
                         <li><a href="{{ route('main.privacy') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-xs text-rose-500"></i> سياسة الخصوصية</a></li>
+                        <li><a href="{{ route('main.refund') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-rotate-left text-xs text-emerald-600"></i> سياسة الاسترجاع والإلغاء</a></li>
+                        <li><a href="{{ route('main.sla') }}" class="hover:text-brand-600 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-bolt text-xs text-indigo-500"></i> اتفاقية مستوى الخدمة (SLA)</a></li>
                     </ul>
                 </div>
 
@@ -336,19 +338,44 @@
                                 <div class="font-bold text-slate-800 font-mono text-xs">support@ordersaif.com</div>
                             </div>
                         </div>
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-location-dot text-xs"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-400">مقر الخدمة</div>
+                                <div class="font-bold text-slate-800 text-xs">جمهورية مصر العربية</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
+            <!-- Payment Methods & Security Strip -->
+            <div class="py-5 border-b border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                    <i class="fa-solid fa-lock text-emerald-600"></i>
+                    <span>الأسعار بالجنيه المصري (EGP) • مدفوعات إلكترونية مشفرة وآمنة</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-extrabold">
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-blue-800 font-sans tracking-wide">VISA</span>
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-rose-600 font-sans tracking-wide">MasterCard</span>
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-indigo-700">ميزة (Meeza)</span>
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-emerald-700">المحافظ الإلكترونية</span>
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-purple-700">InstaPay</span>
+                </div>
+            </div>
+
             <!-- Bottom Copyright & Legal -->
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-400">
                 <div>
-                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-slate-700">أوردر سيف (Order Saif)</strong>.
+                    جميع الحقوق محفوظة © {{ date('Y') }} <strong class="text-slate-700">أوردر سيف (Order Saif)</strong> — جمهورية مصر العربية.
                 </div>
-                <div class="flex items-center gap-5">
-                    <a href="{{ route('main.terms') }}" class="hover:text-slate-700 transition-colors">شروط الاستخدام</a>
+                <div class="flex flex-wrap items-center justify-center gap-5">
+                    <a href="{{ route('main.terms') }}" class="hover:text-slate-700 transition-colors">الشروط والأحكام</a>
                     <a href="{{ route('main.privacy') }}" class="hover:text-slate-700 transition-colors">سياسة الخصوصية</a>
+                    <a href="{{ route('main.refund') }}" class="hover:text-slate-700 transition-colors">سياسة الاسترجاع والإلغاء</a>
                     <a href="{{ route('main.sla') }}" class="hover:text-slate-700 transition-colors">اتفاقية مستوى الخدمة</a>
                 </div>
             </div>

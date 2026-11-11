@@ -63,12 +63,19 @@ class WalletController extends Controller
 
         $paymobConfigured = app(\App\Services\PaymobService::class)->isConfigured();
 
+        $policyLinks = [
+            'terms'   => route('main.terms'),
+            'privacy' => route('main.privacy'),
+            'refund'  => route('main.refund'),
+        ];
+
         return Inertia::render('Merchant/Wallet/Index', [
             'wallet_balance'       => (float) ($tenant->wallet_balance ?? 0),
             'paymentInfo'          => $paymentInfo,
             'depositRequests'      => $depositRequests,
             'transactions'         => $transactions,
             'is_paymob_configured' => $paymobConfigured,
+            'policyLinks'          => $policyLinks,
         ]);
     }
 

@@ -52,6 +52,9 @@ Route::domain($baseDomain)->group(function () {
     Route::post('/contact', [\App\Http\Controllers\PlatformController::class, 'contactSubmit'])->name('main.contact.submit');
     Route::get('/privacy', [\App\Http\Controllers\PlatformController::class, 'privacy'])->name('main.privacy');
     Route::get('/terms', [\App\Http\Controllers\PlatformController::class, 'terms'])->name('main.terms');
+    Route::get('/refund-policy', [\App\Http\Controllers\PlatformController::class, 'refund'])->name('main.refund');
+    Route::redirect('/refund', '/refund-policy', 301);
+    Route::redirect('/return-policy', '/refund-policy', 301);
     Route::get('/sla', [\App\Http\Controllers\PlatformController::class, 'sla'])->name('main.sla');
     Route::get('/help', [\App\Http\Controllers\PlatformController::class, 'help'])->name('main.help');
 

@@ -1,8 +1,8 @@
 @extends('layouts.platform')
 
-@section('title', 'شروط الخدمة | أوردر سيف (Order Saif) - التزامات وقواعد واضحة')
+@section('title', 'الشروط والأحكام | أوردر سيف (Order Saif) - التزامات وقواعد واضحة')
 
-@section('meta_description', 'اقرأ شروط وأحكام استخدام منصة أوردر سيف لبناء المتاجر الإلكترونية، وقواعد الاستخدام المقبول وحقوق الملكية الفكرية والالتزامات المالية.')
+@section('meta_description', 'اقرأ الشروط والأحكام الخاصة باستخدام منصة أوردر سيف لبناء المتاجر الإلكترونية، وقواعد الدفع الإلكتروني وشحن المحفظة والملكية الفكرية.')
 
 @section('content')
 <section class="py-16 md:py-24 relative overflow-hidden bg-slate-50">
@@ -10,12 +10,12 @@
         
         <div class="text-center mb-12">
             <span class="px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200 inline-block uppercase tracking-wider mb-4">
-                📄 شروط الاستخدام
+                📄 الشروط والأحكام
             </span>
             <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
-                اتفاقية شروط الخدمة والاستخدام
+                اتفاقية الشروط والأحكام واستخدام الخدمة
             </h1>
-            <p class="text-slate-500 mt-3 font-medium text-sm">آخر تحديث: 2026</p>
+            <p class="text-slate-500 mt-3 font-medium text-sm">آخر تحديث: نوفمبر 2026 • جمهورية مصر العربية</p>
         </div>
 
         <div class="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-10 leading-relaxed text-slate-600">
@@ -59,37 +59,70 @@
             <div class="space-y-4">
                 <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
                     <span class="w-1.5 h-6 rounded-full bg-brand-600"></span>
-                    4. الاشتراكات والمدفوعات
+                    4. الاشتراكات وشحن المحفظة والمدفوعات الإلكترونية
                 </h2>
                 <p class="text-sm sm:text-base leading-relaxed">
-                    تتوفر الخدمات عبر باقات اشتراك شهرية أو نظام شحن المحفظة (2ج لكل أوردر) أو التجربة المجانية الموضحة في صفحة الأسعار. يتم دفع رسوم الاشتراك أو شحن الرصيد مقدماً عبر وسائل الدفع المعتمدة (فودافون كاش، إنستاباي، والتحويل البنكي).
+                    تتوفر خدمات منصة أوردر سيف (Order Saif) من خلال باقات اشتراك شهرية أو سنوية، أو بنظام شحن رصيد محفظة المتجر (2 ج.م لكل أوردر مفتوح و1 ج.م لرسائل التأكيد التلقائي)، بالإضافة إلى الرصيد الافتتاحي المجاني الموضح في صفحة الأسعار. جميع الأسعار والمدفوعات مسعّرة وتُدفع بعملة <strong>الجنيه المصري (EGP)</strong>.
+                </p>
+                <p class="text-sm sm:text-base leading-relaxed">
+                    يتم سداد رسوم الاشتراك أو شحن رصيد المحفظة مقدماً عبر وسائل الدفع المعتمدة، والتي تشمل: <strong>الدفع الإلكتروني المباشر بالبطاقات البنكية (فيزا، ماستركارد، ميزة) والمحافظ الإلكترونية عبر بوابة الدفع المؤمّنة باي موب (Paymob)</strong>، بالإضافة إلى التحويل عبر فودافون كاش أو إنستاباي.
                 </p>
             </div>
 
             <div class="space-y-4">
                 <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
                     <span class="w-1.5 h-6 rounded-full bg-brand-600"></span>
-                    5. إخلاء المسؤولية وحدودها
+                    5. سياسة الاسترجاع والإلغاء واستمرارية المتجر
                 </h2>
                 <p class="text-sm sm:text-base leading-relaxed">
-                    تُقدم المنصة خدماتها بأعلى مستويات الاستقرار والأمان. أوردر سيف توفر البنية التحتية التقنية للمتاجر وتسهل استقبال الطلبات وإدارتها، ولكن التاجر يتحمل المسؤولية القانونية الكاملة عن جودة منتجاته وعمليات شحنها لعملائه النهائيين.
+                    نظراً للطبيعة الرقمية الفورية لخدمات المنصة، فإن مبالغ <strong>شحن محفظة المتجر</strong> و<strong>الاشتراكات المفعّلة</strong> غير قابلة للاسترجاع النقدي بمجرد إضافتها أو تفعيلها، ولكن <strong>يظل المتجر نشطاً وشغالاً مع العميل، ويبقى رصيد المحفظة متاحاً دون انتهاء صلاحية لاستخدامه وفق الباقة المختارة</strong>. كما يحق للتاجر إلغاء التجديد أو تغيير باقته في أي وقت، وتُعالج أي أخطاء تقنية أو خصومات مكررة وفقاً للضوابط الموضحة بالكامل في صفحة
+                    <a href="{{ route('main.refund') }}" class="text-brand-600 font-bold underline hover:text-brand-700">سياسة الاسترجاع والإلغاء</a>.
                 </p>
             </div>
 
             <div class="space-y-4">
                 <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
                     <span class="w-1.5 h-6 rounded-full bg-brand-600"></span>
-                    6. الملكية الفكرية
+                    6. إخلاء المسؤولية وحدودها
+                </h2>
+                <p class="text-sm sm:text-base leading-relaxed">
+                    تُقدم المنصة خدماتها بأعلى مستويات الاستقرار والأمان. أوردر سيف توفر البنية التحتية التقنية للمتاجر وتسهل استقبال الطلبات وإدارتها، ولكن التاجر يتحمل المسؤولية القانونية الكاملة عن جودة منتجاته ومشروعيتها وعمليات شحنها وسياسة الاسترجاع الخاصة بمتجره أمام عملائه النهائيين.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
+                    <span class="w-1.5 h-6 rounded-full bg-brand-600"></span>
+                    7. الملكية الفكرية
                 </h2>
                 <p class="text-sm sm:text-base leading-relaxed">
                     جميع الحقوق والملكيات الفكرية الخاصة بالمنصة وتصميمها وشفرتها البرمجية وعلامتها التجارية تنتمي حصرياً لـ Order Saif. بالمقابل، يمتلك التاجر كامل الحقوق والملكية الفكرية للمحتوى والمنتجات والصور التي يرفعها على متجره الإلكتروني الخاص.
                 </p>
             </div>
 
+            <div class="space-y-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
+                    <span class="w-1.5 h-6 rounded-full bg-brand-600"></span>
+                    8. القانون الحاكم وحفظ السجلات
+                </h2>
+                <p class="text-sm sm:text-base leading-relaxed">
+                    تُدار المنصة وتُقدم خدماتها من <strong>جمهورية مصر العربية</strong>، وتخضع هذه الشروط والأحكام وتُفسر وفقاً لقوانين جمهورية مصر العربية، وتختص المحاكم المصرية المختصة بالنظر في أي نزاع قد ينشأ عن تنفيذها. كما تلتزم المنصة بالاحتفاظ بسجلات المعاملات والفواتير الرقمية وفق الضوابط المالية والقانونية المعتمدة.
+                </p>
+                <div class="flex flex-wrap gap-3 pt-2 text-sm font-bold">
+                    <a href="{{ route('main.privacy') }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 transition-colors">
+                        <i class="fa-solid fa-shield-halved ml-1 text-rose-500"></i> سياسة الخصوصية
+                    </a>
+                    <a href="{{ route('main.refund') }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 transition-colors">
+                        <i class="fa-solid fa-rotate-left ml-1 text-emerald-500"></i> سياسة الاسترجاع والإلغاء
+                    </a>
+                </div>
+            </div>
+
             <div class="space-y-3 pt-6 border-t border-slate-100">
-                <h3 class="text-lg font-bold text-slate-900">هل لديك استفسارات قانونية حول الاتفاقية؟</h3>
-                <p class="text-sm text-slate-500">
-                    يسعدنا تواصلك مع القسم القانوني أو الدعم الفني عبر البريد: <a href="mailto:support@ordersaif.com" class="text-brand-600 font-bold hover:underline font-mono">support@ordersaif.com</a> أو هاتفياً: <a href="tel:01066571999" class="text-slate-900 font-bold font-mono">01066571999</a>
+                <h3 class="text-lg font-bold text-slate-900">معلومات التاجر والاتصال بالمنصة</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    <strong>اسم المنصة:</strong> أوردر سيف (Order Saif) • <strong>المقر:</strong> جمهورية مصر العربية<br>
+                    للاستفسارات القانونية أو خدمة العملاء، تواصل معنا عبر البريد: <a href="mailto:support@ordersaif.com" class="text-brand-600 font-bold hover:underline font-mono">support@ordersaif.com</a> أو هاتفياً وواتساب: <a href="tel:01066571999" class="text-slate-900 font-bold font-mono">01066571999</a>
                 </p>
             </div>
 

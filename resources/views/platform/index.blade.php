@@ -209,7 +209,7 @@
                     </div>
                     <h3 class="text-xl font-black text-slate-900">باقة الأوردر المرنة (2ج فقط)</h3>
                     <p class="text-sm text-slate-600 leading-relaxed">
-                        بدون أي اشتراك شهري ثابت! اشحن محفظتك بـ فودافون كاش أو إنستاباي، وادفع 2 ج.م فقط عند فتح ومعاينة كل أوردر يصل لمتجرك.
+                        بدون أي اشتراك شهري ثابت! اشحن محفظتك بالبطاقات البنكية أو المحافظ الإلكترونية أو فودافون كاش وإنستاباي، وادفع 2 ج.م فقط عند فتح ومعاينة كل أوردر يصل لمتجرك.
                     </p>
                 </div>
 
@@ -381,13 +381,13 @@
                             <span class="text-sm font-bold text-slate-500">ج.م / لكل أوردر مفتوح</span>
                         </div>
                         <p class="text-xs text-slate-500">
-                            بدون أي اشتراك شهري ثابت! اشحن محفظتك بـ فودافون كاش أو إنستاباي وادفع فقط عند معاينة الأوردر.
+                            بدون أي اشتراك شهري ثابت! اشحن محفظتك بالبطاقة البنكية أو المحافظ الإلكترونية أو فودافون كاش وإنستاباي وادفع فقط عند معاينة الأوردر.
                         </p>
 
                         <div class="pt-4 border-t border-slate-100 space-y-2.5 text-sm text-slate-700 font-semibold">
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> 0ج اشتراك شهري ثابت</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> خصم 2 ج.م فقط عند فتح كل أوردر</div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> شحن فوري بـ فودافون كاش وإنستاباي</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> شحن فوري (فيزا/ماستركارد/محافظ) وفودافون كاش وإنستاباي</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> منتجات وثيمات غير محدودة</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> ميزة تأكيد الطلبات عبر الواتساب (1ج للرسالة)</div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600"></i> ربط دومين وبيكسلات مجاناً</div>
@@ -432,6 +432,21 @@
                     </a>
                 </div>
 
+            </div>
+
+            <!-- Legal & Payment Transparency Note under Pricing -->
+            <div class="mt-10 p-5 rounded-2xl bg-white border border-slate-200 text-center space-y-2 max-w-4xl mx-auto shadow-xs">
+                <p class="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
+                    <i class="fa-solid fa-shield-check text-emerald-600 ml-1"></i>
+                    جميع الأسعار بالجنيه المصري (EGP). مبالغ شحن المحفظة والباقات المفعّلة غير قابلة للاسترجاع النقدي بعد إضافتها، ولكن يظل متجرك شغالاً معك ويستمر رصيدك متاحاً بدون انتهاء صلاحية وفق الباقة المختارة.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-brand-600 pt-1">
+                    <a href="{{ route('main.terms') }}" class="hover:underline flex items-center gap-1"><i class="fa-solid fa-file-contract text-amber-500"></i> الشروط والأحكام</a>
+                    <span class="text-slate-300">•</span>
+                    <a href="{{ route('main.privacy') }}" class="hover:underline flex items-center gap-1"><i class="fa-solid fa-shield-halved text-rose-500"></i> سياسة الخصوصية</a>
+                    <span class="text-slate-300">•</span>
+                    <a href="{{ route('main.refund') }}" class="hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate-left text-emerald-600"></i> سياسة الاسترجاع والإلغاء</a>
+                </div>
             </div>
 
         </div>
@@ -551,7 +566,7 @@
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="openFaq === 2 ? 'rotate-180' : ''"></i>
                     </button>
                     <div x-show="openFaq === 2" x-collapse class="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                        في باقة الطلب المرنة، لا تدفع أي اشتراك شهري ثابت. تقوم فقط بشحن محفظتك داخل لوحة التحكم برصيد (عبر فودافون كاش أو إنستا باي)، وعندما يأتيك أوردر جديد وتقوم بفتحه ومعاينته يتم خصم 2 ج.م فقط من رصيدك.
+                        في باقة الطلب المرنة، لا تدفع أي اشتراك شهري ثابت. تقوم فقط بشحن محفظتك داخل لوحة التحكم برصيد (عبر البطاقات البنكية، المحافظ الإلكترونية، فودافون كاش أو إنستا باي)، وعندما يأتيك أوردر جديد وتقوم بفتحه ومعاينته يتم خصم 2 ج.م فقط من رصيدك.
                     </div>
                 </div>
 
@@ -582,6 +597,24 @@
                     </button>
                     <div x-show="openFaq === 5" x-collapse class="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                         ندعم الدفع عند الاستلام (COD) وهو الأكثر طلباً في مصر، بالإضافة للتحويل اليدوي عبر فودافون كاش وإنستاباي مع إمكانية رفع صورة إيصال التحويل، والتواصل الفوري عبر الواتساب.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button @click="openFaq = openFaq === 6 ? null : 6" class="w-full p-5 text-right font-extrabold text-slate-900 flex items-center justify-between gap-4">
+                        <span>ما هي سياسة الاسترجاع لشحن المحفظة والباقات؟ وهل الرصيد له صلاحية محددة؟</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="openFaq === 6 ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="openFaq === 6" x-collapse class="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3 space-y-2">
+                        <p>
+                            شحن رصيد المحفظة وباقات الاشتراك المفعّلة خدمات رقمية فورية غير قابلة للاسترجاع النقدي بعد إضافتها، ولكن في المقابل <strong>يظل متجرك شغالاً معك ويستمر رصيدك في المحفظة دون انتهاء صلاحية لتستخدمه وفق الباقة المختارة</strong>. وفي حال حدوث أي خطأ تقني أو خصم مزدوج يتم رد المبلغ عبر نفس وسيلة الدفع الأصلية.
+                        </p>
+                        <p class="text-xs font-bold">
+                            راجع التفاصيل كاملة في:
+                            <a href="{{ route('main.refund') }}" class="text-brand-600 hover:underline ml-2">سياسة الاسترجاع والإلغاء</a>
+                            <a href="{{ route('main.terms') }}" class="text-brand-600 hover:underline ml-2">الشروط والأحكام</a>
+                            <a href="{{ route('main.privacy') }}" class="text-brand-600 hover:underline">سياسة الخصوصية</a>
+                        </p>
                     </div>
                 </div>
 

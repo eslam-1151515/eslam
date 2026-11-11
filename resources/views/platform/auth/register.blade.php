@@ -561,7 +561,7 @@
 
     <!-- Footer -->
     <footer class="max-w-4xl mx-auto w-full text-center mt-8 text-xs text-gray-500">
-        <p>© {{ date('Y') }} أوردر سيف (Order Saif). جميع الحقوق محفوظة. بتسجيلك أنت توافق على <a href="#" class="text-gray-400 underline">شروط الخدمة</a> و <a href="#" class="text-gray-400 underline">سياسة الخصوصية</a>.</p>
+        <p>© {{ date('Y') }} أوردر سيف (Order Saif). جميع الحقوق محفوظة. بتسجيلك أنت توافق على <a href="{{ route('main.terms') }}" target="_blank" class="text-gray-300 hover:text-white underline">الشروط والأحكام</a> و <a href="{{ route('main.privacy') }}" target="_blank" class="text-gray-300 hover:text-white underline">سياسة الخصوصية</a> و <a href="{{ route('main.refund') }}" target="_blank" class="text-gray-300 hover:text-white underline">سياسة الاسترجاع</a>.</p>
     </footer>
 
     <!-- Alpine.js Wizard Logic -->

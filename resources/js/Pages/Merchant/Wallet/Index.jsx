@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 
-export default function WalletIndex({ wallet_balance, paymentInfo, depositRequests, transactions, is_paymob_configured = false }) {
+export default function WalletIndex({ wallet_balance, paymentInfo, depositRequests, transactions, is_paymob_configured = false, policyLinks = {} }) {
     const { flash } = usePage().props;
 
     const [activeTab, setActiveTab] = useState('deposit'); // deposit, history
     const [chargeMode, setChargeMode] = useState(is_paymob_configured ? 'instant' : 'manual'); // 'instant' (Paymob) or 'manual' (Cash/InstaPay)
+    const [acceptedPolicies, setAcceptedPolicies] = useState(false);
+
+    const termsUrl = policyLinks?.terms || '/terms';
+    const privacyUrl = policyLinks?.privacy || '/privacy';
+    const refundUrl = policyLinks?.refund || '/refund-policy';
 
     // Manual Form State
     const [manualQuickAmount, setManualQuickAmount] = useState(300);
@@ -435,11 +440,40 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                             </div>
                                         )}
 
+                                        {/* Policy Acceptance Checkbox (Required for Payment Gateway Compliance) */}
+                                        <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
+                                            <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-700 leading-relaxed">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={acceptedPolicies}
+                                                    onChange={(e) => setAcceptedPolicies(e.target.checked)}
+                                                    required
+                                                    className="mt-1 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                                                />
+                                                <span>
+                                                    أقر بموافقتي على{' '}
+                                                    <a href={termsUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold underline hover:text-indigo-800">
+                                                        الشروط والأحكام
+                                                    </a>
+                                                    {' '}و{' '}
+                                                    <a href={privacyUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold underline hover:text-indigo-800">
+                                                        سياسة الخصوصية
+                                                    </a>
+                                                    {' '}و{' '}
+                                                    <a href={refundUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold underline hover:text-indigo-800">
+                                                        سياسة الاسترجاع والإلغاء
+                                                    </a>
+                                                    {' '}(رصيد الشحن لا يُسترد نقدياً ويظل متاحاً لاستخدامه بالمتجر حسب الباقة المختارة).
+                                                </span>
+                                            </label>
+                                        </div>
+
                                         {/* Submit Button */}
                                         <button
                                             type="submit"
                                             disabled={
                                                 instantForm.processing ||
+                                                !acceptedPolicies ||
                                                 (instantForm.data.method_type === 'wallet' && (instantForm.data.wallet_phone.length !== 11 || !instantForm.data.wallet_phone.startsWith('01')))
                                             }
                                             className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-sm rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"

@@ -351,11 +351,23 @@ class PlatformController extends Controller
     }
 
     /**
+     * Display a platform view with no-cache headers so policy and landing updates appear immediately.
+     */
+    protected function renderNoCacheView(string $view, array $data = [])
+    {
+        return response()
+            ->view($view, $data)
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+    }
+
+    /**
      * Display the privacy policy page.
      */
     public function privacy(Request $request)
     {
-        return view('platform.privacy');
+        return $this->renderNoCacheView('platform.privacy');
     }
 
     /**
@@ -363,7 +375,15 @@ class PlatformController extends Controller
      */
     public function terms(Request $request)
     {
-        return view('platform.terms');
+        return $this->renderNoCacheView('platform.terms');
+    }
+
+    /**
+     * Display the refund and cancellation policy page.
+     */
+    public function refund(Request $request)
+    {
+        return $this->renderNoCacheView('platform.refund');
     }
 
     /**
@@ -371,7 +391,7 @@ class PlatformController extends Controller
      */
     public function sla(Request $request)
     {
-        return view('platform.sla');
+        return $this->renderNoCacheView('platform.sla');
     }
 
     /**
