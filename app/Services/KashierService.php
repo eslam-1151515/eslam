@@ -159,6 +159,91 @@ class KashierService
     }
 
     /**
+     * Initiate checkout session for a customer order in a merchant's store.
+     *
+     * @param \App\Models\Order $order
+     * @return array ['success' => bool, 'redirect_url' => string, 'session_id' => string, 'message' => string]
+     */
+    public function createStoreOrderCheckout(\App\Models\Order $order): array
+    {
+        if (!$this->isConfigured()) {
+            return [
+                'success' => false,
+                'message' => 'بوابة كاشير غير مهيأة بالشكل الصحيح في هذا المتجر.',
+            ];
+        }
+
+        $email = $order->customer_email ?: 'customer@store.com';
+        $orderId = "STORE_ORDER_{$order->tenant_id}_{$order->id}";
+        $redirectUrl = url("/checkout/payment-callback/kashier?order_id={$order->id}");
+        $webhookUrl = url('/api/webhooks/kashier');
+
+        $endpoint = $this->getBaseUrl() . '/v3/payment/sessions';
+
+        $payload = [
+            'amount'           => number_format((float) $order->total, 2, '.', ''),
+            'currency'         => 'EGP',
+            'order'            => $orderId,
+            'merchantId'       => $this->merchantId,
+            'merchantRedirect' => $redirectUrl,
+            'serverWebhook'    => $webhookUrl,
+            'display'          => 'ar',
+            'type'             => 'one-time',
+            'allowedMethods'   => 'card,wallet',
+            'customer'         => [
+                'email'     => $email,
+                'reference' => "order-{$order->id}",
+            ],
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $this->secretKey,
+                'api-key'       => $this->paymentApiKey,
+                'Content-Type'  => 'application/json',
+            ])->timeout(30)->post($endpoint, $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $sessionUrl = $data['sessionUrl'] ?? null;
+                $sessionId = $data['_id'] ?? null;
+
+                if (!empty($sessionUrl)) {
+                    $order->update([
+                        'transaction_id'  => $sessionId ?: $orderId,
+                        'payment_details' => array_merge($order->payment_details ?? [], [
+                            'kashier_session_id' => $sessionId,
+                            'kashier_order_id'   => $orderId,
+                        ]),
+                    ]);
+
+                    return [
+                        'success'      => true,
+                        'redirect_url' => $sessionUrl,
+                        'session_id'   => $sessionId,
+                    ];
+                }
+            }
+
+            Log::error('Kashier store order session creation failed', [
+                'status'   => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'تعذر بدء جلسة الدفع عبر كاشير: ' . ($response->json('messages.ar') ?? $response->json('message') ?? 'خطأ غير متوقع'),
+            ];
+        } catch (\Throwable $e) {
+            Log::error('Kashier store order exception: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'حدث خطأ أثناء الاتصال ببوابة الدفع: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Validate the HMAC-SHA256 signature sent by Kashier (for redirect or webhook).
      *
      * Kashier signs an ordered list of 10 fields:

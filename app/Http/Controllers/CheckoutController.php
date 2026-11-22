@@ -391,7 +391,23 @@ class CheckoutController extends Controller
                         $redirectUrl = $checkoutData['redirect_url'];
                     }
                 } elseif ($paymentMethod === 'kashier') {
-                    $redirectUrl = url("/checkout/payment-callback/kashier?order_id={$order->id}&status=success");
+                    $gw = \App\Models\PaymentGateway::where('tenant_id', $order->tenant_id)
+                        ->where('provider', 'kashier')
+                        ->first();
+                    $creds = $gw?->credentials ?? [];
+                    $settings = $gw?->settings ?? [];
+
+                    $kashierService = new \App\Services\KashierService(
+                        merchantId: $creds['merchant_id'] ?? null,
+                        paymentApiKey: $creds['api_key'] ?? null,
+                        secretKey: $creds['api_secret'] ?? null,
+                        mode: $settings['mode'] ?? null
+                    );
+
+                    $checkoutData = $kashierService->createStoreOrderCheckout($order);
+                    if (!empty($checkoutData['redirect_url'])) {
+                        $redirectUrl = $checkoutData['redirect_url'];
+                    }
                 } elseif ($paymentMethod === 'fawry') {
                     $redirectUrl = url("/order-success/{$order->reference_number}?clear_cart=1&fawry=1");
                 }
@@ -433,8 +449,10 @@ class CheckoutController extends Controller
     public function paymentCallback(Request $request, string $provider)
     {
         $orderId = $request->query('order_id') ?? $request->input('order_id');
+        $paymentStatus = strtoupper((string) ($request->query('paymentStatus') ?? $request->input('paymentStatus') ?? ''));
         $success = $request->query('success') === 'true'
             || $request->query('status') === 'success'
+            || in_array($paymentStatus, ['SUCCESS', 'CAPTURED', 'PAID'])
             || filter_var($request->input('success'), FILTER_VALIDATE_BOOLEAN);
 
         $order = Order::find($orderId);
@@ -443,7 +461,7 @@ class CheckoutController extends Controller
         }
 
         if ($success) {
-            $transId = $request->query('id') ?? $request->query('transaction_id') ?? ('TRX_' . time());
+            $transId = $request->query('transactionId') ?? $request->query('id') ?? $request->query('transaction_id') ?? ('TRX_' . time());
             $order->update([
                 'payment_status' => 'paid',
                 'transaction_id' => $transId,

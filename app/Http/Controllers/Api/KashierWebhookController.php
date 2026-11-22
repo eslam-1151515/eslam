@@ -45,7 +45,40 @@ class KashierWebhookController extends Controller
             }
         }
 
-        // Find matching SubscriptionReceipt
+        // Case 1: Store Customer Order (STORE_ORDER_{tenantId}_{orderId})
+        if (preg_match('/STORE_ORDER_(\d+)_(\d+)/', $merchantOrderId, $matches)) {
+            $storeOrderId = (int) $matches[2];
+            $storeOrder = \App\Models\Order::find($storeOrderId);
+            if ($storeOrder) {
+                if (in_array($paymentStatus, ['SUCCESS', 'CAPTURED', 'PAID'])) {
+                    $storeOrder->update([
+                        'payment_status' => 'paid',
+                        'transaction_id' => $transactionId ?: $storeOrder->transaction_id,
+                        'status'         => 'processing',
+                    ]);
+
+                    // Send WhatsApp auto confirmation if enabled
+                    try {
+                        $isAutoConfirmEnabled = (bool) \App\Models\Setting::get('auto_confirm_enabled', false, $storeOrder->tenant_id);
+                        if ($isAutoConfirmEnabled) {
+                            $whatsAppService = new \App\Services\MetaWhatsAppService();
+                            $whatsAppService->sendOrderConfirmation($storeOrder);
+                        }
+                    } catch (\Throwable $e) {
+                        Log::warning('WhatsApp auto confirmation failed after Kashier webhook: ' . $e->getMessage());
+                    }
+
+                    Log::info("Kashier Webhook: Store Order #{$storeOrder->id} marked as PAID.");
+                } else {
+                    $storeOrder->update([
+                        'payment_status' => 'failed',
+                    ]);
+                }
+                return response()->json(['status' => 'STORE_ORDER_PROCESSED'], 200);
+            }
+        }
+
+        // Case 2: Wallet Top-Up Receipt (WALLET_{tenantId}_{receiptId})
         $receipt = null;
 
         // Pattern WALLET_{tenantId}_{receiptId}
