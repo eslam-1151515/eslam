@@ -13,7 +13,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
     const [rejectionReason, setRejectionReason] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
-    const [settingsTab, setSettingsTab] = useState('manual'); // 'manual' or 'paymob'
+    const [settingsTab, setSettingsTab] = useState('kashier'); // 'kashier', 'manual', or 'paymob'
     const [processing, setProcessing] = useState(false);
 
     // Form for editing payment settings
@@ -27,6 +27,13 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
         paymob_wallet_integration_id: paymentSettings?.paymob_wallet_integration_id || '',
         paymob_iframe_id: paymentSettings?.paymob_iframe_id || '',
         paymob_hmac_secret: paymentSettings?.paymob_hmac_secret || '',
+
+        // Kashier settings
+        kashier_active: paymentSettings?.kashier_active ?? true,
+        kashier_mode: paymentSettings?.kashier_mode || 'test',
+        kashier_merchant_id: paymentSettings?.kashier_merchant_id || 'MID-52019-895',
+        kashier_payment_api_key: paymentSettings?.kashier_payment_api_key || '',
+        kashier_secret_key: paymentSettings?.kashier_secret_key || '',
     });
 
     // Modal state for attaching receipt
@@ -181,6 +188,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
             cash: 'نقدي',
             paymob_card: '⚡ فيزا / ماستركارد (Paymob)',
             paymob_wallet: '⚡ محفظة إلكترونية (Paymob)',
+            kashier: '⚡ كاشير (Kashier - فيزا ومحافظ)',
         };
         return methods[method] || method;
     };
@@ -638,11 +646,30 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                             </div>
 
                             {/* Tabs */}
-                            <div className="flex border-b border-gray-100 px-6 bg-gray-50/30 gap-4">
+                            <div className="flex border-b border-gray-100 px-6 bg-gray-50/30 gap-4 overflow-x-auto">
+                                <button
+                                    type="button"
+                                    onClick={() => setSettingsTab('kashier')}
+                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                                        settingsTab === 'kashier'
+                                            ? 'border-indigo-600 text-indigo-700'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                                >
+                                    <span>⚡</span>
+                                    <span>بوابة Kashier (شحن لحظي)</span>
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                        settingsData.kashier_mode === 'live'
+                                            ? 'bg-emerald-100 text-emerald-800'
+                                            : 'bg-amber-100 text-amber-800'
+                                    }`}>
+                                        {settingsData.kashier_mode === 'live' ? 'فعلي 🟢' : 'تجريبي 🧪'}
+                                    </span>
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() => setSettingsTab('manual')}
-                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                                         settingsTab === 'manual'
                                             ? 'border-indigo-600 text-indigo-600'
                                             : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -653,19 +680,109 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                 <button
                                     type="button"
                                     onClick={() => setSettingsTab('paymob')}
-                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                    className={`py-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                                         settingsTab === 'paymob'
                                             ? 'border-emerald-600 text-emerald-700'
                                             : 'border-transparent text-gray-500 hover:text-gray-700'
                                     }`}
                                 >
-                                    <span>⚡</span>
-                                    <span>بوابة Paymob (شحن لحظي)</span>
+                                    <span>💳</span>
+                                    <span>بوابة Paymob</span>
                                 </button>
                             </div>
 
                             <div className="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
-                                {settingsTab === 'manual' ? (
+                                {settingsTab === 'kashier' ? (
+                                    <div className="space-y-4">
+                                        <div className="p-3.5 bg-indigo-50/70 border border-indigo-200 rounded-2xl text-[11px] text-indigo-900 leading-relaxed space-y-2">
+                                            <div className="flex items-center justify-between font-bold">
+                                                <span>💡 رابط الويب هوك (Webhook URL) لكاشير:</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const url = paymentSettings?.kashier_webhook_url || `${window.location.origin}/api/webhooks/kashier`;
+                                                        navigator.clipboard.writeText(url);
+                                                        alert('تم نسخ رابط الويب هوك بنجاح!');
+                                                    }}
+                                                    className="px-2 py-1 bg-white hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-[10px] font-bold shadow-xs transition-colors cursor-pointer"
+                                                >
+                                                    📋 نسخ الرابط
+                                                </button>
+                                            </div>
+                                            <div className="font-mono font-bold text-indigo-700 select-all bg-white p-2 rounded-xl border border-indigo-200 dir-ltr text-left text-[11px] break-all">
+                                                {paymentSettings?.kashier_webhook_url || `${window.location.origin}/api/webhooks/kashier`}
+                                            </div>
+                                            <p className="text-[10px] text-indigo-600/90">
+                                                * ضعه في لوحة كاشير تحت قسم <strong>المطورين &gt; التكامل &gt; إضافة ويب هوك</strong> لاستقبال تأكيدات الشحن التلقائية لحظياً.
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">حالة بوابة كاشير:</label>
+                                                <label className="relative inline-flex items-center cursor-pointer mt-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={!!settingsData.kashier_active}
+                                                        onChange={(e) => setSettingsData('kashier_active', e.target.checked)}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                                    <span className="mr-3 text-xs font-bold text-gray-800">
+                                                        {settingsData.kashier_active ? 'مفعلة للشحن اللحظي ✅' : 'معطلة ❌'}
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 mb-1">بيئة التشغيل (Mode):</label>
+                                                <select
+                                                    value={settingsData.kashier_mode}
+                                                    onChange={(e) => setSettingsData('kashier_mode', e.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-bold focus:ring-2 focus:ring-indigo-500 bg-white"
+                                                >
+                                                    <option value="test">وضع تجريبي (Test Mode / Sandbox) 🧪</option>
+                                                    <option value="live">وضع التشغيل الفعلي (Live Production) 🟢</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">معرف التاجر (Merchant ID - MID):</label>
+                                            <input
+                                                type="text"
+                                                value={settingsData.kashier_merchant_id}
+                                                onChange={(e) => setSettingsData('kashier_merchant_id', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                                placeholder="MID-52019-895"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">مفتاح الدفع (Payment API Key):</label>
+                                            <input
+                                                type="password"
+                                                value={settingsData.kashier_payment_api_key}
+                                                onChange={(e) => setSettingsData('kashier_payment_api_key', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                                placeholder="19a348ba-f4b5-4b5b-..."
+                                            />
+                                            <p className="text-[10px] text-gray-400 mt-1">يستخدم لتشفير طلبات الدفع والتحقق من التوقيع الرقمي.</p>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 mb-1">المفتاح السري (Secret Key):</label>
+                                            <input
+                                                type="password"
+                                                value={settingsData.kashier_secret_key}
+                                                onChange={(e) => setSettingsData('kashier_secret_key', e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-indigo-500 dir-ltr text-left"
+                                                placeholder="77bb86af19c35067...$8c6ec9bb..."
+                                            />
+                                            <p className="text-[10px] text-gray-400 mt-1">المفتاح السري لإنشاء جلسات الدفع عبر السيرفر (v3 Sessions).</p>
+                                        </div>
+                                    </div>
+                                ) : settingsTab === 'manual' ? (
                                     <div className="space-y-4">
                                         <div>
                                             <label className="block text-xs font-bold text-gray-700 mb-1">رقم فودافون كاش (Vodafone Cash):</label>

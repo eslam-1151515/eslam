@@ -82,6 +82,14 @@ class SubscriptionController extends Controller
             'paymob_iframe_id'             => \App\Models\Setting::getGlobal('paymob_iframe_id', \App\Models\Setting::get('paymob_iframe_id', '')),
             'paymob_hmac_secret'           => \App\Models\Setting::getGlobal('paymob_hmac_secret', \App\Models\Setting::get('paymob_hmac_secret', '')),
             'paymob_webhook_url'           => url('/api/webhooks/paymob'),
+
+            // Kashier Gateway Settings
+            'kashier_active'               => (bool) \App\Models\Setting::getGlobal('kashier_active', \App\Models\Setting::get('kashier_active', 1)),
+            'kashier_mode'                 => \App\Models\Setting::getGlobal('kashier_mode', \App\Models\Setting::get('kashier_mode', 'test')),
+            'kashier_merchant_id'          => \App\Models\Setting::getGlobal('kashier_merchant_id', \App\Models\Setting::get('kashier_merchant_id', 'MID-52019-895')),
+            'kashier_payment_api_key'      => \App\Models\Setting::getGlobal('kashier_payment_api_key', \App\Models\Setting::get('kashier_payment_api_key', '19a348ba-f4b5-4b5b-a998-deb66d1406a9')),
+            'kashier_secret_key'           => \App\Models\Setting::getGlobal('kashier_secret_key', \App\Models\Setting::get('kashier_secret_key', '77bb86af19c35067aa3a0bf8b75e38e9$8c6ec9bb6a07278643447bdcd24f3e632584b9161bfa79fb46262d2006a1d3d69a9b76e5a11e59a21f246da41458c069')),
+            'kashier_webhook_url'          => url('/api/webhooks/kashier'),
         ];
 
         return Inertia::render('SuperAdmin/Subscriptions/Receipts', [
@@ -108,6 +116,11 @@ class SubscriptionController extends Controller
             'paymob_wallet_integration_id' => ['nullable', 'string', 'max:100'],
             'paymob_iframe_id'             => ['nullable', 'string', 'max:100'],
             'paymob_hmac_secret'           => ['nullable', 'string', 'max:500'],
+            'kashier_active'               => ['nullable', 'boolean'],
+            'kashier_mode'                 => ['nullable', 'string', 'in:test,live'],
+            'kashier_merchant_id'          => ['nullable', 'string', 'max:100'],
+            'kashier_payment_api_key'      => ['nullable', 'string', 'max:500'],
+            'kashier_secret_key'           => ['nullable', 'string', 'max:500'],
         ]);
 
         if ($request->has('vodafone_cash_number')) {
@@ -138,7 +151,24 @@ class SubscriptionController extends Controller
             \App\Models\Setting::setGlobal('paymob_hmac_secret', $request->paymob_hmac_secret, 'payment');
         }
 
-        return redirect()->back()->with('success', 'تم تحديث إعدادات الدفع وبوابة Paymob بنجاح.');
+        // Kashier settings
+        if ($request->has('kashier_active')) {
+            \App\Models\Setting::setGlobal('kashier_active', $request->boolean('kashier_active') ? '1' : '0', 'payment');
+        }
+        if ($request->has('kashier_mode')) {
+            \App\Models\Setting::setGlobal('kashier_mode', $request->kashier_mode, 'payment');
+        }
+        if ($request->has('kashier_merchant_id')) {
+            \App\Models\Setting::setGlobal('kashier_merchant_id', $request->kashier_merchant_id, 'payment');
+        }
+        if ($request->has('kashier_payment_api_key')) {
+            \App\Models\Setting::setGlobal('kashier_payment_api_key', $request->kashier_payment_api_key, 'payment');
+        }
+        if ($request->has('kashier_secret_key')) {
+            \App\Models\Setting::setGlobal('kashier_secret_key', $request->kashier_secret_key, 'payment');
+        }
+
+        return redirect()->back()->with('success', 'تم تحديث إعدادات وسائل الدفع وبوابات الدفع بنجاح.');
     }
 
     /**

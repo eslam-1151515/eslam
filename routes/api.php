@@ -33,6 +33,10 @@ Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle'])-
 use App\Http\Controllers\Api\PaymobWebhookController;
 Route::post('/webhooks/paymob', [PaymobWebhookController::class, 'handle'])->name('api.webhooks.paymob');
 
+// Kashier Payment Webhook
+use App\Http\Controllers\Api\KashierWebhookController;
+Route::post('/webhooks/kashier', [KashierWebhookController::class, 'handle'])->name('api.webhooks.kashier');
+
 // Health check endpoint (no authentication required)
 use App\Http\Controllers\Api\HealthCheckController;
 Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health');

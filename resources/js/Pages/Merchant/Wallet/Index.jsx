@@ -2,11 +2,21 @@ import React, { useState } from 'react';
 import MerchantLayout from '@/Layouts/MerchantLayout';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 
-export default function WalletIndex({ wallet_balance, paymentInfo, depositRequests, transactions, is_paymob_configured = false, policyLinks = {} }) {
+export default function WalletIndex({
+    wallet_balance,
+    paymentInfo,
+    depositRequests,
+    transactions,
+    is_paymob_configured = false,
+    is_kashier_configured = false,
+    kashier_mode = 'test',
+    policyLinks = {}
+}) {
     const { flash } = usePage().props;
 
+    const isInstantConfigured = is_kashier_configured || is_paymob_configured;
     const [activeTab, setActiveTab] = useState('deposit'); // deposit, history
-    const [chargeMode, setChargeMode] = useState(is_paymob_configured ? 'instant' : 'manual'); // 'instant' (Paymob) or 'manual' (Cash/InstaPay)
+    const [chargeMode, setChargeMode] = useState(isInstantConfigured ? 'instant' : 'manual'); // 'instant' or 'manual'
     const [acceptedPolicies, setAcceptedPolicies] = useState(false);
 
     const termsUrl = policyLinks?.terms || '/terms';
@@ -94,7 +104,11 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
 
     const handleInstantSubmit = (e) => {
         e.preventDefault();
-        instantForm.post(route('merchant.wallet.instant-deposit'), {
+        const routeName = is_kashier_configured
+            ? route('merchant.wallet.kashier.deposit')
+            : route('merchant.wallet.instant-deposit');
+
+        instantForm.post(routeName, {
             preserveScroll: true,
         });
     };
@@ -102,6 +116,14 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
     const whatsappLink = `https://wa.me/2${paymentInfo?.support_phone?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('مرحباً، أود الاستفسار عن طلب شحن محفظتي.')}`;
 
     const getPaymentMethodBadge = (method) => {
+        if (method === 'kashier') {
+            return (
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md">
+                    <span>⚡</span>
+                    <span>كاشير (Kashier - لحظي)</span>
+                </span>
+            );
+        }
         if (method === 'paymob_card') {
             return (
                 <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md">
@@ -224,28 +246,28 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                             <button
                                 type="button"
                                 onClick={() => {
-                                    if (!is_paymob_configured) {
+                                    if (!isInstantConfigured) {
                                         return;
                                     }
                                     setChargeMode('instant');
                                 }}
                                 className={`flex-1 py-3.5 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2.5 ${
-                                    is_paymob_configured ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+                                    isInstantConfigured ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
                                 } ${
-                                    chargeMode === 'instant' && is_paymob_configured
+                                    chargeMode === 'instant' && isInstantConfigured
                                         ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-600/20 scale-[1.01]'
                                         : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100'
                                 }`}
-                                title={!is_paymob_configured ? 'الدفع الإلكتروني اللحظي قيد التفعيل حالياً، يرجى استخدام التحويل اليدوي' : ''}
+                                title={!isInstantConfigured ? 'الدفع الإلكتروني اللحظي قيد التفعيل حالياً، يرجى استخدام التحويل اليدوي' : ''}
                             >
                                 <span className="text-base">⚡</span>
                                 <span>شحن لحظي (دفع فوري بالفيزا والمحافظ الإلكترونية)</span>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                    !is_paymob_configured
+                                    !isInstantConfigured
                                         ? 'bg-amber-100 text-amber-800'
                                         : (chargeMode === 'instant' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800')
                                 }`}>
-                                    {is_paymob_configured ? 'فوري ⚡' : 'قيد التفعيل ⏳'}
+                                    {isInstantConfigured ? (is_kashier_configured && kashier_mode === 'test' ? 'كاشير (تجريبي 🧪)' : 'فوري ⚡') : 'قيد التفعيل ⏳'}
                                 </span>
                             </button>
 
@@ -499,7 +521,7 @@ export default function WalletIndex({ wallet_balance, paymentInfo, depositReques
                                         <ul className="space-y-3 text-xs text-emerald-100/90 leading-relaxed">
                                             <li className="flex items-start gap-2">
                                                 <span className="text-emerald-400 font-bold">1.</span>
-                                                <span>يتم تحويلك إلى صفحة الدفع الرسمية والمشفرة من <strong>Paymob</strong>.</span>
+                                                <span>يتم تحويلك إلى صفحة الدفع الرسمية والمشفرة من <strong>{is_kashier_configured ? 'Kashier' : 'Paymob'}</strong>.</span>
                                             </li>
                                             <li className="flex items-start gap-2">
                                                 <span className="text-emerald-400 font-bold">2.</span>

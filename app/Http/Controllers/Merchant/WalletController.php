@@ -62,6 +62,9 @@ class WalletController extends Controller
             ]);
 
         $paymobConfigured = app(\App\Services\PaymobService::class)->isConfigured();
+        $kashierService = app(\App\Services\KashierService::class);
+        $kashierConfigured = $kashierService->isConfigured();
+        $kashierMode = Setting::getGlobal('kashier_mode', 'test');
 
         $policyLinks = [
             'terms'   => route('main.terms'),
@@ -70,12 +73,14 @@ class WalletController extends Controller
         ];
 
         return Inertia::render('Merchant/Wallet/Index', [
-            'wallet_balance'       => (float) ($tenant->wallet_balance ?? 0),
-            'paymentInfo'          => $paymentInfo,
-            'depositRequests'      => $depositRequests,
-            'transactions'         => $transactions,
-            'is_paymob_configured' => $paymobConfigured,
-            'policyLinks'          => $policyLinks,
+            'wallet_balance'        => (float) ($tenant->wallet_balance ?? 0),
+            'paymentInfo'           => $paymentInfo,
+            'depositRequests'       => $depositRequests,
+            'transactions'          => $transactions,
+            'is_paymob_configured'  => $paymobConfigured,
+            'is_kashier_configured' => $kashierConfigured,
+            'kashier_mode'          => $kashierMode,
+            'policyLinks'           => $policyLinks,
         ]);
     }
 
@@ -126,10 +131,18 @@ class WalletController extends Controller
     }
 
     /**
-     * Start Instant Paymob Deposit.
+     * Start Instant Deposit (Supports Kashier or Paymob).
      */
     public function instantDeposit(Request $request, \App\Services\PaymobService $paymobService)
     {
+        $gateway = $request->input('gateway');
+        $kashierService = app(\App\Services\KashierService::class);
+
+        // If gateway explicitly requested as kashier, or if paymob is not configured and kashier is
+        if ($gateway === 'kashier' || (!$paymobService->isConfigured() && $kashierService->isConfigured())) {
+            return $this->kashierDeposit($request, $kashierService);
+        }
+
         if (!$paymobService->isConfigured()) {
             return redirect()->back()->with('error', 'عفواً، خدمة الدفع الإلكتروني اللحظي غير مفعلة حالياً. يرجى اختيار التحويل اليدوي (إنستاباي / فودافون كاش) ورفع إيصال التحويل ليتم مراجعته وتغذية محفظتك فوراً.');
         }
@@ -185,6 +198,128 @@ class WalletController extends Controller
         }
 
         return Inertia::location($result['redirect_url']);
+    }
+
+    /**
+     * Start Instant Kashier Deposit.
+     */
+    public function kashierDeposit(Request $request, \App\Services\KashierService $kashierService)
+    {
+        if (!$kashierService->isConfigured()) {
+            return redirect()->back()->with('error', 'عفواً، خدمة الدفع الإلكتروني عبر كاشير غير مفعلة حالياً. يرجى مراجعة إدارة المنصة.');
+        }
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:300',
+        ], [
+            'amount.required' => 'يرجى إدخال مبلغ الشحن.',
+            'amount.numeric'  => 'المبلغ يجب أن يكون قيمة رقمية.',
+            'amount.min'      => 'عفواً، الحد الأدنى لشحن المحفظة هو 300 جنيه.',
+        ]);
+
+        $tenant = app(Tenant::class);
+
+        // Create pending subscription receipt record
+        $receipt = SubscriptionReceipt::create([
+            'tenant_id'         => $tenant->id,
+            'plan_id'           => null,
+            'type'              => 'wallet',
+            'amount'            => $validated['amount'],
+            'payment_method'    => 'kashier',
+            'payment_reference' => 'بانتظار إتمام الدفع عبر كاشير...',
+            'receipt_path'      => null,
+            'status'            => 'pending',
+        ]);
+
+        $result = $kashierService->initiateDeposit($receipt, $tenant);
+
+        if (!$result['success']) {
+            $receipt->update([
+                'status'           => 'rejected',
+                'rejection_reason' => $result['message'],
+            ]);
+
+            return redirect()->back()->with('error', $result['message'] ?? 'فشل الاتصال ببوابة كاشير.');
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success'      => true,
+                'redirect_url' => $result['redirect_url'],
+            ]);
+        }
+
+        return Inertia::location($result['redirect_url']);
+    }
+
+    /**
+     * Browser redirect callback after Kashier payment.
+     */
+    public function kashierCallback(Request $request, \App\Services\KashierService $kashierService)
+    {
+        $params = $request->query();
+        \Illuminate\Support\Facades\Log::info('Kashier Callback received:', $params);
+
+        $merchantOrderId = $request->query('merchantOrderId') ?? $request->query('orderId');
+        $paymentStatus = strtoupper($request->query('paymentStatus', ''));
+        $transactionId = $request->query('transactionId', '');
+        $signature = $request->query('signature');
+
+        // Check if there is an associated receipt
+        $receipt = null;
+        if ($merchantOrderId && preg_match('/WALLET_(\d+)_(\d+)/', $merchantOrderId, $m)) {
+            $receipt = SubscriptionReceipt::find((int) $m[2]);
+        }
+        if (!$receipt && $merchantOrderId) {
+            $receipt = SubscriptionReceipt::where('payment_reference', 'like', "%{$merchantOrderId}%")->latest()->first();
+        }
+
+        // If webhook already processed and approved the receipt
+        if ($receipt && $receipt->status === 'approved') {
+            return redirect()->route('merchant.wallet.index')->with('success', '⚡ تم تأكيد شحن المحفظة بنجاح وإضافة الرصيد إلى حسابك!');
+        }
+
+        // Verify signature if provided
+        $isValidSignature = false;
+        if (!empty($signature)) {
+            $isValidSignature = $kashierService->verifySignature($params, $signature);
+        } else {
+            $isValidSignature = !empty($paymentStatus);
+        }
+
+        $isSuccess = in_array($paymentStatus, ['SUCCESS', 'CAPTURED', 'PAID']);
+
+        if ($isSuccess && $receipt && $receipt->status !== 'approved') {
+            $tenant = $receipt->tenant;
+            if ($tenant) {
+                $tenant->increment('wallet_balance', $receipt->amount);
+                WalletTransaction::create([
+                    'tenant_id'   => $tenant->id,
+                    'amount'      => $receipt->amount,
+                    'type'        => 'credit',
+                    'description' => "⚡ شحن محفظة لحظي عبر كاشير (معاملة #{$transactionId})",
+                    'created_by'  => null,
+                ]);
+            }
+
+            $receipt->update([
+                'status'            => 'approved',
+                'approved_at'       => now(),
+                'payment_method'    => 'kashier',
+                'payment_reference' => "Kashier Trans #{$transactionId} (Order #{$merchantOrderId})",
+            ]);
+
+            return redirect()->route('merchant.wallet.index')->with('success', '⚡ تم شحن المحفظة بنجاح عبر كاشير وإضافة الرصيد إلى حسابك فوراً!');
+        }
+
+        if ($receipt && $receipt->status === 'pending') {
+            $receipt->update([
+                'status'           => 'rejected',
+                'rejection_reason' => "فشلت عملية الدفع عبر كاشير أو تم إلغاؤها (الحالة: {$paymentStatus}).",
+            ]);
+        }
+
+        return redirect()->route('merchant.wallet.index')->with('error', '⚠️ لم يتم تأكيد عملية الدفع عبر كاشير. إذا تم الخصم، سيتم تحديث رصيدك تلقائياً فور وصول إشعار البنك.');
     }
 
     /**

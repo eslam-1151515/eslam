@@ -263,6 +263,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/wallet', [App\Http\Controllers\Merchant\WalletController::class, 'index'])->name('merchant.wallet.index');
             Route::post('/wallet/deposit', [App\Http\Controllers\Merchant\WalletController::class, 'deposit'])->name('merchant.wallet.deposit');
             Route::post('/wallet/instant-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'instantDeposit'])->name('merchant.wallet.instant-deposit');
+            Route::post('/wallet/kashier-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'kashierDeposit'])->name('merchant.wallet.kashier.deposit');
+            Route::match(['get', 'post'], '/wallet/kashier-callback', [App\Http\Controllers\Merchant\WalletController::class, 'kashierCallback'])->name('merchant.wallet.kashier.callback');
             Route::get('/wallet/paymob-callback', [App\Http\Controllers\Merchant\WalletController::class, 'paymobCallback'])->name('merchant.wallet.paymob.callback');
             if (app()->environment('local')) {
                 Route::get('/wallet/paymob-sandbox', [App\Http\Controllers\Merchant\WalletController::class, 'paymobSandbox'])->name('merchant.wallet.paymob.sandbox');

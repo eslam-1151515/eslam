@@ -32,13 +32,15 @@ class AppServiceProvider extends ServiceProvider
         Carbon::setLocale('en');
         date_default_timezone_set('Africa/Cairo');
 
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
-                $storeName = \App\Models\Setting::get('store_name', 'Store');
-                \Illuminate\Support\Facades\View::share('storeName', $storeName);
+        if (!$this->app->runningInConsole()) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                    $storeName = \App\Models\Setting::get('store_name', 'Store');
+                    \Illuminate\Support\Facades\View::share('storeName', $storeName);
+                }
+            } catch (\Throwable $e) {
+                // تجاهل الخطأ لتجنب توقف أوامر الأرتيزان
             }
-        } catch (\Throwable $e) {
-            // تجاهل الخطأ لتجنب توقف أوامر الأرتيزان
         }
 
         \Illuminate\Support\Facades\View::composer('platform.*', function ($view) {
