@@ -743,10 +743,10 @@ Route::prefix('admin')->group(function () {
                     'id'                  => $codGw?->id ?? 0,
                     'provider'            => 'cod',
                     'code'                => 'cod',
-                    'display_name'        => $codGw?->display_name ?: 'الدفع عند الاستلام',
-                    'name'                => $codGw?->display_name ?: 'الدفع عند الاستلام',
-                    'display_description' => $codGw?->display_description ?: 'ادفع نقداً عند استلام طلبك من المندوب',
-                    'description'         => $codGw?->display_description ?: 'ادفع نقداً عند استلام طلبك من المندوب',
+                    'display_name'        => 'الدفع عند الاستلام',
+                    'name'                => 'الدفع عند الاستلام',
+                    'display_description' => 'ادفع نقداً عند استلام طلبك من المندوب',
+                    'description'         => 'ادفع نقداً عند استلام طلبك من المندوب',
                     'is_active'           => true,
                     'logo'                => '/images/payments/cod.svg',
                 ];
@@ -757,28 +757,14 @@ Route::prefix('admin')->group(function () {
                     continue;
                 }
 
-                $defaultName = match ($gw->provider) {
-                    'kashier' => 'كاشير (Kashier)',
-                    'paymob'  => 'باي موب (Paymob)',
-                    'fawry'   => 'فوري باي (Fawry)',
-                    default   => ucfirst($gw->provider),
-                };
-
-                $defaultDesc = match ($gw->provider) {
-                    'kashier' => 'ادفع بأمان عبر البطاقات البنكية (فيزا / ماستركارد / ميزة) أو المحافظ الإلكترونية',
-                    'paymob'  => 'ادفع بأمان عبر البطاقات البنكية أو المحافظ الإلكترونية',
-                    'fawry'   => 'ادفع عبر منافذ وشبكة فوري برقم مرجعي',
-                    default   => 'دفع إلكتروني آمن',
-                };
-
                 $gwItem = [
                     'id'                  => $gw->id,
                     'provider'            => $gw->provider,
                     'code'                => $gw->provider,
-                    'display_name'        => $gw->display_name ?: $defaultName,
-                    'name'                => $gw->display_name ?: $defaultName,
-                    'display_description' => $gw->display_description ?: $defaultDesc,
-                    'description'         => $gw->display_description ?: $defaultDesc,
+                    'display_name'        => 'الدفع الإلكتروني',
+                    'name'                => 'الدفع الإلكتروني',
+                    'display_description' => 'ادفع بأمان عبر الفيزا أو الماستركارد أو المحافظ الإلكترونية',
+                    'description'         => 'ادفع بأمان عبر الفيزا أو الماستركارد أو المحافظ الإلكترونية',
                     'is_active'           => true,
                     'logo'                => "/images/payments/{$gw->provider}.svg",
                 ];

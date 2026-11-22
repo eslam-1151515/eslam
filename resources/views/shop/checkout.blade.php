@@ -412,12 +412,9 @@
                             @foreach($paymentGateways as $gw)
                                 @php
                                     $gwId = $gw->provider ?? 'cod';
-                                    $title = $gw->display_name ?: match($gwId) {
-                                        'cod' => 'الدفع عند الاستلام (COD)',
-                                        'paymob' => 'البطاقات البنكية والمحافظ (Paymob)',
-                                        'kashier' => 'الدفع الإلكتروني (Kashier)',
-                                        'fawry' => 'فوري باي (Fawry)',
-                                        default => ucfirst($gwId)
+                                    $title = match($gwId) {
+                                        'cod' => 'الدفع عند الاستلام',
+                                        default => 'الدفع الإلكتروني'
                                     };
                                     $desc = $gw->display_description ?: match($gwId) {
                                         'cod' => 'ادفع نقداً عند وصول طلبك',
