@@ -713,6 +713,87 @@ Route::prefix('admin')->group(function () {
             return response()->json(['data' => $data])->header('Access-Control-Allow-Origin', '*');
         });
 
+        Route::get('/public-api/payment-gateways', function (\Illuminate\Http\Request $request) {
+            $tenant = $request->attributes->get('tenant') 
+                ?? (app()->bound(\App\Models\Tenant::class) ? app(\App\Models\Tenant::class) : null);
+            $tenantId = $tenant?->id ?? config('tenant.id') ?? session()->get('tenant_id');
+
+            $activeGateways = collect();
+            if ($tenantId) {
+                $activeGateways = \App\Models\PaymentGateway::withoutGlobalScopes()
+                    ->where('tenant_id', $tenantId)
+                    ->where('is_active', true)
+                    ->orderBy('sort_order', 'asc')
+                    ->get();
+            }
+
+            $allList = [];
+            $onlineList = [];
+
+            // Cash on Delivery (COD) - Included by default unless explicitly disabled by merchant
+            $codGw = $activeGateways->firstWhere('provider', 'cod');
+            $codDisabled = \App\Models\PaymentGateway::withoutGlobalScopes()
+                ->where('tenant_id', $tenantId)
+                ->where('provider', 'cod')
+                ->where('is_active', false)
+                ->exists();
+
+            if (!$codDisabled) {
+                $allList[] = [
+                    'id'                  => $codGw?->id ?? 0,
+                    'provider'            => 'cod',
+                    'code'                => 'cod',
+                    'display_name'        => $codGw?->display_name ?: 'الدفع عند الاستلام',
+                    'name'                => $codGw?->display_name ?: 'الدفع عند الاستلام',
+                    'display_description' => $codGw?->display_description ?: 'ادفع نقداً عند استلام طلبك من المندوب',
+                    'description'         => $codGw?->display_description ?: 'ادفع نقداً عند استلام طلبك من المندوب',
+                    'is_active'           => true,
+                    'logo'                => '/images/payments/cod.svg',
+                ];
+            }
+
+            foreach ($activeGateways as $gw) {
+                if ($gw->provider === 'cod') {
+                    continue;
+                }
+
+                $defaultName = match ($gw->provider) {
+                    'kashier' => 'كاشير (Kashier)',
+                    'paymob'  => 'باي موب (Paymob)',
+                    'fawry'   => 'فوري باي (Fawry)',
+                    default   => ucfirst($gw->provider),
+                };
+
+                $defaultDesc = match ($gw->provider) {
+                    'kashier' => 'ادفع بأمان عبر البطاقات البنكية (فيزا / ماستركارد / ميزة) أو المحافظ الإلكترونية',
+                    'paymob'  => 'ادفع بأمان عبر البطاقات البنكية أو المحافظ الإلكترونية',
+                    'fawry'   => 'ادفع عبر منافذ وشبكة فوري برقم مرجعي',
+                    default   => 'دفع إلكتروني آمن',
+                };
+
+                $gwItem = [
+                    'id'                  => $gw->id,
+                    'provider'            => $gw->provider,
+                    'code'                => $gw->provider,
+                    'display_name'        => $gw->display_name ?: $defaultName,
+                    'name'                => $gw->display_name ?: $defaultName,
+                    'display_description' => $gw->display_description ?: $defaultDesc,
+                    'description'         => $gw->display_description ?: $defaultDesc,
+                    'is_active'           => true,
+                    'logo'                => "/images/payments/{$gw->provider}.svg",
+                ];
+
+                $allList[] = $gwItem;
+                $onlineList[] = $gwItem;
+            }
+
+            return response()->json([
+                'success'  => true,
+                'data'     => $allList,
+                'gateways' => $onlineList,
+            ])->header('Access-Control-Allow-Origin', '*');
+        });
+
         Route::get('/public-api/banners', function () {
             $banners = \App\Models\Banner::active()->ordered()->get();
             $data = $banners->map(function ($banner) {

@@ -205,4 +205,225 @@ class KashierPaymentTest extends TestCase
         $this->assertEquals('rejected', $receipt->status);
         $this->assertEquals(50.00, (float) $tenant->wallet_balance);
     }
+
+    public function test_public_api_payment_gateways_returns_active_gateways_for_tenant()
+    {
+        $tenant = Tenant::create([
+            'uuid'           => (string) \Illuminate\Support\Str::uuid(),
+            'name'           => 'متجر كاشير',
+            'slug'           => 'kashier-store',
+            'email'          => 'kashier@ordersaif.com',
+            'is_active'      => true,
+            'wallet_balance' => 0,
+        ]);
+
+        \App\Models\PaymentGateway::create([
+            'tenant_id'    => $tenant->id,
+            'provider'     => 'kashier',
+            'is_active'    => true,
+            'display_name' => 'كاشير (Kashier)',
+            'credentials'  => [
+                'merchant_id' => 'MID-52019-895',
+                'api_key'     => '0b01aadf-test',
+                'secret_key'  => 'sec_test',
+            ],
+            'settings'     => [
+                'is_live' => true,
+            ],
+            'sort_order'   => 1,
+        ]);
+
+        // Simulating storefront request with tenant context
+        $response = $this->get('http://kashier-store.fastorder.test/public-api/payment-gateways');
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+        ]);
+
+        $data = $response->json('data');
+        $gateways = $response->json('gateways');
+
+        // Check COD is present in all data
+        $this->assertTrue(collect($data)->contains('provider', 'cod'));
+        // Check Kashier is present in online gateways
+        $this->assertTrue(collect($gateways)->contains('code', 'kashier'));
+    }
+
+    public function test_storefront_checkout_with_kashier_redirects_to_kashier_session()
+    {
+        Http::fake([
+            'https://api.kashier.io/v3/payment/sessions' => Http::response([
+                'sessionUrl' => 'https://payments.kashier.io/session/store_session_999',
+                '_id'        => 'store_session_999',
+            ], 200),
+        ]);
+
+        $tenant = Tenant::create([
+            'uuid'           => (string) \Illuminate\Support\Str::uuid(),
+            'name'           => 'متجر كاشير لايف',
+            'slug'           => 'kashier-live-store',
+            'email'          => 'live@ordersaif.com',
+            'is_active'      => true,
+            'wallet_balance' => 0,
+        ]);
+
+        \App\Models\PaymentGateway::create([
+            'tenant_id'    => $tenant->id,
+            'provider'     => 'kashier',
+            'is_active'    => true,
+            'display_name' => 'كاشير (Kashier)',
+            'credentials'  => [
+                'merchant_id' => 'MID-52019-895',
+                'api_key'     => '0b01aadf-test',
+                'secret_key'  => 'sec_test',
+            ],
+            'settings'     => [
+                'is_live' => true,
+            ],
+            'sort_order'   => 1,
+        ]);
+
+        $gov = \App\Models\ShippingGovernorate::create([
+            'tenant_id' => $tenant->id,
+            'name'      => 'القاهرة',
+            'price'     => 50,
+            'is_active' => true,
+        ]);
+
+        $category = \App\Models\Category::create([
+            'tenant_id' => $tenant->id,
+            'name'      => 'ملابس',
+            'slug'      => 'clothes',
+        ]);
+
+        $product = \App\Models\Product::create([
+            'tenant_id'     => $tenant->id,
+            'category_id'   => $category->id,
+            'name'          => 'قميص صيفي',
+            'price'         => 250,
+            'stock'         => 10,
+            'shipping_type' => 'paid',
+        ]);
+
+        $orderPayload = [
+            'customer_name'    => 'أحمد محمد',
+            'customer_phone'   => '01012345678',
+            'customer_address' => 'شارع التحرير، الدقي',
+            'governorate_id'   => $gov->id,
+            'payment_method'   => 'kashier',
+            'items'            => [
+                [
+                    'id'    => $product->id,
+                    'name'  => $product->name,
+                    'price' => 250,
+                    'qty'   => 1,
+                ]
+            ]
+        ];
+
+        $response = $this->postJson('http://kashier-live-store.fastorder.test/checkout', $orderPayload);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success'      => true,
+            'redirect'     => 'https://payments.kashier.io/session/store_session_999',
+            'redirect_url' => 'https://payments.kashier.io/session/store_session_999',
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'tenant_id'      => $tenant->id,
+            'payment_method' => 'kashier',
+            'payment_status' => 'unpaid',
+            'total'          => 300,
+        ]);
+    }
+
+    public function test_product_page_quick_order_with_kashier_returns_redirect_url()
+    {
+        Http::fake([
+            'https://api.kashier.io/v3/payment/sessions' => Http::response([
+                'sessionUrl' => 'https://payments.kashier.io/session/quick_session_777',
+                '_id'        => 'quick_session_777',
+            ], 200),
+        ]);
+
+        $tenant = Tenant::create([
+            'uuid'           => (string) \Illuminate\Support\Str::uuid(),
+            'name'           => 'متجر كاشير سريع',
+            'slug'           => 'kashier-quick-store',
+            'email'          => 'quick@ordersaif.com',
+            'is_active'      => true,
+            'wallet_balance' => 0,
+        ]);
+
+        \App\Models\PaymentGateway::create([
+            'tenant_id'    => $tenant->id,
+            'provider'     => 'kashier',
+            'is_active'    => true,
+            'display_name' => 'كاشير (Kashier)',
+            'credentials'  => [
+                'merchant_id' => 'MID-52019-895',
+                'api_key'     => '0b01aadf-test',
+                'secret_key'  => 'sec_test',
+            ],
+            'settings'     => [
+                'is_live' => true,
+            ],
+            'sort_order'   => 1,
+        ]);
+
+        $gov = \App\Models\ShippingGovernorate::create([
+            'tenant_id' => $tenant->id,
+            'name'      => 'الجيزة',
+            'price'     => 40,
+            'is_active' => true,
+        ]);
+
+        $category = \App\Models\Category::create([
+            'tenant_id' => $tenant->id,
+            'name'      => 'أحذية',
+            'slug'      => 'shoes',
+        ]);
+
+        $product = \App\Models\Product::create([
+            'tenant_id'     => $tenant->id,
+            'category_id'   => $category->id,
+            'name'          => 'حذاء رياضي',
+            'price'         => 500,
+            'stock'         => 5,
+            'shipping_type' => 'paid',
+        ]);
+
+        $orderPayload = [
+            'customer_name'    => 'محمد علي',
+            'customer_phone'   => '01112345678',
+            'customer_address' => 'شارع الهرم، الجيزة',
+            'governorate_id'   => $gov->id,
+            'payment_method'   => 'kashier',
+            'items'            => [
+                [
+                    'id'    => $product->id,
+                    'name'  => $product->name,
+                    'price' => 500,
+                    'qty'   => 1,
+                ]
+            ]
+        ];
+
+        $response = $this->postJson('http://kashier-quick-store.fastorder.test/api/orders', $orderPayload);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success'      => true,
+            'redirect_url' => 'https://payments.kashier.io/session/quick_session_777',
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'tenant_id'      => $tenant->id,
+            'payment_method' => 'kashier',
+            'payment_status' => 'unpaid',
+            'total'          => 540,
+        ]);
+    }
 }

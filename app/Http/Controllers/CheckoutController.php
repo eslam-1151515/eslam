@@ -391,17 +391,19 @@ class CheckoutController extends Controller
                         $redirectUrl = $checkoutData['redirect_url'];
                     }
                 } elseif ($paymentMethod === 'kashier') {
-                    $gw = \App\Models\PaymentGateway::where('tenant_id', $order->tenant_id)
+                    $gw = \App\Models\PaymentGateway::withoutGlobalScopes()
+                        ->where('tenant_id', $order->tenant_id)
                         ->where('provider', 'kashier')
                         ->first();
                     $creds = $gw?->credentials ?? [];
                     $settings = $gw?->settings ?? [];
+                    $mode = (!empty($settings['is_live']) || ($settings['mode'] ?? '') === 'live') ? 'live' : 'test';
 
                     $kashierService = new \App\Services\KashierService(
                         merchantId: $creds['merchant_id'] ?? null,
-                        paymentApiKey: $creds['api_key'] ?? null,
-                        secretKey: $creds['api_secret'] ?? null,
-                        mode: $settings['mode'] ?? null
+                        paymentApiKey: $creds['api_key'] ?? ($creds['payment_api_key'] ?? null),
+                        secretKey: $creds['secret_key'] ?? ($creds['api_secret'] ?? null),
+                        mode: $mode,
                     );
 
                     $checkoutData = $kashierService->createStoreOrderCheckout($order);
@@ -449,6 +451,12 @@ class CheckoutController extends Controller
     public function paymentCallback(Request $request, string $provider)
     {
         $orderId = $request->query('order_id') ?? $request->input('order_id');
+        if (!$orderId) {
+            $mOrderId = (string) ($request->query('merchantOrderId') ?? $request->query('orderId') ?? $request->input('merchantOrderId') ?? '');
+            if (preg_match('/STORE_ORDER_\d+_(\d+)/', $mOrderId, $matches)) {
+                $orderId = (int) $matches[1];
+            }
+        }
         $paymentStatus = strtoupper((string) ($request->query('paymentStatus') ?? $request->input('paymentStatus') ?? ''));
         $success = $request->query('success') === 'true'
             || $request->query('status') === 'success'

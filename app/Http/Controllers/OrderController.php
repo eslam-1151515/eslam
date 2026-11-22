@@ -202,7 +202,7 @@ class OrderController extends Controller
                 'customer_phone'   => 'required|string|max:20',
                 'customer_address' => 'required|string|max:1000',
                 'governorate_id'   => 'required|exists:shipping_governorates,id',
-                'payment_method'   => 'nullable|in:cod,visa',
+                'payment_method'   => 'nullable|string|in:cod,visa,kashier,paymob,fawry',
                 'coupon_code'      => 'nullable|string',
                 'items'            => 'required|array|min:1',
                 'items.*.id'       => 'required|integer',
@@ -310,6 +310,7 @@ class OrderController extends Controller
                 'ip_country'       => strtolower($request->header('CF-IPCountry') ?: $request->header('X-Country') ?: 'eg'),
                 'governorate'      => $governorate->name,
                 'payment_method'   => $validated['payment_method'] ?? 'cod',
+                'payment_status'   => in_array($validated['payment_method'] ?? 'cod', ['kashier', 'paymob', 'fawry']) ? 'unpaid' : 'pending_cash',
                 'shipping_cost'    => $shippingCost,
                 'coupon_code'      => $couponCode,
                 'discount'         => $discount,
@@ -409,7 +410,8 @@ class OrderController extends Controller
 
             // إرسال رسالة التأكيد التلقائي عبر الواتساب (WhatsApp Meta Cloud API)
             try {
-                if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id)) {
+                $isOnlinePayment = in_array($order->payment_method, ['kashier', 'paymob', 'fawry']);
+                if ((bool) \App\Models\Setting::get('auto_confirm_enabled', false, $order->tenant_id) && !$isOnlinePayment) {
                     $whatsAppService = new \App\Services\MetaWhatsAppService();
                     $whatsAppService->sendOrderConfirmation($order);
                 }
@@ -429,13 +431,59 @@ class OrderController extends Controller
                 \Illuminate\Support\Facades\Log::warning('CAPI sendPurchaseEvent failed on storeApi: ' . $e->getMessage());
             }
 
+            $redirectUrl = '/shop/order-success.html?ref=' . $order->reference_number;
+
+            if ($order->payment_method === 'kashier') {
+                $gw = \App\Models\PaymentGateway::withoutGlobalScopes()
+                    ->where('tenant_id', $order->tenant_id)
+                    ->where('provider', 'kashier')
+                    ->first();
+                $creds = $gw?->credentials ?? [];
+                $settings = $gw?->settings ?? [];
+                $mode = (!empty($settings['is_live']) || ($settings['mode'] ?? '') === 'live') ? 'live' : 'test';
+
+                $kashierService = new \App\Services\KashierService(
+                    merchantId: $creds['merchant_id'] ?? null,
+                    paymentApiKey: $creds['api_key'] ?? ($creds['payment_api_key'] ?? null),
+                    secretKey: $creds['secret_key'] ?? ($creds['api_secret'] ?? null),
+                    mode: $mode,
+                );
+
+                $checkoutData = $kashierService->createStoreOrderCheckout($order);
+                if (!empty($checkoutData['redirect_url'])) {
+                    $redirectUrl = $checkoutData['redirect_url'];
+                }
+            } elseif ($order->payment_method === 'paymob') {
+                $gw = \App\Models\PaymentGateway::withoutGlobalScopes()
+                    ->where('tenant_id', $order->tenant_id)
+                    ->where('provider', 'paymob')
+                    ->first();
+                $creds = $gw?->credentials ?? [];
+
+                $paymobService = new \App\Services\PaymobService(
+                    apiKey: $creds['api_key'] ?? null,
+                    publicKey: $creds['public_key'] ?? null,
+                    secretKey: $creds['secret_key'] ?? null,
+                    cardIntegrationId: $creds['card_integration_id'] ?? null,
+                    walletIntegrationId: $creds['wallet_integration_id'] ?? null,
+                    hmacSecret: $creds['hmac_secret'] ?? null,
+                );
+
+                $checkoutData = $paymobService->createStoreOrderCheckout($order);
+                if (!empty($checkoutData['redirect_url'])) {
+                    $redirectUrl = $checkoutData['redirect_url'];
+                }
+            }
+
             return response()->json([
-                'success' => true,
-                'message' => 'تم إنشاء الطلب بنجاح',
-                'data'    => [
+                'success'      => true,
+                'message'      => 'تم إنشاء الطلب بنجاح',
+                'redirect_url' => $redirectUrl,
+                'data'         => [
                     'reference_number' => $order->reference_number,
                     'total'            => $order->total,
-                    'order_id'         => $order->id
+                    'order_id'         => $order->id,
+                    'redirect_url'     => $redirectUrl,
                 ]
             ]);
 
