@@ -449,7 +449,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/checkout', [CheckoutController::class, 'store'])
             ->name('storefront.checkout.store')
             ->middleware(\App\Http\Middleware\GhostOrderBlockerMiddleware::class);
-        Route::get('/checkout/payment-callback/{provider}', [CheckoutController::class, 'paymentCallback'])->name('storefront.checkout.payment.callback');
+        Route::match(['get', 'post'], '/checkout/payment-callback/{provider}', [CheckoutController::class, 'paymentCallback'])->name('storefront.checkout.payment.callback');
         Route::get('/order-success/{referenceNumber}', [CheckoutController::class, 'success'])->name('storefront.order.success');
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // legacy HTML form
 
