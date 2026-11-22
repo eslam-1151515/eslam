@@ -85,10 +85,10 @@ class SubscriptionController extends Controller
 
             // Kashier Gateway Settings
             'kashier_active'               => (bool) \App\Models\Setting::getGlobal('kashier_active', \App\Models\Setting::get('kashier_active', 1)),
-            'kashier_mode'                 => \App\Models\Setting::getGlobal('kashier_mode', \App\Models\Setting::get('kashier_mode', 'test')),
+            'kashier_mode'                 => \App\Models\Setting::getGlobal('kashier_mode', \App\Models\Setting::get('kashier_mode', 'live')),
             'kashier_merchant_id'          => \App\Models\Setting::getGlobal('kashier_merchant_id', \App\Models\Setting::get('kashier_merchant_id', 'MID-52019-895')),
-            'kashier_payment_api_key'      => \App\Models\Setting::getGlobal('kashier_payment_api_key', \App\Models\Setting::get('kashier_payment_api_key', '19a348ba-f4b5-4b5b-a998-deb66d1406a9')),
-            'kashier_secret_key'           => \App\Models\Setting::getGlobal('kashier_secret_key', \App\Models\Setting::get('kashier_secret_key', '77bb86af19c35067aa3a0bf8b75e38e9$8c6ec9bb6a07278643447bdcd24f3e632584b9161bfa79fb46262d2006a1d3d69a9b76e5a11e59a21f246da41458c069')),
+            'kashier_payment_api_key'      => \App\Models\Setting::getGlobal('kashier_payment_api_key', \App\Models\Setting::get('kashier_payment_api_key', '0b01aadf-0df2-4d90-864c-913dc3462b1c')),
+            'kashier_secret_key'           => \App\Models\Setting::getGlobal('kashier_secret_key', \App\Models\Setting::get('kashier_secret_key', '20b46d7dd22d75e195c8d0f0f6ed6e41$b47fdd473e076b8e035662ea2fd217bf96c7196524de12cf5c1dbfebd85ef6276888f3a833443645a0a29441f243590e')),
             'kashier_webhook_url'          => url('/api/webhooks/kashier'),
         ];
 

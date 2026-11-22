@@ -30,10 +30,10 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
 
         // Kashier settings
         kashier_active: paymentSettings?.kashier_active ?? true,
-        kashier_mode: paymentSettings?.kashier_mode || 'test',
+        kashier_mode: paymentSettings?.kashier_mode || 'live',
         kashier_merchant_id: paymentSettings?.kashier_merchant_id || 'MID-52019-895',
-        kashier_payment_api_key: paymentSettings?.kashier_payment_api_key || '',
-        kashier_secret_key: paymentSettings?.kashier_secret_key || '',
+        kashier_payment_api_key: paymentSettings?.kashier_payment_api_key || '0b01aadf-0df2-4d90-864c-913dc3462b1c',
+        kashier_secret_key: paymentSettings?.kashier_secret_key || '20b46d7dd22d75e195c8d0f0f6ed6e41$b47fdd473e076b8e035662ea2fd217bf96c7196524de12cf5c1dbfebd85ef6276888f3a833443645a0a29441f243590e',
     });
 
     // Modal state for attaching receipt

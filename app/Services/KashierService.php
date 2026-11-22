@@ -23,10 +23,10 @@ class KashierService
         ?string $secretKey = null,
         ?string $mode = null
     ) {
-        $this->merchantId = $merchantId ?: (Setting::getGlobal('kashier_merchant_id', Setting::get('kashier_merchant_id', 'MID-52019-895')) ?: '');
-        $this->paymentApiKey = $paymentApiKey ?: (Setting::getGlobal('kashier_payment_api_key', Setting::get('kashier_payment_api_key', '19a348ba-f4b5-4b5b-a998-deb66d1406a9')) ?: '');
-        $this->secretKey = $secretKey ?: (Setting::getGlobal('kashier_secret_key', Setting::get('kashier_secret_key', '77bb86af19c35067aa3a0bf8b75e38e9$8c6ec9bb6a07278643447bdcd24f3e632584b9161bfa79fb46262d2006a1d3d69a9b76e5a11e59a21f246da41458c069')) ?: '');
-        $this->mode = $mode ?: (Setting::getGlobal('kashier_mode', Setting::get('kashier_mode', 'test')) ?: 'test');
+        $this->merchantId = $merchantId ?: (Setting::getGlobal('kashier_merchant_id', Setting::get('kashier_merchant_id', 'MID-52019-895')) ?: 'MID-52019-895');
+        $this->paymentApiKey = $paymentApiKey ?: (Setting::getGlobal('kashier_payment_api_key', Setting::get('kashier_payment_api_key', '0b01aadf-0df2-4d90-864c-913dc3462b1c')) ?: '0b01aadf-0df2-4d90-864c-913dc3462b1c');
+        $this->secretKey = $secretKey ?: (Setting::getGlobal('kashier_secret_key', Setting::get('kashier_secret_key', '20b46d7dd22d75e195c8d0f0f6ed6e41$b47fdd473e076b8e035662ea2fd217bf96c7196524de12cf5c1dbfebd85ef6276888f3a833443645a0a29441f243590e')) ?: '20b46d7dd22d75e195c8d0f0f6ed6e41$b47fdd473e076b8e035662ea2fd217bf96c7196524de12cf5c1dbfebd85ef6276888f3a833443645a0a29441f243590e');
+        $this->mode = $mode ?: (Setting::getGlobal('kashier_mode', Setting::get('kashier_mode', 'live')) ?: 'live');
         $this->isActive = (bool) Setting::getGlobal('kashier_active', Setting::get('kashier_active', 1));
 
         $this->isConfigured = !empty($this->merchantId) && !empty($this->paymentApiKey) && !empty($this->secretKey);
