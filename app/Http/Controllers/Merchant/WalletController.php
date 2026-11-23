@@ -257,17 +257,17 @@ class WalletController extends Controller
      */
     public function kashierCallback(Request $request, \App\Services\KashierService $kashierService)
     {
-        $params = $request->query();
+        $params = array_merge($request->query(), $request->post());
         \Illuminate\Support\Facades\Log::info('Kashier Callback received:', $params);
 
-        $merchantOrderId = $request->query('merchantOrderId') ?? $request->query('orderId');
-        $paymentStatus = strtoupper($request->query('paymentStatus', ''));
-        $transactionId = $request->query('transactionId', '');
-        $signature = $request->query('signature');
+        $merchantOrderId = $request->input('merchantOrderId') ?? $request->input('orderId') ?? $request->query('merchantOrderId') ?? $request->query('orderId');
+        $paymentStatus = strtoupper((string) ($request->input('paymentStatus') ?? $request->query('paymentStatus', '')));
+        $transactionId = (string) ($request->input('transactionId') ?? $request->query('transactionId', ''));
+        $signature = $request->input('signature') ?? $request->query('signature');
 
         // Check if there is an associated receipt
         $receipt = null;
-        if ($merchantOrderId && preg_match('/WALLET_(\d+)_(\d+)/', $merchantOrderId, $m)) {
+        if ($merchantOrderId && preg_match('/WALLET[_-](\d+)[_-](\d+)/i', $merchantOrderId, $m)) {
             $receipt = SubscriptionReceipt::find((int) $m[2]);
         }
         if (!$receipt && $merchantOrderId) {
@@ -327,14 +327,14 @@ class WalletController extends Controller
      */
     public function paymobCallback(Request $request, \App\Services\PaymobService $paymobService)
     {
-        $orderId = $request->query('order');
-        $merchantOrderId = $request->query('merchant_order_id');
-        $transactionId = $request->query('id');
-        $hmac = $request->query('hmac');
+        $orderId = $request->input('order') ?? $request->query('order');
+        $merchantOrderId = $request->input('merchant_order_id') ?? $request->query('merchant_order_id');
+        $transactionId = $request->input('id') ?? $request->query('id');
+        $hmac = $request->input('hmac') ?? $request->query('hmac');
 
         // Check if there is an associated receipt
         $receipt = null;
-        if ($merchantOrderId && preg_match('/WALLET_(\d+)_(\d+)/', $merchantOrderId, $m)) {
+        if ($merchantOrderId && preg_match('/WALLET[_-](\d+)[_-](\d+)/i', $merchantOrderId, $m)) {
             $receipt = SubscriptionReceipt::find((int) $m[2]);
         }
         if (!$receipt && $orderId) {

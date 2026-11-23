@@ -166,6 +166,10 @@ Route::prefix('admin')->group(function () {
     // Merchant Auth Routes — منفصلة تماماً عن السوبر أدمن
     Route::middleware(['web', 'tenant'])->group(function () {
         require __DIR__ . '/auth_merchant.php';
+
+        // Payment Gateway Callbacks (No auth middleware to prevent session drops on cross-site redirect)
+        Route::match(['get', 'post'], '/wallet/kashier-callback', [App\Http\Controllers\Merchant\WalletController::class, 'kashierCallback'])->name('merchant.wallet.kashier.callback');
+        Route::match(['get', 'post'], '/wallet/paymob-callback', [App\Http\Controllers\Merchant\WalletController::class, 'paymobCallback'])->name('merchant.wallet.paymob.callback');
     });
 
         // Protected Merchant Admin Routes (لوحة تحكم التاجر تُفتح دائماً ولا تُغلق بالخطأ)
@@ -264,8 +268,6 @@ Route::prefix('admin')->group(function () {
             Route::post('/wallet/deposit', [App\Http\Controllers\Merchant\WalletController::class, 'deposit'])->name('merchant.wallet.deposit');
             Route::post('/wallet/instant-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'instantDeposit'])->name('merchant.wallet.instant-deposit');
             Route::post('/wallet/kashier-deposit', [App\Http\Controllers\Merchant\WalletController::class, 'kashierDeposit'])->name('merchant.wallet.kashier.deposit');
-            Route::match(['get', 'post'], '/wallet/kashier-callback', [App\Http\Controllers\Merchant\WalletController::class, 'kashierCallback'])->name('merchant.wallet.kashier.callback');
-            Route::get('/wallet/paymob-callback', [App\Http\Controllers\Merchant\WalletController::class, 'paymobCallback'])->name('merchant.wallet.paymob.callback');
             if (app()->environment('local')) {
                 Route::get('/wallet/paymob-sandbox', [App\Http\Controllers\Merchant\WalletController::class, 'paymobSandbox'])->name('merchant.wallet.paymob.sandbox');
                 Route::post('/wallet/paymob-sandbox/complete', [App\Http\Controllers\Merchant\WalletController::class, 'completeSandbox'])->name('merchant.wallet.paymob.sandbox.complete');

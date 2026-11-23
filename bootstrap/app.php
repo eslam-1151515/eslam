@@ -69,6 +69,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'lp/*/convert',
             'public-api/*',
             'api/webhooks/*',
+            // Payment Gateway Callbacks
+            '*/admin/wallet/kashier-callback',
+            '*/admin/wallet/paymob-callback',
+            '*/wallet/kashier-callback',
+            '*/wallet/paymob-callback',
+            'admin/wallet/kashier-callback',
+            'admin/wallet/paymob-callback',
+            'wallet/kashier-callback',
+            'wallet/paymob-callback',
         ]);
 
         $middleware->redirectTo(
