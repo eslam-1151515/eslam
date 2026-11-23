@@ -188,7 +188,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
             cash: 'نقدي',
             paymob_card: '⚡ فيزا / ماستركارد (Paymob)',
             paymob_wallet: '⚡ محفظة إلكترونية (Paymob)',
-            kashier: '⚡ كاشير (Kashier - فيزا ومحافظ)',
+            kashier: 'Kashier',
         };
         return methods[method] || method;
     };
@@ -410,13 +410,13 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 whitespace-nowrap">
                                                 {receipt.type === 'wallet' ? (
-                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-700 border border-purple-200">
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-700 border border-purple-200 whitespace-nowrap">
                                                         👛 شحن محفظة
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
                                                         📦 اشتراك باقة
                                                     </span>
                                                 )}
@@ -447,10 +447,10 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-xs text-gray-600">
-                                                <div className="space-y-0.5">
-                                                    <span className="font-bold text-gray-800 block">{dt.date}</span>
-                                                    <span className="text-[11px] text-gray-400 font-mono block" dir="ltr">{dt.time}</span>
+                                            <td className="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
+                                                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                    <span className="font-bold text-gray-800">{dt.date}</span>
+                                                    <span className="text-[11px] text-gray-400 font-mono" dir="ltr">{dt.time}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -476,29 +476,35 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                     <div>
                                                         {receipt.status === 'approved' && (
                                                             <div>
-                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
                                                                     <span>✓</span>
                                                                     <span>تمت المعاملة إلكترونياً</span>
                                                                 </span>
-                                                                <span className="block text-[10px] text-gray-400 mt-1 font-semibold">تأكيد تلقائي (Paymob)</span>
+                                                                <span className="block text-[10px] text-gray-400 mt-1 font-semibold">
+                                                                    {receipt.payment_method === 'kashier' ? 'تأكيد تلقائي (Kashier)' : 'تأكيد تلقائي (Paymob)'}
+                                                                </span>
                                                             </div>
                                                         )}
                                                         {receipt.status === 'pending' && (
                                                             <div>
-                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap">
                                                                     <span>⏳</span>
                                                                     <span>بانتظار السداد الإلكتروني</span>
                                                                 </span>
-                                                                <span className="block text-[10px] text-amber-600 mt-1 font-semibold">لم يستكمل الدفع في باي موب</span>
+                                                                <span className="block text-[10px] text-amber-600 mt-1 font-semibold">
+                                                                    {receipt.payment_method === 'kashier' ? 'لم يستكمل الدفع في كاشير' : 'لم يستكمل الدفع في باي موب'}
+                                                                </span>
                                                             </div>
                                                         )}
                                                         {receipt.status === 'rejected' && (
                                                             <div>
-                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 whitespace-nowrap">
                                                                     <span>✕</span>
                                                                     <span>فشلت / مرفوضة</span>
                                                                 </span>
-                                                                <span className="block text-[10px] text-rose-500 mt-1 font-semibold">فشلت عملية الدفع في باي موب</span>
+                                                                <span className="block text-[10px] text-rose-500 mt-1 font-semibold">
+                                                                    {receipt.payment_method === 'kashier' ? 'فشلت عملية الدفع في كاشير' : 'فشلت عملية الدفع في باي موب'}
+                                                                </span>
                                                             </div>
                                                         )}
                                                     </div>
@@ -539,9 +545,24 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                             <td className="px-6 py-4 text-left">
                                                 {isOnlineMethod(receipt.payment_method) ? (
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <span className="text-[11px] font-semibold text-gray-400">
-                                                            {receipt.status === 'approved' ? 'معاملة آلية مكتملة ✓' : 'معاملة دفع إلكتروني'}
-                                                        </span>
+                                                        {receipt.status === 'pending' && (
+                                                            <>
+                                                                <button
+                                                                    onClick={() => handleApprove(receipt)}
+                                                                    disabled={processing}
+                                                                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
+                                                                >
+                                                                    موافقة وتأكيد
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => openRejectModal(receipt)}
+                                                                    disabled={processing}
+                                                                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
+                                                                >
+                                                                    رفض
+                                                                </button>
+                                                            </>
+                                                        )}
                                                         <button
                                                             onClick={() => handleDeleteReceipt(receipt)}
                                                             disabled={processing}
@@ -557,14 +578,14 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                             <button
                                                                 onClick={() => handleApprove(receipt)}
                                                                 disabled={processing}
-                                                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
+                                                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
                                                             >
                                                                 موافقة وتأكيد
                                                             </button>
                                                             <button
                                                                 onClick={() => openRejectModal(receipt)}
                                                                 disabled={processing}
-                                                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm"
+                                                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
                                                             >
                                                                 رفض
                                                             </button>
@@ -584,7 +605,7 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                                             className="px-2.5 py-1 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-md text-xs font-bold transition-colors"
                                                             title="حذف الإيصال"
                                                         >
-                                                            🗑️ حذف
+                                                            🗑️
                                                         </button>
                                                     )
                                                 )}

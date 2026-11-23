@@ -37,6 +37,17 @@ class KashierWebhookController extends Controller
         if (!empty($signature)) {
             $isValid = $kashierService->verifySignature($data, $signature);
             if (!$isValid) {
+                $rawBody = $request->getContent();
+                $secretKey = $kashierService->getSecretKey();
+                if (!empty($rawBody) && !empty($secretKey)) {
+                    $rawHmac = hash_hmac('sha256', $rawBody, $secretKey);
+                    if (hash_equals(strtolower($rawHmac), strtolower($signature))) {
+                        $isValid = true;
+                    }
+                }
+            }
+
+            if (!$isValid) {
                 Log::warning('Kashier Webhook: Invalid signature', [
                     'signature' => $signature,
                     'data'      => $data,
@@ -82,7 +93,7 @@ class KashierWebhookController extends Controller
         $receipt = null;
 
         // Pattern WALLET_{tenantId}_{receiptId}
-        if (preg_match('/WALLET_(\d+)_(\d+)/', $merchantOrderId, $matches)) {
+        if (preg_match('/WALLET[_-](\d+)[_-](\d+)/i', $merchantOrderId, $matches)) {
             $receiptId = (int) $matches[2];
             $receipt = SubscriptionReceipt::find($receiptId);
         }

@@ -282,9 +282,20 @@ class KashierService
         }
 
         $message = implode('&', $dataParts);
-        $computedSignature = strtolower(hash_hmac('sha256', $message, $this->paymentApiKey));
+        $cleanSig = strtolower(trim($signature));
 
-        return hash_equals($computedSignature, strtolower(trim($signature)));
+        $sigApi = strtolower(hash_hmac('sha256', $message, $this->paymentApiKey));
+        $sigSec = strtolower(hash_hmac('sha256', $message, $this->secretKey));
+
+        return hash_equals($sigApi, $cleanSig) || hash_equals($sigSec, $cleanSig);
+    }
+
+    /**
+     * Get secret key.
+     */
+    public function getSecretKey(): string
+    {
+        return $this->secretKey;
     }
 
     /**

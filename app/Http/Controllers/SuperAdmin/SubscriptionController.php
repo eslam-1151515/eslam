@@ -230,7 +230,7 @@ class SubscriptionController extends Controller
                         'tenant_id'   => $tenant->id,
                         'amount'      => $receipt->amount,
                         'type'        => 'credit',
-                        'description' => 'شحن محفظة عبر ' . ($receipt->payment_method === 'vodafone_cash' ? 'فودافون كاش' : ($receipt->payment_method === 'instapay' ? 'إنستا باي' : $receipt->payment_method)) . ($receipt->payment_reference ? ' (الرقم المحول منه: ' . $receipt->payment_reference . ')' : ''),
+                        'description' => 'شحن محفظة عبر ' . ($receipt->payment_method === 'vodafone_cash' ? 'فودافون كاش' : ($receipt->payment_method === 'instapay' ? 'إنستا باي' : ($receipt->payment_method === 'kashier' ? 'كاشير (Kashier)' : $receipt->payment_method))) . ($receipt->payment_reference ? ' (المرجع: ' . $receipt->payment_reference . ')' : ''),
                         'created_by'  => Auth::id(),
                     ]);
                 }
