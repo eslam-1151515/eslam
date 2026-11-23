@@ -453,7 +453,7 @@ class CheckoutController extends Controller
         $orderId = $request->query('order_id') ?? $request->input('order_id');
         if (!$orderId) {
             $mOrderId = (string) ($request->query('merchantOrderId') ?? $request->query('orderId') ?? $request->input('merchantOrderId') ?? '');
-            if (preg_match('/STORE_ORDER_\d+_(\d+)/', $mOrderId, $matches)) {
+            if (preg_match('/STORE_ORDER[_-]\d+[_-](\d+)/i', $mOrderId, $matches)) {
                 $orderId = (int) $matches[1];
             }
         }

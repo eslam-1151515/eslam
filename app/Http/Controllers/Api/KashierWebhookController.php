@@ -57,8 +57,9 @@ class KashierWebhookController extends Controller
         }
 
         // Case 1: Store Customer Order (STORE_ORDER_{tenantId}_{orderId})
-        if (preg_match('/STORE_ORDER_(\d+)_(\d+)/', $merchantOrderId, $matches)) {
-            $storeOrderId = (int) $matches[2];
+        $orderMatches = [];
+        if (preg_match('/STORE_ORDER[_-](\d+)[_-](\d+)/i', $merchantOrderId, $orderMatches) || preg_match('/STORE_ORDER[_-](\d+)[_-](\d+)/i', $orderId, $orderMatches)) {
+            $storeOrderId = (int) $orderMatches[2];
             $storeOrder = \App\Models\Order::find($storeOrderId);
             if ($storeOrder) {
                 if (in_array($paymentStatus, ['SUCCESS', 'CAPTURED', 'PAID'])) {
