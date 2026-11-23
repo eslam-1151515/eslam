@@ -545,24 +545,6 @@ export default function Receipts({ receipts, tenants, plans, paymentSettings, fi
                                             <td className="px-6 py-4 text-left">
                                                 {isOnlineMethod(receipt.payment_method) ? (
                                                     <div className="flex items-center justify-end gap-2">
-                                                        {receipt.status === 'pending' && (
-                                                            <>
-                                                                <button
-                                                                    onClick={() => handleApprove(receipt)}
-                                                                    disabled={processing}
-                                                                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
-                                                                >
-                                                                    موافقة وتأكيد
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => openRejectModal(receipt)}
-                                                                    disabled={processing}
-                                                                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold transition-colors disabled:opacity-50 shadow-sm whitespace-nowrap"
-                                                                >
-                                                                    رفض
-                                                                </button>
-                                                            </>
-                                                        )}
                                                         <button
                                                             onClick={() => handleDeleteReceipt(receipt)}
                                                             disabled={processing}
