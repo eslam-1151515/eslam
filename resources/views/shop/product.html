@@ -685,9 +685,126 @@
         }
       });
 
+      function showUpsellPopup(upsellProduct, btn, isBuyNow) {
+        try {
+          if (!upsellProduct) {
+            handleCartAction(btn, isBuyNow, true);
+            return;
+          }
+
+          let existingModal = document.getElementById('upsellModalOverlay');
+          if (existingModal) existingModal.remove();
+
+          const formattedPrice = window.BirdCart ? window.BirdCart.formatEGP(upsellProduct.price_after || upsellProduct.price || 0) : ((upsellProduct.price_after || upsellProduct.price || 0) + ' ج.م');
+          const formattedOldPrice = (upsellProduct.price_before && Number(upsellProduct.price_before) > Number(upsellProduct.price_after || upsellProduct.price || 0))
+            ? (window.BirdCart ? window.BirdCart.formatEGP(upsellProduct.price_before) : (upsellProduct.price_before + ' ج.م'))
+            : '';
+
+          const modalHtml = `
+            <div id="upsellModalOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);">
+              <div style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.25); text-align: center; position: relative; border: 1px solid #f1f5f9; font-family: Cairo, sans-serif;" dir="rtl">
+                <button id="upsellCloseBtn" type="button" style="position: absolute; top: 12px; left: 12px; width: 34px; height: 34px; background: #f1f5f9; border: none; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">&times;</button>
+                
+                <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 18px 20px; border-bottom: 1px solid #fcd34d;">
+                  <span style="display: inline-block; background: #f59e0b; color: #fff; font-size: 12px; font-weight: 800; padding: 3px 12px; border-radius: 20px; margin-bottom: 6px;">🔥 عرض خاص ومميز</span>
+                  <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #78350f;">هل ترغب في إضافة هذا العرض لطلبك؟</h3>
+                </div>
+
+                <div style="padding: 20px;">
+                  ${upsellProduct.image_url ? `
+                    <div style="width: 130px; height: 130px; margin: 0 auto 14px; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; background: #fafafa; display: flex; align-items: center; justify-content: center;">
+                      <img src="${upsellProduct.image_url}" alt="${upsellProduct.name}" style="max-width: 100%; max-height: 100%; object-fit: cover;" onerror="this.src='https://dummyimage.com/130x130/f3f4f6/9ca3af&text=Offer'" />
+                    </div>
+                  ` : ''}
+                  <h4 style="margin: 0 0 10px; font-size: 15px; font-weight: 700; color: #1e293b; line-height: 1.4;">${upsellProduct.name}</h4>
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px;">
+                    <span style="font-size: 18px; font-weight: 800; color: #16a34a;">${formattedPrice}</span>
+                    ${formattedOldPrice ? `<span style="font-size: 14px; color: #94a3b8; text-decoration: line-through;">${formattedOldPrice}</span>` : ''}
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="upsellAcceptBtn" type="button" style="width: 100%; padding: 13px; background: #16a34a; color: #ffffff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22,163,74,0.3);">
+                      <i class="fa fa-plus-circle"></i> نعم، أضف هذا العرض لطلبي
+                    </button>
+                    <button id="upsellDeclineBtn" type="button" style="width: 100%; padding: 10px; background: transparent; color: #64748b; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                      لا شكراً، الاستمرار بالمنتج الحالي فقط
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+          const overlay = document.getElementById('upsellModalOverlay');
+          const closeBtn = document.getElementById('upsellCloseBtn');
+          const declineBtn = document.getElementById('upsellDeclineBtn');
+          const acceptBtn = document.getElementById('upsellAcceptBtn');
+
+          function cleanup(addUpsell) {
+            if (overlay) overlay.remove();
+
+            if (addUpsell) {
+              handleCartAction(btn, false, true);
+
+              if (window.BirdCart && window.BirdCart.addToCart) {
+                window.BirdCart.addToCart({
+                  id: +upsellProduct.id,
+                  name: upsellProduct.name,
+                  price: Number(upsellProduct.price_after || upsellProduct.price || 0),
+                  image: upsellProduct.image_url || null,
+                  shipping_type: upsellProduct.shipping_type || 'free',
+                  price_before: Number(upsellProduct.price_before) || 0,
+                  qty: 1,
+                  selectedSize: null,
+                  selectedColor: null,
+                  options: null,
+                  piecesSelections: []
+                });
+                window.BirdCart.updateCartCount();
+              }
+
+              if (isBuyNow) {
+                const inlineSection = document.getElementById('inlineCheckoutSection');
+                if (inlineSection) {
+                  inlineSection.style.display = 'block';
+                  inlineSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  window.location.href = '/shop/checkout.html';
+                }
+              } else {
+                const origText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa fa-check"></i> تمت إضافة العرض والمنتج';
+                btn.style.backgroundColor = '#16a34a';
+                setTimeout(() => {
+                  btn.innerHTML = origText;
+                  btn.style.backgroundColor = '#2563eb';
+                }, 2000);
+              }
+            } else {
+              handleCartAction(btn, isBuyNow, true);
+            }
+          }
+
+          if (closeBtn) closeBtn.onclick = () => cleanup(false);
+          if (declineBtn) declineBtn.onclick = () => cleanup(false);
+          if (overlay) {
+            overlay.onclick = (e) => {
+              if (e.target === overlay) cleanup(false);
+            };
+          }
+          if (acceptBtn) acceptBtn.onclick = () => cleanup(true);
+        } catch (err) {
+          console.error('Upsell popup error:', err);
+          handleCartAction(btn, isBuyNow, true);
+        }
+      }
+      window.showUpsellPopup = showUpsellPopup;
+
       // Cart logic
       function handleCartAction(btn, isBuyNow, bypassUpsell = false) {
-        if (window.currentProductUpsells && window.currentProductUpsells.length > 0 && !bypassUpsell) {
+        if (window.currentProductUpsells && Array.isArray(window.currentProductUpsells) && window.currentProductUpsells.length > 0 && !bypassUpsell) {
           showUpsellPopup(window.currentProductUpsells[0], btn, isBuyNow);
           return;
         }
@@ -924,17 +1041,21 @@
         }
       }
 
+      window.handleCartAction = handleCartAction;
+
       document.querySelectorAll('.p-btn-buy-now').forEach(btnBuyNow => {
         btnBuyNow.addEventListener('click', function (e) {
           e.stopPropagation();
-          handleCartAction(this, true);
+          const bypass = this.dataset.bypassUpsell === 'true';
+          handleCartAction(this, true, bypass);
         });
       });
 
       document.querySelectorAll('.p-btn-add').forEach(btnAdd => {
         btnAdd.addEventListener('click', function (e) {
           e.stopPropagation();
-          handleCartAction(this, false);
+          const bypass = this.dataset.bypassUpsell === 'true';
+          handleCartAction(this, false, bypass);
         });
       });
 
@@ -2152,8 +2273,13 @@
         if(!cart || cart.length === 0) {
            var buyNowBtn = document.querySelector('.p-btn-buy-now');
            if(buyNowBtn) {
-               buyNowBtn.click();
-               await new Promise(resolve => setTimeout(resolve, 500));
+               if (typeof window.handleCartAction === 'function') {
+                   window.handleCartAction(buyNowBtn, true, true);
+               } else {
+                   buyNowBtn.dataset.bypassUpsell = 'true';
+                   buyNowBtn.click();
+               }
+               await new Promise(resolve => setTimeout(resolve, 300));
                cart = getCartItems();
            }
         }
